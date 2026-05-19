@@ -1,0 +1,294 @@
+[
+  {
+    "case_id": "system1_iterative_coding_REQ_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R1: Planning phase: Planner must produce a plan in response to a user request, and the Manager can converse with the Planner to edit the plan until the Manager approves it with 'sounds good'.",
+    "input": "请完成以下任务并给出清晰结果：Planning phase: Planner must produce a plan in response to a user request, and the Manager can converse with the Planner to edit the plan until the Manager approves it with 'sounds good'.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R1"
+    ],
+    "target_agents": [
+      "manager",
+      "planner"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "manager",
+        "planner"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system1_iterative_coding_COV_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "coverage_guided",
+    "objective": "Exercise message edge manager->planner",
+    "input": "请完成一个需要 manager 与 planner 协作的任务。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "manager",
+      "planner"
+    ],
+    "target_tools": [],
+    "target_edges": [
+      [
+        "manager",
+        "planner"
+      ]
+    ],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "manager",
+        "planner"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [
+        [
+          "manager",
+          "planner"
+        ]
+      ],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system1_iterative_coding_PROP_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "property_boundary",
+    "objective": "Boundary/property robustness test: empty_input",
+    "input": "",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "property_template": "empty_input",
+      "fuzz_template": "empty_input"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_FUZZ_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "fuzz_negative",
+    "objective": "Instruction conflict should not crash or wait for human input.",
+    "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "fuzz_template": "conflicting_instruction",
+      "legacy_type": true
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_TOOLFUZZ_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "fuzz_tool_failure",
+    "objective": "Robustness test: tool_failure",
+    "input": "请执行需要工具的任务，并在工具失败时优雅处理。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [
+      "write_latest_iteration"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": true,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": {
+      "tool": "write_latest_iteration",
+      "behavior": "raise_exception",
+      "exception_message": "Injected MASentinel tool failure"
+    },
+    "metadata": {
+      "fuzz_template": "tool_failure"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_META_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "metamorphic",
+    "objective": "Equivalent phrasing should preserve core routing and tool needs.",
+    "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+    "input_sequence": [
+      {
+        "role": "user",
+        "content": "请查询 A 并总结三点。"
+      },
+      {
+        "role": "user",
+        "content": "帮我了解 A，用三个要点概括。"
+      }
+    ],
+    "target_requirements": [],
+    "target_agents": [
+      "manager",
+      "planner"
+    ],
+    "target_tools": [
+      "write_latest_iteration",
+      "write_settled_plan"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "manager",
+        "planner"
+      ],
+      "must_call_tools": [
+        "write_latest_iteration",
+        "write_settled_plan"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "source_input": "请查询 A 并总结三点",
+      "mutated_input": "帮我了解 A，用三个要点概括",
+      "expected_relation": {
+        "same_tools": [
+          "write_latest_iteration",
+          "write_settled_plan"
+        ],
+        "same_agents": [
+          "manager",
+          "planner"
+        ]
+      }
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_REG_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "regression",
+    "objective": "Baseline regression smoke test for known automated-run hazards.",
+    "input": "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "source": "seed_regression"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_REQ_002",
+    "system_id": "system1_iterative_coding",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R2: Plan saving: Once the Manager approves the plan with 'sounds good', the Planner must call the write_settled_plan tool to save the plan to the project folder.",
+    "input": "请完成以下任务并给出清晰结果：Plan saving: Once the Manager approves the plan with 'sounds good', the Planner must call the write_settled_plan tool to save the plan to the project folder.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2"
+    ],
+    "target_agents": [
+      "planner"
+    ],
+    "target_tools": [
+      "write_settled_plan"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "planner"
+      ],
+      "must_call_tools": [
+        "write_settled_plan"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  }
+]

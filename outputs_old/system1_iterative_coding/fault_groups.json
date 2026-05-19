@@ -1,0 +1,88 @@
+[
+  {
+    "group_id": "generic:application-metamorphic-relation-violation-the-0-turn-trace-provides-no-evidence-of-agent-tool-routing-so-the-metamorphi",
+    "title": "Metamorphic Relation Violation",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_003"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_META_001"
+    ],
+    "failure_codes": [
+      "METAMORPHIC_RELATION_VIOLATION"
+    ],
+    "severity": "medium",
+    "confidence": 0.0,
+    "root_cause": "The 0-turn trace provides no evidence of agent/tool routing, so the metamorphic relation violation cannot be confirmed from the given data. The fault may be a false positive or a trace collection issue.",
+    "suggested_fix": "Re-run the test with proper event/trace collection enabled. If the 0-turn count is accurate, investigate why the system produced a final message without any agent/tool calls. If the trace is incomplete, fix the logging/event capture to ensure all agent and tool invocations are recorded before re-evaluating the metamorphic relation.",
+    "summary": "Equivalent metamorphic inputs did not preserve expected routing/tool relation."
+  },
+  {
+    "group_id": "generic:application-missing-tool-call-the16-fault-detection-is-based-on-rule-oracle-but-the-trace-evidence-0-turns-3-events-stat",
+    "title": "Missing Tool Call",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_002"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_META_001"
+    ],
+    "failure_codes": [
+      "MISSING_TOOL_CALL"
+    ],
+    "severity": "medium",
+    "confidence": 0.0,
+    "root_cause": "The16 fault detection is based on rule oracle, but the trace evidence (0 turns, 3 events, status passed) is insufficient to confirm the fault. The trace may be incomplete or the oracle may have misapplied the tool call requirement.",
+    "suggested_fix": "Re-run the test case with full trace logging to capture all agent interactions and tool calls. Verify that the 0 turn count is not a logging error. If the system truly completed without calling write_latest_iteration, investigate the planner agent's tool registration and prompt.",
+    "summary": "Expected tool was not called: write_latest_iteration"
+  },
+  {
+    "group_id": "generic:autogen_framework-message-routing-error-insufficient-evidence-in-trace_summary-to-confirm-the-missing-message-edge.-the-",
+    "title": "Message Routing Error",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_001"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_COV_001",
+      "system1_iterative_coding_R2_001",
+      "system1_iterative_coding_R2_002"
+    ],
+    "failure_codes": [
+      "MISSING_MESSAGE_EDGE"
+    ],
+    "severity": "medium",
+    "confidence": 0.0,
+    "root_cause": "Insufficient  evidence in trace_summary to confirm the missing message edge. The  trace_summary lacks agent communication logs, and the  events_count/turn_count inconsistency suggests  incomplete data. The fault  may be a false positive due to  incomplete trace collection.",
+    "suggested_fix": "Re-run the test with  detailed trace logging enabled to capture agent-to-agent  messages. Verify if the manager->planner edge actually occurred. If  the edge is  missing, investigate AutoGen routing configuration or  agent registration. If the edge is present,  fix the trace collection  mechanism.",
+    "summary": "Expected message edge was not observed: manager->planner"
+  },
+  {
+    "group_id": "interaction:timeout-or-non-termination",
+    "title": "Conversation timeout or missing termination guard",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_005"
+    ],
+    "symptom_fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_005"
+    ],
+    "affected_cases": [
+      "system1_iterative_coding_R2_003"
+    ],
+    "failure_codes": [
+      "NON_TERMINATION",
+      "TIMEOUT"
+    ],
+    "severity": "high",
+    "confidence": 0.9,
+    "root_cause": "The conversation lacks a reliable termination condition, max-turn guard, or speaker selection constraint. The system did not produce any turns (turn_count: 0) before timing out, indicating the initial message processing or agent setup may have hung or failed to start the conversation loop.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round. Additionally, investigate why no turns were generated (turn_count: 0) - possible issues with very long input parsing or agent initialization blocking the conversation start.",
+    "summary": "The process exceeded the configured timeout."
+  }
+]

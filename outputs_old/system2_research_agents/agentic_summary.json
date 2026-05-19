@@ -1,0 +1,209 @@
+{
+  "workflow_agents": [
+    "RequirementAnalystAgent",
+    "SystemModelingAgent",
+    "TestDesignerAgent",
+    "InteractionAdapterAgent",
+    "CoverageStrategistAgent",
+    "ExecutionMonitorAgent",
+    "FaultDiagnoserAgent",
+    "FalsePositiveAuditorAgent",
+    "ReportWriterAgent"
+  ],
+  "model_usage": {
+    "run_id": "agentic_1779173380_1485d186",
+    "total_calls": 25,
+    "successful_calls": 24,
+    "fallback_calls": 1,
+    "failed_calls": 1,
+    "by_agent": {
+      "RequirementAnalystAgent": 1,
+      "SystemModelingAgent": 1,
+      "InteractionAdapterAgent": 1,
+      "TestDesignerAgent": 2,
+      "ExecutionMonitorAgent": 1,
+      "FaultDiagnoserAgent": 8,
+      "FalsePositiveAuditorAgent": 8,
+      "CoverageStrategistAgent": 2,
+      "ReportWriterAgent": 1
+    },
+    "by_purpose": {
+      "extract_requirements": 1,
+      "review_semantic_graph": 1,
+      "plan_interaction_adapter": 1,
+      "generate_testcases": 2,
+      "summarize_execution": 1,
+      "diagnose_fault": 8,
+      "audit_false_positive": 8,
+      "analyze_coverage_gaps": 2,
+      "write_report_narrative": 1
+    },
+    "by_model": {
+      "ds-v4-pro": 25
+    },
+    "estimated_tokens": {
+      "input_tokens": 49834,
+      "output_tokens": 7259
+    }
+  },
+  "run_manifest": {
+    "run_id": "system2_research_agents_2026-05-19T06:49:40.307434+00:00",
+    "start_time": "2026-05-19T06:49:40.307449+00:00",
+    "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system2.yaml",
+    "config_hash": "17f2f7278904c4d30063536ff9a33376f142d74184bc35a7e310942322053976",
+    "code_snapshot_hash": "bf309e6f5b2a651789a56a09c82a42b9851ab6f0c05b1b6a358fd2d041610ee9",
+    "doc_hash": null,
+    "human_intervention_allowed": false,
+    "entry_command": "scripts/run_with_api_md.py --config configs/all_systems.yaml",
+    "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
+    "pid": 47593
+  },
+  "testcases_frozen_sha256": "c6c35c1b3afed4145eaa2c28cb7e5c0623e88e9ffd12ee4484f6b89255767ce1",
+  "human_intervention_allowed": false,
+  "semantic_graph_review": {
+    "semantic_graph_review": "The message edges are derived from a GroupChat topology where all agents (user_proxy, researcher, research_manager, director) are registered in the same group chat. The edges correctly reflect the all-to-all potential communication paths enabled by the GroupChatManager. The edge from user_proxy to group_chat_manager is explicitly supported by the initiate_chat call. No missing edges are detected for the declared agents. The tool assignments (researcher: web_scraping, google_search; director: get_airtable_records, update_single_airtable_record) are consistent with the requirements and the agent_tool_links extracted by the analyzer.",
+    "suspected_risk_points": [
+      {
+        "type": "tool_schema_risk",
+        "evidence": "The tools web_scraping, google_search, get_airtable_records, and update_single_airtable_record have no signature, docstring, or parameters defined in the profile. This means the agents may not have proper function schemas registeredood, which can lead to invalid arguments being passed or the LLM hallucinating parameters. This directly impacts requirement R2 (tools must be callable with valid arguments).",
+        "related_tool": "web_scraping, google_search, get_airtable_records, update_single_airtable_record"
+      },
+      {
+        "type": "tool_schema_risk",
+        "evidence": "The raw_notes list a function 'summary' that is16 not assigned to any agent and is not mentioned in the requirements. It is16 unclear if this is an orphaned tool or a missing assignment. If it is intended to be used, it represents a gap in the agent-tool mapping.",
+        "related_tool": "summary"
+      }
+    ],
+    "additional_edges": [],
+    "confidence": 0.85
+  },
+  "interaction_adapter": {
+    "prompt_responses": [],
+    "isolated_paths": [],
+    "risk_notes": [
+      "Entrypoint app.py may start a Gradio web UI or similar interactive server, which cannot be controlled via stdin prompt-response rules. Automated evaluation may hang or timeout if the script blocks on a web server loop.",
+      "No input() calls or stdin prompts were found in the provided excerpts, so no prompt-response rules can be defined. If the script requires interactive input at runtime,16 the current configuration will fail.",
+      "The run_config timeout is 45 seconds; if the script starts a long-lived server, the process will be killed by timeout, and no meaningful test output will be collected."
+    ],
+    "confidence": 0.8,
+    "applied": {
+      "added_prompt_responses": [],
+      "added_isolated_paths": []
+    }
+  },
+  "coverage_strategy": {
+    "coverage_gaps": [
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "web_scraping",
+        "suggested_test_intent": "Verify that the researcher agent can call web_scraping with a valid URL and receive a usable result, covering the researcher->web_scraping tool link."
+      },
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "get_airtable_records",
+        "suggested_test_intent": "Verify that the director agent can call get_airtable_records with valid parameters and receive a usable result, covering the director->get_airtable_records tool link."
+      },
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "update_single_airtable_record",
+        "suggested_test_intent": "Verify that the director agent can call update_single_airtable_record with valid parameters and receive a usable result, covering the director->update_single_airtable_record tool link."
+      },
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "google_search",
+        "suggested_test_intent": "Verify that the researcher agent can call google_search with a valid query and receive a usable result, covering the researcher->google_search tool link."
+      }
+    ],
+    "new_test_requests": [],
+    "confidence": 0.95
+  },
+  "second_round": {
+    "enabled": true,
+    "target_mascov": 0.8,
+    "initial_mascov": 0.3687,
+    "extra_cases": 3,
+    "reason": "coverage_below_target",
+    "extra_traces": 3,
+    "initial_failed": 0
+  },
+  "trace_graph": {
+    "nodes": 0,
+    "edges": 0
+  },
+  "flaky_report": {
+    "history": {
+      "system2_research_agents_COV_001": [
+        "passed"
+      ],
+      "system2_research_agents_COV_002": [
+        "passed"
+      ],
+      "system2_research_agents_COV_003": [
+        "passed"
+      ],
+      "system2_research_agents_COV_004": [
+        "passed"
+      ],
+      "system2_research_agents_COV_005": [
+        "passed"
+      ],
+      "system2_research_agents_FUZZ_001": [
+        "passed"
+      ],
+      "system2_research_agents_FUZZ_002": [
+        "passed"
+      ],
+      "system2_research_agents_META_001": [
+        "passed"
+      ],
+      "system2_research_agents_PROP_001": [
+        "passed"
+      ],
+      "system2_research_agents_REG_001": [
+        "passed"
+      ],
+      "system2_research_agents_REQ_001": [
+        "passed"
+      ],
+      "system2_research_agents_REQ_002": [
+        "passed"
+      ],
+      "system2_research_agents_REQ_003": [
+        "passed"
+      ],
+      "system2_research_agents_REQ_004": [
+        "passed"
+      ],
+      "system2_research_agents_REQ_005": [
+        "passed"
+      ],
+      "system2_research_agents_TOOLFUZZ_001": [
+        "passed"
+      ],
+      "system2_research_agents_R2_001": [
+        "passed"
+      ],
+      "system2_research_agents_R2_002": [
+        "passed"
+      ],
+      "system2_research_agents_R2_003": [
+        "passed"
+      ]
+    },
+    "flaky_cases": {},
+    "flaky_count": 0
+  },
+  "report_narrative": {
+    "agentic_workflow_summary": "本次测试针对 system2_research_agents 系统执行了确定性覆盖率、故障检测和模型使用分析。测试覆盖了 4 个需求（R1-R4），但 agent 覆盖率仅 0.4（仅 user_proxy 和 researcher 被访问），tool 覆盖率为 0.0，message edge 覆盖率为 0.0。共报告 4 个故障，全部被标记为疑似误报（likely_false_positive），置信度在 0.85-0.95 之间。模型使用方面，共调用 24 次（ds-v4-pro），成功 23 次，失败 1 次，主要用于故障诊断和误报审计。",
+    "effectiveness_analysis": "测试在需求覆盖上表现良好（1.0），但实际执行效果有限。agent 覆盖率仅 0.4，tool 和 message edge 覆盖率均为 0.0，表明多数测试用例未能触发多 agent 协作和工具调用。所有报告的故障均因测试输入未能触发 agent 交互（user_proxy 立即发送 TERMINATE）而被判定为误报，未发现真实的软件缺陷。模型使用集中在故障诊断和误报审计（各 8 次），但未能产出有效故障，说明测试用例设计和执行环境需要优化。",
+    "false_positive_analysis": "全部 4 个故障（FAULT_001-004）均被判定为 likely_false_positive，原因一致：测试输入未能触发多 agent 交互，user_proxy 在 0 轮对话后立即发送 TERMINATE，导致预期 agent、工具和消息边均未出现。这不是应用层或 AutoGen 框架的软件故障，而是测试用例设计（输入过于模糊或触发自动终止）或执行环境（配置、工具注册）问题。误报风险为 high，置信度 0.85-0.95。",
+    "next_steps": [
+      "优化测试用例输入，使用具体、可操作的任务描述（如明确要求 director 分配任务给 research_manager），避免触发 user_proxy 的自动终止。",
+      "检查 user_proxy 的配置（如 max_turns、auto_terminate 设置），确保测试用例有足够的对话轮次来触发多 agent 协作。",
+      "在测试执行环境中启用详细日志，捕获 agent 选择、工具调用和消息路由事件，以便更准确地诊断覆盖率不足的原因。",
+      "重新运行测试套件，验证优化后的输入是否能提升 agent、tool 和 message edge 覆盖率，并重新评估故障报告的有效性。"
+    ],
+    "confidence": 0.9
+  },
+  "fallback_calls": 1
+}

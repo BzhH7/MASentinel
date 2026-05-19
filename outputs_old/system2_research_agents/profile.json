@@ -1,0 +1,322 @@
+{
+  "system_id": "system2_research_agents",
+  "root_path": "/Users/zhbai/code/cz_exp/research-agents-3.0-main",
+  "doc_path": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/README.md",
+  "entrypoint": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+  "agents": [
+    {
+      "name": "user_proxy",
+      "var_name": "user_proxy",
+      "class_name": "UserProxyAgent",
+      "system_message": null,
+      "description": null,
+      "tools": []
+    },
+    {
+      "name": "researcher",
+      "var_name": "researcher",
+      "class_name": "GPTAssistantAgent",
+      "system_message": null,
+      "description": null,
+      "tools": [
+        "web_scraping",
+        "google_search"
+      ]
+    },
+    {
+      "name": "research_manager",
+      "var_name": "research_manager",
+      "class_name": "GPTAssistantAgent",
+      "system_message": null,
+      "description": null,
+      "tools": []
+    },
+    {
+      "name": "director",
+      "var_name": "director",
+      "class_name": "GPTAssistantAgent",
+      "system_message": null,
+      "description": null,
+      "tools": [
+        "get_airtable_records",
+        "update_single_airtable_record"
+      ]
+    },
+    {
+      "name": "group_chat_manager",
+      "var_name": "group_chat_manager",
+      "class_name": "GroupChatManager",
+      "system_message": null,
+      "description": null,
+      "tools": []
+    }
+  ],
+  "tools": [
+    {
+      "name": "web_scraping",
+      "function_name": "web_scraping",
+      "signature": null,
+      "docstring": null,
+      "parameters": [],
+      "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    },
+    {
+      "name": "google_search",
+      "function_name": "google_search",
+      "signature": null,
+      "docstring": null,
+      "parameters": [],
+      "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    },
+    {
+      "name": "get_airtable_records",
+      "function_name": "get_airtable_records",
+      "signature": null,
+      "docstring": null,
+      "parameters": [],
+      "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    },
+    {
+      "name": "update_single_airtable_record",
+      "function_name": "update_single_airtable_record",
+      "signature": null,
+      "docstring": null,
+      "parameters": [],
+      "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R1",
+      "description": "The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate within the configured max_turns or upon a TERMINATE signal.",
+      "expected_agents": [
+        "user_proxy",
+        "researcher",
+        "research_manager",
+        "director"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "user_proxy initiates chat with group_chat_manager",
+        "group_chat_manager routes messages among all registered agents",
+        "agents collaborate to complete the research task",
+        "conversation terminates via TERMINATE message or max_turns limit"
+      ],
+      "negative_cases": [
+        "empty user input causes immediate termination without agent interaction",
+        "conversation exceeds max_turns without producing a result",
+        "agent fails to respond, causing infinite loop or timeout"
+      ]
+    },
+    {
+      "id": "R2",
+      "description": "Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable by their assigned agents with valid arguments ετυμολογία and return usable results or handled errors.",
+      "expected_agents": [
+        "researcher",
+        "director"
+      ],
+      "expected_tools": [
+        "web_scraping",
+        "google_search",
+        "get_airtable_records",
+        "update_single_airtable_record"
+      ],
+      "expected_behavior": [
+        "researcher invokes web_scraping and google_search to gather16 information",
+        "director invokes get_airtable_records to retrieve data and update_single_airtable_record to modify records",
+        "tools return structured data or a clear error message on failure",
+        "agents handle tool errors gracefully without crashing the workflow"
+      ],
+      "negative_cases": [
+        "tool receives invalid arguments and returns unhandled exception",
+        "tool returns malformed JSON that agents cannot parse",
+        "tool call fails silently, causing agents to proceed with incorrect data",
+        "agent attempts to call a tool not assigned to it"
+      ]
+    },
+    {
+      "id": "R3",
+      "description": "awn The group chat manager must enforce speaker selection and turn-taking so that only one agent speaks at a time and the conversation follows a logical order.",
+      "expected_agents": [
+        "group_chat_manager"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "group_chat_manager selects the next speaker based on the conversation context",
+        "only the selected agent generates a response",
+        "all agents have the opportunity to contribute",
+        "speaker selection prevents infinite loops between two agents"
+      ],
+      "negative_cases": [
+        "multiple agents respond simultaneously",
+        "speaker selection gets stuck in a loop between two agents",
+        "an agent is never selected to speak despite having relevant context"
+      ]
+    },
+    {
+      "id": "R4",
+      "description": "The system must handle multi-turn conversations where agents maintain context across turns and build upon previous responses.",
+      "expected_agents": [
+        "user_proxy",
+        "researcher",
+        "research_manager",
+        "director"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "agents reference information from earlier turns",
+        "research_manager coordinates the research process across multiple turns",
+        "director makes decisions based on accumulated research data",
+        "conversation history is preserved and accessible to all agents"
+      ],
+      "negative_cases": [
+        "agents lose context after a few turns and repeat questions",
+        "research_manager fails to track progress across turns",
+        "conversation history exceeds token limit and causes truncation"
+      ]
+    }
+  ],
+  "message_edges": [
+    {
+      "source": "director",
+      "target": "research_manager",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "director",
+      "target": "researcher",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "director",
+      "target": "user_proxy",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "research_manager",
+      "target": "director",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "research_manager",
+      "target": "researcher",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "research_manager",
+      "target": "user_proxy",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "researcher",
+      "target": "director",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "researcher",
+      "target": "research_manager",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "researcher",
+      "target": "user_proxy",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "user_proxy",
+      "target": "director",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "user_proxy",
+      "target": "group_chat_manager",
+      "evidence": "initiate_chat"
+    },
+    {
+      "source": "user_proxy",
+      "target": "research_manager",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "user_proxy",
+      "target": "researcher",
+      "evidence": "GroupChat potential route"
+    }
+  ],
+  "termination_conditions": [
+    "TERMINATE",
+    "max_turns",
+    "process_exit"
+  ],
+  "raw_notes": {
+    "warnings": [],
+    "files": [
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    ],
+    "functions": [
+      {
+        "name": "google_search",
+        "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "in_class": false,
+        "docstring": null
+      },
+      {
+        "name": "summary",
+        "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "in_class": false,
+        "docstring": null
+      },
+      {
+        "name": "web_scraping",
+        "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "in_class": false,
+        "docstring": null
+      },
+      {
+        "name": "get_airtable_records",
+        "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "in_class": false,
+        "docstring": null
+      },
+      {
+        "name": "update_single_airtable_record",
+        "source_file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "in_class": false,
+        "docstring": null
+      }
+    ],
+    "group_managers": {
+      "group_chat_manager": "autogen.GroupChatManager(groupchat=groupchat, llm_config={'config_list': config_list})"
+    },
+    "agent_tool_links": {
+      "researcher": [
+        "web_scraping",
+        "google_search"
+      ],
+      "director": [
+        "get_airtable_records",
+        "update_single_airtable_record"
+      ]
+    },
+    "analyzer": "deterministic_ast_plus_doc_heuristic",
+    "agentic": {
+      "semantic_graph_review": {
+        "semantic_graph_review": "The message edges are derived from a GroupChat topology where all agents (user_proxy, researcher, research_manager, director) are registered in the same group chat. The edges correctly reflect the all-to-all potential communication paths enabled by the GroupChatManager. The edge from user_proxy to group_chat_manager is explicitly supported by the initiate_chat call. No missing edges are detected for the declared agents. The tool assignments (researcher: web_scraping, google_search; director: get_airtable_records, update_single_airtable_record) are consistent with the requirements and the agent_tool_links extracted by the analyzer.",
+        "suspected_risk_points": [
+          {
+            "type": "tool_schema_risk",
+            "evidence": "The tools web_scraping, google_search, get_airtable_records, and update_single_airtable_record have no signature, docstring, or parameters defined in the profile. This means the agents may not have proper function schemas registeredood, which can lead to invalid arguments being passed or the LLM hallucinating parameters. This directly impacts requirement R2 (tools must be callable with valid arguments).",
+            "related_tool": "web_scraping, google_search, get_airtable_records, update_single_airtable_record"
+          },
+          {
+            "type": "tool_schema_risk",
+            "evidence": "The raw_notes list a function 'summary' that is16 not assigned to any agent and is not mentioned in the requirements. It is16 unclear if this is an orphaned tool or a missing assignment. If it is intended to be used, it represents a gap in the agent-tool mapping.",
+            "related_tool": "summary"
+          }
+        ],
+        "additional_edges": [],
+        "confidence": 0.85
+      }
+    }
+  }
+}

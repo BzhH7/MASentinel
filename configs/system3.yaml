@@ -1,0 +1,31 @@
+system_id: system3_financial_analysis
+root_path: ../../autogen-financial-analysis-main
+doc_path: ../../autogen-financial-analysis-main/README.md
+entrypoint: ../../autogen-financial-analysis-main/simple_autogen/main.py
+
+run:
+  mode: subprocess
+  command: "python main.py analyze {stock_symbol}"
+  input_mode: argv
+  runtime_patches: true
+  timeout_seconds: 75
+  max_turns: 15
+  working_dir: ../../autogen-financial-analysis-main/simple_autogen
+  env:
+    MAS_USE_MOCK_DATA: "1"
+    MAS_MOCK_ON_DATA_FAILURE: "1"
+
+model:
+  testing_openai_base_url: "https://o8kjqm58o8ogcm5ek8aggddkb5ggk8dp.openapi-sj.sii.edu.cn/v1"
+  testing_api_key_env: "INF_API_KEY_PRO"
+  testing_model: "ds-v4-pro"
+  testing_timeout_seconds: 90
+  testing_retries: 1
+  target_openai_base_url: "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1"
+  target_api_key_env: "INF_API_KEY_FLASH"
+  target_model: "ds-v4-flash"
+
+testing:
+  num_cases: 16
+  workers: 2
+  random_seed: 42

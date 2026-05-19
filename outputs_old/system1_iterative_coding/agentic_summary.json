@@ -1,0 +1,250 @@
+{
+  "workflow_agents": [
+    "RequirementAnalystAgent",
+    "SystemModelingAgent",
+    "TestDesignerAgent",
+    "InteractionAdapterAgent",
+    "CoverageStrategistAgent",
+    "ExecutionMonitorAgent",
+    "FaultDiagnoserAgent",
+    "FalsePositiveAuditorAgent",
+    "ReportWriterAgent"
+  ],
+  "model_usage": {
+    "run_id": "agentic_1779171808_67c07b13",
+    "total_calls": 24,
+    "successful_calls": 22,
+    "fallback_calls": 2,
+    "failed_calls": 2,
+    "by_agent": {
+      "RequirementAnalystAgent": 1,
+      "SystemModelingAgent": 1,
+      "InteractionAdapterAgent": 1,
+      "TestDesignerAgent": 1,
+      "ExecutionMonitorAgent": 1,
+      "FaultDiagnoserAgent": 8,
+      "FalsePositiveAuditorAgent": 8,
+      "CoverageStrategistAgent": 2,
+      "ReportWriterAgent": 1
+    },
+    "by_purpose": {
+      "extract_requirements": 1,
+      "review_semantic_graph": 1,
+      "plan_interaction_adapter": 1,
+      "generate_testcases": 1,
+      "summarize_execution": 1,
+      "diagnose_fault": 8,
+      "audit_false_positive": 8,
+      "analyze_coverage_gaps": 2,
+      "write_report_narrative": 1
+    },
+    "by_model": {
+      "ds-v4-pro": 24
+    },
+    "estimated_tokens": {
+      "input_tokens": 71566,
+      "output_tokens": 8263
+    }
+  },
+  "run_manifest": {
+    "run_id": "system1_iterative_coding_2026-05-19T06:23:28.981668+00:00",
+    "start_time": "2026-05-19T06:23:28.981903+00:00",
+    "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system1.yaml",
+    "config_hash": "867f496fd2c2e259a335d887a1a67879e0b837d0b573db26d3401f248586648d",
+    "code_snapshot_hash": "451adfccdb3e4541ee6c3ad301c71e16bea1ff2eba29970b2df8de583451bb3b",
+    "doc_hash": "1ee7beafb5f91e4249e44a16d09d1405328375e9e1dbbf48e2c974e357880c43",
+    "human_intervention_allowed": false,
+    "entry_command": "scripts/run_with_api_md.py --config configs/all_systems.yaml",
+    "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
+    "pid": 47593
+  },
+  "testcases_frozen_sha256": "a02a344f5d3d4ff500df6c75bf56e9879e36460cbc8501a718c62623820cf5dd",
+  "human_intervention_allowed": false,
+  "semantic_graph_review": {
+    "semantic_graph_review": "The provided profile describes a multi-agent iterative coding system with a manager, planner, programmer, and reviewer. The message edges correctly reflect the manager initiating chats with the planner, programmer, and reviewer. The agent-tool links show the manager has access to 'write_latest_iteration' and 'write_settled_plan'. However,16 the requirements indicate the planner should call 'write_settled_plan' (R1) and the manager triggers 'write_latest_iteration' (R2) and 'write_latest_iteration_comments' (R3). The current agent-tool links do not assign 'write_settled_plan' to the planner, nor 'write_latest_iteration_comments' to the reviewer or managerenger. This is a potential tool schema risk. The requirements also mention tools like 'retrieve_latest_iteration', 'retrieve_latest_iteration_comment', 'list_subdirectories', and 'setProjectDir' which are16 not linked to any agent in the profile, though they exist in the codebase. The termination conditions include 'TERMINATE', 'max_turns', and 'process_exit', which align with AutoGen's default mechanisms. No additional edges are necessary based on the provided data.",
+    "suspected_risk_points": [
+      {
+        "type": "tool_schema_risk",
+        "evidence": "Requirement R1 states the Planner must call write_settled_plan after manager approval, but the agent_tool_links only assign write_settled_plan to the manager. The planner's tools list is empty.",
+        "related_tool": "write_settled_plan"
+      },
+      {
+        "type": "tool_schema_risk",
+        "evidence": "Requirement R3 states write_latest_iteration_comments must be triggered after 'exit', but this tool is not linked to any agent (manager or reviewer) in agent_tool_links.",
+        "related_tool": "write_latest_iteration_comments"
+      },
+      {
+        "type": "tool_schema_risk",
+        "evidence": "Requirement R4 mentions retrieve_latest_iteration and retrieve_latest_iteration_comment for context management, but these tools are not linked to the programmer or reviewer agents in agent_tool_links.",
+        "related_tool": "retrieve_latest_iteration"
+      },
+      {
+        "type": "tool_schema_risk",
+        "evidence": "Requirement R5 mentions list_subdirectories and setProjectDir for project continuation, but these tools are not linked to the manager agent in agent_tool_links.",
+        "related_tool": "list_subdirectories"
+      }
+    ],
+    "additional_edges": [],
+    "confidence": 0.9
+  },
+  "interaction_adapter": {
+    "prompt_responses": [
+      {
+        "trigger": "Selection:",
+        "response": "1",
+        "regex": false,
+        "max_count": 1
+      },
+      {
+        "trigger": "What python creation would you like?",
+        "response": "Build a small Python command-line app for this request: {input}",
+        "regex": false,
+        "max_count": 1
+      },
+      {
+        "trigger": "What name would you like to give this project?",
+        "response": "mas_{safe_case_id}",
+        "regex": false,
+        "max_count": 1
+      },
+      {
+        "trigger": "Select project to continue:",
+        "response": "0",
+        "regex": false,
+        "max_count": 1
+      }
+    ],
+    "isolated_paths": [
+      ".masentinel_projects/{safe_case_id}",
+      ".masentinel_autoreply/{safe_case_id}"
+    ],
+    "risk_notes": [
+      "The 'Select project to continue:' prompt appears when previous projects exist. The response '0' is a safe default to select the first listed project, but14 if the list is empty or 0 is invalid, the program may crash. Consider pre-cleaning project directories to avoid this path.",
+      "The program uses int(user_selection[0]) and int(input(...)[0]) which will raise ValueError if the user input is empty or non-numeric. Ensure prompt-response rules always provide a numeric first character.",
+      "The timeout_seconds of 120 may be insufficient for complex code generation tasks; monitor for timeout errors and adjust if needed."
+    ],
+    "confidence": 0.9,
+    "applied": {
+      "added_prompt_responses": [
+        {
+          "trigger": "Select project to continue:",
+          "response": "0",
+          "regex": false,
+          "max_count": 1
+        }
+      ],
+      "added_isolated_paths": []
+    }
+  },
+  "coverage_strategy": {
+    "coverage_gaps": [
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "write_latest_iteration_comments",
+        "suggested_test_intent": "Design a test that triggers the reviewer to produce comments and then verifies that write_latest_iteration_comments is called to save those comments. This should cover the R3 requirement path where the manager ends the conversation with 'exit' and the tool is invoked."
+      },
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "retrieve_latest_iteration",
+        "suggested_test_intent": "Create a test scenario where the programmer or reviewer needs to access the latest script version. The test should verify that retrieve_latest_iteration is called to fetch the correct script_v{n}.py file, ensuring context management (R4) works as expected."
+      },
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "retrieve_latest_iteration_comment",
+        "suggested_test_intent": "Design a test where the programmer needs to access the latest review comments. The test should confirm that retrieve_latest_iteration_comment is called to fetch the correct comments_v{n}.txt file, validating the R4 requirement for context management."
+      },
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "list_subdirectories",
+        "suggested_test_intent": "Create a test for the project continuation feature (R5) that checks if list_subdirectories is called on startup to detect existing projects in the IterCode_Projects folder."
+      },
+      {
+        "gap_type": "missing_tool_coverage",
+        "target": "setProjectDir",
+        "suggested_test_intent": "Design a test for the project continuation flow (R5) where the user chooses to continue an existing projectood. The test should verify that setProjectDir is called to set the working directory to the selected project folder."
+      }
+    ],
+    "new_test_requests": [],
+    "confidence": 0.9
+  },
+  "second_round": {
+    "enabled": true,
+    "target_mascov": 0.8,
+    "initial_mascov": 0.529,
+    "extra_cases": 8,
+    "reason": "coverage_below_target",
+    "extra_traces": 8,
+    "initial_failed": 0
+  },
+  "trace_graph": {
+    "nodes": 0,
+    "edges": 0
+  },
+  "flaky_report": {
+    "history": {
+      "system1_iterative_coding_COV_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_FUZZ_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_META_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_PROP_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_REG_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_REQ_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_REQ_002": [
+        "passed"
+      ],
+      "system1_iterative_coding_TOOLFUZZ_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_R2_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_R2_002": [
+        "passed"
+      ],
+      "system1_iterative_coding_R2_003": [
+        "timeout"
+      ],
+      "system1_iterative_coding_R2_004": [
+        "passed"
+      ],
+      "system1_iterative_coding_R2_005": [
+        "passed"
+      ],
+      "system1_iterative_coding_R2_006": [
+        "passed"
+      ],
+      "system1_iterative_coding_R2_007": [
+        "passed"
+      ],
+      "system1_iterative_coding_R2_008": [
+        "passed"
+      ]
+    },
+    "flaky_cases": {},
+    "flaky_count": 0
+  },
+  "report_narrative": {
+    "agentic_workflow_summary": "MASentinel used testing agents with deterministic tool fallbacks to complete requirement analysis, test design, execution monitoring, diagnosis, audit, and reporting.",
+    "effectiveness_analysis": "Coverage and fault counts are computed by deterministic metrics and oracle modules.",
+    "false_positive_analysis": "Potential GroupChat-only missing-edge findings are marked as suspected false positives when confidence is low.",
+    "next_steps": [
+      "Enable DeepSeek V4 pro credentials for full semantic agent reasoning.",
+      "Add target-system instrumentation for richer AutoGen traces."
+    ],
+    "confidence": 0.35,
+    "fallback": true,
+    "error": "Model call failed after 2 attempt(s): The read operation timed out"
+  },
+  "fallback_calls": 2
+}

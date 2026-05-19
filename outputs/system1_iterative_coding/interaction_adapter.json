@@ -1,0 +1,49 @@
+{
+  "prompt_responses": [
+    {
+      "trigger": "Selection:",
+      "response": "1",
+      "regex": false,
+      "max_count": 1
+    },
+    {
+      "trigger": "What python creation would you like?",
+      "response": "Build a small Python command-line app for this request: {input}",
+      "regex": false,
+      "max_count": 1
+    },
+    {
+      "trigger": "What name would you like to give this project?",
+      "response": "mas_{safe_case_id}",
+      "regex": false,
+      "max_count": 1
+    },
+    {
+      "trigger": "Select project to continue:",
+      "response": "0",
+      "regex": false,
+      "max_count": 1
+    }
+  ],
+  "isolated_paths": [
+    ".masentinel_projects/{safe_case_id}",
+    ".masentinel_autoreply/{safe_case_id}"
+  ],
+  "risk_notes": [
+    "The 'Select project to continue:' prompt appears when previous projects exist. The response '0' is a safe default to select the first listed project, but14 if the list is empty or index 0 is invalid, the program may crash. Consider pre-cleaning project directories or ensuring 1-based indexing matches the response.",
+    "The program uses input() calls that may block indefinitely if expected prompts do not appear due to upstream errors. The 120-second timeout in run_config mitigates this risk.",
+    "The project name response uses {safe_case_id} to ensure directory naming rules are followed, but if the program enforces additional naming constraints (e.g., no underscores), the response may be rejected. Monitor for such failures."
+  ],
+  "confidence": 0.9,
+  "applied": {
+    "added_prompt_responses": [
+      {
+        "trigger": "Select project to continue:",
+        "response": "0",
+        "regex": false,
+        "max_count": 1
+      }
+    ],
+    "added_isolated_paths": []
+  }
+}

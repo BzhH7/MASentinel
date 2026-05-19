@@ -1,0 +1,17 @@
+system_id: toy_autogen_system
+root_path: ../examples/toy_autogen_system
+doc_path: ../examples/toy_autogen_system/README.md
+entrypoint: ../examples/toy_autogen_system/main.py
+
+run:
+  mode: subprocess
+  command: "python main.py"
+  input_mode: stdin
+  timeout_seconds: 10
+  max_turns: 8
+  working_dir: ../examples/toy_autogen_system
+
+testing:
+  num_cases: 12
+  workers: 1
+  random_seed: 42

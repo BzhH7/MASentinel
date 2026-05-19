@@ -1,0 +1,52 @@
+{
+  "suspicious_cases": [
+    {
+      "case_id": "system1_iterative_coding_COV_001",
+      "reason": "Coverage oracle detected a missing message edge from manager to planner, indicating a potential communication or routing failure in the agent graph.",
+      "rule_failures": [
+        {
+          "code": "MISSING_MESSAGE_EDGE",
+          "message": "Expected message edge was not observed: manager->planner",
+          "severity": "medium",
+          "evidence": [
+            "('manager', 'planner')"
+          ]
+        }
+      ],
+      "trace_summary": "No trace summary provided."
+    },
+    {
+      "case_id": "system1_iterative_coding_META_001",
+      "reason": "Metamorphic testing revealed missing agents (manager, planner) and missing tool calls (write_latest_iteration, write_settled_plan) under equivalent inputs, suggesting a structural or routing defect.",
+      "rule_failures": [
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: write_latest_iteration",
+          "severity": "medium",
+          "evidence": [
+            "write_latest_iteration"
+          ]
+        },
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: write_settled_plan",
+          "severity": "medium",
+          "evidence": [
+            "write_settled_plan"
+          ]
+        },
+        {
+          "code": "METAMORPHIC_RELATION_VIOLATION",
+          "message": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
+          "severity": "medium",
+          "evidence": [
+            "missing_agents=['manager', 'planner']",
+            "missing_tools=['write_latest_iteration', 'write_settled_plan']"
+          ]
+        }
+      ],
+      "trace_summary": "No trace summary provided."
+    }
+  ],
+  "confidence": 121.0
+}

@@ -1,0 +1,14 @@
+{
+  "prompt_responses": [],
+  "isolated_paths": [],
+  "risk_notes": [
+    "Entrypoint app.py may start a Gradio web UI or similar interactive server, which cannot be controlled via stdin prompt-response rules. Automated evaluation may hang or timeout if the script blocks on a web server loop.",
+    "No input() calls or stdin prompts were found in the provided excerpts, so no prompt-response rules can be defined. If the script requires interactive input at runtime,16 the current configuration will fail.",
+    "The run_config timeout is 45 seconds; if the script starts a long-lived server, the process will be killed by timeout, and no meaningful test output will be collected."
+  ],
+  "confidence": 0.8,
+  "applied": {
+    "added_prompt_responses": [],
+    "added_isolated_paths": []
+  }
+}

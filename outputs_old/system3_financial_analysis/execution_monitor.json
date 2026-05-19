@@ -1,0 +1,26 @@
+{
+  "suspicious_cases": [
+    {
+      "case_id": "system3_financial_analysis_COV_001",
+      "reason": "All cases exhibit identical high-severity TIMEOUT and NON_TERMINATION failures with turn_count=0/null returncode. This case additionally reports multiple MISSING_AGENT failures for enterprise_data_collector, enterprise_financial_analyst, enterprise_risk_analyst, and enterprise_portfolio_manager, indicating a potential agent registration or routing issue.",
+      "rule_failures": [
+        "TIMEOUT",
+        "NON_TERMINATION",
+        "MISSING_AGENT"
+      ],
+      "trace_summary": "Status: timeout. Turn count: 0. Return code: null.awn logs show '开始分析股票 AAPL - 启动AutoGen智能体协作' and '成功收集 AAPL 的数据', but only 2 events recorded. stdout shows a single message from user_proxy to financial_analyst with TERMINATE, suggesting the conversation stopped immediately."
+    },
+    {
+      "case_id": "system3_financial_analysis_META_001",
+      "reason": "This case has the unique METAMORPHIC_RELATION_VIOLATION failure in addition to the common TIMEOUT/NON_TERMINATION. It also reports MISSING_AGENT for data_collector. The metamorphic violation suggests a deeper logic or routing inconsistency that is distinct from the timeout/termination12 issue.",
+      "rule_failures": [
+        "TIMEOUT",
+        "NON_TERMINATION",
+        "MISSING_AGENT",
+        "METAMORPHIC_RELATION_VIOLATION"
+      ],
+      "trace_summary": "Status: timeout. Turn count: 0. Return code: null. Logs show '开始分析股票 AAPL - 启动AutoGen智能体协作' and '成功收集 AAPL 的数据', but only 2 events. stdout shows user_proxy to financial_analyst with TERMINATE."
+    }
+  ],
+  "confidence": 0.9
+}

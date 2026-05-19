@@ -1,0 +1,59 @@
+system_id: system1_iterative_coding
+root_path: ../../AutoGen_IterativeCoding-main
+doc_path: ../../AutoGen_IterativeCoding-main/README.md
+entrypoint: ../../AutoGen_IterativeCoding-main/main.py
+
+analyzer:
+  doc_model_enabled: false
+
+run:
+  mode: subprocess
+  command: "python main.py"
+  input_mode: interactive
+  runtime_patches: true
+  timeout_seconds: 120
+  max_turns: 15
+  working_dir: ../../AutoGen_IterativeCoding-main
+  clean_isolated_paths_before_case: true
+  isolated_paths:
+    - ".masentinel_projects/{safe_case_id}"
+    - ".masentinel_autoreply/{safe_case_id}"
+  interaction:
+    prompt_responses:
+      - trigger: "Selection:"
+        response: "1"
+        max_count: 1
+      - trigger: "What python creation would you like?"
+        response: "Build a small Python command-line app for this request: {input}"
+        max_count: 1
+      - trigger: "What name would you like to give this project?"
+        response: "mas_{safe_case_id}"
+        max_count: 1
+  env:
+    AUTOGEN_USE_DOCKER: "0"
+    MAS_AUTOGEN_USE_DOCKER: "0"
+    MAS_AUTOGEN_DISABLE_CODE_EXECUTION: "1"
+    MAS_AUTOGEN_CODE_WORK_DIR: ".masentinel_autoreply/{safe_case_id}"
+    MAS_AUTOGEN_HUMAN_INPUT_MODE: "NEVER"
+    MAS_AUTOGEN_DEFAULT_REPLY: "sounds good"
+    MAS_AUTOGEN_MAX_CONSECUTIVE_AUTO_REPLY: "3"
+    MAS_SYSTEM1_ITERATIONS: "1"
+    MAS_SYSTEM1_PROJECT_DIR: ".masentinel_projects/{safe_case_id}/"
+
+model:
+  testing_openai_base_url: "https://o8kjqm58o8ogcm5ek8aggddkb5ggk8dp.openapi-sj.sii.edu.cn/v1"
+  testing_api_key_env: "INF_API_KEY_PRO"
+  testing_model: "ds-v4-pro"
+  testing_timeout_seconds: 90
+  testing_retries: 1
+  target_openai_base_url: "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1"
+  target_api_key_env: "INF_API_KEY_FLASH"
+  target_model: "ds-v4-flash"
+
+testing:
+  num_cases: 8
+  workers: 2
+  random_seed: 42
+  max_case_input_chars: 1200
+  agent_design_batch_size: 1
+  enable_agent_interaction_adapter: true

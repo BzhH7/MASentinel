@@ -1,0 +1,31 @@
+{
+  "coverage_gaps": [
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "write_latest_iteration_comments",
+      "suggested_test_intent": "Design a test that triggers the reviewer to produce comments and then verifies that write_latest_iteration_comments is called to save those comments. This should cover the R3 requirement path where the manager ends the conversation with 'exit' and the tool is invoked."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "retrieve_latest_iteration",
+      "suggested_test_intent": "Create a test scenario where the programmer or reviewer needs to access the latest script version. The test should verify that retrieve_latest_iteration is called to fetch the correct script_v{n}.py file, ensuring context management (R4) works as expected."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "retrieve_latest_iteration_comment",
+      "suggested_test_intent": "Design a test where the programmer needs to access the latest review comments. The test should confirm that retrieve_latest_iteration_comment is called to fetch the correct comments_v{n}.txt file, validating the R4 requirement for context management."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "list_subdirectories",
+      "suggested_test_intent": "Create a test for the project continuation feature (R5) that checks if list_subdirectories is called on startup to detect existing projects in the IterCode_Projects folder."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "setProjectDir",
+      "suggested_test_intent": "Design a test for the project continuation flow (R5) where the user chooses to continue an existing projectood. The test should verify that setProjectDir is called to set the working directory to the selected project folder."
+    }
+  ],
+  "new_test_requests": [],
+  "confidence": 0.9
+}

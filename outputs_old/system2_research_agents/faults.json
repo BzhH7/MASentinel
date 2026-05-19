@@ -1,0 +1,235 @@
+[
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
+    "case_id": "system2_research_agents_COV_001",
+    "layer": "application",
+    "fault_type": "Missing Tool Call",
+    "failure_code": "MISSING_TOOL_CALL",
+    "severity": "medium",
+    "confidence": 0.0,
+    "summary": "Expected tool was not called: google_search",
+    "evidence": [
+      "google_search",
+      "get_airtable_records",
+      "update_single_airtable_record",
+      "web_scraping"
+    ],
+    "root_cause": "The test case input 'Search for...' was16:16:10. The trace shows the conversation terminated immediately by user_proxy without engaging the researcher agent/null. This is likely a test harness or orchestration issue where the16:16:10. The input was not properly routed to the researcher agent, or the agent was not invoked at all, rather than a missing tool call in the application code.",
+    "suggested_fix": "Investigate the test harness or orchestration logic to ensure the user_proxy correctly initiates the conversation with the researcher agent and that the input is passed to the researcher. Verify that the researcher agent is properly registered and configured to receive16:16:10. The input. If the researcher agent is not invoked, the google_search tool will never be called regardless of tool registration.",
+    "reproduction": {
+      "input": "Search for 'AutoGen multi-agent framework latest release' and report the version number.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_COV_001",
+      "system2_research_agents_FUZZ_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_003"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_012",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_013",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_014",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_021",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_022",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_023",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_024"
+    ],
+    "agentic_evidence": [
+      "Trace shows only 1 event: user_proxy sends TERMINATE immediately, no researcher agent or google_search call observed.",
+      "Test oracle requires must_call_tools: ['google_search'], but trace contains no tool call events.",
+      "No error or crash; system terminated cleanly with returncode 0."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "Trace shows only 1 event: user_proxy sends TERMINATE immediately. The researcher agent was never invoked and no conversation turns occurred. The google_search tool was not called because the agent was never engaged, not because of a missing tool call in the application code. This is a test harness/orchestration issue where the input was not routed to the researcher agent.",
+      "false_positive_risk": "high",
+      "confidence": 0.85
+    },
+    "root_cause_group_id": "generic:application-missing-tool-call-the-test-case-input-search-for...-was16:16:10.-the-trace-shows-the-conversation-terminated",
+    "root_cause_group_title": "Missing Tool Call",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
+    "case_id": "system2_research_agents_COV_002",
+    "layer": "autogen_framework",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.0,
+    "summary": "Expected agent was not observed: director",
+    "evidence": [
+      "research_manager",
+      "group_chat_manager",
+      "director"
+    ],
+    "root_cause": "The test case input failed to trigger any agent interaction, resulting in an empty trace. The absence of 'director' and 'research_manager' is due to the system not engaging in the requested task, not a routing fault. This is a test case design or input quality issue, not a software fault.",
+    "suggested_fix": "Review and redesign the test case input to ensure it reliably triggers16 the required agent interactions. Consider using a more specific and actionable prompt that forces16 the 'director' to delegate to 'research_manager'.",
+    "reproduction": {
+      "input": "请完成一个需要 director 与 research_manager 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_COV_004",
+      "system2_research_agents_COV_005",
+      "system2_research_agents_COV_005",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_002",
+      "system2_research_agents_REQ_002",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_005",
+      "system2_research_agents_REQ_005",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_009",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_010",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_016",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_017",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_018",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_019",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_020",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_025",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_026",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_027",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_028",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_030",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_032"
+    ],
+    "agentic_evidence": [
+      "Trace shows status 'passed' and terminated normally with returncode 0.",
+      "Turn count is 0, indicating no agent-to-agent conversation occurred.",
+      "Only 'user_proxy' and 'chat_manager' appear in the trace; 'director' and 'research_manager' are not observed.",
+      "The input '请完成一个需要 director 与 research_manager 协作的任务。' did not trigger any agent interaction."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The trace shows 0 turns and only a TERMINATE message from user_proxy, indicating the input failed to trigger any agent interaction. The absence of 'director' and 'research_manager' is due to test case input quality, not a routing fault in the AutoGen framework. The system terminated normally (returncode 0), and no framework-level error was observed.",
+      "false_positive_risk": "high",
+      "confidence": 0.9
+    },
+    "root_cause_group_id": "generic:autogen_framework-wrong-agent-routing-the-test-case-input-failed-to-trigger-any-agent-interaction-resulting-in-an-empty-",
+    "root_cause_group_title": "Wrong Agent Routing",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "case_id": "system2_research_agents_COV_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Routing Error",
+    "failure_code": "MISSING_MESSAGE_EDGE",
+    "severity": "medium",
+    "confidence": 0.0,
+    "summary": "Expected message edge was not observed: director->research_manager",
+    "evidence": [
+      "('research_manager', 'researcher')",
+      "('researcher', 'director')",
+      "('director', 'researcher')",
+      "('director', 'research_manager')",
+      "('research_manager', 'director')",
+      "('research_manager', 'user_proxy')",
+      "('director', 'user_proxy')"
+    ],
+    "root_cause": "The test case input was insufficient to trigger the multi-agent conversation. The user_proxy immediately terminated the chat, resulting in zero turns and no agent interactions. This is a test case design issue, not a software fault in the AutoGen framework or application code.",
+    "suggested_fix": "Redesign the test case input to provide a concrete, actionable task that requires director and research_manager collaboration (e.g., '请 director 分配一个研究任务给 research_manager，并等待 research_manager 返回结果'). Alternatively, configure the user_proxy to not auto-terminate or set a higher max_turns to allow the conversation to develop.",
+    "reproduction": {
+      "input": "请完成一个需要 director 与 research_manager 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_COV_004",
+      "system2_research_agents_COV_005",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_011",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_029",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_031",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_033"
+    ],
+    "agentic_evidence": [
+      "Trace shows only 1 event: user_proxy sends TERMINATE, turn_count=0, no agent interactions occurred.",
+      "Target edge director->research_manager was not covered because the conversation terminated immediately.",
+      "No evidence of a routing error in the framework; the system did not reach a state where routing could be tested.",
+      "The input '请完成一个需要 director 与 research_manager 协作的任务。' was16 too vague to trigger the intended multi-agent workflow."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The trace shows the conversation terminated immediately with 0 turns after user_proxy sent TERMINATE. No agent interactions occurred, so the expected message edge 'director->research_manager' was never reachable. The root cause is a test case design issue (vague input triggering auto-termination), not a software fault in the AutoGen framework or application code. The16 evidence of missing edge is16 a symptom of insufficient test input, not a routing error.",
+      "false_positive_risk": "high",
+      "confidence": 0.95
+    },
+    "root_cause_group_id": "generic:autogen_framework-message-routing-error-the-test-case-input-was-insufficient-to-trigger-the-multi-agent-conversation.-th",
+    "root_cause_group_title": "Message Routing Error",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "case_id": "system2_research_agents_META_001",
+    "layer": "application",
+    "fault_type": "Metamorphic Relation Violation",
+    "failure_code": "METAMORPHIC_RELATION_VIOLATION",
+    "severity": "medium",
+    "confidence": 0.0,
+    "summary": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
+    "evidence": [
+      "missing_agents=['user_proxy', 'researcher']",
+      "missing_tools=['web_scraping', 'google_search']"
+    ],
+    "root_cause": "The test execution terminated immediately with user_proxy sending TERMINATE, without engaging the researcher agent or calling required tools. This could be caused by16 an environment issue, missing tool registration,16 or16 a prompt that triggers early termination, but16 no16 application or framework code fault is16 confirmed from the provided trace.",
+    "suggested_fix": "Re-run the test in a controlled environment with16 verbose logging to capture agent16 transitions and tool calls. Verify that the researcher agent and tools are properly registered and that the16 prompt does not inadvertently trigger termination. If the issue persists, inspect the16 routing logic and16 tool registration code for16 defects, and add a paired metamorphic regression test with16 detailed assertions.",
+    "reproduction": {
+      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_META_001"
+    ],
+    "duplicate_fault_ids": [],
+    "agentic_evidence": [
+      "Trace shows status 'passed', terminated normally, returncode 0, and no crash.",
+      "Only one event recorded: user_proxy immediately sends TERMINATE, no researcher agent or tool calls observed.",
+      "Oracle requires must_visit_agents=['user_proxy','researcher'] and must_call_tools=['web_scraping','google_search'], but trace turn_count=0 and16 no agent/tool events beyond user_proxy TERMINATE.",
+      "Fault report claims missing_agents=['user_proxy','researcher'] and missing_tools=['web_scraping','google_search'], but user_proxy is16 present; the trace does not show researcher or tools, which is consistent with16 the oracle failure.",
+      "No evidence of application code or AutoGen framework fault; the16 behavior may be due to16 test environment, prompt handling, or16 configuration, not a confirmed software defect."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The trace shows the test terminated normally (returncode 0, status 'passed') with only one event: user_proxy immediately sending TERMINATE. No researcher agent or tool calls were observed. The oracle requires must_visit_agents=['user_proxy','researcher'] and must_call_tools=['web_scraping','google_search'], which were not satisfied. However, there is no evidence of an application code or AutoGen framework fault. The behavior is consistent with a test environment, prompt handling, or configuration issue that caused early termination, not a confirmed software defect. The fault report itself notes that no application or framework code fault is confirmed.",
+      "false_positive_risk": "high",
+      "confidence": 0.85
+    },
+    "root_cause_group_id": "generic:application-metamorphic-relation-violation-the-test-execution-terminated-immediately-with-user_proxy-sending-terminate-w",
+    "root_cause_group_title": "Metamorphic Relation Violation",
+    "is_primary_fault": true,
+    "cascades_from": null
+  }
+]

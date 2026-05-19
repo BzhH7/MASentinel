@@ -1,0 +1,34 @@
+system_id: system2_research_agents
+root_path: ../../research-agents-3.0-main
+doc_path: ../../research-agents-3.0-main/README.md
+entrypoint: ../../research-agents-3.0-main/app.py
+
+run:
+  mode: subprocess
+  command: "python app.py"
+  input_mode: stdin
+  message_template: "{input}"
+  runtime_patches: true
+  timeout_seconds: 45
+  max_turns: 15
+  working_dir: ../../research-agents-3.0-main
+  env:
+    MAS_AUTOGEN_HUMAN_INPUT_MODE: "NEVER"
+    MAS_AUTOGEN_MAX_AUTO_REPLY: "2"
+    MAS_FORCE_LOCAL_AUTOGEN: "1"
+    MAS_MOCK_EXTERNAL_HTTP: "1"
+
+model:
+  testing_openai_base_url: "https://o8kjqm58o8ogcm5ek8aggddkb5ggk8dp.openapi-sj.sii.edu.cn/v1"
+  testing_api_key_env: "INF_API_KEY_PRO"
+  testing_model: "ds-v4-pro"
+  testing_timeout_seconds: 90
+  testing_retries: 1
+  target_openai_base_url: "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1"
+  target_api_key_env: "INF_API_KEY_FLASH"
+  target_model: "ds-v4-flash"
+
+testing:
+  num_cases: 16
+  workers: 2
+  random_seed: 42

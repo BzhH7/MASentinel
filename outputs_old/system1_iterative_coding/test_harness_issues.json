@@ -1,0 +1,18 @@
+[
+  {
+    "case_id": "system1_iterative_coding_R2_003",
+    "code": "TESTCASE_SETUP_TIMEOUT",
+    "layer": "test_harness",
+    "issue_type": "Generated Test Input Exceeded Runtime Budget",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "The generated test input exceeded the automated execution budget before a meaningful target workflow could be observed.",
+    "evidence": [
+      "input_length=5110",
+      "timeout_seconds=120"
+    ],
+    "root_cause": "The generated test input exceeded the configured automated execution budget before the target agent workflow could be meaningfully observed.",
+    "suggested_fix": "Reduce or truncate the generated prompt for interactive LLM systems and rerun; do not count this as a target-system defect.",
+    "excluded_from_target_faults": true
+  }
+]

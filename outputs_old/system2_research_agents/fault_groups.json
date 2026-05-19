@@ -1,0 +1,102 @@
+[
+  {
+    "group_id": "generic:application-metamorphic-relation-violation-the-test-execution-terminated-immediately-with-user_proxy-sending-terminate-w",
+    "title": "Metamorphic Relation Violation",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_004"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_META_001"
+    ],
+    "failure_codes": [
+      "METAMORPHIC_RELATION_VIOLATION"
+    ],
+    "severity": "medium",
+    "confidence": 0.0,
+    "root_cause": "The test execution terminated immediately with user_proxy sending TERMINATE, without engaging the researcher agent or calling required tools. This could be caused by16 an environment issue, missing tool registration,16 or16 a prompt that triggers early termination, but16 no16 application or framework code fault is16 confirmed from the provided trace.",
+    "suggested_fix": "Re-run the test in a controlled environment with16 verbose logging to capture agent16 transitions and tool calls. Verify that the researcher agent and tools are properly registered and that the16 prompt does not inadvertently trigger termination. If the issue persists, inspect the16 routing logic and16 tool registration code for16 defects, and add a paired metamorphic regression test with16 detailed assertions.",
+    "summary": "Equivalent metamorphic inputs did not preserve expected routing/tool relation."
+  },
+  {
+    "group_id": "generic:application-missing-tool-call-the-test-case-input-search-for...-was16:16:10.-the-trace-shows-the-conversation-terminated",
+    "title": "Missing Tool Call",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_001"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_COV_001",
+      "system2_research_agents_FUZZ_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_REQ_003"
+    ],
+    "failure_codes": [
+      "MISSING_TOOL_CALL"
+    ],
+    "severity": "medium",
+    "confidence": 0.0,
+    "root_cause": "The test case input 'Search for...' was16:16:10. The trace shows the conversation terminated immediately by user_proxy without engaging the researcher agent/null. This is likely a test harness or orchestration issue where the16:16:10. The input was not properly routed to the researcher agent, or the agent was not invoked at all, rather than a missing tool call in the application code.",
+    "suggested_fix": "Investigate the test harness or orchestration logic to ensure the user_proxy correctly initiates the conversation with the researcher agent and that the input is passed to the researcher. Verify that the researcher agent is properly registered and configured to receive16:16:10. The input. If the researcher agent is not invoked, the google_search tool will never be called regardless of tool registration.",
+    "summary": "Expected tool was not called: google_search"
+  },
+  {
+    "group_id": "generic:autogen_framework-message-routing-error-the-test-case-input-was-insufficient-to-trigger-the-multi-agent-conversation.-th",
+    "title": "Message Routing Error",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_COV_004",
+      "system2_research_agents_COV_005",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003"
+    ],
+    "failure_codes": [
+      "MISSING_MESSAGE_EDGE"
+    ],
+    "severity": "medium",
+    "confidence": 0.0,
+    "root_cause": "The test case input was insufficient to trigger the multi-agent conversation. The user_proxy immediately terminated the chat, resulting in zero turns and no agent interactions. This is a test case design issue, not a software fault in the AutoGen framework or application code.",
+    "suggested_fix": "Redesign the test case input to provide a concrete, actionable task that requires director and research_manager collaboration (e.g., '请 director 分配一个研究任务给 research_manager，并等待 research_manager 返回结果'). Alternatively, configure the user_proxy to not auto-terminate or set a higher max_turns to allow the conversation to develop.",
+    "summary": "Expected message edge was not observed: director->research_manager"
+  },
+  {
+    "group_id": "generic:autogen_framework-wrong-agent-routing-the-test-case-input-failed-to-trigger-any-agent-interaction-resulting-in-an-empty-",
+    "title": "Wrong Agent Routing",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_002"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_COV_004",
+      "system2_research_agents_COV_005",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_002",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_005"
+    ],
+    "failure_codes": [
+      "MISSING_AGENT"
+    ],
+    "severity": "medium",
+    "confidence": 0.0,
+    "root_cause": "The test case input failed to trigger any agent interaction, resulting in an empty trace. The absence of 'director' and 'research_manager' is due to the system not engaging in the requested task, not a routing fault. This is a test case design or input quality issue, not a software fault.",
+    "suggested_fix": "Review and redesign the test case input to ensure it reliably triggers16 the required agent interactions. Consider using a more specific and actionable prompt that forces16 the 'director' to delegate to 'research_manager'.",
+    "summary": "Expected agent was not observed: director"
+  }
+]

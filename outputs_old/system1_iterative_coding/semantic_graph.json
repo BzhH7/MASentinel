@@ -1,0 +1,188 @@
+{
+  "nodes": [
+    {
+      "id": "manager",
+      "type": "agent",
+      "var_name": "user_proxy",
+      "class_name": "UserProxyAgent"
+    },
+    {
+      "id": "planner",
+      "type": "agent",
+      "var_name": "planner",
+      "class_name": "AssistantAgent"
+    },
+    {
+      "id": "programmer",
+      "type": "agent",
+      "var_name": "coder",
+      "class_name": "AssistantAgent"
+    },
+    {
+      "id": "reviewer",
+      "type": "agent",
+      "var_name": "reviewer",
+      "class_name": "AssistantAgent"
+    },
+    {
+      "id": "write_latest_iteration",
+      "type": "tool",
+      "function_name": "write_latest_iteration"
+    },
+    {
+      "id": "write_settled_plan",
+      "type": "tool",
+      "function_name": "write_settled_plan"
+    },
+    {
+      "id": "R1",
+      "type": "requirement",
+      "description": "Planning Phase: Planner must produce a plan based on user request and save it via write_settled_plan when manager says 'sounds good'."
+    },
+    {
+      "id": "R2",
+      "type": "requirement",
+      "description": "Iteration Phase: Coder must produce only code blocks, no extra text, and output is saved via write_latest_iteration."
+    },
+    {
+      "id": "R3",
+      "type": "requirement",
+      "description": "Iteration Phase: Reviewer must evaluate code and produce comments, saved via write_latest_iteration_comments."
+    },
+    {
+      "id": "R4",
+      "type": "requirement",
+      "description": "Context Management: Only latest script and comments are presented to agents in each iteration."
+    },
+    {
+      "id": "R5",
+      "type": "requirement",
+      "description": "Project Continuation: System must detect existing projects and allow user to continue or start new."
+    },
+    {
+      "id": "R6",
+      "type": "requirement",
+      "description": "Manual Speaker Control: AndyTools.py must override GroupChat/GroupChatManager to allow manual control of speakers."
+    },
+    {
+      "id": "R7",
+      "type": "requirement",
+      "description": "Termination: User must terminate program externally; no in-app exit mechanism."
+    }
+  ],
+  "edges": [
+    {
+      "source": "manager",
+      "target": "write_latest_iteration",
+      "type": "tool_call"
+    },
+    {
+      "source": "manager",
+      "target": "write_settled_plan",
+      "type": "tool_call"
+    },
+    {
+      "source": "R1",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "planner",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "write_settled_plan",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R2",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "write_latest_iteration",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R3",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "reviewer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "write_latest_iteration_comments",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R4",
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "reviewer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "retrieve_latest_iteration",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R4",
+      "target": "retrieve_latest_iteration_comment",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R5",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "list_subdirectories",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R5",
+      "target": "setProjectDir",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R6",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "manager",
+      "target": "planner",
+      "type": "message",
+      "evidence": "initiate_chat"
+    },
+    {
+      "source": "manager",
+      "target": "programmer",
+      "type": "message",
+      "evidence": "initiate_chat"
+    },
+    {
+      "source": "manager",
+      "target": "reviewer",
+      "type": "message",
+      "evidence": "initiate_chat"
+    }
+  ]
+}

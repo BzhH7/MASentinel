@@ -1,0 +1,262 @@
+{
+  "nodes": [
+    {
+      "id": "manager",
+      "type": "agent",
+      "var_name": "user_proxy",
+      "class_name": "UserProxyAgent"
+    },
+    {
+      "id": "planner",
+      "type": "agent",
+      "var_name": "planner",
+      "class_name": "AssistantAgent"
+    },
+    {
+      "id": "programmer",
+      "type": "agent",
+      "var_name": "coder",
+      "class_name": "AssistantAgent"
+    },
+    {
+      "id": "reviewer",
+      "type": "agent",
+      "var_name": "reviewer",
+      "class_name": "AssistantAgent"
+    },
+    {
+      "id": "write_latest_iteration",
+      "type": "tool",
+      "function_name": "write_latest_iteration"
+    },
+    {
+      "id": "write_settled_plan",
+      "type": "tool",
+      "function_name": "write_settled_plan"
+    },
+    {
+      "id": "R1",
+      "type": "requirement",
+      "description": "Planning phase: Planner must produce a plan in response to a user request, and the Manager can converse with the Planner to edit the plan until the Manager approves it with 'sounds good'."
+    },
+    {
+      "id": "R2",
+      "type": "requirement",
+      "description": "Plan saving: Once the Manager approves the plan with 'sounds good', the Planner must call the write_settled_plan tool to save the plan to the project folder."
+    },
+    {
+      "id": "R3",
+      "type": "requirement",
+      "description": "Iteration 0: Coder must produce initial code based on the plan, and its output must be recorded to script_v1.py via the write_latest_iteration tool."
+    },
+    {
+      "id": "R4",
+      "type": "requirement",
+      "description": "Iteration 0: Reviewer must evaluate the initial code and produce comments, which are saved to comments_v1.txt via the write_latest_iteration tool."
+    },
+    {
+      "id": "R5",
+      "type": "requirement",
+      "description": "Iteration n: Coder must produce improved code based on the plan, latest script, and latest comments, and the new script version must be incremented (script_v2.py, script_v3.py, etc.)."
+    },
+    {
+      "id": "R6",
+      "type": "requirement",
+      "description": "Iteration n: Reviewer must evaluate the latest script and produce updated comments, saved with an incremented version number (comments_v2.txt, comments_v3.txt, etc.)."
+    },
+    {
+      "id": "R7",
+      "type": "requirement",
+      "description": "Context management: Only the latest version of code and comments should be presented to agents in each iteration, preventing distraction from previous faulty code or irrelevant comments."
+    },
+    {
+      "id": "R8",
+      "type": "requirement",
+      "description": "Project continuation: When re-running main.py, the system must detect existing projects and allow the user to continue an existing project, resuming the iteration phase with the latest plan, script, and comments."
+    },
+    {
+      "id": "R9",
+      "type": "requirement",
+      "description": "Manager feedback during iteration: The Manager can provide direct feedback to the Coder or Reviewer before exiting the conversation, and the agent must update its output accordingly."
+    },
+    {
+      "id": "R10",
+      "type": "requirement",
+      "description": "Termination: The iteration loop continues until the user is satisfied and terminates the program externally, as there is no built-in exit code."
+    }
+  ],
+  "edges": [
+    {
+      "source": "manager",
+      "target": "write_latest_iteration",
+      "type": "tool_call"
+    },
+    {
+      "source": "manager",
+      "target": "write_settled_plan",
+      "type": "tool_call"
+    },
+    {
+      "source": "R1",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "planner",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "planner",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "write_settled_plan",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R3",
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "write_latest_iteration",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R4",
+      "target": "reviewer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "write_latest_iteration",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R5",
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "write_latest_iteration",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R6",
+      "target": "reviewer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R6",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R6",
+      "target": "write_latest_iteration",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R7",
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R7",
+      "target": "reviewer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R8",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R8",
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R9",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R9",
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R9",
+      "target": "reviewer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R10",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "manager",
+      "target": "planner",
+      "type": "message",
+      "evidence": "initiate_chat"
+    },
+    {
+      "source": "manager",
+      "target": "programmer",
+      "type": "message",
+      "evidence": "initiate_chat"
+    },
+    {
+      "source": "manager",
+      "target": "reviewer",
+      "type": "message",
+      "evidence": "initiate_chat"
+    },
+    {
+      "source": "planner",
+      "target": "write_settled_plan",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "manager",
+      "target": "write_latest_iteration",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "reviewer",
+      "target": "manager",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "programmer",
+      "target": "manager",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    }
+  ]
+}

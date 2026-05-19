@@ -1,0 +1,27 @@
+# Minimal runtime dependencies for MASentinel plus the three provided
+# AutoGen target systems. Keep this focused: the upstream financial project
+# requirements include dev, database, plotting, and service packages that are
+# unnecessary for automated evaluation and slow to resolve on shared servers.
+
+PyYAML>=6.0
+pytest>=8.0
+pypdf>=6.0
+
+# AutoGen samples use the legacy `import autogen` API.
+pyautogen>=0.2.0,<0.3.0
+
+# Shared HTTP/config helpers.
+requests>=2.31
+beautifulsoup4>=4.12
+python-dotenv>=1.0
+
+# research-agents-3.0 compatibility imports.
+langchain>=0.1,<0.3
+langchain-community>=0.0.20,<0.3
+langchain-openai>=0.0.8,<0.2
+langchain-text-splitters>=0.0.1,<0.3
+
+# simple_autogen financial analysis core.
+numpy>=1.24,<2.0
+pandas>=2.0,<3.0
+yfinance>=0.2,<0.3
