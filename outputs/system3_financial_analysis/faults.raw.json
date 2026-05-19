@@ -14,91 +14,13 @@
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
     "reproduction": {
-      "input": "What is the current ROE of AAPL?",
+      "input": "What is the ROE of AAPL?",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze ROE"
     },
     "suspected_false_positive": false
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
-    "case_id": "system3_financial_analysis_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=7"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "What is the current ROE of AAPL?",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze ROE"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
-    "case_id": "system3_financial_analysis_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "What is the current ROE of AAPL?",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze ROE"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-    "case_id": "system3_financial_analysis_COV_002",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "Collect recent financial data for MSFT and pass it to the financial analyst.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-    "case_id": "system3_financial_analysis_COV_002",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=7"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "Collect recent financial data for MSFT and pass it to the financial analyst.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
     "case_id": "system3_financial_analysis_COV_002",
     "layer": "autogen_framework",
     "fault_type": "Wrong Agent Routing",
@@ -112,71 +34,13 @@
     "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
     "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
     "reproduction": {
-      "input": "Collect recent financial data for MSFT and pass it to the financial analyst.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
+      "input": "Collect historical price data for AAPL from Yahoo Finance.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
-    "case_id": "system3_financial_analysis_COV_002",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "Collect recent financial data for MSFT and pass it to the financial analyst.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
-    "case_id": "system3_financial_analysis_COV_003",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请让 report_generator 参与处理一个正常任务，并输出处理过程摘要。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
-    "case_id": "system3_financial_analysis_COV_003",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=12"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请让 report_generator 参与处理一个正常任务，并输出处理过程摘要。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
     "case_id": "system3_financial_analysis_COV_003",
     "layer": "autogen_framework",
     "fault_type": "Wrong Agent Routing",
@@ -196,1154 +60,247 @@
     "suspected_false_positive": false
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
-    "case_id": "system3_financial_analysis_COV_003",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
+    "case_id": "system3_financial_analysis_META_001",
     "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请让 report_generator 参与处理一个正常任务，并输出处理过程摘要。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
-    "case_id": "system3_financial_analysis_FUZZ_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
     "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
     "evidence": [
-      "turn_count=19"
+      "75"
     ],
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
     "reproduction": {
-      "input": "Run a Monte Carlo VaR simulation for AAPL portfolio.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
     },
     "suspected_false_positive": false
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
-    "case_id": "system3_financial_analysis_FUZZ_001",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+    "case_id": "system3_financial_analysis_REQ_001",
     "layer": "autogen_framework",
     "fault_type": "Wrong Agent Routing",
     "failure_code": "MISSING_AGENT",
     "severity": "medium",
     "confidence": 0.72,
-    "summary": "Expected agent was not observed: enterprise_quantitative_analyst",
+    "summary": "Expected agent was not observed: report_generator",
     "evidence": [
-      "enterprise_quantitative_analyst"
+      "report_generator"
     ],
     "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
     "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
     "reproduction": {
-      "input": "Run a Monte Carlo VaR simulation for AAPL portfolio.",
+      "input": "Analyze AAPL stock and provide a comprehensive investment report.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
-    "case_id": "system3_financial_analysis_FUZZ_001",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
+    "case_id": "system3_financial_analysis_REQ_002",
     "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
     "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "confidence": 0.72,
+    "summary": "Expected agent was not observed: agent",
+    "evidence": [
+      "agent"
+    ],
+    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
     "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
     "reproduction": {
-      "input": "Run a Monte Carlo VaR simulation for AAPL portfolio.",
+      "input": "请完成以下任务并给出清晰结果：一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
+    },
+    "suspected_false_positive": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
+    "case_id": "system3_financial_analysis_REQ_003",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
+    "evidence": [
+      "75"
+    ],
+    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AMZN"
+    },
+    "suspected_false_positive": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
+    "case_id": "system3_financial_analysis_REQ_004",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
+    "evidence": [
+      "75"
+    ],
+    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：智能财务分析**: 基于AutoGen的多Agent协作分析",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
+    },
+    "suspected_false_positive": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
+    "case_id": "system3_financial_analysis_REQ_005",
+    "layer": "autogen_framework",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "Expected agent was not observed: data_collector",
+    "evidence": [
+      "data_collector"
+    ],
+    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
+    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：量化分析**: 因子模型、投资组合优化、策略回测、机器学习预测",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
+    "case_id": "system3_financial_analysis_REQ_006",
+    "layer": "autogen_framework",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "Expected agent was not observed: data_collector",
+    "evidence": [
+      "data_collector"
+    ],
+    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
+    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：数据可视化**: 交互式图表和报告生成",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
+    },
+    "suspected_false_positive": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
+    "case_id": "system3_financial_analysis_REQ_007",
+    "layer": "autogen_framework",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "Expected agent was not observed: data_collector",
+    "evidence": [
+      "data_collector"
+    ],
+    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
+    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：微服务架构**: 模块化设计，支持水平扩展",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
+    },
+    "suspected_false_positive": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
+    "case_id": "system3_financial_analysis_TOOLFUZZ_001",
+    "layer": "autogen_framework",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "Expected agent was not observed: data_collector",
+    "evidence": [
+      "data_collector"
+    ],
+    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
+    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "reproduction": {
+      "input": "Use yfinance to get the latest balance sheet for MSFT.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
+    },
+    "suspected_false_positive": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
+    "case_id": "system3_financial_analysis_R2_001",
+    "layer": "autogen_framework",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "Expected agent was not observed: data_collector",
+    "evidence": [
+      "data_collector"
+    ],
+    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
+    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：容器化**: Docker和Kubernetes部署支持",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
+    },
+    "suspected_false_positive": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
+    "case_id": "system3_financial_analysis_R2_002",
+    "layer": "autogen_framework",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "Expected agent was not observed: data_collector",
+    "evidence": [
+      "data_collector"
+    ],
+    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
+    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
-    "case_id": "system3_financial_analysis_FUZZ_002",
+    "case_id": "system3_financial_analysis_R2_003",
     "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "Expected agent was not observed: data_collector",
     "evidence": [
-      "75"
+      "data_collector"
     ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
+    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
     "reproduction": {
-      "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
+      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
-    "case_id": "system3_financial_analysis_FUZZ_002",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=16"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
-    "case_id": "system3_financial_analysis_FUZZ_002",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
-    "case_id": "system3_financial_analysis_META_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_019",
-    "case_id": "system3_financial_analysis_META_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=7"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_020",
-    "case_id": "system3_financial_analysis_META_001",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
-    "evidence": [
-      "data_collector"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_021",
-    "case_id": "system3_financial_analysis_META_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_022",
-    "case_id": "system3_financial_analysis_META_001",
-    "layer": "application",
-    "fault_type": "Metamorphic Relation Violation",
-    "failure_code": "METAMORPHIC_RELATION_VIOLATION",
-    "severity": "medium",
-    "confidence": 0.74,
-    "summary": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
-    "evidence": [
-      "missing_agents=['data_collector']",
-      "missing_tools=[]"
-    ],
-    "root_cause": "Equivalent test prompts did not preserve the expected agent/tool routing relation.",
-    "suggested_fix": "Inspect prompts, tool registration, and routing logic for equivalent requests; add a paired metamorphic regression test.",
-    "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_023",
-    "case_id": "system3_financial_analysis_PROP_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_024",
-    "case_id": "system3_financial_analysis_PROP_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=7"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_025",
-    "case_id": "system3_financial_analysis_PROP_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_026",
-    "case_id": "system3_financial_analysis_REG_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_027",
-    "case_id": "system3_financial_analysis_REG_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=7"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_028",
-    "case_id": "system3_financial_analysis_REG_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_029",
-    "case_id": "system3_financial_analysis_REQ_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "Analyze AAPL stock and provide a comprehensive investment report.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_030",
-    "case_id": "system3_financial_analysis_REQ_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=12"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "Analyze AAPL stock and provide a comprehensive investment report.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_031",
-    "case_id": "system3_financial_analysis_REQ_001",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: investment_advisor",
-    "evidence": [
-      "investment_advisor"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "Analyze AAPL stock and provide a comprehensive investment report.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_032",
-    "case_id": "system3_financial_analysis_REQ_001",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: report_generator",
-    "evidence": [
-      "report_generator"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "Analyze AAPL stock and provide a comprehensive investment report.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_033",
-    "case_id": "system3_financial_analysis_REQ_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "Analyze AAPL stock and provide a comprehensive investment report.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_034",
-    "case_id": "system3_financial_analysis_REQ_002",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_035",
-    "case_id": "system3_financial_analysis_REQ_002",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=12"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_036",
-    "case_id": "system3_financial_analysis_REQ_002",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: agent",
-    "evidence": [
-      "agent"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_037",
-    "case_id": "system3_financial_analysis_REQ_002",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_038",
-    "case_id": "system3_financial_analysis_REQ_003",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AMZN"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_039",
-    "case_id": "system3_financial_analysis_REQ_003",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=7"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AMZN"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_040",
-    "case_id": "system3_financial_analysis_REQ_003",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
-    "evidence": [
-      "data_collector"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AMZN"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_041",
-    "case_id": "system3_financial_analysis_REQ_003",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AMZN"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_042",
-    "case_id": "system3_financial_analysis_REQ_004",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：智能财务分析**: 基于AutoGen的多Agent协作分析",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_043",
-    "case_id": "system3_financial_analysis_REQ_004",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=7"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：智能财务分析**: 基于AutoGen的多Agent协作分析",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_044",
-    "case_id": "system3_financial_analysis_REQ_004",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: agent",
-    "evidence": [
-      "agent"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：智能财务分析**: 基于AutoGen的多Agent协作分析",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_045",
-    "case_id": "system3_financial_analysis_REQ_004",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：智能财务分析**: 基于AutoGen的多Agent协作分析",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_046",
-    "case_id": "system3_financial_analysis_REQ_005",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=19"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：量化分析**: 因子模型、投资组合优化、策略回测、机器学习预测",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_047",
-    "case_id": "system3_financial_analysis_REQ_005",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
-    "evidence": [
-      "data_collector"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：量化分析**: 因子模型、投资组合优化、策略回测、机器学习预测",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_048",
-    "case_id": "system3_financial_analysis_REQ_005",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：量化分析**: 因子模型、投资组合优化、策略回测、机器学习预测",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_049",
-    "case_id": "system3_financial_analysis_REQ_006",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：数据可视化**: 交互式图表和报告生成",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_050",
-    "case_id": "system3_financial_analysis_REQ_006",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=12"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：数据可视化**: 交互式图表和报告生成",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_051",
-    "case_id": "system3_financial_analysis_REQ_006",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
-    "evidence": [
-      "data_collector"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：数据可视化**: 交互式图表和报告生成",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_052",
-    "case_id": "system3_financial_analysis_REQ_006",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：数据可视化**: 交互式图表和报告生成",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_053",
-    "case_id": "system3_financial_analysis_REQ_007",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：微服务架构**: 模块化设计，支持水平扩展",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_054",
-    "case_id": "system3_financial_analysis_REQ_007",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=7"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：微服务架构**: 模块化设计，支持水平扩展",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_055",
-    "case_id": "system3_financial_analysis_REQ_007",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
-    "evidence": [
-      "data_collector"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：微服务架构**: 模块化设计，支持水平扩展",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_056",
-    "case_id": "system3_financial_analysis_REQ_007",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：微服务架构**: 模块化设计，支持水平扩展",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_057",
-    "case_id": "system3_financial_analysis_TOOLFUZZ_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=19"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请执行一个可能需要外部工具的任务；若没有工具可用，请优雅说明限制并结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_058",
-    "case_id": "system3_financial_analysis_TOOLFUZZ_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请执行一个可能需要外部工具的任务；若没有工具可用，请优雅说明限制并结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_059",
-    "case_id": "system3_financial_analysis_R2_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "75"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：容器化**: Docker和Kubernetes部署支持",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_060",
-    "case_id": "system3_financial_analysis_R2_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=12"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：容器化**: Docker和Kubernetes部署支持",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_061",
-    "case_id": "system3_financial_analysis_R2_001",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
-    "evidence": [
-      "data_collector"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：容器化**: Docker和Kubernetes部署支持",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_062",
-    "case_id": "system3_financial_analysis_R2_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：容器化**: Docker和Kubernetes部署支持",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_063",
-    "case_id": "system3_financial_analysis_R2_002",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=19"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_064",
-    "case_id": "system3_financial_analysis_R2_002",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
-    "evidence": [
-      "data_collector"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_065",
-    "case_id": "system3_financial_analysis_R2_002",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_066",
-    "case_id": "system3_financial_analysis_R2_003",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=19"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --type comprehensive",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_067",
-    "case_id": "system3_financial_analysis_R2_003",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
-    "evidence": [
-      "data_collector"
-    ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --type comprehensive",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_068",
-    "case_id": "system3_financial_analysis_R2_003",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --type comprehensive",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_069",
-    "case_id": "system3_financial_analysis_R2_004",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=19"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --format html,pdf",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_070",
     "case_id": "system3_financial_analysis_R2_004",
     "layer": "autogen_framework",
     "fault_type": "Wrong Agent Routing",
@@ -1355,24 +312,6 @@
       "data_collector"
     ],
     "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --format html,pdf",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_071",
-    "case_id": "system3_financial_analysis_R2_004",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
     "reproduction": {
       "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --format html,pdf",

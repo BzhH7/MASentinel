@@ -349,6 +349,10 @@ def _patch_iterative_tools(module) -> None:
                         "args_count": len(args),
                         "kwargs": sorted(str(key) for key in kwargs),
                     },
+                    "metadata": {
+                        "source": "runtime_method",
+                        "llm_visible": False,
+                    },
                 }
             )
             try:
@@ -360,6 +364,10 @@ def _patch_iterative_tools(module) -> None:
                         "tool": method_name,
                         "error_type": exc.__class__.__name__,
                         "error_message": str(exc),
+                        "metadata": {
+                            "source": "runtime_method",
+                            "llm_visible": False,
+                        },
                     }
                 )
                 raise
@@ -368,6 +376,10 @@ def _patch_iterative_tools(module) -> None:
                     "type": "tool_result",
                     "tool": method_name,
                     "result_preview": str(result)[:300] if result is not None else "",
+                    "metadata": {
+                        "source": "runtime_method",
+                        "llm_visible": False,
+                    },
                 }
             )
             return result

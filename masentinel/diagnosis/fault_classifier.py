@@ -22,13 +22,14 @@ FAULT_MAP = {
     "HUMAN_INPUT_REQUESTED": ("autogen_framework", "Human Input Mode Error", "high", 0.9),
     "METAMORPHIC_RELATION_VIOLATION": ("application", "Metamorphic Relation Violation", "medium", 0.74),
     "BUSINESS_TASK_FAILED": ("application", "Business Task Failure", "high", 0.82),
+    "TURN_BUDGET_EXCEEDED": ("test_harness", "Soft Turn Budget Exceeded", "low", 0.95),
     "TESTCASE_SETUP_TIMEOUT": ("test_harness", "Generated Test Input Exceeded Runtime Budget", "low", 0.95),
     "TARGET_WORKFLOW_NOT_OBSERVED": ("test_harness", "Target Workflow Not Observed", "low", 0.95),
     "MODEL_PROVIDER_FAILURE": ("model_provider", "Model/API Provider Failure", "low", 0.95),
 }
 
 TARGET_LAYERS = {"application", "autogen_framework"}
-NON_TARGET_FAILURE_CODES = {"TESTCASE_SETUP_TIMEOUT", "TARGET_WORKFLOW_NOT_OBSERVED", "MODEL_PROVIDER_FAILURE"}
+NON_TARGET_FAILURE_CODES = {"TESTCASE_SETUP_TIMEOUT", "TARGET_WORKFLOW_NOT_OBSERVED", "MODEL_PROVIDER_FAILURE", "TURN_BUDGET_EXCEEDED"}
 
 
 def classify_faults(profile: SystemProfile, testcases: list[TestCase], traces: list[RunTrace]) -> list[dict]:
@@ -154,6 +155,8 @@ def _root_cause(code: str, profile: SystemProfile, evidence: list[str] | None = 
         return "The target process did not expose a meaningful agent workflow for this generated case, so routing/tool expectations would be unreliable as target faults."
     if code == "MODEL_PROVIDER_FAILURE":
         return "The failure is caused by model/API service authentication, authorization, rate limiting, or timeout rather than a target application or AutoGen framework defect."
+    if code == "TURN_BUDGET_EXCEEDED":
+        return "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction."
     if code == "RUNTIME_EXCEPTION":
         return "The application raised an unhandled exception during the test run."
     return f"The rule oracle detected {code} for system {profile.system_id}."
@@ -183,6 +186,8 @@ def _suggested_fix(code: str, evidence: list[str] | None = None) -> str:
         return "Improve the case-to-target adapter, command template, or runtime instrumentation, then rerun the frozen testcase before judging application/framework faults."
     if code == "MODEL_PROVIDER_FAILURE":
         return "Fix API credentials/network limits or add application-level retry/fallback configuration, then rerun; do not treat model/provider availability as a model defect."
+    if code == "TURN_BUDGET_EXCEEDED":
+        return "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself."
     if code == "RUNTIME_EXCEPTION":
         return "Inspect stderr evidence, add defensive error handling, and make required environment/config dependencies explicit."
     if code == "OUTPUT_SCHEMA_VIOLATION":
@@ -209,6 +214,14 @@ def _environment_runtime_exception(evidence: list[str]) -> tuple[str, str, str, 
             "rate limit",
             "too many requests",
             "read operation timed out",
+            "openai.apitimeouterror",
+            "openai api call timed out",
+            "request timed out",
+            "connecttimeout",
+            "httpx.connecttimeout",
+            "httpcore.connecttimeout",
+            "api timeout",
+            "llm timeout",
         )
     ):
         return ("model_provider", "Model/API Provider Failure", "low", 0.96)

@@ -3,11 +3,12 @@
     "case_id": "system2_research_agents_REQ_001",
     "system_id": "system2_research_agents",
     "case_type": "requirement_positive",
-    "objective": "Verify full agent routing and clean termination for a simple task",
-    "input": "Please research the latest AI news and summarize it in 2 sentences.",
+    "objective": "Verify full agent routing and termination with a simple task",
+    "input": "Please summarize the latest news on AI and save the summary to Airtable.",
     "input_sequence": [],
     "target_requirements": [
       "R1",
+      "R4",
       "R5"
     ],
     "target_agents": [
@@ -37,116 +38,43 @@
       "expected_keywords": []
     },
     "fault_injection": null,
-    "metadata": {}
+    "metadata": {
+      "priority": "high",
+      "tags": [
+        "smoke",
+        "routing",
+        "termination"
+      ]
+    }
   },
   {
     "case_id": "system2_research_agents_COV_001",
     "system_id": "system2_research_agents",
     "case_type": "coverage_guided",
-    "objective": "Exercise researcher tools (web_scraping, google_search) and director tools (get_airtable_records, update_single_airtable_record) in a single workflow",
-    "input": "Search for 'climate change 202 cockpit', scrape the first result, then store the summary in Airtable.",
+    "objective": "Exercise researcher tools with valid arguments and verify results",
+    "input": "Search for 'AutoGen multi-agent framework' and scrape the first result page.",
     "input_sequence": [],
     "target_requirements": [
       "R2",
-      "R3",
-      "R4"
-    ],
-    "target_agents": [
-      "researcher",
-      "director"
-    ],
-    "target_tools": [
-      "web_scraping",
-      "google_search",
-      "get_airtable_records",
-      "update_single_airtable_record"
-    ],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 20,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "researcher",
-        "director"
-      ],
-      "must_call_tools": [
-        "google_search",
-        "web_scraping",
-        "get_airtable_records",
-        "update_single_airtable_record"
-      ],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {}
-  },
-  {
-    "case_id": "system2_research_agents_PROP_001",
-    "system_id": "system2_research_agents",
-    "case_type": "property_boundary",
-    "objective": "Verify group chat terminates at max_turns boundary when no TERMINATE is sent",
-    "input": "Repeat the word 'hello' exactly 20 times, one per message, and never say TERMINATE.",
-    "input_sequence": [],
-    "target_requirements": [
-      "R5"
-    ],
-    "target_agents": [
-      "group_chat_manager"
-    ],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 10,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "user_proxy",
-        "group_chat_manager"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "boundary": "max_turns=10",
-      "expected_behavior": "conversation stops after 10 turns even without TERMINATE keyword"
-    }
-  },
-  {
-    "case_id": "system2_research_agents_TOOLFUZZ_001",
-    "system_id": "system2_research_agents",
-    "case_type": "fuzz_tool_failure",
-    "objective": "Verify researcher handles tool failure gracefully when web_scraping receives invalid URL",
-    "input": "Use web_scraping on url 'not-a-valid-url-!!!' and report what happens.",
-    "input_sequence": [],
-    "target_requirements": [
       "R3"
     ],
     "target_agents": [
       "researcher"
     ],
     "target_tools": [
+      "google_search",
       "web_scraping"
     ],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
-      "max_turns": 15,
+      "max_turns": 10,
       "must_not_crash": true,
       "must_visit_agents": [
-        "user_proxy",
         "researcher"
       ],
       "must_call_tools": [
+        "google_search",
         "web_scraping"
       ],
       "must_cover_edges": [],
@@ -157,16 +85,96 @@
     },
     "fault_injection": null,
     "metadata": {
-      "fuzz_type": "invalid_url",
-      "expected_behavior": "tool returns error or empty result, agent reports failure without crashing"
+      "priority": "high",
+      "tags": [
+        "tool",
+        "researcher",
+        "coverage"
+      ]
+    }
+  },
+  {
+    "case_id": "system2_research_agents_PROP_001",
+    "system_id": "system2_research_agents",
+    "case_type": "property_boundary",
+    "objective": "Verify termination on explicit TERMINATE message from user_proxy",
+    "input": "TERMINATE",
+    "input_sequence": [],
+    "target_requirements": [
+      "R5"
+    ],
+    "target_agents": [
+      "user_proxy",
+      "group_chat_manager"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 5,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "user_proxy"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "boundary": "explicit_terminate",
+      "expected_behavior": "group_chat_manager should propagate TERMINATE and stop conversation"
+    }
+  },
+  {
+    "case_id": "system2_research_agents_TOOLFUZZ_001",
+    "system_id": "system2_research_agents",
+    "case_type": "fuzz_tool_failure",
+    "objective": "Verify director handles invalid arguments to get_airtable_records gracefully",
+    "input": "Please call get_airtable_records with an empty base_id and table_name",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2",
+      "R3"
+    ],
+    "target_agents": [
+      "director"
+    ],
+    "target_tools": [
+      "get_airtable_records"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 10,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "director"
+      ],
+      "must_call_tools": [
+        "get_airtable_records"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "fuzz_type": "invalid_arguments",
+      "expected_behavior": "tool should return error or empty result, agent should not crash"
     }
   },
   {
     "case_id": "system2_research_agents_REQ_002",
     "system_id": "system2_research_agents",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R1: The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate cleanly.",
-    "input": "请完成以下任务并给出清晰结果：The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate cleanly.",
+    "objective": "Validate requirement R1: The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate within the configured max_turns or upon receiving a TERMINATE signal.",
+    "input": "请完成以下任务并给出清晰结果：The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate within the configured max_turns or upon receiving a TERMINATE signal.",
     "input_sequence": [],
     "target_requirements": [
       "R1"
@@ -469,18 +477,21 @@
     "case_id": "system2_research_agents_REQ_004",
     "system_id": "system2_research_agents",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R3: The researcher agent must be able to use web_scraping and google_search tools to gather16 information.",
-    "input": "请完成以下任务并给出清晰结果：The researcher agent must be able to use web_scraping and google_search tools to gather16 information.",
+    "objective": "Validate requirement R3: The researcher agent must be able to invoke web_scraping and google_search tools to gather16 information, and16 the director agent must be able to invoke get_airtable_records and update_single_airtable_record to manage Airtable data.",
+    "input": "请完成以下任务并给出清晰结果：The researcher agent must be able to invoke web_scraping and google_search tools to gather16 information, and16 the director agent must be able to invoke get_airtable_records and update_single_airtable_record to manage Airtable data.",
     "input_sequence": [],
     "target_requirements": [
       "R3"
     ],
     "target_agents": [
-      "researcher"
+      "researcher",
+      "director"
     ],
     "target_tools": [
       "web_scraping",
-      "google_search"
+      "google_search",
+      "get_airtable_records",
+      "update_single_airtable_record"
     ],
     "target_edges": [],
     "oracle": {
@@ -488,11 +499,14 @@
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "researcher"
+        "researcher",
+        "director"
       ],
       "must_call_tools": [
         "web_scraping",
-        "google_search"
+        "google_search",
+        "get_airtable_records",
+        "update_single_airtable_record"
       ],
       "must_cover_edges": [],
       "must_not_call_tools": [],
@@ -507,31 +521,33 @@
     "case_id": "system2_research_agents_REQ_005",
     "system_id": "system2_research_agents",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R4: The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data.",
-    "input": "请完成以下任务并给出清晰结果：The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data.",
+    "objective": "Validate requirement R4: The group chat manager must coordinate the conversation among agents, allowing any agent to send messages to any other agent as per the group chat configuration.",
+    "input": "请完成以下任务并给出清晰结果：The group chat manager must coordinate the conversation among agents, allowing any agent to send messages to any other agent as per the group chat configuration.",
     "input_sequence": [],
     "target_requirements": [
       "R4"
     ],
     "target_agents": [
+      "group_chat_manager",
+      "user_proxy",
+      "researcher",
+      "research_manager",
       "director"
     ],
-    "target_tools": [
-      "get_airtable_records",
-      "update_single_airtable_record"
-    ],
+    "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
+        "group_chat_manager",
+        "user_proxy",
+        "researcher",
+        "research_manager",
         "director"
       ],
-      "must_call_tools": [
-        "get_airtable_records",
-        "update_single_airtable_record"
-      ],
+      "must_call_tools": [],
       "must_cover_edges": [],
       "must_not_call_tools": [],
       "must_not_fabricate_tool_result": false,
@@ -545,13 +561,17 @@
     "case_id": "system2_research_agents_REQ_006",
     "system_id": "system2_research_agents",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R5: The group chat manager must coordinate the conversation and enforce termination conditions (TERMINATE, max_turns, process_exit).",
-    "input": "请完成以下任务并给出清晰结果：The group chat manager must coordinate the conversation and enforce termination conditions (TERMINATE, max_turns, process_exit).",
+    "objective": "Validate requirement R5: The system must handle termination conditions correctly, including explicit TERMINATE messages and max_turns limit, without hanging or crashing.",
+    "input": "请完成以下任务并给出清晰结果：The system must handle termination conditions correctly, including explicit TERMINATE messages and max_turns limit, without hanging or crashing.",
     "input_sequence": [],
     "target_requirements": [
       "R5"
     ],
     "target_agents": [
+      "user_proxy",
+      "researcher",
+      "research_manager",
+      "director",
       "group_chat_manager"
     ],
     "target_tools": [],
@@ -561,6 +581,10 @@
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
+        "user_proxy",
+        "researcher",
+        "research_manager",
+        "director",
         "group_chat_manager"
       ],
       "must_call_tools": [],
@@ -782,63 +806,5 @@
     },
     "fault_injection": null,
     "metadata": {}
-  },
-  {
-    "case_id": "system2_research_agents_REG_002",
-    "system_id": "system2_research_agents",
-    "case_type": "regression",
-    "objective": "Reproduce confirmed fault: The process ended with an unhandled runtime error.",
-    "input": "请让 group_chat_manager 参与处理一个正常任务，并输出处理过程摘要。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "derived_from": "system2_research_agents_COV_001",
-      "source": "regression_pool"
-    }
-  },
-  {
-    "case_id": "system2_research_agents_REG_003",
-    "system_id": "system2_research_agents",
-    "case_type": "regression",
-    "objective": "Reproduce confirmed fault: Expected tool was not called: web_scraping",
-    "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "derived_from": "system2_research_agents_META_001",
-      "source": "regression_pool"
-    }
   }
 ]

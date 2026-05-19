@@ -5,51 +5,18 @@
     "suspected_false_positive": false,
     "audit": {
       "audit_result": "confirmed_fault",
-      "reason": "The evidence clearly shows an AutoGen framework configuration fault: no is_termination_msg function is registered, so the 'TERMINATE' keyword sent by user_proxy is ignored, and no max_turns guard is set. This is a software defect in the agent configuration that can be fixed by modifying the AutoGen setup code, not a model service or test framework issue.",
+      "reason": "The conversation exceeded the configured max_turns (10) and did not terminate despite the user_proxy sending a message containing 'TERMINATE'. The root cause is a missing or misconfigured termination checking function (is_termination_msg) in the AutoGen runtime, which is an application-layer configuration/framework integration fault. The evidence (turn_count: 12, terminated: false, stdout showing TERMINATE message) directly supports this. The fault is reproducible and can be fixed by modifying the AutoGen configuration or code.",
       "false_positive_risk": "low",
       "confidence": 0.95
     }
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
-    "case_id": "system3_financial_analysis_COV_001",
-    "suspected_false_positive": false,
-    "audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The evidence shows the user_proxy sent a message containing 'TERMINATE' to financial_analyst, but the conversation did not terminate and eventually timed out. The turn_count=7 is within the oracle max_turns=10, indicating the framework's termination condition (is_termination_msg) is not correctly configured to detect the 'TERMINATE' keyword. This is a clear AutoGen framework configuration error, not a model capability or test framework issue.",
-      "false_positive_risk": "low",
-      "confidence": 0.95
-    }
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
-    "case_id": "system3_financial_analysis_COV_001",
-    "suspected_false_positive": false,
-    "audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The trace shows user_proxy repeatedly sending a message containing 'TERMINATE' to financial_analyst, but the conversation does not stop (terminated=false, turn_count=7, status=timeout). The root cause is that the AutoGen group chat manager or speaker selection logic fails to recognize the 'TERMINATE' keyword as a termination signal, leading to an infinite loop. This is a framework-level fault in speaker selection/termination handling, which can be fixed by modifying the AutoGen configuration or group chat manager code to properly handle the termination condition.",
-      "false_positive_risk": "low",
-      "confidence": 0.85
-    }
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
     "case_id": "system3_financial_analysis_COV_002",
     "suspected_false_positive": false,
     "audit": {
       "audit_result": "confirmed_fault",
-      "reason": "The evidence shows that the application's agent routing logic (in simple_autogen_system.py or its AutoGen configuration) does not include a path from user_proxy to data_collector. The trace confirms that user_proxy directly sends messages to financial_analyst, bypassing data_collector entirely, which violates the oracle's must_visit_agents requirement. This is a control flow defect in the application layer, not an AutoGen framework bug or a model capability issue.",
-      "false_positive_risk": "low",
-      "confidence": 0.95
-    }
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-    "case_id": "system3_financial_analysis_META_001",
-    "suspected_false_positive": false,
-    "audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The metamorphic oracle requires must_visit_agents=['data_collector', 'financial_analyst'], but the AutoGen conversation trace only contains 'user_proxy' and 'financial_analyst'. The system log shows data collection steps ('开始收集 A 的数据...', '成功收集 A 的数据') were executed, but no agent named 'data_collector' appears in MAS_TRACE events. This indicates the data collection16functionality is not exposed as a registered ConversableAgent in the group chat, which is an application-layer agent registration/routing defect. The fault can be mitigated by registering a 'data_collector' agent or a wrapper agent that invokes the data collection tool and appears in the conversation trace.",
+      "reason": "The root cause is a missing tool registration (yfinance) for the data_collector agent, which is an application-level configuration/registration issue in the AutoGen system. The agent is present and routed correctly (logs show '开始收集 AAPL 的数据...' and '成功收集 AAPL 的数据'), but returns empty data because it has no tools. This is a genuine software fault in the agent setup, not a model capability or test framework problem. The initial detection misclassified the symptom as 'agent not observed', but the underlying fault is real and fixable by modifying the tool registration logic.",
       "false_positive_risk": "low",
       "confidence": 0.85
     }

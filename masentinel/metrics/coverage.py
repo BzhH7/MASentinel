@@ -37,39 +37,52 @@ FAULT_MODES = [
     "async_sync_mismatch",
 ]
 
+AGENT_ALIASES = {
+    "chat_manager": "group_chat_manager",
+    "GroupChatManager": "group_chat_manager",
+    "groupchat_manager": "group_chat_manager",
+}
+
 
 def compute_coverage(profile: SystemProfile, testcases: list[TestCase], traces: list[RunTrace], faults: list[dict]) -> dict:
     text_by_trace = {trace.case_id: f"{trace.stdout or ''}\n{trace.stderr or ''}\n{trace.final_output or ''}".lower() for trace in traces}
     visited_agents = set()
     called_tools = set()
     observed_edges = set()
+    profile_agents = {_canon_agent(agent.name) for agent in profile.agents}
+    profile_tools = {tool.name for tool in profile.tools}
+    required_edges = {
+        (_canon_agent(edge.source), _canon_agent(edge.target))
+        for edge in profile.message_edges
+        if not (edge.evidence and "potential" in edge.evidence.lower())
+    }
     for trace in traces:
         text = text_by_trace.get(trace.case_id, "")
         for agent in profile.agents:
             if agent.name.lower() in text:
-                visited_agents.add(agent.name)
+                visited_agents.add(_canon_agent(agent.name))
         for tool in profile.tools:
             if tool.name.lower() in text:
                 called_tools.add(tool.name)
         for event in trace.events:
             if event.sender:
-                visited_agents.add(event.sender)
+                visited_agents.add(_canon_agent(event.sender))
             if event.receiver:
-                visited_agents.add(event.receiver)
+                visited_agents.add(_canon_agent(event.receiver))
             if event.tool:
                 called_tools.add(event.tool)
             if event.type == "message" and event.sender and event.receiver:
-                observed_edges.add((event.sender, event.receiver))
+                observed_edges.add((_canon_agent(event.sender), _canon_agent(event.receiver)))
     target_reqs = {req for case in testcases for req in case.target_requirements}
     state_hits = _state_hits(testcases, traces, faults)
     fault_mode_hits = _fault_mode_hits(testcases, faults)
     metrics = {
-        "agent_coverage": _ratio(len(visited_agents & {a.name for a in profile.agents}), len(profile.agents)),
-        "tool_coverage": _ratio(len(called_tools & {t.name for t in profile.tools}), len(profile.tools)),
-        "message_edge_coverage": _ratio(len(observed_edges & {(e.source, e.target) for e in profile.message_edges}), len(profile.message_edges)),
-        "requirement_coverage": _ratio(len(target_reqs & {r.id for r in profile.requirements}), len(profile.requirements)),
-        "state_coverage": _ratio(len(state_hits), len(STATES)),
-        "fault_mode_coverage": _ratio(len(fault_mode_hits), len(FAULT_MODES)),
+        "agent_coverage": _ratio_or_none(len(visited_agents & profile_agents), len(profile_agents)),
+        "tool_coverage": _ratio_or_none(len(called_tools & profile_tools), len(profile_tools)),
+        "message_edge_coverage": _ratio_or_none(len(observed_edges & required_edges), len(required_edges)),
+        "requirement_coverage": _ratio_or_none(len(target_reqs & {r.id for r in profile.requirements}), len(profile.requirements)),
+        "state_coverage": _ratio_or_none(len(state_hits), len(STATES)),
+        "fault_mode_coverage": _ratio_or_none(len(fault_mode_hits), len(FAULT_MODES)),
         "details": {
             "visited_agents": sorted(visited_agents),
             "called_tools": sorted(called_tools),
@@ -77,24 +90,50 @@ def compute_coverage(profile: SystemProfile, testcases: list[TestCase], traces: 
             "covered_requirements": sorted(target_reqs),
             "covered_states": sorted(state_hits),
             "covered_fault_modes": sorted(fault_mode_hits),
+            "applicability": {
+                "agents": len(profile_agents),
+                "tools": len(profile_tools),
+                "required_message_edges": len(required_edges),
+                "profile_message_edges": len(profile.message_edges),
+                "potential_message_edges": len(profile.message_edges) - len(required_edges),
+            },
         },
     }
-    metrics["mascov"] = round(
-        0.18 * metrics["agent_coverage"]
-        + 0.18 * metrics["tool_coverage"]
-        + 0.16 * metrics["message_edge_coverage"]
-        + 0.16 * metrics["requirement_coverage"]
-        + 0.16 * metrics["state_coverage"]
-        + 0.16 * metrics["fault_mode_coverage"],
-        4,
-    )
+    metrics["mascov"] = _weighted_mascov(metrics)
     return metrics
 
 
-def _ratio(numerator: int, denominator: int) -> float:
+def _ratio_or_none(numerator: int, denominator: int) -> float | None:
     if denominator <= 0:
-        return 1.0
+        return None
     return round(numerator / denominator, 4)
+
+
+def _weighted_mascov(metrics: dict) -> float | None:
+    weights = {
+        "agent_coverage": 0.18,
+        "tool_coverage": 0.18,
+        "message_edge_coverage": 0.16,
+        "requirement_coverage": 0.16,
+        "state_coverage": 0.16,
+        "fault_mode_coverage": 0.16,
+    }
+    weighted_sum = 0.0
+    weight_sum = 0.0
+    for key, weight in weights.items():
+        value = metrics.get(key)
+        if value is None:
+            continue
+        weighted_sum += weight * float(value)
+        weight_sum += weight
+    return round(weighted_sum / weight_sum, 4) if weight_sum else None
+
+
+def _canon_agent(name: str | None) -> str:
+    if not name:
+        return ""
+    value = str(name).strip()
+    return AGENT_ALIASES.get(value, AGENT_ALIASES.get(value.lower(), value))
 
 
 def _state_hits(testcases: list[TestCase], traces: list[RunTrace], faults: list[dict]) -> set[str]:

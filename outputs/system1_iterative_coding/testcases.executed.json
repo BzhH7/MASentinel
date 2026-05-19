@@ -3,15 +3,78 @@
     "case_id": "system1_iterative_coding_REQ_001",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Verify planner produces a plan, asks for manager approval, and only calls write_settled_plan after receiving 'sounds good'.",
-    "input": "Manager: 'Create a simple calculator app.'",
+    "objective": "Verify that the manager initiates a sequential planning-coding-review workflow, plan is written, code and comments are persisted, and manager can provide feedback before termination.",
+    "input": "Task: Write a Flask app with a single /health endpoint. Manager input: 'sounds good' after plan; 'exit' after each iteration; final 'exit' to terminate.",
     "input_sequence": [],
     "target_requirements": [
-      "R1"
+      "R1",
+      "R2",
+      "R3",
+      "R8"
     ],
     "target_agents": [
+      "manager",
       "planner",
-      "manager"
+      "programmer",
+      "reviewer"
+    ],
+    "target_tools": [
+      "write_settled_plan",
+      "write_latest_iteration"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "manager",
+        "planner",
+        "programmer",
+        "reviewer"
+      ],
+      "must_call_tools": [
+        "write_settled_plan",
+        "write_latest_iteration"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": true,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "fault_model": "tool_schema_risk"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_COV_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "coverage_guided",
+    "objective": "Trigger the manager->planner message edge and verify the planner calls write_settled_plan after receiving approval.",
+    "input": "Task: Write a script to sort a list. Manager responds 'sounds good' when planner asks for approval.",
+    "input_sequence": [
+      {
+        "agent": "manager",
+        "message": "Write a script to sort a list."
+      },
+      {
+        "agent": "manager",
+        "message": "sounds good"
+      },
+      {
+        "agent": "manager",
+        "message": "exit"
+      }
+    ],
+    "target_requirements": [
+      "R1",
+      "R3"
+    ],
+    "target_agents": [
+      "manager",
+      "planner"
     ],
     "target_tools": [
       "write_settled_plan"
@@ -22,33 +85,45 @@
       "max_turns": 10,
       "must_not_crash": true,
       "must_visit_agents": [
-        "planner",
-        "manager"
+        "manager",
+        "planner"
       ],
       "must_call_tools": [
         "write_settled_plan"
       ],
       "must_cover_edges": [],
       "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
+      "must_not_fabricate_tool_result": true,
       "output_contract": null,
       "expected_keywords": []
     },
     "fault_injection": null,
     "metadata": {
-      "priority": "high",
-      "gap_type": "requirement_coverage"
+      "covers_gap": "message_edge_manager->planner"
     }
   },
   {
-    "case_id": "system1_iterative_coding_COV_001",
+    "case_id": "system1_iterative_coding_PROP_001",
     "system_id": "system1_iterative_coding",
-    "case_type": "coverage_guided",
-    "objective": "Verifyawn planner does not call write_settled_plan before manager approval.",
-    "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function. I will now save it.'",
-    "input_sequence": [],
+    "case_type": "property_boundary",
+    "objective": "Test that 'sounds good' (lowercase, no punctuation) is recognized as plan approval.",
+    "input": "Task: Write a function to reverse a string. After planner proposes plan, manager types exactly 'sounds good'.",
+    "input_sequence": [
+      {
+        "agent": "manager",
+        "message": "Write a function to reverse a string."
+      },
+      {
+        "agent": "manager",
+        "message": "sounds good"
+      },
+      {
+        "agent": "manager",
+        "message": "exit"
+      }
+    ],
     "target_requirements": [
-      "R1"
+      "R3"
     ],
     "target_agents": [
       "planner"
@@ -62,8 +137,59 @@
       "max_turns": 10,
       "must_not_crash": true,
       "must_visit_agents": [
+        "manager",
+        "planner"
+      ],
+      "must_call_tools": [
+        "write_settled_plan"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": true,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "boundary_value": "approval phrase 'sounds good'"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_FUZZ_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "fuzz_negative",
+    "objective": "Verify system behavior when programmer produces conversational text without a code block.",
+    "input": "Task: Write a hello world script. Planner already approved. Programmer responds with 'I can't figure this out, let's discuss' instead of code.",
+    "input_sequence": [
+      {
+        "agent": "manager",
+        "message": "Write a hello world script."
+      },
+      {
+        "agent": "manager",
+        "message": "sounds good"
+      },
+      {
+        "agent": "manager",
+        "message": "exit"
+      }
+    ],
+    "target_requirements": [
+      "R4"
+    ],
+    "target_agents": [
+      "programmer"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "manager",
         "planner",
-        "manager"
+        "programmer"
       ],
       "must_call_tools": [],
       "must_cover_edges": [],
@@ -74,66 +200,7 @@
     },
     "fault_injection": null,
     "metadata": {
-      "negative_case": true,
-      "expected_failure": "Planner calls write_settled_plan without manager approval."
-    }
-  },
-  {
-    "case_id": "system1_iterative_coding_PROP_001",
-    "system_id": "system1_iterative_coding",
-    "case_type": "property_boundary",
-    "objective": "Boundary/property robustness test: empty_input",
-    "input": "",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "property_template": "empty_input",
-      "fuzz_template": "empty_input"
-    }
-  },
-  {
-    "case_id": "system1_iterative_coding_FUZZ_001",
-    "system_id": "system1_iterative_coding",
-    "case_type": "fuzz_negative",
-    "objective": "Instruction conflict should not crash or wait for human input.",
-    "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "fuzz_template": "conflicting_instruction",
-      "legacy_type": true
+      "fuzz_scenario": "programmer_no_code_block"
     }
   },
   {
@@ -259,32 +326,40 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_COV_002",
+    "case_id": "system1_iterative_coding_REQ_002",
     "system_id": "system1_iterative_coding",
-    "case_type": "coverage_guided",
-    "objective": "Verify planneraltering plan after manager approval is rejected or reverted.",
-    "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function.' Manager: 'sounds good' Planner: 'I will now add multiplication to the plan and save it.'",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R1: The system must implement a two-phase workflow: a planning phase that produces a written project plan, and an iterative coding phase that cycles through Coder and Reviewer until the user terminates the program.",
+    "input": "请完成以下任务并给出清晰结果：The system must implement a two-phase workflow: a planning phase that produces a written project plan, and an iterative coding phase that cycles through Coder and Reviewer until the user terminates the program.",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
+      "manager",
       "planner",
-      "manager"
+      "programmer",
+      "reviewer"
     ],
     "target_tools": [
-      "write_settled_plan"
+      "write_settled_plan",
+      "write_latest_iteration"
     ],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
-      "max_turns": 10,
+      "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
+        "manager",
         "planner",
-        "manager"
+        "programmer",
+        "reviewer"
       ],
-      "must_call_tools": [],
+      "must_call_tools": [
+        "write_settled_plan",
+        "write_latest_iteration"
+      ],
       "must_cover_edges": [],
       "must_not_call_tools": [],
       "must_not_fabricate_tool_result": false,
@@ -292,9 +367,7 @@
       "expected_keywords": []
     },
     "fault_injection": null,
-    "metadata": {
-      "negative_case": "Planner alters plan after manager approval."
-    }
+    "metadata": {}
   },
   {
     "case_id": "system1_iterative_coding_R2_001",
@@ -343,6 +416,36 @@
   {
     "case_id": "system1_iterative_coding_R2_002",
     "system_id": "system1_iterative_coding",
+    "case_type": "property_boundary",
+    "objective": "Boundary/property robustness test: empty_input",
+    "input": "",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "property_template": "empty_input",
+      "fuzz_template": "empty_input",
+      "coverage_guided_round": 2
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_R2_003",
+    "system_id": "system1_iterative_coding",
     "case_type": "coverage_guided",
     "objective": "Exercise message edge manager->programmer",
     "input": "请完成一个需要 manager 与 programmer 协作的任务。",
@@ -385,39 +488,65 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_R2_003",
+    "case_id": "system1_iterative_coding_R2_004",
     "system_id": "system1_iterative_coding",
-    "case_type": "coverage_guided",
-    "objective": "Exercise message edge manager->reviewer",
-    "input": "请完成一个需要 manager 与 reviewer 协作的任务。",
+    "case_type": "fuzz_negative",
+    "objective": "Instruction conflict should not crash or wait for human input.",
+    "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
     "input_sequence": [],
     "target_requirements": [],
-    "target_agents": [
-      "manager",
-      "reviewer"
-    ],
+    "target_agents": [],
     "target_tools": [],
-    "target_edges": [
-      [
-        "manager",
-        "reviewer"
-      ]
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "fuzz_template": "conflicting_instruction",
+      "legacy_type": true,
+      "coverage_guided_round": 2
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_R2_005",
+    "system_id": "system1_iterative_coding",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R2: Manager agent must be decorated with the write_latest_iteration and write_settled_plan tools so it can execute tool calls on behalf of other agents.",
+    "input": "请完成以下任务并给出清晰结果：Manager agent must be decorated with the write_latest_iteration and write_settled_plan tools so it can execute tool calls on behalf of other agents.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2"
     ],
+    "target_agents": [
+      "manager"
+    ],
+    "target_tools": [
+      "write_latest_iteration",
+      "write_settled_plan"
+    ],
+    "target_edges": [],
     "oracle": {
       "must_terminate": true,
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "manager",
-        "reviewer"
+        "manager"
       ],
-      "must_call_tools": [],
-      "must_cover_edges": [
-        [
-          "manager",
-          "reviewer"
-        ]
+      "must_call_tools": [
+        "write_latest_iteration",
+        "write_settled_plan"
       ],
+      "must_cover_edges": [],
       "must_not_call_tools": [],
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
@@ -429,14 +558,14 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_R2_004",
+    "case_id": "system1_iterative_coding_R2_006",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R1: Planner must produce a plan containing numbered functional requirements and wait for manager approval ('sounds good') before calling write_settled_plan.",
-    "input": "请完成以下任务并给出清晰结果：Planner must produce a plan containing numbered functional requirements and wait for manager approval ('sounds good') before calling write_settled_plan.",
+    "objective": "Validate requirement R3: Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
+    "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
     "input_sequence": [],
     "target_requirements": [
-      "R1"
+      "R3"
     ],
     "target_agents": [
       "planner",
@@ -469,14 +598,14 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_R2_005",
+    "case_id": "system1_iterative_coding_R2_007",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R2: Coder must output only well-formatted code blocks, no extra text, and must not participate in conversation.",
-    "input": "请完成以下任务并给出清晰结果：Coder must output only well-formatted code blocks, no extra text, and must not participate in conversation.",
+    "objective": "Validate requirement R4: Coder must output only well-formed Python code blocks, without extra conversational text.",
+    "input": "请完成以下任务并给出清晰结果：Coder must output only well-formed Python code blocks, without extra conversational text.",
     "input_sequence": [],
     "target_requirements": [
-      "R2"
+      "R4"
     ],
     "target_agents": [
       "programmer"
@@ -503,108 +632,28 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_R2_006",
-    "system_id": "system1_iterative_coding",
-    "case_type": "requirement_positive",
-    "objective": "Validate requirement R3: Reviewer must evaluate code against the planoro produce a list of criticisms/comments without writing code.",
-    "input": "请完成以下任务并给出清晰结果：Reviewer must evaluate code against the planoro produce a list of criticisms/comments without writing code.",
-    "input_sequence": [],
-    "target_requirements": [
-      "R3"
-    ],
-    "target_agents": [
-      "reviewer"
-    ],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "reviewer"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "coverage_guided_round": 2
-    }
-  },
-  {
-    "case_id": "system1_iterative_coding_R2_007",
-    "system_id": "system1_iterative_coding",
-    "case_type": "requirement_positive",
-    "objective": "Validate requirement R4: Manager must be able to test code and provide feedback to Coder or Reviewer before exiting conversation.",
-    "input": "请完成以下任务并给出清晰结果：Manager must be able to test code and provide feedback to Coder or Reviewer before exiting conversation.",
-    "input_sequence": [],
-    "target_requirements": [
-      "R4"
-    ],
-    "target_agents": [
-      "manager",
-      "programmer",
-      "reviewer"
-    ],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "manager",
-        "programmer",
-        "reviewer"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "coverage_guided_round": 2
-    }
-  },
-  {
     "case_id": "system1_iterative_coding_R2_008",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R5: Iteration phase must present only the latest script and latest comments to Coder and Reviewer.",
-    "input": "请完成以下任务并给出清晰结果：Iteration phase must present only the latest script and latest comments to Coder and Reviewer.",
+    "objective": "Validate requirement R5: Reviewer must produce a textual evaluation and list of criticisms, without generating code.",
+    "input": "请完成以下任务并给出清晰结果：Reviewer must produce a textual evaluation and list of criticisms, without generating code.",
     "input_sequence": [],
     "target_requirements": [
       "R5"
     ],
     "target_agents": [
-      "programmer",
       "reviewer"
     ],
-    "target_tools": [
-      "write_latest_iteration",
-      "write_settled_plan"
-    ],
+    "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "programmer",
         "reviewer"
       ],
-      "must_call_tools": [
-        "write_latest_iteration",
-        "write_settled_plan"
-      ],
+      "must_call_tools": [],
       "must_cover_edges": [],
       "must_not_call_tools": [],
       "must_not_fabricate_tool_result": false,

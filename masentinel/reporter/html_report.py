@@ -77,7 +77,7 @@ def build_html_report(
         ("Fault Mode", coverage.get("fault_mode_coverage", 0)),
         ("MASCov", coverage.get("mascov", 0)),
     ]
-    metric_cards = "".join([f"<div class='card'><div class='muted'>{name}</div><div class='num'>{value:.2f}</div></div>" for name, value in metrics])
+    metric_cards = "".join([f"<div class='card'><div class='muted'>{name}</div><div class='num'>{_format_metric(value)}</div></div>" for name, value in metrics])
     agentic_section = _agentic_html(agentic_info)
     return f"""<!doctype html>
 <html><head><meta charset="utf-8"><title>MASentinel {html.escape(profile.system_id)}</title><style>{STYLE}</style></head>
@@ -145,13 +145,23 @@ def write_global_index(results: list[dict], output_dir: str | Path) -> None:
             f"<td>{result.get('process_failed', result.get('failed', 0))}</td>"
             f"<td>{result.get('oracle_passed', '')}</td>"
             f"<td>{result.get('oracle_failed', '')}</td>"
-            f"<td>{cov.get('mascov', 0):.2f}</td>"
-            f"<td>{result.get('faults', 0)}</td>"
+            f"<td>{_format_metric(cov.get('mascov'))}</td>"
+            f"<td>{result.get('confirmed_primary_root_causes', result.get('faults', 0))}</td>"
+            f"<td>{result.get('derived_symptoms', '')}</td>"
             f"<td>{result.get('fault_groups', '')}</td>"
             f"<td>{len(((result.get('agentic', {}) or {}).get('non_target_issues', []) or []))}</td>"
             f"<td>{len(((result.get('agentic', {}) or {}).get('test_harness_issues', []) or []))}</td>"
             "</tr>"
         )
     content = f"""<!doctype html><html><head><meta charset="utf-8"><title>MASentinel Summary</title><style>{STYLE}</style></head>
-<body><main><h1>MASentinel Summary</h1><section><table><tr><th>System</th><th>Cases</th><th>Proc Passed</th><th>Proc Failed</th><th>Oracle Passed</th><th>Oracle Failed</th><th>MASCov</th><th>Faults</th><th>Root Groups</th><th>Non-target Excluded</th><th>Harness Excluded</th></tr>{''.join(rows)}</table></section></main></body></html>"""
+<body><main><h1>MASentinel Summary</h1><section><table><tr><th>System</th><th>Cases</th><th>Proc Passed</th><th>Proc Failed</th><th>Oracle Passed</th><th>Oracle Failed</th><th>MASCov</th><th>Primary Root Causes</th><th>Derived Symptoms</th><th>Root Groups</th><th>Non-target Excluded</th><th>Harness Excluded</th></tr>{''.join(rows)}</table></section></main></body></html>"""
     write_text(output_dir / "index.html", content)
+
+
+def _format_metric(value: object) -> str:
+    if value is None:
+        return "N/A"
+    try:
+        return f"{float(value):.2f}"
+    except (TypeError, ValueError):
+        return "N/A"

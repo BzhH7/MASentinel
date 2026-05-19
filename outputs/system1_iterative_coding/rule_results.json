@@ -1,45 +1,16 @@
 [
   {
     "case_id": "system1_iterative_coding_REQ_001",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=20"
+          "turn_count=23",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "MISSING_TOOL_CALL",
-        "message": "Expected tool was not called: write_settled_plan",
-        "severity": "medium",
-        "evidence": [
-          "write_settled_plan"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -48,155 +19,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=21"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
-      }
-    ]
-  },
-  {
-    "case_id": "system1_iterative_coding_PROP_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=20"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
-      }
-    ]
-  },
-  {
-    "case_id": "system1_iterative_coding_FUZZ_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=21"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
-      }
-    ]
-  },
-  {
-    "case_id": "system1_iterative_coding_TOOLFUZZ_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=22"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
-      }
-    ]
-  },
-  {
-    "case_id": "system1_iterative_coding_META_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=20"
+          "turn_count=24",
+          "max_turns=10"
         ]
       },
       {
@@ -206,289 +34,187 @@
         "evidence": [
           "write_settled_plan"
         ]
-      },
+      }
+    ]
+  },
+  {
+    "case_id": "system1_iterative_coding_PROP_001",
+    "passed": false,
+    "failures": [
       {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "write_latest_iteration_comments"
+          "turn_count=24",
+          "max_turns=10"
         ]
       },
       {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
+        "code": "MISSING_TOOL_CALL",
+        "message": "Expected tool was not called: write_settled_plan",
+        "severity": "medium",
         "evidence": [
-          "retrieve_latest_iteration"
+          "write_settled_plan"
         ]
-      },
+      }
+    ]
+  },
+  {
+    "case_id": "system1_iterative_coding_FUZZ_001",
+    "passed": true,
+    "failures": [
       {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
-      },
-      {
-        "code": "METAMORPHIC_RELATION_VIOLATION",
-        "message": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
-        "severity": "medium",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "missing_agents=[]",
-          "missing_tools=['write_settled_plan']"
+          "turn_count=24",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system1_iterative_coding_TOOLFUZZ_001",
+    "passed": true,
+    "failures": [
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=23",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system1_iterative_coding_META_001",
+    "passed": true,
+    "failures": [
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=25",
+          "max_turns=15"
         ]
       }
     ]
   },
   {
     "case_id": "system1_iterative_coding_REG_001",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=20"
+          "turn_count=23",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
-    "case_id": "system1_iterative_coding_COV_002",
+    "case_id": "system1_iterative_coding_REQ_002",
     "passed": false,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=20"
+          "turn_count=20",
+          "max_turns=15"
         ]
       },
       {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
+        "code": "MISSING_TOOL_CALL",
+        "message": "Expected tool was not called: write_settled_plan",
         "severity": "medium",
-        "evidence": []
+        "evidence": [
+          "write_settled_plan"
+        ]
       }
     ]
   },
   {
     "case_id": "system1_iterative_coding_R2_001",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=19"
+          "turn_count=22",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
     "case_id": "system1_iterative_coding_R2_002",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=21"
+          "turn_count=24",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
     "case_id": "system1_iterative_coding_R2_003",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=20"
+          "turn_count=24",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
     "case_id": "system1_iterative_coding_R2_004",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=20"
+          "turn_count=24",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
     "case_id": "system1_iterative_coding_R2_005",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=21"
+          "turn_count=23",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -497,27 +223,26 @@
     "passed": false,
     "failures": [
       {
+        "code": "HUMAN_INPUT_REQUESTED",
+        "message": "The target system requested human input during an automated no-human run.",
+        "severity": "high",
+        "evidence": [
+          "|------|--------|",
+          "| Plan Creation | ✅ Done |",
+          "| Manager Approval | ✅ Granted |",
+          "| `write_settled_plan()` | ✅ Executed |",
+          "| Immutability Enforced | ✅ Active |",
+          "The app is ready to run as-is. Simply execute `python3 planner_app.py` to see the full workflow in action.",
+          "Is there anything else you'd like me to review or explain about the code?",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
         "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
+        "message": "The run did not terminate.",
         "severity": "high",
         "evidence": [
-          "turn_count=19"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
+          "turn_count=23"
         ]
       },
       {
@@ -530,81 +255,31 @@
   },
   {
     "case_id": "system1_iterative_coding_R2_007",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=21"
+          "turn_count=22",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
     "case_id": "system1_iterative_coding_R2_008",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=21"
+          "turn_count=23",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "MISSING_TOOL_CALL",
-        "message": "Expected tool was not called: write_settled_plan",
-        "severity": "medium",
-        "evidence": [
-          "write_settled_plan"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: write_latest_iteration_comments",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      },
-      {
-        "code": "TOOL_HALLUCINATION",
-        "message": "Unregistered tool was called: retrieve_latest_iteration",
-        "severity": "high",
-        "evidence": [
-          "retrieve_latest_iteration"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   }

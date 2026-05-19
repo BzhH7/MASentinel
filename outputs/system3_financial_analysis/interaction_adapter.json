@@ -2,9 +2,10 @@
   "prompt_responses": [],
   "isolated_paths": [],
   "risk_notes": [
-    "Entrypoint uses argv input mode with no interactive prompts detected; no prompt-response rules needed.",
-    "No input() calls or interactive prompts found in the provided excerpts; automated evaluation should proceed without interaction.",
-    "Ensure timeout_seconds (75) is sufficient for the financial analysis task; consider increasing if network calls to external APIs are involved."
+    "Entrypoint uses argv for stock_symbol; no interactive input() or stdin prompts detected in run_config or input_call_excerpts.",
+    "No prompt-response rules needed because the program does not issue interactive prompts that require automated responses.",
+    "No isolated paths suggested because the run_config already has empty isolated_paths and no file output or state leakage is indicated.",
+    "Timeout of 75 seconds is configured; if the financial analysis agent chain or model calls exceed this, the test harness will terminate the process, which is  a non-target infrastructure risk."
   ],
   "confidence": 0.95,
   "applied": {

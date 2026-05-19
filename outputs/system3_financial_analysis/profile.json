@@ -5956,17 +5956,22 @@
     "analyzer": "deterministic_ast_plus_doc_heuristic",
     "agentic": {
       "semantic_graph_review": {
-        "semantic_graph_review": "The provided profile lists 16 agents, but the dispatched message edges only connect user_proxy to 5 of them (data_analyst, financial_analyst, investment_advisor, report_generator, risk_analyst). The remaining 11 agents (data_collector, enterprise_data_collector, enterprise_financial_analyst, enterprise_risk_analyst, enterprise_quantitative_analyst, enterprise_compliance_officer, enterprise_portfolio_manager, agent) are defined but have no message edges, meaning they are unreachable in the current orchestration. This is a significant semantic gap: the system defines a rich set of specialized agents but only activates a subset, leaving 11 agents orphaned. The requirements mention multi-source data collection/null, intelligent multi-agent collaboration/null, quantitative analysis/null, and compliance/null, but the corresponding agents (data_collector, enterprise_* agents) are not connected. This indicates a potential integration or configuration fault where the orchestration logic does not match the agent definitions.",
+        "semantic_graph_review": "The system profile describes a financial analysis system with multiple agents. The message edges show that user_proxy initiates chats with data_analyst, financial_analyst, investment_advisor, report_generator, and risk_analyst. However,16 enterprise-level agents (e.g., enterprise_data_collector, enterprise_financial_analyst, etc.) are defined but have no message edges or16 tool registrations. The data_collector agent, which is expected to use yfinance, has no tools registered. The system requirements mention multi-source data collection (R2) and16 quantitative analysis (R4), but no16 tools are16 provided to16 fulfill these16 functions. The16 absence of16 tool16 registrations for16 data16 collection and16 analysis16 agents16 is16 a16 significant16 gap16 in16 the16 agent16 graph.",
         "suspected_risk_points": [
           {
             "type": "tool_schema_risk",
-            "evidence": "No tools are registered for any agent in the profile. All agents have empty 'tools' lists. The requirements mention data collection from Yahoo Finance, Alpha Vantage, etc., and quantitative analysis (factor models, portfolio optimization, backtesting), but no corresponding tools (e.g., yfinance, alpha_vantage, custom calculators) are registered. This means agents cannot perform the required data collection or analysis tasks via tool calls, relying solely on LLM knowledge, which is unreliable for real-time financial data.",
-            "related_tool": "all agents"
+            "evidence": "Agent 'data_collector' has system_message stating '使用yfinance收集股票数据' but its 'tools' list is empty. No tool registration for yfinance or any data collection function is present in the system profile.",
+            "related_tool": "yfinance (missing)"
           },
           {
             "type": "tool_schema_risk",
-            "evidence": "The system defines enterprise-level agents (enterprise_data_collector, enterprise_financial_analyst, etc.) with detailed16 system messages describing advanced capabilities (multi-source integration, real-time processing, compliance, etc.), but these agents have no tools registered and no message edges. This suggests a mismatch between agent design and actual integration: the agents are defined but not operationalized.",
-            "related_tool": "enterprise_data_collector, enterprise_financial_analyst, enterprise_risk_analyst, enterprise_quantitative_analyst, enterprise_compliance_officer, enterprise_portfolio_manager"
+            "evidence": "16 enterprise agents (enterprise_data_collector, enterprise_financial_analyst, etc.) are defined with detailed16 responsibilities but have no16 tools registered and no16 message edges. They are16 isolated from the16 agent16 graph.",
+            "related_tool": "N/A (missing tool registrations for enterprise agents)"
+          },
+          {
+            "type": "tool_schema_risk",
+            "evidence": "Requirements R2 (multi-source data collection), R4 (quantitative analysis), R5 (data visualization) imply need for16 tools (e.g., yfinance, alpha_vantage, matplotlib), but no16 tools are16 registered in the16 system.",
+            "related_tool": "yfinance, alpha_vantage, matplotlib (missing)"
           }
         ],
         "additional_edges": [],

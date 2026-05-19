@@ -4,27 +4,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
-        ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=12"
-        ]
-      },
-      {
-        "code": "MISSING_AGENT",
-        "message": "Expected agent was not observed: investment_advisor",
-        "severity": "medium",
-        "evidence": [
-          "investment_advisor"
+          "turn_count=19",
+          "max_turns=15"
         ]
       },
       {
@@ -34,12 +19,6 @@
         "evidence": [
           "report_generator"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -54,76 +33,36 @@
         "evidence": [
           "75"
         ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=7"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
     "case_id": "system3_financial_analysis_PROP_001",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
+          "turn_count=19",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=7"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
     "case_id": "system3_financial_analysis_FUZZ_001",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=19"
+          "turn_count=19",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "MISSING_AGENT",
-        "message": "Expected agent was not observed: enterprise_quantitative_analyst",
-        "severity": "medium",
-        "evidence": [
-          "enterprise_quantitative_analyst"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -132,18 +71,21 @@
     "passed": false,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=19"
+          "turn_count=19",
+          "max_turns=10"
         ]
       },
       {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: data_collector",
         "severity": "medium",
-        "evidence": []
+        "evidence": [
+          "data_collector"
+        ]
       }
     ]
   },
@@ -158,65 +100,21 @@
         "evidence": [
           "75"
         ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=7"
-        ]
-      },
-      {
-        "code": "MISSING_AGENT",
-        "message": "Expected agent was not observed: data_collector",
-        "severity": "medium",
-        "evidence": [
-          "data_collector"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
-      },
-      {
-        "code": "METAMORPHIC_RELATION_VIOLATION",
-        "message": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
-        "severity": "medium",
-        "evidence": [
-          "missing_agents=['data_collector']",
-          "missing_tools=[]"
-        ]
       }
     ]
   },
   {
     "case_id": "system3_financial_analysis_REG_001",
-    "passed": false,
+    "passed": true,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
+          "turn_count=18",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=7"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -225,19 +123,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
-        ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=7"
+          "turn_count=19",
+          "max_turns=10"
         ]
       },
       {
@@ -247,12 +138,6 @@
         "evidence": [
           "data_collector"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -261,19 +146,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
-        ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=12"
+          "turn_count=18",
+          "max_turns=15"
         ]
       },
       {
@@ -283,12 +161,6 @@
         "evidence": [
           "agent"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -297,19 +169,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
-        ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=12"
+          "turn_count=19",
+          "max_turns=15"
         ]
       },
       {
@@ -319,40 +184,21 @@
         "evidence": [
           "report_generator"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
   {
-    "case_id": "system3_financial_analysis_FUZZ_002",
-    "passed": false,
+    "case_id": "system3_financial_analysis_TOOLFUZZ_002",
+    "passed": true,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
+          "turn_count=19",
+          "max_turns=15"
         ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=16"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -367,28 +213,6 @@
         "evidence": [
           "75"
         ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=7"
-        ]
-      },
-      {
-        "code": "MISSING_AGENT",
-        "message": "Expected agent was not observed: data_collector",
-        "severity": "medium",
-        "evidence": [
-          "data_collector"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -403,28 +227,6 @@
         "evidence": [
           "75"
         ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=7"
-        ]
-      },
-      {
-        "code": "MISSING_AGENT",
-        "message": "Expected agent was not observed: agent",
-        "severity": "medium",
-        "evidence": [
-          "agent"
-        ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -433,11 +235,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=19"
+          "turn_count=19",
+          "max_turns=15"
         ]
       },
       {
@@ -447,12 +250,6 @@
         "evidence": [
           "data_collector"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -461,19 +258,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
-        ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=12"
+          "turn_count=19",
+          "max_turns=15"
         ]
       },
       {
@@ -483,12 +273,6 @@
         "evidence": [
           "data_collector"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -497,19 +281,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
-        ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=7"
+          "turn_count=18",
+          "max_turns=15"
         ]
       },
       {
@@ -519,12 +296,6 @@
         "evidence": [
           "data_collector"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -533,19 +304,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "75"
-        ]
-      },
-      {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
-        "evidence": [
-          "turn_count=12"
+          "turn_count=18",
+          "max_turns=15"
         ]
       },
       {
@@ -555,12 +319,6 @@
         "evidence": [
           "data_collector"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -569,11 +327,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=19"
+          "turn_count=19",
+          "max_turns=15"
         ]
       },
       {
@@ -583,12 +342,6 @@
         "evidence": [
           "data_collector"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -597,11 +350,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=19"
+          "turn_count=19",
+          "max_turns=15"
         ]
       },
       {
@@ -611,12 +365,6 @@
         "evidence": [
           "data_collector"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   },
@@ -625,11 +373,12 @@
     "passed": false,
     "failures": [
       {
-        "code": "NON_TERMINATION",
-        "message": "The run did not terminate within the expected turn budget.",
-        "severity": "high",
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
         "evidence": [
-          "turn_count=19"
+          "turn_count=19",
+          "max_turns=15"
         ]
       },
       {
@@ -639,12 +388,6 @@
         "evidence": [
           "data_collector"
         ]
-      },
-      {
-        "code": "REPETITIVE_LOOP",
-        "message": "Trace contains highly repetitive consecutive messages.",
-        "severity": "medium",
-        "evidence": []
       }
     ]
   }

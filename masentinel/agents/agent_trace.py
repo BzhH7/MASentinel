@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import threading
 import time
 import uuid
 from pathlib import Path
@@ -15,6 +16,7 @@ class AgentTraceLogger:
         self.run_id = run_id or f"agentic_{int(time.time())}_{uuid.uuid4().hex[:8]}"
         self.trace_path = self.out_dir / "agent_trace.jsonl"
         self.usage_path = self.out_dir / "model_usage.json"
+        self._lock = threading.Lock()
         self.trace_path.write_text("", encoding="utf-8")
         self.usage: dict[str, Any] = {
             "run_id": self.run_id,
@@ -54,10 +56,11 @@ class AgentTraceLogger:
             "token_usage": token_usage,
             "error": error,
         }
-        with self.trace_path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(event, ensure_ascii=False) + "\n")
-        self._update_usage(event)
-        write_json(self.usage_path, self.usage)
+        with self._lock:
+            with self.trace_path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(event, ensure_ascii=False) + "\n")
+            self._update_usage(event)
+            write_json(self.usage_path, self.usage)
 
     def _update_usage(self, event: dict[str, Any]) -> None:
         self.usage["total_calls"] += 1

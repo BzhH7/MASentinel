@@ -51,23 +51,23 @@
 
 ## Test Summary
 - Cases: 20
-- Passed process runs: 6
-- Failed/timeout process runs: 14
-- Fault findings: 5
-- Root-cause groups: 1
-- Primary fault findings: 1
+- Passed process runs: 16
+- Failed/timeout process runs: 4
+- Fault findings: 2
+- Root-cause groups: 2
+- Primary fault findings: 2
 - Suspected false positives: 0
 
 ## Coverage
 | Metric | Value |
 |--------|-------|
 | AgentCov | 0.3571 |
-| ToolCov | 1.0000 |
+| ToolCov | N/A |
 | EdgeCov | 0.8000 |
 | ReqCov | 0.5500 |
 | StateCov | 0.4375 |
-| FaultCov | 0.2500 |
-| MASCov | 0.5703 |
+| FaultCov | 0.1667 |
+| MASCov | 0.4597 |
 
 ## Agentic Testing Workflow
 - `RequirementAnalystAgent`
@@ -82,25 +82,25 @@
 
 ## Three-Stage Automation Evidence
 - Human intervention allowed: False
-- Testcase frozen SHA256: `8879b5a7155c31b7e10266053f444703f6dff44c4f33a0d25e69363379b6026e`
+- Testcase frozen SHA256: `029fb90a0ba2c3637cf8d687c87e6decd6d107c86bbd77545cb79baefa811165`
 - Second-round extra cases: 4
-- Non-target issues excluded from target faults: 0
-- Test harness issues excluded from target faults: 0
+- Non-target issues excluded from target faults: 16
+- Test harness issues excluded from target faults: 16
 - Artifacts: `run_manifest.json`, `testcases.generated.json`, `testcases.validated.json`, `oracle_results.json`, `non_target_issues.json`, `test_harness_issues.json`, `faults.json`, `false_positive_audit.json`
 
 ## Testing-Agent Model Usage
-- Total agent calls: 29
-- Successful model calls: 27
+- Total agent calls: 17
+- Successful model calls: 15
 - Fallback calls: 2
-- Estimated input tokens: 244044
-- Estimated output tokens: 11123
+- Estimated input tokens: 66862
+- Estimated output tokens: 6388
 
 | Agent | Calls |
 |-------|-------|
 | CoverageStrategistAgent | 2 |
 | ExecutionMonitorAgent | 1 |
-| FalsePositiveAuditorAgent | 10 |
-| FaultDiagnoserAgent | 10 |
+| FalsePositiveAuditorAgent | 4 |
+| FaultDiagnoserAgent | 4 |
 | InteractionAdapterAgent | 1 |
 | ReportWriterAgent | 1 |
 | RequirementAnalystAgent | 1 |
@@ -110,7 +110,7 @@
 ## Target-System Model Usage
 - Scope: `target_system_subprocess`
 - Traced cases: 20
-- AutoGen model-warning mentions: 32
+- AutoGen model-warning mentions: 26
 - API key envs: `INF_API_KEY_FLASH`
 
 | Target Model | Cases |
@@ -122,30 +122,27 @@
 | `https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1` | 20 |
 
 ## Agentic Analysis
-The MASentinel agentic workflow analyzed the system3_financial_analysis system, which is an AutoGen-based multi-agent financial analysis application. The workflow involved 28 model calls across 8 agent roles, including requirement analysis, system modeling, test design, execution monitoring, fault diagnosis, false positive auditing, and coverage analysis. The system defines 16 agents but only 5 are connected via message edges, leaving 11 agents orphaned/null. No tools are registered for any agent, despite requirements for data collection and quantitative analysis. The workflow identified 5 distinct faults, all related to termination handling and agent routing, with a primary root cause in the AutoGen framework configuration (missing is_termination_msg function and max_turns guard). The coverage analysis shows agent coverage of 35.71%, tool coverage of 100% (no tools to cover), message edge coverage of 80%, and requirement coverage of 55%.
+系统基于AutoGen框架构建了金融分析多智能体系统，包含14个智能体（如data_collector、financial_analyst、risk_analyst等）和20项需求。测试过程中，user_proxy与data_analyst、financial_analyst、investment_advisor、risk_analyst、report_generator等5个智能体建立了消息边，但data_collector及16个企业级智能体未参与消息交互。共检测到2个主要故障：1个非终止故障（SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001）和1个错误路由故障（SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002），后者实际根因为data_collector缺少yfinance工具注册导致数据缺失。模型调用共16次，成功14次，失败2次，总输入token约56979，输出token约5606。
 
-The agentic workflow successfully identified a critical framework-level fault (SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001) that cascades to 4 other faults, affecting 14 test cases. The primary fault is a missing termination condition in the AutoGen configuration, which causes non-termination and timeout across multiple test scenarios. The workflow also identified an application-layer agent routing defect where the data_collector agent is never invoked despite being defined. The fault diagnosis achieved high confidence (0.82-0.90) for all identified faults, and the false positive audit confirmed all faults as genuine with low false positive risk. However, the coverage analysis reveals significant gaps: only 5 of 16 agents were visited (35.71% agent coverage), and 11 orphan agents remain untested. The requirement coverage of 55% indicates that many documented requirements (R11-R20) were not exercised. The fault mode coverage of 25% suggests that only 3 of 12 possible fault modes were detected. The overall MASCov score of 0.5703 indicates moderate coverage but significant room for improvement.
+测试覆盖了35.71%的智能体（5/14）、80%的消息边（4/5条已定义边）、55%的需求（11/20）和43.75%的状态（7/16）。故障模式覆盖率为16.67%（2/12），仅检测到非终止和错误路由两类故障。主要故障SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001（非终止）置信度0.82，证据充分，影响多个测试用例；SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002（错误路由）置信度0.25，经审计确认为工具缺失导致的真实故障，置信度提升至0.85。整体MASCov覆盖率为0.4597，表明测试在智能体交互和需求覆盖方面表现中等，但在工具注册、企业级智能体集成和故障模式多样性方面存在明显不足。
 
-False positive analysis: The false positive auditor reviewed all 5 faults and confirmed them as genuine software defects with low false positive risk (confidence 0.85-0.95). The primary fault (SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001) is clearly an AutoGen framework configuration issue: no is_termination_msg function is registered, causing the 'TERMINATE' keyword to be ignored, and no max_turns guard is set. This is a software defect that can be fixed by modifying the AutoGen setup code, not a model service or test framework issue. The cascading faults (FAULT_002 through FAULT_005) are all symptoms of the same root cause or related agent routing defects. The auditor noted that the system log shows data collection steps were executed, but no agent named 'data_collector' appears in MAS_TRACE events, confirming an application-layer agent registration/routing defect. No false positives were identified among the 5 faults.
+False positive analysis: SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002初始检测为'Expected agent was not observed: data_collector'，置信度0.72，但经FalsePositiveAuditorAgent审计后确认为真实故障，误报风险低（置信度0.85）。根因是data_collector智能体缺少yfinance工具注册，导致返回空数据，而非智能体未被路由。日志显示'开始收集 AAPL 的数据...'和'成功收集 AAPL 的数据'，证明智能体存在且被调用，但输出'数据缺失'表明工具缺失。该故障可通过注册工具修复，不属于模型能力或测试框架问题。其他故障未发现误报风险。
 
 Agent-proposed next steps:
-- Fix the primary termination condition fault: Register an is_termination_msg function in the AutoGen agent configuration that checks for 'TERMINATE' keyword, set human_input_mode='NEVER', and add max_turns/max_round parameter to enforce a hard limit on conversation turns.
-- Fix the agent routing defect: Modify simple_autogen_system.py to include data_collector in the group chat and ensure the speaker selection logic routes data collection requests to data_collector before financial_analyst.
-- Connect orphan agents: Integrate the 11 unconnected agents (enterprise_data_collector, enterprise_financial_analyst, enterprise_risk_analyst, enterprise_quantitative_analyst, enterprise_compliance_officer, enterprise_portfolio_manager, data_collector, report_generator, agent) into the message flow by adding appropriate message edges and orchestration logic.
-- Register tools for agents: Add tool registrations for data collection (yfinance, alpha_vantage), financial analysis (ratio calculators), risk analysis (VaR calculators), and quantitative analysis (portfolio optimizers) to enable agents to perform their designated functions via tool calls rather than relying solely on LLM knowledge.
-- Expand test coverage: Design additional test cases to cover the remaining 11 orphan agents, uncovered requirements (R11-R20), and additional fault modes (tool_schema_error, hallucinated_tool, etc.) to improve the MASCov score beyond 0.5703.
-- Add metamorphic regression tests: Implement tests that verify agent presence for equivalent inputs to prevent future agent routing regressions.
-- Validate the fixes by re-running the affected test cases (system3_financial_analysis_COV_001 through COV_003, META_001, and all REQ_* cases) to confirm termination and agent routing work correctly.
+- 为data_collector智能体注册yfinance工具，修复数据收集功能缺失问题（影响12个测试用例）
+- 配置is_termination_msg检查函数，确保识别TERMINATE关键字，并设置max_turns强制限制，解决非终止故障
+- 将16个企业级智能体（enterprise_data_collector等）集成到消息图中，建立与user_proxy或其他智能体的交互边
+- 扩展测试用例以覆盖更多故障模式（如工具调用失败、状态异常、数据格式错误等），当前仅覆盖2/12种故障模式
+- 增加对工具注册、智能体间消息传递和需求R12-R20的测试覆盖，提升整体MASCov覆盖率
+- 修复3个语法错误文件（src/api/routes.py、src/monitoring/logging_system.py、tests/test_data.py），确保系统可正常运行
 
 ## Fault Summary
 
 ### Root-Cause Groups
-- `interaction:timeout-or-non-termination` Conversation timeout or missing termination guard primary=`SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001` cases=20 symptoms=4
+- `generic:autogen_framework-wrong-agent-routing-data_collector-agent-is-likely-0-tool-registered-yfinance-missing-so-it-returns-em` Wrong Agent Routing primary=`SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002` cases=12 symptoms=0
+- `interaction:timeout-or-non-termination` Conversation timeout or missing termination guard primary=`SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001` cases=4 symptoms=0
 - `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001` `system3_financial_analysis_COV_001` autogen_framework / Non-Termination / high / primary: The process exceeded the configured timeout.
-- `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002` `system3_financial_analysis_COV_001` autogen_framework / Termination Condition Error / high / derived from `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001`: The run did not terminate within the expected turn budget.
-- `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003` `system3_financial_analysis_COV_001` autogen_framework / Speaker Selection Error / high / derived from `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001`: Trace contains highly repetitive consecutive messages.
-- `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004` `system3_financial_analysis_COV_002` application / Wrong Agent Routing / high / derived from `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001`: Expected agent was not observed: data_collector
-- `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005` `system3_financial_analysis_META_001` application / addressed_agent_mismatch / medium / derived from `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001`: Equivalent metamorphic inputs did not preserve expected routing/tool relation.
+- `SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002` `system3_financial_analysis_COV_002` autogen_framework / Wrong Agent Routing / medium / primary: Expected agent was not observed: data_collector
 
 ## Suspected False Positives
 Findings with confidence below 0.65 are marked as suspected false positives. Missing-agent and missing-edge findings can be caused by limited instrumentation when a target system does not emit MASentinel trace events.

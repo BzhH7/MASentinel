@@ -11,20 +11,20 @@
     "ReportWriterAgent"
   ],
   "model_usage": {
-    "run_id": "agentic_1779181957_7d7ce2e9",
-    "total_calls": 39,
-    "successful_calls": 35,
-    "fallback_calls": 4,
-    "failed_calls": 4,
+    "run_id": "agentic_1779193655_41c0f4db",
+    "total_calls": 16,
+    "successful_calls": 16,
+    "fallback_calls": 0,
+    "failed_calls": 0,
     "by_agent": {
       "RequirementAnalystAgent": 1,
       "SystemModelingAgent": 1,
       "InteractionAdapterAgent": 1,
       "TestDesignerAgent": 2,
       "ExecutionMonitorAgent": 1,
-      "FaultDiagnoserAgent": 15,
-      "FalsePositiveAuditorAgent": 15,
-      "CoverageStrategistAgent": 2,
+      "FaultDiagnoserAgent": 4,
+      "FalsePositiveAuditorAgent": 4,
+      "CoverageStrategistAgent": 1,
       "ReportWriterAgent": 1
     },
     "by_purpose": {
@@ -33,85 +33,85 @@
       "plan_interaction_adapter": 1,
       "generate_testcases": 2,
       "summarize_execution": 1,
-      "diagnose_fault": 15,
-      "audit_false_positive": 15,
-      "analyze_coverage_gaps": 2,
+      "diagnose_fault": 4,
+      "audit_false_positive": 4,
+      "analyze_coverage_gaps": 1,
       "write_report_narrative": 1
     },
     "by_model": {
-      "ds-v4-pro": 39
+      "ds-v4-pro": 16
     },
     "estimated_tokens": {
-      "input_tokens": 90176,
-      "output_tokens": 10818
+      "input_tokens": 46969,
+      "output_tokens": 7088
     }
   },
   "target_model_usage": {
     "scope": "target_system_subprocess",
     "note": "Target-system LLM calls run inside the evaluated subprocess and are not routed through MASentinel ModelClient, so this is evidence from injected environment metadata and captured stdout/stderr.",
-    "cases": 20,
+    "cases": 16,
     "by_model": {
-      "ds-v4-flash": 20
+      "ds-v4-flash": 16
     },
     "by_base_url": {
-      "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1": 20
+      "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1": 16
     },
     "target_api_key_envs": [
       "INF_API_KEY_FLASH"
     ],
-    "stdout_model_mentions": 42,
+    "stdout_model_mentions": 91,
     "stderr_model_mentions": 0,
-    "autogen_model_warning_count": 42,
+    "autogen_model_warning_count": 91,
     "case_summaries": [
       {
         "case_id": "system2_research_agents_COV_001",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 9,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 9
+      },
+      {
+        "case_id": "system2_research_agents_COV_002",
         "status": "passed",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 7,
+        "stdout_model_mentions": 1,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 7
-      },
-      {
-        "case_id": "system2_research_agents_COV_002",
-        "status": "failed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 1
       },
       {
         "case_id": "system2_research_agents_COV_003",
-        "status": "failed",
+        "status": "timeout",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 8,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 8
       },
       {
         "case_id": "system2_research_agents_FUZZ_001",
-        "status": "failed",
+        "status": "passed",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 2,
+        "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 2
+        "autogen_model_warning_count": 3
       },
       {
         "case_id": "system2_research_agents_META_001",
-        "status": "failed",
+        "status": "timeout",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 14,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 14
       },
       {
         "case_id": "system2_research_agents_PROP_001",
@@ -135,13 +135,13 @@
       },
       {
         "case_id": "system2_research_agents_REG_001",
-        "status": "failed",
+        "status": "timeout",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 5,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 5
       },
       {
         "case_id": "system2_research_agents_REQ_001",
@@ -149,9 +149,9 @@
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 14,
+        "stdout_model_mentions": 10,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 14
+        "autogen_model_warning_count": 10
       },
       {
         "case_id": "system2_research_agents_REQ_002",
@@ -165,33 +165,33 @@
       },
       {
         "case_id": "system2_research_agents_REQ_003",
-        "status": "failed",
+        "status": "passed",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 2,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 2
       },
       {
         "case_id": "system2_research_agents_REQ_004",
-        "status": "failed",
+        "status": "timeout",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 1,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 1
       },
       {
         "case_id": "system2_research_agents_REQ_005",
-        "status": "failed",
+        "status": "passed",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 10,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 10
       },
       {
         "case_id": "system2_research_agents_REQ_006",
@@ -205,71 +205,161 @@
       },
       {
         "case_id": "system2_research_agents_TOOLFUZZ_001",
-        "status": "failed",
+        "status": "timeout",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 26,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 26
       },
       {
         "case_id": "system2_research_agents_TOOLFUZZ_002",
-        "status": "failed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
-      },
-      {
-        "case_id": "system2_research_agents_R2_001",
         "status": "timeout",
         "target_model": "ds-v4-flash",
         "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
         "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 8,
+        "stdout_model_mentions": 2,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 8
-      },
-      {
-        "case_id": "system2_research_agents_R2_002",
-        "status": "timeout",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 4
-      },
-      {
-        "case_id": "system2_research_agents_R2_003",
-        "status": "timeout",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 4
-      },
-      {
-        "case_id": "system2_research_agents_R2_004",
-        "status": "timeout",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 3,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
+        "autogen_model_warning_count": 2
       }
     ]
   },
-  "non_target_issues": [],
-  "test_harness_issues": [],
+  "non_target_issues": [
+    {
+      "case_id": "system2_research_agents_FUZZ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_PROP_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_REQ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=28",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_REQ_005",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=29",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    }
+  ],
+  "test_harness_issues": [
+    {
+      "case_id": "system2_research_agents_FUZZ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_PROP_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_REQ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=28",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_REQ_005",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=29",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    }
+  ],
   "run_manifest": {
-    "run_id": "system2_research_agents_2026-05-19T09:12:37.752755+00:00",
-    "start_time": "2026-05-19T09:12:37.752770+00:00",
+    "run_id": "system2_research_agents_2026-05-19T12:27:35.665621+00:00",
+    "start_time": "2026-05-19T12:27:35.665717+00:00",
     "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system2.yaml",
     "config_hash": "c23a71e993bbeafc1ac0789e45454e1e243c6d051d3ed965c5ee8f99a2e7da19",
     "code_snapshot_hash": "bf309e6f5b2a651789a56a09c82a42b9851ab6f0c05b1b6a358fd2d041610ee9",
@@ -277,36 +367,41 @@
     "human_intervention_allowed": false,
     "entry_command": "scripts/run_with_api_md.py --config configs/all_systems.yaml",
     "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
-    "pid": 60055
+    "pid": 70592
   },
-  "testcases_frozen_sha256": "8fa8d73642aa4cf43261abe2751ce1fc31d9668590c62a5659e39bbce2371f79",
+  "testcases_frozen_sha256": "41184ba93b9c2a8e34ea7365d0efc06d6a930a1adf59b1e11df5d6ef168e18c6",
   "human_intervention_allowed": false,
   "semantic_graph_review": {
-    "semantic_graph_review": "The message edges are all marked as 'GroupChat potential route', which is consistent with the use of autogen.GroupChat where any agent can speak to any other agent. The agent-tool links match the requirements: researcher has web_scraping and google_search, director has get_airtable_records and update_single_airtable_record. The user_proxy initiates chat with group_chat_manager, which is correct. No missing or spurious edges detected based on the provided profile.",
+    "semantic_graph_review": "The message edges are derived from a GroupChat configuration, which allows any agent to send messages to any other agent. This is semantically correct for a fully connected group chat. The13 edges listed cover all possible pairwise routes among user_proxy, researcher, research_manager, and director, plus the user_proxy->group_chat_manager edge for chat initiation. No missing or spurious edges are detected based on the GroupChat pattern. The agent-tool bindings match the requirements: researcher has web_scraping and google_search; director has get_airtable_records and update_single_airtable_record. The group_chat_manager and user_proxy have no tools, which is expected. The termination conditions include TERMINATE, max_turns, and process_exit, aligning with AutoGen's default behavior.",
     "suspected_risk_points": [
       {
         "type": "tool_schema_risk",
-        "evidence": "The tool functions (web_scraping, google_search, get_airtable_records, update_single_airtable_record) have no signature, docstring, or parameters defined in the profile. This suggests they may be registered without proper type annotations or descriptions, which can cause AutoGen's function calling to fail or produce invalid arguments.",
+        "evidence": "The tool functions (web_scraping, google_search, get_airtable_records, update_single_airtable_record) have no signature, docstring, or parameters defined in the profile. In the source file app.py, these functions are registered with GPTAssistantAgent, which requires a valid JSON schema for function calling. If the schema is missing or malformed, the assistant may fail to call the tools or produce invalid arguments, violating R2 and R3.",
         "related_tool": "web_scraping, google_search, get_airtable_records, update_single_airtable_record"
       },
       {
-        "type": "tool_schema_risk",
-        "evidence": "The profile lists a 'summary' function in raw_notes.functions but it is not registered as a tool for any agent. If it is intendedood to be used, it is missing from the tool list; if not, it is dead code.",
-        "related_tool": "summary"
+        "type": "agent_configuration_risk",
+        "evidence": "The researcher and director agents are GPTAssistantAgent instances. GPTAssistantAgent relies on OpenAI's Assistants API, which requires specific tool registration (e.g., using assistant.add_function) and may have different behavior than standard function calling. If the tools are not properly registered with the assistant's schema, the agents may not be able to invoke them, violating R3.",
+        "related_tool": "web_scraping, google_search, get_airtable_records, update_single_airtable_record"
+      },
+      {
+        "type": "termination_risk",
+        "evidence": "The group chat manager uses the default AutoGen speaker selection method (auto), which may cause infinite loops if no agent sends a TERMINATE message or if the conversation does not converge. The max_turns limit is configured but its value is not specified in the profile. If max_turns is too high or not set, the system may hang, violating R5.",
+        "related_tool": "N/A"
       }
     ],
     "additional_edges": [],
-    "confidence": 0.8
+    "confidence": 0.85
   },
   "interaction_adapter": {
     "prompt_responses": [],
     "isolated_paths": [],
     "risk_notes": [
-      "Entrypoint app.py is a Gradio web UI (gradio.Blocks.launch), not a CLI with stdin prompts. Automated evaluation via stdin is not applicable; the system requires browser-based interaction or Gradio API calls.",
-      "No input() calls or stdin-based prompts found in the entrypoint or run_config; the current run_config.input_mode is 'stdin' but Gradio does not read from stdin.",
-      "If the evaluation framework cannot drive Gradio's API (e.g., /api/predict), 45-second timeout may be insufficient for model inference and Gradio startup."
+      "Entrypoint app.py likely starts a Gradio web UI (common in research-agents-3.0), which requires a browser and human interaction; automated stdin-based evaluation is not feasible without modifying the app to expose a CLI or API.",
+      "No input() calls or stdin prompts found in the provided excerpts, suggesting the app may block waiting for HTTP requests or Gradio events, leading to timeout in a stdin-based run.",
+      "If the app writes output files or logs, they may be written to the current working directory; consider isolating per-case working directories if multiple cases are run sequentially."
     ],
-    "confidence": 0.95,
+    "confidence": 0.7,
     "applied": {
       "added_prompt_responses": [],
       "added_isolated_paths": []
@@ -316,23 +411,13 @@
     "coverage_gaps": [
       {
         "gap_type": "missing_tool_coverage",
-        "target": "summary",
-        "suggested_test_intent": "Verify that the 'summary' function (listed in raw_notes.functions but not registered as a tool for any agent) is either intentionally dead code or should be registered and tested. If intended for use, register it for an agent (e.g., researcher) and create a test that invokes it with 2-3 sentences of text and checks for a concise summary output."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
         "target": "update_single_airtable_record",
-        "suggested_test_intent": "Test update_single_airtable_record with invalid or missing record ID to verify error handling and ensure the agent does not crash or fabricate a success response."
+        "suggested_test_intent": "Design a test that explicitly requires the director agent to call update_single_airtable_record with valid arguments (e.g., updating a specific record field) and verify the call succeeds without crashing. This addresses the gap where the tool is registered and covered in requirement tests but has no dedicated coverage-guided test exercising its invocation with valid arguments."
       },
       {
         "gap_type": "missing_tool_coverage",
         "target": "get_airtable_records",
-        "suggested_test_intent": "Test get_airtable_records with an empty or non-existent table name to verify error handling and ensure the agent returns a diagnostic message instead of crashing."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
-        "target": "google_search",
-        "suggested_test_intent": "Test google_search with an empty query string to verify error handling and ensure the agent does not crash or fabricate results."
+        "suggested_test_intent": "Design a test that explicitly requires the director agent to call get_airtable_records with valid arguments (e.g., fetching records from a specific base/table) and verify the call succeeds without crashing. Although the tool is covered in requirement testsoro and a fuzz test, there is no dedicated coverage-guided test for valid-argument invocation."
       }
     ],
     "new_test_requests": [],
@@ -341,11 +426,9 @@
   "second_round": {
     "enabled": true,
     "target_mascov": 0.8,
-    "initial_mascov": 0.69,
-    "extra_cases": 4,
-    "reason": "coverage_below_target",
-    "extra_traces": 4,
-    "initial_failed": 10
+    "initial_mascov": 0.8333,
+    "extra_cases": 0,
+    "reason": "target_reached"
   },
   "trace_graph": {
     "nodes": 7,
@@ -354,119 +437,69 @@
   "flaky_report": {
     "history": {
       "system2_research_agents_COV_001": [
-        "failed",
-        "passed"
+        "timeout"
       ],
       "system2_research_agents_COV_002": [
-        "failed",
-        "failed"
+        "passed"
       ],
       "system2_research_agents_COV_003": [
-        "failed",
-        "failed"
-      ],
-      "system2_research_agents_COV_004": [
-        "failed"
-      ],
-      "system2_research_agents_COV_005": [
-        "failed"
-      ],
-      "system2_research_agents_COV_006": [
-        "failed"
-      ],
-      "system2_research_agents_COV_007": [
-        "failed"
-      ],
-      "system2_research_agents_COV_008": [
-        "failed"
-      ],
-      "system2_research_agents_COV_009": [
-        "failed"
+        "timeout"
       ],
       "system2_research_agents_FUZZ_001": [
-        "failed",
-        "failed"
+        "passed"
       ],
       "system2_research_agents_META_001": [
-        "failed",
-        "failed"
+        "timeout"
       ],
       "system2_research_agents_PROP_001": [
-        "passed",
         "passed"
-      ],
-      "system2_research_agents_REG_001": [
-        "failed",
-        "failed"
-      ],
-      "system2_research_agents_REQ_001": [
-        "passed",
-        "passed"
-      ],
-      "system2_research_agents_REQ_002": [
-        "failed",
-        "passed"
-      ],
-      "system2_research_agents_TOOLFUZZ_001": [
-        "failed",
-        "failed"
       ],
       "system2_research_agents_PROP_002": [
         "passed"
       ],
+      "system2_research_agents_REG_001": [
+        "timeout"
+      ],
+      "system2_research_agents_REQ_001": [
+        "passed"
+      ],
+      "system2_research_agents_REQ_002": [
+        "passed"
+      ],
       "system2_research_agents_REQ_003": [
-        "failed"
+        "passed"
       ],
       "system2_research_agents_REQ_004": [
-        "failed"
+        "timeout"
       ],
       "system2_research_agents_REQ_005": [
-        "failed"
+        "passed"
       ],
       "system2_research_agents_REQ_006": [
         "passed"
       ],
+      "system2_research_agents_TOOLFUZZ_001": [
+        "timeout"
+      ],
       "system2_research_agents_TOOLFUZZ_002": [
-        "failed"
-      ],
-      "system2_research_agents_R2_001": [
-        "timeout"
-      ],
-      "system2_research_agents_R2_002": [
-        "timeout"
-      ],
-      "system2_research_agents_R2_003": [
-        "timeout"
-      ],
-      "system2_research_agents_R2_004": [
         "timeout"
       ]
     },
-    "flaky_cases": {
-      "system2_research_agents_COV_001": [
-        "failed",
-        "passed"
-      ],
-      "system2_research_agents_REQ_002": [
-        "failed",
-        "passed"
-      ]
-    },
-    "flaky_count": 2
+    "flaky_cases": {},
+    "flaky_count": 0
   },
   "report_narrative": {
-    "agentic_workflow_summary": "本次运行针对 system2_research_agents 系统执行了完整的 MASentinel 自动化测试流程。系统包含 5 个 Agent（user_proxy, researcher, research_manager, director, group_chat_manager）和 4 个工具（web_scraping, google_search, get_airtable_records, update_single_airtable_record）。测试覆盖了所有 5 个需求（R1-R5），访问了 8 个 Agent，调用了全部 4 个工具，覆盖了 9 种状态和 6 种故障模式。共产生 20 条规则结果，诊断出 8 个唯一故障（FAULT_001 至 FAULT_008），其中 2 个被确认为真实故障（FAULT_004 和 FAULT_008），其余 6 个被审计为误报。模型使用方面，共调用 38 次 ds-v4-pro 模型，成功 34 次，失败 4 次，fallback 4 次，主要用于故障诊断（15 次）和误报审计（15 次）。",
-    "effectiveness_analysis": "本次测试在故障检测方面表现出较高的覆盖率（agent_coverage=1.0, tool_coverage=1.0, requirement_coverage=1.0），但 message_edge_coverage 为 0.0，state_coverage 为 0.5625，fault_mode_coverage 为 0.5，整体 mascov 为 0.69。检测到的 8 个故障中，2 个为真实故障（FAULT_004: 未处理的 TimeoutError 导致运行时崩溃；FAULT_008: 缺少终止条件导致超时），其余 6 个为误报（主要因 oracle 阈值过严、命名不匹配或外部服务超时导致）。真实故障均属于 AutoGen 框架层问题，可通过修改配置或添加错误处理来缓解。误报率较高（6/8=75%），主要源于 oracle 的 max_turns 阈值设置过紧（20 或 15）以及 agent 命名不一致（group_chat_manager vs chat_manager）。测试有效性中等，需要优化 oracle 规则以减少误报。",
-    "false_positive_analysis": "在 8 个故障中，6 个被审计为误报（FAULT_001, FAULT_002, FAULT_003, FAULT_005, FAULT_006, FAULT_007），误报率 75%。主要原因包括：(1) Oracle 阈值过严：FAULT_001 和 FAULT_003 因 turn_count 超过 max_turns（23>20）被误判为 NON_TERMINATION 和 REPETITIVE_LOOP，但实际对话已正常终止；(2) 外部服务超时导致的级联误报：FAULT_005 和 FAULT_006 因 OpenAI API TimeoutError 导致工作流中断，进而触发 MISSING_MESSAGE_EDGE 和 METAMORPHIC_RELATION_VIOLATION，根源为基础设施问题而非软件缺陷；(3) 命名不一致：FAULT_007 因系统使用 'chat_manager' 而 oracle 期望 'group_chat_manager'，导致 MISSING_AGENT 误报；(4) 日志缺失：FAULT_002 因 trace 中无工具调用日志，oracle 无法确认 google_search 是否被调用，但测试本身已通过。这些误报均不涉及应用代码或 AutoGen 框架的实际缺陷，建议调整 oracle 阈值、统一命名规范并增强日志记录。",
+    "agentic_workflow_summary": "本次自动化测试运行基于 deterministic AST + 文档启发式分析构建的 profile，对 research-agents-3.0 系统进行了覆盖测试。测试覆盖了全部 5 个 agent、4 个工具、13 条消息边和 5 项需求，状态覆盖率为 62.5%，故障模式覆盖率为 33.3%。共发现 4 个故障，其中 一枝 2 个被确认为真实故障（SYSTEM2_RESEARCH_AGENTS_FAULT_002 和 SYSTEM2_RESEARCH_AGENTS_FAULT_004），2 个被判定为疑似误报（SYSTEM2_RESEARCH_AGENTS_FAULT_001 和 SYSTEM2_RESEARCH_AGENTS_FAULT_003）。模型使用方面，共调用 15 次 ds-v4-pro 模型，全部成功，无 fallback 或失败，估计消耗输入 token 39834、输出 token 6182。",
+    "effectiveness_analysis": "本次测试在 agent/tool/消息边/需求覆盖率上均达到 100%，但状态覆盖率仅 62.5%，故障模式覆盖率仅 33.3%，说明测试用例在覆盖正常路径和部分异常路径方面有效，但在覆盖更多运行时状态（如 conflicting_instruction、metamorphic_relation、property_boundary）和故障模式（如 tool_schema_error、agent_configuration_error）方面存在不足。已确认的两个真实故障（FAULT_002 和 FAULT_004）均与 speaker_selection_agent 的响应解析和循环控制缺陷相关，属于框架层和应用层逻辑错误，诊断准确且修复建议具体。两个疑似误报（FAULT_001 和 FAULT_003）经审计后认为更可能是模型服务行为或测试覆盖缺口导致，而非软件缺陷，降低了误报对后续修复的干扰。整体上，测试流程有效识别了关键的非终止和解析错误，但需扩展测试用例以提升状态和故障模式覆盖率。",
+    "false_positive_analysis": "共 2 个故障被标记为疑似误报。FAULT_001（Human Input Mode Error）的 trace 中未发现实际 human input 提示或阻塞调用，超时更可能由模型服务返回空内容导致，属于基础设施/模型服务问题，非应用或框架配置故障，误报风险高。FAULT_003（Message Routing Error）的测试已正常通过，缺失的 director->research_manager 边是模型决策行为导致的覆盖缺口，无证据表明框架路由失败，误报风险高。两个误报均经 FalsePositiveAuditorAgent 审计并给出详细理由，置信度分别为 0.85 和 0.9，有效避免了将非软件缺陷误判为目标故障。",
     "next_steps": [
-      "调整测试 oracle 的 max_turns 阈值：将 system2_research_agents_COV_001 等用例的 max_turns 从 20 提高到 25 或 30，以匹配实际工作流的正常耗时。",
-      "统一 Agent 命名：将 oracle 中的 'group_chat_manager' 改为 'chat_manager'，或在系统配置中将 agent 名称改为 'group_chat_manager'，消除命名不一致导致的误报。",
-      "增强工具调用日志：在 app.py 中添加工具调用的显式日志输出，确保 MASentinel 能准确捕获 google_search 等工具的调用情况，避免因日志缺失导致的 MISSING_TOOL_CALL 误报。",
-      "添加 API 超时处理：在 app.py 或 AutoGen 配置中添加 try-except 块捕获 TimeoutError，实现重试或优雅降级，修复 FAULT_004 的真实故障。",
-      "完善终止条件：在 GroupChat 配置中设置 human_input_mode='NEVER'，添加 is_termination_msg 检查，并设置 max_round 参数，修复 FAULT_008 的真实故障。",
-      "优化 oracle 规则：对 MISSING_MESSAGE_EDGE 和 METAMORPHIC_RELATION_VIOLATION 规则增加前置条件检查（如确认无 TimeoutError），减少因外部服务中断导致的级联误报。"
+      "修复 FAULT_002：在 speaker_selection_agent 的调用逻辑中增加最大重试次数和 fallback 机制，例如连续 3 次空响应后默认选择 'user_proxy' 或 'director'，并在 GroupChat 配置中设置合理的 max_turns 作为兜底。",
+      "修复 FAULT_004：在 checking_agent 的 speaker 验证逻辑中增加字符串归一化处理（去除空白字符和已知前缀如 'response'），或修改 speaker_selection_agent 的 prompt 强制输出纯 speaker 名称。",
+      "扩展测试用例以覆盖更多状态和故障模式：针对 tool_schema_risk 和 agent_configuration_risk 设计异常参数测试（如无效 JSON、缺失必填字段），覆盖 conflicting_instruction、metamorphic_relation、property_boundary 等状态。",
+      "优化测试 oracle 和覆盖率目标：对 FAULT_003 类缺失边问题，调整 oracle 为接受间接通信或增加强制路由的 prompt；对 FAULT_001 类超时问题，增加模型服务健康检查或重试机制，避免误判。",
+      "在 CI/CD 中集成自动化测试，并设置 max_turns 和 timeout 阈值，确保回归测试能及时发现 speaker selection 循环和解析错误。"
     ],
-    "confidence": 0.85
+    "confidence": 0.9
   },
-  "fallback_calls": 4
+  "fallback_calls": 0
 }

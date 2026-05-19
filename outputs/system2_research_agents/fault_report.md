@@ -2,147 +2,100 @@
 
 ## Root-Cause Groups
 
-### generic:autogen_framework-wrong-agent-routing-the-agent-name-in-the-trace-is-chat_manager-while-the-oracle-expects-group_chat_ma
-- Title: Wrong Agent Routing
-- Primary Fault: `SYSTEM2_RESEARCH_AGENTS_FAULT_007`
-- Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_007`
+### generic:autogen_framework-message-routing-error-the-collected-trace-does-not-contain-a-direct-director--research_manager-message
+- Title: Message Routing Error
+- Primary Fault: `SYSTEM2_RESEARCH_AGENTS_FAULT_003`
+- Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_003`
 - Symptom Fault IDs: None
-- Affected Cases: 2
-- Failure Codes: MISSING_AGENT
-- Root Cause: The agent name in the trace is 'chat_manager' while the oracle expects 'group_chat_manager'. This is likely a naming mismatch in the test oracle or a configuration alias, not a genuine routing fault. The test passed and the conversation terminated correctly within the max_turns boundary.
-- Suggested Fix: Align the agent name in the test oracle with the actual agent name used in the system (e.g., change 'group_chat_manager' to 'chat_manager' in the oracle's must_visit_agents list) or update the system configuration to use the name 'group_chat_manager' if that is the intended design. No code logic change is required.
+- Affected Cases: 1
+- Failure Codes: MISSING_MESSAGE_EDGE
+- Root Cause: The collected trace does not contain a direct director->research_manager message. The test passed (no crash, terminated), but the required edge was not observed. This is likely because the director agent chose not to send a  message to research_manager in this run, or the  model's response did not trigger that pathospan. There is no indication of a framework routing failure.
+- Suggested Fix: This is a likely false positive for a software fault. To improve coverage, consider adding a more specific prompt that forces director to delegate to research_manager, or adjust the test oracle to accept indirect communication via chat_manager. If a direct edge is required, review the agent configuration and  model instructions to ensure the director is prompted to send a message to research_manager.
+
+### interaction:human-input-or-approval
+- Title: Unattended run blocked by human input or approval
+- Primary Fault: `SYSTEM2_RESEARCH_AGENTS_FAULT_001`
+- Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_001`
+- Symptom Fault IDs: None
+- Affected Cases: 1
+- Failure Codes: HUMAN_INPUT_REQUESTED
+- Root Cause: The AutoGen framework's human_input_mode was not set to 'NEVER' for the automated test run, causing the system to block and wait for human input, which led to a timeout.
+- Suggested Fix: In the test harness or agent configuration, explicitly set human_input_mode='NEVER' for all agents involved in automated execution. Ensure no blocking input() calls are present in the execution path. For example, in the GroupChat or agent initialization, set the parameter human_input_mode='NEVER'.
 
 ### interaction:timeout-or-non-termination
 - Title: Conversation timeout or missing termination guard
-- Primary Fault: `SYSTEM2_RESEARCH_AGENTS_FAULT_001`
-- Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_001`, `SYSTEM2_RESEARCH_AGENTS_FAULT_002`, `SYSTEM2_RESEARCH_AGENTS_FAULT_003`, `SYSTEM2_RESEARCH_AGENTS_FAULT_008`
-- Symptom Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_002`, `SYSTEM2_RESEARCH_AGENTS_FAULT_003`, `SYSTEM2_RESEARCH_AGENTS_FAULT_008`
-- Affected Cases: 20
-- Failure Codes: MISSING_TOOL_CALL, NON_TERMINATION, REPETITIVE_LOOP, TIMEOUT
-- Root Cause: The fault report is likely a false positive for NON_TERMINATION. The trace shows the conversation terminated successfully with explicit TERMINATE messages. The turn_count of 23 exceeds the oracle's max_turns of 20, which may have triggered the fault detection, but this is an oracle threshold violation (performance/constraint issue), not a non-termination fault. The actual termination mechanism (is_termination_msg or max_turns) appears to be working, as the conversation ended with TERMINATE messages.
-- Suggested Fix: If the issue is consistently exceeding max_turns, consider increasing the oracle's max_turns threshold to 25 or 30 for this workflow, or optimize the agent conversation to reduce turns. If the termination condition is indeed unreliable in other cases (as suggested by duplicate faults), review the is_termination_msg function and max_turns setting in the AutoGen configuration. However, based on the provided trace, no code fix is required for this specific case.
+- Primary Fault: `SYSTEM2_RESEARCH_AGENTS_FAULT_002`
+- Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_002`
+- Symptom Fault IDs: None
+- Affected Cases: 7
+- Failure Codes: TIMEOUT
+- Root Cause: The speaker selection agent (speaker_selection_agent) is repeatedly returning empty responses without selecting a valid speaker from the allowed list. The checking_agent then re-prompts with the same instructions, creating an infinite loop. This is a framework-level issue because the speaker selection mechanism (likely a custom AutoGen speaker selection function or agent) does not handle the case where the model returns an empty or invalid response, and there is no fallback or max retry limit to break the cycle.
+- Suggested Fix: 1. Add a max retry limit in the speaker selection logic (e.g., after 3 empty responses, default to 'user_proxy' or 'director'). 2. Implement a fallback speaker selection rule when the model response is empty or invalid. 3. Ensure the speaker selection agent's prompt or configuration forces a valid output (e.g., using function calling or structured output). 4. Add a global max_turns/max_round parameter in the GroupChat configuration to force termination even if speaker selection loops.
 
-### runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739
+### runtime:the-speaker_selection_agent-s-response-is-not-properly-parsed.-the-agent-returns-response-director-instead-of-director-.
 - Title: Unhandled startup/runtime exception
 - Primary Fault: `SYSTEM2_RESEARCH_AGENTS_FAULT_004`
-- Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_004`, `SYSTEM2_RESEARCH_AGENTS_FAULT_005`, `SYSTEM2_RESEARCH_AGENTS_FAULT_006`
-- Symptom Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_005`, `SYSTEM2_RESEARCH_AGENTS_FAULT_006`
-- Affected Cases: 14
-- Failure Codes: METAMORPHIC_RELATION_VIOLATION, MISSING_MESSAGE_EDGE, RUNTIME_EXCEPTION
-- Root Cause: The AutoGen framework's OpenAI client raises an unhandled TimeoutError when the API call exceeds the configured timeout. The application does not implement any defensive error handling to catch this exceptionoro and provide a diagnostic error or graceful degradation, leading to a crash.
-- Suggested Fix: Add a try-except block around the LLM call in the application's agent logic or in the AutoGen configuration to catch TimeoutError and other API-related exceptions. Implement a fallback mechanism (e.g., retry with backoff, return a controlled error message to the user, or terminate the conversation gracefully) instead of allowing the exception to propagate and crash the process.
+- Fault IDs: `SYSTEM2_RESEARCH_AGENTS_FAULT_004`
+- Symptom Fault IDs: None
+- Affected Cases: 1
+- Failure Codes: RUNTIME_EXCEPTION
+- Root Cause: The speaker_selection_agent's response is not properly parsed. The agent returns ' response director' instead of 'director'. The checking_agent's validation logic (exact string match against a list) fails to strip whitespace or handle the 'response' prefix, causing it to reject the valid speaker name and request a new selection indefinitely.
+- Suggested Fix: In the checking_agent's speaker validation logic (or the speaker_selection_agent's response processing), add string normalization: strip whitespaceantu and remove known prefixes like 'response' before performing the exact match. Alternatively, update the speaker_selection_agent's system prompt to strictly output only the speaker name with no extra characters.
 
 ## Fault Details
 
 ## SYSTEM2_RESEARCH_AGENTS_FAULT_001
 - Case ID: `system2_research_agents_COV_001`
-- Root-Cause Group: `interaction:timeout-or-non-termination`
+- Root-Cause Group: `interaction:human-input-or-approval`
 - Classification: primary
 - Layer: autogen_framework
-- Fault Type: Termination Condition Error
+- Fault Type: Human Input Mode Error
 - Severity: high
-- Confidence: 0.85
-- Input: Search for 'climate change 202 cockpit', scrape the first result, then store the summary in Airtable.
-- Evidence: turn_count=11 | turn_count=19 | turn_count=28 | turn_count=23 | turn_count=15
-- Root Cause: The fault report is likely a false positive for NON_TERMINATION. The trace shows the conversation terminated successfully with explicit TERMINATE messages. The turn_count of 23 exceeds the oracle's max_turns of 20, which may have triggered the fault detection, but this is an oracle threshold violation (performance/constraint issue), not a non-termination fault. The actual termination mechanism (is_termination_msg or max_turns) appears to be working, as the conversation ended with TERMINATE messages.
-- Suggested Fix: If the issue is consistently exceeding max_turns, consider increasing the oracle's max_turns threshold to 25 or 30 for this workflow, or optimize the agent conversation to reduce turns. If the termination condition is indeed unreliable in other cases (as suggested by duplicate faults), review the is_termination_msg function and max_turns setting in the AutoGen configuration. However, based on the provided trace, no code fix is required for this specific case.
+- Confidence: 0.9
+- Input: Search for 'AutoGen multi-agent framework' and scrape the first result page.
+- Evidence: - **Latest Version**: 0.2.x (early 2024) | - **Documentation**: [microsoft.github.io/autogen/](https://microsoft.github.io/autogen/) | Is there a specific aspect of AutoGen you would like me to explore in more detail? | -------------------------------------------------------------------------------- | [33m[autogen.oai.client: 05-19 20:31:46] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {"price" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing. [0m | [33m[autogen.oai.client: 05-19 20:31:47] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {"price" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing. [0m | [33m[autogen.oai.client: 05-19 20:31:48] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {"price" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing. [0m | Next speaker: director
+- Root Cause: The AutoGen framework's human_input_mode was not set to 'NEVER' for the automated test run, causing the system to block and wait for human input, which led to a timeout.
+- Suggested Fix: In the test harness or agent configuration, explicitly set human_input_mode='NEVER' for all agents involved in automated execution. Ensure no blocking input() calls are present in the execution path. For example, in the GroupChat or agent initialization, set the parameter human_input_mode='NEVER'.
 - Reproduction Command: `/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py`
 
 ## SYSTEM2_RESEARCH_AGENTS_FAULT_002
 - Case ID: `system2_research_agents_COV_001`
 - Root-Cause Group: `interaction:timeout-or-non-termination`
-- Classification: derived from SYSTEM2_RESEARCH_AGENTS_FAULT_001
-- Layer: application
-- Fault Type: Missing Tool Call
-- Severity: medium
-- Confidence: 0.2
-- Input: Search for 'climate change 202 cockpit', scrape the first result, then store the summary in Airtable.
-- Evidence: google_search | web_scraping | get_airtable_records | update_single_airtable_record
-- Root Cause: The rule oracle flagged MISSING_TOOL_CALL for google_search, but the test case passed (status: passed, no crash, terminated). The trace_summary lacks tool call logs, so it is impossible to confirm whether google_search was actually called or not. The confidence of the fault is low because the16 duplicate faults and passed test status suggest the oracle may be misinterpreting the trace or the tool call was not captured in the provided summary. Without concrete evidence of missing call, this is likely a false positive or non-target issue.
-- Suggested Fix: 1. Review the full trace to verify if google_search was called. 2. If it was called but not logged, fix the logging/tracing mechanism. 3. If it was not called, investigate why the agent chose not to use it (e.g., prompt, tool registration, model decision). 4. Re-evaluate the rule oracle to reduce false positives.
+- Classification: primary
+- Layer: autogen_framework
+- Fault Type:  böjnings Termination
+- Severity: high
+- Confidence: 0.9
+- Input: Search for 'AutoGen multi-agent framework' and scrape the first result page.
+- Evidence: 45
+- Root Cause: The speaker selection agent (speaker_selection_agent) is repeatedly returning empty responses without selecting a valid speaker from the allowed list. The checking_agent then re-prompts with the same instructions, creating an infinite loop. This is a framework-level issue because the speaker selection mechanism (likely a custom AutoGen speaker selection function or agent) does not handle the case where the model returns an empty or invalid response, and there is no fallback or max retry limit to break the cycle.
+- Suggested Fix: 1. Add a max retry limit in the speaker selection logic (e.g., after 3 empty responses, default to 'user_proxy' or 'director'). 2. Implement a fallback speaker selection rule when the model response is empty or invalid. 3. Ensure the speaker selection agent's prompt or configuration forces a valid output (e.g., using function calling or structured output). 4. Add a global max_turns/max_round parameter in the GroupChat configuration to force termination even if speaker selection loops.
 - Reproduction Command: `/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py`
 
 ## SYSTEM2_RESEARCH_AGENTS_FAULT_003
-- Case ID: `system2_research_agents_COV_001`
-- Root-Cause Group: `interaction:timeout-or-non-termination`
-- Classification: derived from SYSTEM2_RESEARCH_AGENTS_FAULT_001
-- Layer: autogen_framework
-- Fault Type: Speaker Selection Error
-- Severity: medium
-- Confidence: 0.2
-- Input: Search for 'climate change 202 cockpit', scrape the first result, then store the summary in Airtable.
-- Evidence: 
-- Root Cause: The fault was likely flagged due to exceeding the max_turns oracle (23 > 20), but the test case itself passed. The trace does not show a speaker selection error or a repetitive loop; it shows a normal termination sequence. This is likely a false positive caused by a strict turn limit check rather than a real software fault.
-- Suggested Fix: No fix needed for the application or framework. If the turn count is a concern, adjust the oracle's max_turns to 25 or add a termination condition check in the test case. Otherwise, this fault can be dismissed as a non-target issue.
-- Reproduction Command: `/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py`
-
-## SYSTEM2_RESEARCH_AGENTS_FAULT_004
 - Case ID: `system2_research_agents_COV_002`
-- Root-Cause Group: `runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739`
+- Root-Cause Group: `generic:autogen_framework-message-routing-error-the-collected-trace-does-not-contain-a-direct-director--research_manager-message`
 - Classification: primary
-- Layer: autogen_framework
-- Fault Type: alen
-- Severity: high
-- Confidence: 0.85
-- Input: 请完成一个需要 director 与 research_manager 协作的任务。
-- Evidence: 请完成一个需要 director 与 researcher 协作的任务。 | -------------------------------------------------------------------------------- | 帮我了解 A，用三个要点概括。 | raise TimeoutError( | Use web_scraping on url 'not-a-valid-url-!!!' and report what happens. | 请完成一个需要 director 与 research_manager 协作的任务。 | File "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py", line 739, in create | 请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。 | 请完成以下任务并给出清晰结果：The researcher agent must be able to use web_scraping and google_search tools to gather16 information. | 请完成以下任务并给出清晰结果：The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data. | [33m[autogen.oai.client: 05-19 17:16:09] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {"price" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing. [0m | File "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py", line 1437, in _generate_oai_reply_from_client
-- Root Cause: The AutoGen framework's OpenAI client raises an unhandled TimeoutError when the API call exceeds the configured timeout. The application does not implement any defensive error handling to catch this exceptionoro and provide a diagnostic error or graceful degradation, leading to a crash.
-- Suggested Fix: Add a try-except block around the LLM call in the application's agent logic or in the AutoGen configuration to catch TimeoutError and other API-related exceptions. Implement a fallback mechanism (e.g., retry with backoff, return a controlled error message to the user, or terminate the conversation gracefully) instead of allowing the exception to propagate and crash the process.
-- Reproduction Command: `/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py`
-
-## SYSTEM2_RESEARCH_AGENTS_FAULT_005
-- Case ID: `system2_research_agents_COV_002`
-- Root-Cause Group: `runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739`
-- Classification: derived from SYSTEM2_RESEARCH_AGENTS_FAULT_004
 - Layer: autogen_framework
 - Fault Type: Message Routing Error
 - Severity: medium
 - Confidence: 0.2
 - Input: 请完成一个需要 director 与 research_manager 协作的任务。
-- Evidence: ('research_manager', 'researcher') | ('director', 'research_manager') | ('research_manager', 'director') | ('director', 'researcher') | ('director', 'user_proxy') | ('research_manager', 'user_proxy')
-- Root Cause: The test case failed because the OpenAI API call timed out before the conversation could progress to the point where the director->research_manager edge would be exercised. The missing edge is a consequence of premature termination due to external service unavailability, not a routing configuration or code defect.
-- Suggested Fix: This is a non-target issue (likely false positive). No code changes are needed in the application or AutoGen framework. To improve test stability, consider increasing the OpenAI API timeout in llm_config or adding retry logic for transient API failures. If the timeout persists, investigate the API service health or network connectivity.
+- Evidence: ('director', 'research_manager')
+- Root Cause: The collected trace does not contain a direct director->research_manager message. The test passed (no crash, terminated), but the required edge was not observed. This is likely because the director agent chose not to send a message to research_manager in this run, or the model's response did not trigger that pathospan. There is no indication of a framework routing failure.
+- Suggested Fix: This is a likely false positive for a software fault. To improve coverage, consider adding a more specific prompt that forces director to delegate to research_manager, or adjust the test oracle to accept indirect communication via chat_manager. If a direct edge is required, review the agent configuration and model instructions to ensure the director is prompted to send a message to research_manager.
 - Reproduction Command: `/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py`
 
-## SYSTEM2_RESEARCH_AGENTS_FAULT_006
-- Case ID: `system2_research_agents_META_001`
-- Root-Cause Group: `runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739`
-- Classification: derived from SYSTEM2_RESEARCH_AGENTS_FAULT_004
-- Layer: application
-- Fault Type: Metamorphic Relation Violation
-- Severity: medium
-- Confidence: 0.0
-- Input: 请查询 A 并总结三点。
-帮我了解 A，用三个要点概括。
-- Evidence: missing_agents=[] | missing_tools=['web_scraping', 'google_search']
-- Root Cause: The test case failed because the OpenAI API call timed out before the agent workflow could execute any tool calls or agent visits. This is a model service availability/infrastructure issue, not a software fault in the application or AutoGen framework.
-- Suggested Fix: This is a non-target issue (likely false positive). No code fix is required. To improve test reliability, consider increasing the API timeout in llm_config, adding retry logic, or running the test when the model service is stable. If this is a recurring issue, investigate API endpoint health.
-- Reproduction Command: `/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py`
-
-## SYSTEM2_RESEARCH_AGENTS_FAULT_007
-- Case ID: `system2_research_agents_PROP_001`
-- Root-Cause Group: `generic:autogen_framework-wrong-agent-routing-the-agent-name-in-the-trace-is-chat_manager-while-the-oracle-expects-group_chat_ma`
+## SYSTEM2_RESEARCH_AGENTS_FAULT_004
+- Case ID: `system2_research_agents_TOOLFUZZ_001`
+- Root-Cause Group: `runtime:the-speaker_selection_agent-s-response-is-not-properly-parsed.-the-agent-returns-response-director-instead-of-director-.`
 - Classification: primary
-- Layer: autogen_framework
-- Fault Type: Wrong Agent Routing
-- Severity: medium
-- Confidence: 0.2
-- Input: Repeat the word 'hello' exactly 20 times, one per message, and never say TERMINATE.
-- Evidence: group_chat_manager
-- Root Cause: The agent name in the trace is 'chat_manager' while the oracle expects 'group_chat_manager'. This is likely a naming mismatch in the test oracle or a configuration alias, not a genuine routing fault. The test passed and the conversation terminated correctly within the max_turns boundary.
-- Suggested Fix: Align the agent name in the test oracle with the actual agent name used in the system (e.g., change 'group_chat_manager' to 'chat_manager' in the oracle's must_visit_agents list) or update the system configuration to use the name 'group_chat_manager' if that is the intended design. No code logic change is required.
-- Reproduction Command: `/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py`
-
-## SYSTEM2_RESEARCH_AGENTS_FAULT_008
-- Case ID: `system2_research_agents_R2_001`
-- Root-Cause Group: `interaction:timeout-or-non-termination`
-- Classification: derived from SYSTEM2_RESEARCH_AGENTS_FAULT_001
-- Layer: autogen_framework
-- Fault Type: Non-Termination
+- Layer: application
+- Fault Type: Encoding/Decoding Error
 - Severity: high
-- Confidence: 0.82
-- Input: 请完成一个需要 director 与 user_proxy 协作的任务。
-- Evidence: 45
-- Root Cause: The GroupChat configuration lacks a reliable termination condition (e.g., is_termination_msg) and does not enforce max_turns/max_round, causing the conversation to loop indefinitely under automated runs.
-- Suggested Fix: Set human_input_mode='NEVER' for automated runs, add a termination message check (e.g., is_termination_msg=lambda x: 'TERMINATE' in x.get('content','')), and enforce max_turns/max_round in the GroupChat configuration.
+- Confidence: 0.9
+- Input: Please call get_airtable_records with an empty base_id and table_name
+- Evidence: Next speaker: director | [33m[autogen.oai.client: 05-19 20:32:31] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {"price" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing. [0m | director (to chat_manager): | Director colleague reply | -------------------------------------------------------------------------------- | [33m[autogen.oai.client: 05-19 20:32:32] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {"price" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing. [0m | [33m[autogen.oai.client: 05-19 20:32:33] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {"price" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing. [0m | Next speaker: director
+- Root Cause: The speaker_selection_agent's response is not properly parsed. The agent returns ' response director' instead of 'director'. The checking_agent's validation logic (exact string match against a list) fails to strip whitespace or handle the 'response' prefix, causing it to reject the valid speaker name and request a new selection indefinitely.
+- Suggested Fix: In the checking_agent's speaker validation logic (or the speaker_selection_agent's response processing), add string normalization: strip whitespaceantu and remove known prefixes like 'response' before performing the exact match. Alternatively, update the speaker_selection_agent's system prompt to strictly output only the speaker name with no extra characters.
 - Reproduction Command: `/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py`

@@ -2,205 +2,6 @@
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
     "case_id": "system1_iterative_coding_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.8,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=22",
-      "turn_count=21",
-      "turn_count=19",
-      "turn_count=20"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function. I will now save it.'",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": false,
-    "affected_cases": [
-      "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_COV_002",
-      "system1_iterative_coding_FUZZ_001",
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_REG_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_TOOLFUZZ_001",
-      "system1_iterative_coding_R2_001",
-      "system1_iterative_coding_R2_002",
-      "system1_iterative_coding_R2_003",
-      "system1_iterative_coding_R2_004",
-      "system1_iterative_coding_R2_005",
-      "system1_iterative_coding_R2_006",
-      "system1_iterative_coding_R2_007",
-      "system1_iterative_coding_R2_008"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_005",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_009",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_013",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_019",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_023",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_027",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_032",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_036",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_040",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_044",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_048",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_052",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_056",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_060",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_064"
-    ]
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
-    "case_id": "system1_iterative_coding_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Function Calling Integration Error",
-    "failure_code": "TOOL_HALLUCINATION",
-    "severity": "high",
-    "confidence": 0.88,
-    "summary": "Unregistered tool was called: write_latest_iteration_comments",
-    "evidence": [
-      "write_latest_iteration_comments",
-      "retrieve_latest_iteration"
-    ],
-    "root_cause": "The rule oracle detected TOOL_HALLUCINATION for system system1_iterative_coding.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function. I will now save it.'",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": false,
-    "affected_cases": [
-      "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_COV_002",
-      "system1_iterative_coding_COV_002",
-      "system1_iterative_coding_FUZZ_001",
-      "system1_iterative_coding_FUZZ_001",
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_REG_001",
-      "system1_iterative_coding_REG_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_TOOLFUZZ_001",
-      "system1_iterative_coding_TOOLFUZZ_001",
-      "system1_iterative_coding_R2_001",
-      "system1_iterative_coding_R2_001",
-      "system1_iterative_coding_R2_002",
-      "system1_iterative_coding_R2_002",
-      "system1_iterative_coding_R2_003",
-      "system1_iterative_coding_R2_003",
-      "system1_iterative_coding_R2_004",
-      "system1_iterative_coding_R2_004",
-      "system1_iterative_coding_R2_005",
-      "system1_iterative_coding_R2_005",
-      "system1_iterative_coding_R2_006",
-      "system1_iterative_coding_R2_006",
-      "system1_iterative_coding_R2_007",
-      "system1_iterative_coding_R2_007",
-      "system1_iterative_coding_R2_008",
-      "system1_iterative_coding_R2_008"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_006",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_007",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_010",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_011",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_015",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_016",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_020",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_021",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_024",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_025",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_029",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_030",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_033",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_034",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_037",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_038",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_041",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_042",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_045",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_046",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_049",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_050",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_053",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_054",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_057",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_058",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_061",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_062",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_066",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_067"
-    ]
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-    "case_id": "system1_iterative_coding_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.67,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
-    "reproduction": {
-      "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function. I will now save it.'",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": false,
-    "affected_cases": [
-      "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_COV_002",
-      "system1_iterative_coding_FUZZ_001",
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_REG_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_TOOLFUZZ_001",
-      "system1_iterative_coding_R2_001",
-      "system1_iterative_coding_R2_002",
-      "system1_iterative_coding_R2_003",
-      "system1_iterative_coding_R2_004",
-      "system1_iterative_coding_R2_005",
-      "system1_iterative_coding_R2_006",
-      "system1_iterative_coding_R2_007",
-      "system1_iterative_coding_R2_008"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_008",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_012",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_017",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_022",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_026",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_031",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_035",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_039",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_043",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_047",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_051",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_055",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_059",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_063",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_068"
-    ]
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-    "case_id": "system1_iterative_coding_META_001",
     "layer": "application",
     "fault_type": "Missing Tool Call",
     "failure_code": "MISSING_TOOL_CALL",
@@ -213,42 +14,94 @@
     "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system1_iterative_coding.",
     "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
     "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+      "input": "Task: Write a script to sort a list. Manager responds 'sounds good' when planner asks for approval.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
     "affected_cases": [
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_R2_008"
+      "system1_iterative_coding_COV_001",
+      "system1_iterative_coding_PROP_001",
+      "system1_iterative_coding_REQ_002"
     ],
     "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_028",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_065"
+      "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_003"
     ]
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
-    "case_id": "system1_iterative_coding_META_001",
-    "layer": "application",
-    "fault_type": "Metamorphic Relation Violation",
-    "failure_code": "METAMORPHIC_RELATION_VIOLATION",
-    "severity": "medium",
-    "confidence": 0.74,
-    "summary": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+    "case_id": "system1_iterative_coding_R2_006",
+    "layer": "autogen_framework",
+    "fault_type": "Human Input Mode Error",
+    "failure_code": "HUMAN_INPUT_REQUESTED",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "The target system requested human input during an automated no-human run.",
     "evidence": [
-      "missing_agents=[]",
-      "missing_tools=['write_settled_plan']"
+      "|------|--------|",
+      "| Plan Creation | ✅ Done |",
+      "| Manager Approval | ✅ Granted |",
+      "| `write_settled_plan()` | ✅ Executed |",
+      "| Immutability Enforced | ✅ Active |",
+      "The app is ready to run as-is. Simply execute `python3 planner_app.py` to see the full workflow in action.",
+      "Is there anything else you'd like me to review or explain about the code?",
+      "--------------------------------------------------------------------------------"
     ],
-    "root_cause": "Equivalent test prompts did not preserve the expected agent/tool routing relation.",
-    "suggested_fix": "Inspect prompts, tool registration, and routing logic for equivalent requests; add a paired metamorphic regression test.",
+    "root_cause": "The target system attempted to enter a manual input path after automated evaluation had started.",
+    "suggested_fix": "Set human_input_mode='NEVER' and remove blocking input() calls from automated execution paths.",
     "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
     "affected_cases": [
-      "system1_iterative_coding_META_001"
+      "system1_iterative_coding_R2_006"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
+    "case_id": "system1_iterative_coding_R2_006",
+    "layer": "autogen_framework",
+    "fault_type": "Termination Condition Error",
+    "failure_code": "NON_TERMINATION",
+    "severity": "high",
+    "confidence": 0.8,
+    "summary": "The run did not terminate.",
+    "evidence": [
+      "turn_count=23"
+    ],
+    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "affected_cases": [
+      "system1_iterative_coding_R2_006"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+    "case_id": "system1_iterative_coding_R2_006",
+    "layer": "autogen_framework",
+    "fault_type": "Speaker Selection Error",
+    "failure_code": "REPETITIVE_LOOP",
+    "severity": "medium",
+    "confidence": 0.67,
+    "summary": "Trace contains highly repetitive consecutive messages.",
+    "evidence": [],
+    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "affected_cases": [
+      "system1_iterative_coding_R2_006"
     ],
     "duplicate_fault_ids": []
   }

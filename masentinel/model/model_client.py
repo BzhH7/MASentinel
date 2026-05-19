@@ -32,7 +32,18 @@ class ModelClient:
         self.timeout = timeout
         self.retries = retries
         self.extra_body = _parse_extra_body(extra_body, os.getenv("MAS_MODEL_EXTRA_BODY_JSON"))
-        self.last_usage: dict[str, Any] = {}
+        self._thread_state = threading.local()
+        self._last_usage: dict[str, Any] = {}
+
+    @property
+    def last_usage(self) -> dict[str, Any]:
+        return getattr(self._thread_state, "last_usage", self._last_usage)
+
+    @last_usage.setter
+    def last_usage(self, value: dict[str, Any]) -> None:
+        usage = dict(value or {})
+        self._thread_state.last_usage = usage
+        self._last_usage = usage
 
     @property
     def available(self) -> bool:

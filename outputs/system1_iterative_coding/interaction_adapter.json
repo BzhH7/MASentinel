@@ -17,12 +17,6 @@
       "response": "mas_{safe_case_id}",
       "regex": false,
       "max_count": 1
-    },
-    {
-      "trigger": "Select project to continue:",
-      "response": "0",
-      "regex": false,
-      "max_count": 1
     }
   ],
   "isolated_paths": [
@@ -30,20 +24,13 @@
     ".masentinel_autoreply/{safe_case_id}"
   ],
   "risk_notes": [
-    "The 'Select project to continue:' prompt appears when previous projects exist; the response '0' is a safe default that selects the first listed project, but16 if the list is empty or 0 is invalid, the program may crash. Consider pre-cleaning the project directory before each case to avoid this branch.",
-    "The program uses int(user_selection[0]) and int(input(...)[0]) which will raise ValueError if the response is empty or non-numeric. Ensure prompt-response rules always provide a numeric first character.",
-    "Timeout of 120 seconds may be insufficient if the iterative coding loop involves multiple LLM calls; monitor and adjust based on observed execution times."
+    "Stdout prompts may slightly differ across versions; if 'Welcome to Iterative Coding! Would you like to:' appears before 'Selection:', a secondary trigger may be needed.",
+    "The project directory is constructed by joining a base project_dir with the user-provided name; if the code writes outside isolated_paths, isolation may be incomplete.",
+    "The 'Select project to continue:' prompt requires numeric input; if the prompt-response rule for 'Selection:' does not match this, the process may hang under timeout."
   ],
-  "confidence": 0.9,
+  "confidence": 0.85,
   "applied": {
-    "added_prompt_responses": [
-      {
-        "trigger": "Select project to continue:",
-        "response": "0",
-        "regex": false,
-        "max_count": 1
-      }
-    ],
+    "added_prompt_responses": [],
     "added_isolated_paths": []
   }
 }

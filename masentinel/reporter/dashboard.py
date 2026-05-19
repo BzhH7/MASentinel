@@ -40,7 +40,7 @@ def write_dashboard(out_dir: str | Path, summary: dict[str, Any]) -> None:
             "Cases": summary.get("cases", 0),
             "Faults": summary.get("faults", 0),
             "Root Groups": summary.get("fault_groups", 0),
-            "MASCov": coverage.get("mascov", 0),
+            "MASCov": _format_metric(coverage.get("mascov")),
             "Fallback Calls": (summary.get("agentic", {}) or {}).get("fallback_calls", 0),
         }.items()
     )
@@ -61,3 +61,12 @@ def _to_dot(graph: dict[str, Any]) -> str:
         lines.append(f'  "{edge["source"]}" -> "{edge["target"]}" [label="{edge.get("count", 1)}"];')
     lines.append("}")
     return "\n".join(lines) + "\n"
+
+
+def _format_metric(value: object) -> str:
+    if value is None:
+        return "N/A"
+    try:
+        return f"{float(value):.2f}"
+    except (TypeError, ValueError):
+        return "N/A"

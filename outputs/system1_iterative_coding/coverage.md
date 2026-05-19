@@ -4,8 +4,8 @@
 |--------|-------|
 | AgentCov | 1.0000 |
 | ToolCov | 1.0000 |
-| EdgeCov | 0.8000 |
-| ReqCov | 0.6250 |
-| StateCov | 0.4375 |
-| FaultCov | 0.4167 |
-| MASCov | 0.7247 |
+| EdgeCov | 1.0000 |
+| ReqCov | 0.6667 |
+| StateCov | 0.5625 |
+| FaultCov | 0.3333 |
+| MASCov | 0.7700 |

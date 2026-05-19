@@ -2,337 +2,174 @@
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
     "case_id": "system1_iterative_coding_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.2,
-    "summary": "The run did not terminate within the expected turn budget.",
+    "layer": "application",
+    "fault_type": "Potential False Positive (Missing Tool Call)",
+    "failure_code": "MISSING_TOOL_CALL",
+    "severity": "medium",
+    "confidence": 0.3,
+    "summary": "Expected tool was not called: write_settled_plan",
     "evidence": [
-      "turn_count=22",
-      "turn_count=21",
-      "turn_count=19",
-      "turn_count=20"
+      "write_settled_plan"
     ],
-    "root_cause": "acciari oracle max_turns=10 is too strict for this scenario; the conversation terminated naturally at turn 21 without violating any functional requirements. The fault report misinterprets a longer-than-expected but successful run as a non-termination fault.",
-    "suggested_fix": "Adjust oracle max_turns to a higher value (e.g., 30) or remove the strict turn limit for12 this test case, since the system terminated correctly and passed all other checks.",
+    "root_cause": "The rule oracle flagged a missing expected tool call, but the test case itself passed according to the trace summary. The oracle may be checking for a tool that is not actually required for test success under these input conditions, or the tool is not being triggered due to workflow logic rather than a software fault.",
+    "suggested_fix": "Re-evaluate the oracle's must_call_tools requirement for write_settled_plan. Check if the test case input sequence and agent interactions logically lead to a state where write_settled_plan should be called. If not, update the oracle to reflect the correct expected tool calls. Also verify tool registration and agent's tool access to ensure write_settled_plan is available when needed.",
     "reproduction": {
-      "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function. I will now save it.'",
+      "input": "Task: Write a script to sort a list. Manager responds 'sounds good' when planner asks for approval.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": true,
     "affected_cases": [
       "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_COV_002",
-      "system1_iterative_coding_FUZZ_001",
-      "system1_iterative_coding_META_001",
       "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_REG_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_TOOLFUZZ_001",
-      "system1_iterative_coding_R2_001",
-      "system1_iterative_coding_R2_002",
-      "system1_iterative_coding_R2_003",
-      "system1_iterative_coding_R2_004",
-      "system1_iterative_coding_R2_005",
-      "system1_iterative_coding_R2_006",
-      "system1_iterative_coding_R2_007",
-      "system1_iterative_coding_R2_008"
+      "system1_iterative_coding_REQ_002"
     ],
     "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_005",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_009",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_013",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_019",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_023",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_027",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_032",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_036",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_040",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_044",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_048",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_052",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_056",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_060",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_064"
+      "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_003"
     ],
     "agentic_evidence": [
-      "trace_summary shows terminated=true, turn_count=21, returncode=0, status=passed",
-      "oracle requires must_terminate=true Jac max_turns=10, but actual turn_count=21 > 10",
-      "fault summary claims NON_TERMINATION, but trace shows the run did terminate successfully",
-      "no crash, no tool misuse, no error in stderr"
+      "Rule oracle reported MISSING_TOOL_CALL for write_settled_plan.",
+      "Trace summary shows the test case status as 'passed' and terminated naturally without crash.",
+      "Trace stdout shows runtime method tool calls (write_latest_iteration_comments) but no write_settled_plan.",
+      "The original fault report confidence is only 0.7 and marked suspected_false_positive as False."
     ],
     "false_positive_audit": {
       "audit_result": "likely_false_positive",
-      "reason": "The trace shows the run terminated successfully (terminated=true, returncode=0, status=passed) at turn 21. The fault report claims NON_TERMINATION based solely on exceeding the oracle's max_turns=10, but the conversation ended naturally without any functional failure. This is a test oracle configuration issue (max_turns too strict), not an application or AutoGen framework fault. No code, tool integration, or framework logic defect is evidenced.",
+      "reason": "Trace summary shows test case 'system1_iterative_coding_COV_001' terminated successfully with return code 0 and status 'passed'. The test completed all interactions naturally without crash or timeout. The oracle flagged a missing expected tool call 'write_settled_plan', but the trace only shows runtime method tool calls (write_latest_iteration_comments) and no evidence that this tool should have been invoked under these input conditions. The original fault report itself has low confidence (0.3) and is not marked as suspected false positive. The failure appears to be an oracle rule mismatch rather than an application or framework fault — the agent workflow may not require calling 'write_settled_plan' for this task sequence. The task involves writing a sort script with manager approval, and the planner-manager-reviewer workflow might legitimately conclude without invoking 'write_settled_plan' if the plan was never formally settled. This is a tool expectation error, not a software bug.",
       "false_positive_risk": "high",
-      "confidence": 0.95
+      "confidence": 0.9
     },
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
+    "root_cause_group_id": "generic:application-potential-false-positive-missing-tool-call-the-rule-oracle-flagged-a-missing-expected-tool-call-but-the-test",
+    "root_cause_group_title": "Potential False Positive (Missing Tool Call)",
     "is_primary_fault": true,
     "cascades_from": null
   },
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
-    "case_id": "system1_iterative_coding_COV_001",
+    "case_id": "system1_iterative_coding_R2_006",
     "layer": "autogen_framework",
-    "fault_type": "Tool Schema Mismatch",
-    "failure_code": "TOOL_HALLUCINATION",
+    "fault_type": "Human Input Mode Error",
+    "failure_code": "HUMAN_INPUT_REQUESTED",
     "severity": "high",
-    "confidence": 0.88,
-    "summary": "Unregistered tool was called: write_latest_iteration_comments",
+    "confidence": 0.9,
+    "summary": "The target system requested human input during an automated no-human run.",
     "evidence": [
-      "write_latest_iteration_comments",
-      "retrieve_latest_iteration"
+      "|------|--------|",
+      "| Plan Creation | ✅ Done |",
+      "| Manager Approval | ✅ Granted |",
+      "| `write_settled_plan()` | ✅ Executed |",
+      "| Immutability Enforced | ✅ Active |",
+      "The app is ready to run as-is. Simply execute `python3 planner_app.py` to see the full workflow in action.",
+      "Is there anything else you'd like me to review or explain about the code?",
+      "--------------------------------------------------------------------------------"
     ],
-    "root_cause": "The agent attempted to call 'write_latest_iteration_comments', which is not registered in the AutoGen tool registry. This indicates a mismatch between the tool name generated by the LLM and the actual tool schema provided to the agent, likely due to a missing or incorrectly named tool registration in the framework configuration.",
-    "suggested_fix": "1. Verify the tool registration configuration for the system1_iterative_coding system. 2. Ensure that 'write_latest_iteration_comments' is either registered with the exact name or the LLM prompt is constrained to use only registered tool names. 3. If the intended tool is 'retrieve_latest_iteration' or another registered tool, update the agent's prompt or tool selection logic to prevent hallucination of unregistered tool names.",
+    "root_cause": "The AutoGen runtime was configured with a human_input_mode that allows or defaults to requesting user input (e.g., 'ALWAYS' or 'TERMINATE'), and the agent conversation reached a point where it prompted the user for further interaction instead of terminating. Specifically, the planner/manager agents did not auto-terminate after completing the required `write_settled_plan` call, and instead issued a conversational prompt ('Is there anything else...') that triggered a human input request, causing the automated test to hang and eventually exceed the turn limit.",
+    "suggested_fix": "Set `human_input_mode='NEVER'` in the AutoGen runtime configuration (e.g., `ConversableAgent` constructor or `GroupChatManager`/`aio_run` parameters) and ensure that the termination condition is strictly enforced: either by using a `max_round` limit on `GroupChat`, a termination message like '__TERMINATE__' sent by agents after completing the required workflow, or by implementing an `is_termination_msg` predicate that recognizes workflow completion phrases. Additionally, remove any blocking `input()` calls from the agents' tool or response handling paths.",
     "reproduction": {
-      "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function. I will now save it.'",
+      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
     "affected_cases": [
-      "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_COV_002",
-      "system1_iterative_coding_COV_002",
-      "system1_iterative_coding_FUZZ_001",
-      "system1_iterative_coding_FUZZ_001",
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_REG_001",
-      "system1_iterative_coding_REG_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_TOOLFUZZ_001",
-      "system1_iterative_coding_TOOLFUZZ_001",
-      "system1_iterative_coding_R2_001",
-      "system1_iterative_coding_R2_001",
-      "system1_iterative_coding_R2_002",
-      "system1_iterative_coding_R2_002",
-      "system1_iterative_coding_R2_003",
-      "system1_iterative_coding_R2_003",
-      "system1_iterative_coding_R2_004",
-      "system1_iterative_coding_R2_004",
-      "system1_iterative_coding_R2_005",
-      "system1_iterative_coding_R2_005",
-      "system1_iterative_coding_R2_006",
-      "system1_iterative_coding_R2_006",
-      "system1_iterative_coding_R2_007",
-      "system1_iterative_coding_R2_007",
-      "system1_iterative_coding_R2_008",
-      "system1_iterative_coding_R2_008"
+      "system1_iterative_coding_R2_006"
     ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_006",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_007",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_010",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_011",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_015",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_016",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_020",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_021",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_024",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_025",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_029",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_030",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_033",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_034",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_037",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_038",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_041",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_042",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_045",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_046",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_049",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_050",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_053",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_054",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_057",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_058",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_061",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_062",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_066",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_067"
-    ],
+    "duplicate_fault_ids": [],
     "agentic_evidence": [
-      "Trace shows tool call: write_latest_iteration_comments",
-      "acciated fault summary: 'Unregistered tool was called: write_latest_iteration_comments'",
-      "Rule oracle detected TOOL_HALLUCINATION for system system1_iterative_coding",
-      "acciated duplicate fault IDs indicate repeated occurrence across multiple cases"
+      "Trace shows termination status false and status failed, indicating the run did not complete successfully within automated constraints.",
+      "Turn count is 23, exceeding oracle max_turns of 15, consistent with a hang or wait for human input.",
+      "The chat output ends with 'Is there anything else you'd like me to review or explain about the code?' which is a prompt for user interaction, not a termination signal.",
+      "No crash or tool error is reported (returncode 0), so the failure mode is consistent with an unfinished conversation waiting for human response.",
+      "Fault summary indicates 'HUMAN_INPUT_REQUESTED' failure code, and the evidence in the input states the system attempted to enter manual input path during automated evaluation.",
+      "Last observed trace events are 'write_latest_iteration_comments' tool call and result, indicating the system was still active at turn 23."
     ],
     "false_positive_audit": {
       "audit_result": "confirmed_fault",
-      "reason": "The trace shows a tool call to 'write_latest_iteration_comments', which is16 not registered in the AutoGen tool registry. This is a framework-level configuration or tool registration issue, not a model capability problem. The root cause is a mismatch between the tool name generated by the LLM and the actual tool schema provided to the agent, which can be fixed by updating the tool registration or prompt constraints.",
+      "reason": "The trace shows a failed run due to human input request: turn count 23 exceeds max_turns 15, no crash, no tool error, and stdout ends with 'Is there anything else you'd like me to review or explain about the code?'—a prompt awaiting user interaction. This indicates the AutoGen runtime was not configured with human_input_mode='NEVER' and lacked a proper termination condition, causing an automated no-human run to hang. The suggested fix to set human_input_mode='NEVER' and enforce termination is a configuration change within AutoGen framework layer, not a model capability or test framework issue.",
       "false_positive_risk": "low",
-      "confidence": 0.88
+      "confidence": 0.95
     },
-    "root_cause_group_id": "generic:autogen_framework-tool-schema-mismatch-the-agent-attempted-to-call-write_latest_iteration_comments-which-is-not-register",
-    "root_cause_group_title": "Tool Schema Mismatch",
+    "root_cause_group_id": "interaction:human-input-or-approval",
+    "root_cause_group_title": "Unattended run blocked by human input or approval",
     "is_primary_fault": true,
     "cascades_from": null
   },
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-    "case_id": "system1_iterative_coding_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "medium",
-    "confidence": 0.3,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The 21-turn conversation exceeded the oracle's max_turns=10 but the test still passed, indicating the oracle enforcement may be misconfigured or max_turns is not a hard failure condition. The REPETITIVE_LOOP failure code  is not supported by the  trace evidence.",
-    "suggested_fix": "1. Verify if max_turns=10 is enforced as a hard failure in the test harness. 2. If repetitive loops are suspected, add a dedicated loop detection metric (e.g., consecutive identical messages) to the oracle. 3. Re-run the test with verbose trace logging to capture full message content for loop analysis.",
-    "reproduction": {
-      "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function. I will now save it.'",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": true,
-    "affected_cases": [
-      "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_COV_002",
-      "system1_iterative_coding_FUZZ_001",
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_REG_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_TOOLFUZZ_001",
-      "system1_iterative_coding_R2_001",
-      "system1_iterative_coding_R2_002",
-      "system1_iterative_coding_R2_003",
-      "system1_iterative_coding_R2_004",
-      "system1_iterative_coding_R2_005",
-      "system1_iterative_coding_R2_006",
-      "system1_iterative_coding_R2_007",
-      "system1_iterative_coding_R2_008"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_008",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_012",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_017",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_022",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_026",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_031",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_035",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_039",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_043",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_047",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_051",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_055",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_059",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_063",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_068"
-    ],
-    "agentic_evidence": [
-      "Trace summary shows case status 'passed', terminated normally, returncode 0, no crash.",
-      "Turn count is 21, which exceeds the oracle max_turns of 10, but the test case still passed.",
-      "No evidence of repetitive consecutive messages in the provided trace summary; stdout_tail shows normal conversation flow.",
-      "The oracle's must_terminate and must_not_crash conditions were met.",
-      "The original fault summary mentions 'highly repetitive consecutive messages' but no such pattern is visible in the provided trace excerpt."
-    ],
-    "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The trace shows a normal conversation flow with 21 turns, returncode 0, and no crash. The test case passed because the oracle's must_terminate and must_not_crash conditions were met. The fault summary claims 'highly repetitive consecutive messages' but no such pattern is visible in the provided trace excerpt. The root cause analysis itself states that the REPETITIVE_LOOP failure code is not supported by the trace evidence. The exceeding of max_turns=10 without failure indicates a test harness/oracle configuration issue (non-hard failure), not an application or AutoGen framework fault. This is a test infrastructure behavior, not a software defect in the system under test.",
-      "false_positive_risk": "high",
-      "confidence": 0.9
-    },
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
-    "is_primary_fault": false,
-    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_001"
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-    "case_id": "system1_iterative_coding_META_001",
+    "case_id": "system1_iterative_coding_R2_006",
     "layer": "application",
-    "fault_type": "Missing Tool Call",
-    "failure_code": "MISSING_TOOL_CALL",
-    "severity": "medium",
-    "confidence": 0.7,
-    "summary": "Expected tool was not called: write_settled_plan",
+    "fault_type": "Termination Condition Error",
+    "failure_code": "NON_TERMINATION",
+    "severity": "high",
+    "confidence": 0.85,
+    "summary": "The run did not terminate.",
     "evidence": [
-      "write_settled_plan"
+      "turn_count=23"
     ],
-    "root_cause": "The planner agent did not call write_settled_plan during the conversation, likely due to missing or incorrect tool registration, or insufficient prompting to trigger the tool call.",
-    "suggested_fix": "Verify that write_settled_plan is registered for the planner agent in the tool configuration. Ensure the agent's system prompt or task description explicitly instructs it to call write_settled_plan when a plan is finalized. Check for any conditional logic that may prevent the tool call.",
+    "root_cause": "The application's conversation flow lacks a reliable termination mechanism. Specifically, after the planner completes its task (presumably including manager approval and calling write_settled_plan), the conversation loop does not send a termination message or signal to the AutoGen runtime. The planner or manager agent ends its turn with an open-ended question ('Is there anything else...?') instead of marking the conversation as complete, causing the system to wait for further user input indefinitely. Additionally, a critical guard (max_turns in the test run) was exceeded, confirming the application did not self-terminate as required by the test oracle.",
+    "suggested_fix": "1. In the application's agent logic (e.g., in the planner or manager), after calling write_settled_plan, ensure the agent returns a specific termination message (e.g., a structured message with a 'terminate' flag or a predefined delimiter) that is recognized by the is_termination_msg function in the AutoGen configuration. 2. Configure the GroupChatManager with an is_termination_msg handler that checks for this specific message. 3. Set human_input_mode to 'NEVER' for automated orchestration to prevent the system from waiting for non-existent human input. 4. As a safety net, enforce a max_round or max_turns in the GroupChat settings that triggers graceful termination before the test oracle's limit is reached.",
     "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
-    "suspected_false_positive": true,
+    "suspected_false_positive": false,
     "affected_cases": [
-      "system1_iterative_coding_META_001",
-      "system1_iterative_coding_REQ_001",
-      "system1_iterative_coding_R2_008"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_028",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_065"
-    ],
-    "agentic_evidence": [
-      "Oracle requires tool call: write_settled_plan",
-      "Fault report indicates MISSING_TOOL_CALL for write_settled_plan",
-      "Trace summary shows tool calls including write_latest_iteration_comments but no write_settled_plan",
-      "Case system1_iterative_coding_META_001 passed but oracle violation detected"
-    ],
-    "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The trace shows the case passed (status: passed, returncode: 0) and the conversation terminated normally after 20 turns. The only evidence for the fault is an oracle violation (MISSING_TOOL_CALL for write_settled_plan) in a passed case. The trace shows write_latest_iteration_comments was called, indicating tool calling works. The missing write_settled_plan call is likely due to the agent's reasoning path not deeming it necessary, or the oracle being too strict about requiring this specific tool call when the task was completed successfully without it. This is a model behavior/oracle design issue, not an application code or AutoGen framework fault.",
-      "false_positive_risk": "high",
-      "confidence": 0.85
-    },
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
-    "is_primary_fault": false,
-    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
-    "classification_note": "Derived symptom: the target crashed before MASentinel could observe the expected agent/tool/message behavior."
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
-    "case_id": "system1_iterative_coding_META_001",
-    "layer": "application",
-    "fault_type": "Metamorphic Relation Violation",
-    "failure_code": "METAMORPHIC_RELATION_VIOLATION",
-    "severity": "medium",
-    "confidence": 0.0,
-    "summary": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
-    "evidence": [
-      "missing_agents=[]",
-      "missing_tools=['write_settled_plan']"
-    ],
-    "root_cause": "Insufficient16 evidence:16 test case passed, no crash, no16 trace16 showing missing16 tool16 'write_settled_plan' or agent routing mismatch.16 Fault16 may16 be16 a16 false16 positive16 or16 non-target16 issue16 (model16 behavior16 variation).",
-    "suggested_fix": "Re-run16 metamorphic16 test16 with16 detailed16 agent/tool16 routing16 logs16 to16 verify16 if16 'write_settled_plan'16 is16 truly16 missing16 or16 if1616 model16 chose16 a16 different16 valid16 path.16 If16 missing,16 inspect16 planner16 prompt16 and16 tool16 registration16 for16 'write_settled_plan'.",
-    "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": true,
-    "affected_cases": [
-      "system1_iterative_coding_META_001"
+      "system1_iterative_coding_R2_006"
     ],
     "duplicate_fault_ids": [],
     "agentic_evidence": [
-      "Trace shows test case status: passed, terminated: true, returncode: 0, no crash.",
-      "Fault evidence claims missing_tools=['write_settled_plan'], but trace stdout_tail shows tool call 'write_latest_iteration_comments' and no explicit evidence of missing 'write_settled_plan'.",
-      "No agent/tool routing trace or oracle comparison provided to confirm metamorphic relation violation.",
-      "Fault confidence is 0.74, but16 no concrete16 trace evidence supports missing tool or agent routing mismatch."
+      "Test oracle requires termination within max_turns=15, but trace shows non-termination at turn_count=23.",
+      "Trace shows the conversation ending with a user query prompt ('Is there anything else...?'), indicating the automated run did not self-terminate.",
+      "The stdout_tail shows runtime method calls (write_latest_iteration_comments) but does not show a call to write_settled_plan, suggesting the workflow did not reach the required termination confirmation step.",
+      "The test case targets requirement R3, which explicitly states 'Planner must call write_settled_plan after manager approval'. Failure to terminate implies this tool was never called or the conversation loop did not end after its call."
     ],
     "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "Test case passed with returncode 0逾 no crash. The claim of missing tool 'write_settled_plan' is not supported by any trace evidence; the stdout shows a successful tool call to 'write_latest_iteration_comments' and no indication that 'write_settled_plan' was expected or required. The fault appears to be based on a metamorphic oracle assumption that equivalent inputs must produce identical tool sequences, which is ​​a model behavior expectation rather than an application or framework defect. No agent routing mismatch or tool registration failure is demonstrated.",
-      "false_positive_risk": "high",
+      "audit_result": "confirmed_fault",
+      "reason": "证据表明 session 在计划完成后未主动调用终止工具或发送终止信号，导致 AutoGen 循环无法停止。turn_count=23 超过 oracle 的 max_turns=15，stderr 无致命错误，stdout 末尾显示 'Is there anything else...?' 提示等待用户输入，且 runtime trace 仅记录 write_latest_iteration_comments 而未记录 write_settled_plan。这属于应用层对话终止逻辑缺失，即应用未在任务完成后发送 AutoGen 可识别的终止消息或调用终止函数，属于可通过修改应用逻辑或 AutoGen 终止处理来修复的软件缺陷。",
+      "false_positive_risk": "low",
       "confidence": 0.92
     },
     "root_cause_group_id": "interaction:timeout-or-non-termination",
     "root_cause_group_title": "Conversation timeout or missing termination guard",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+    "case_id": "system1_iterative_coding_R2_006",
+    "layer": "autogen_framework",
+    "fault_type": "Termination/Guardrail Missing",
+    "failure_code": "REPETITIVE_LOOP",
+    "severity": "high",
+    "confidence": 0.85,
+    "summary": "Trace contains highly repetitive consecutive messages.",
+    "evidence": [],
+    "root_cause": "The AutoGen group chat or workflow lacks a reliable termination condition and max-turn guard, causing repetitive loops beyond oracle limits. Additionally, no mechanism enforces that write_settled_plan is called only after manager approval and that planner stops generating further modifications.",
+    "suggested_fix": "In the AutoGen configuration (group chat or SelectorGroupChat), set a strict max_turns ≤ 15. Add a custom termination message/method that triggers when write_settled_plan is successfully executed after manager's confirmation, immediately ending the conversation. Optionally implement a state guard in planner's agent definition to prevent any planning actions once settled plan is written.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system1_iterative_coding_R2_006"
+    ],
+    "duplicate_fault_ids": [],
+    "agentic_evidence": [
+      "Test case requirement R3: Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
+      "Oracle expects max_turns=15, must_visit_agents=[planner, manager], must_call_tools=[write_settled_plan].",
+      "Trace summary: status=failed, terminated=false, turn_count=23 (exceeds oracle max_turns 15), no timeout.",
+      "Trace indicates repeated tool calling and no sign of write_settled_plan being invoked (missing from stdout_tail events).",
+      "No constraint in the provided configuration or code ensures planner cannot alter plan after manager approval, or that conversation terminates upon reaching plan finalization."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "Trace shows a continued conversation about reviewing code but no direct evidence of a missing termination condition causing the planner to alter a settled plan. The loop appears driven by the model's conversational behavior rather than a definitive software defect in AutoGen configuration or application logic. While turn count exceeded the oracle max (23 > 15), this could be mitigated by adding strict max_turns; however, the reported fault is a symptom of model verbosity, not a confirmed application/AutoGen integration bug.",
+      "false_positive_risk": "high",
+      "confidence": 0.3
+    },
+    "root_cause_group_id": "interaction:timeout-or-non-termination",
+    "root_cause_group_title": "Conversation timeout or missing termination guard",
     "is_primary_fault": false,
-    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
-    "classification_note": "Derived symptom: the target crashed before MASentinel could observe the expected agent/tool/message behavior."
+    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_003"
   }
 ]

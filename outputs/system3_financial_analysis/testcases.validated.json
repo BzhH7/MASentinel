@@ -3,7 +3,7 @@
     "case_id": "system3_financial_analysis_REQ_001",
     "system_id": "system3_financial_analysis",
     "case_type": "requirement_positive",
-    "objective": "Verify that user_proxy can initiate a basic financial analysis workflow for AAPL using the 5 connected agents (data_analyst, financial_analyst, risk_analyst, investment_advisor, report_generator) and the conversation terminates normally.",
+    "objective": "Verify that user_proxy can initiate a basic financial analysis workflow for AAPL using the core agents (data_analyst, financial_analyst, risk_analyst, investment_advisor, report_generator).",
     "input": "Analyze AAPL stock and provide a comprehensive investment report.",
     "input_sequence": [],
     "target_requirements": [
@@ -25,6 +25,7 @@
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
+        "user_proxy",
         "data_analyst",
         "financial_analyst",
         "risk_analyst",
@@ -41,22 +42,21 @@
     "fault_injection": null,
     "metadata": {
       "priority": "high",
-      "gap_type": "missing_agent_activation"
+      "description": "Basic positive test for core agent collaboration on AAPL analysis."
     }
   },
   {
     "case_id": "system3_financial_analysis_COV_001",
     "system_id": "system3_financial_analysis",
     "case_type": "coverage_guided",
-    "objective": "Verify that the system can handle a request for a specific financial metric (ROE) even though no tools are registered, relying on LLM knowledge and agent collaboration.",
-    "input": "What is the current ROE of AAPL?",
+    "objective": "Verify that the system handles a request for a specific financial metric (ROE) by engaging the financial_analyst agent, covering the R12 requirement.",
+    "input": "What is the ROE of AAPL?",
     "input_sequence": [],
     "target_requirements": [
       "R12"
     ],
     "target_agents": [
       "user_proxy",
-      "data_analyst",
       "financial_analyst"
     ],
     "target_tools": [],
@@ -66,7 +66,7 @@
       "max_turns": 10,
       "must_not_crash": true,
       "must_visit_agents": [
-        "data_analyst",
+        "user_proxy",
         "financial_analyst"
       ],
       "must_call_tools": [],
@@ -79,7 +79,7 @@
     "fault_injection": null,
     "metadata": {
       "priority": "medium",
-      "gap_type": "missing_tool_coverage"
+      "description": "Coverage-guided test for R12 (profitability analysis) using financial_analyst."
     }
   },
   {
@@ -115,43 +115,8 @@
     "case_id": "system3_financial_analysis_FUZZ_001",
     "system_id": "system3_financial_analysis",
     "case_type": "fuzz_negative",
-    "objective": "Send a request to an enterprise agent (enterprise_quantitative_analyst) that has no message edge/null tools, expecting graceful handling (no crash, termination or fallback).",
-    "input": "Run a Monte Carlo VaR simulation for AAPL portfolio.",
-    "input_sequence": [],
-    "target_requirements": [
-      "R4"
-    ],
-    "target_agents": [
-      "enterprise_quantitative_analyst"
-    ],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 10,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "enterprise_quantitative_analyst"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "gap": "enterprise_quantitative_analyst has no message edge and no tools",
-      "risk": "tool_schema_risk: no tools registered for quantitative analysis"
-    }
-  },
-  {
-    "case_id": "system3_financial_analysis_TOOLFUZZ_001",
-    "system_id": "system3_financial_analysis",
-    "case_type": "fuzz_tool_failure",
-    "objective": "Tool-failure fuzz placeholder when no tool is statically discovered.",
-    "input": "请执行一个可能需要外部工具的任务；若没有工具可用，请优雅说明限制并结束。",
+    "objective": "Instruction conflict should not crash or wait for human input.",
+    "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
     "input_sequence": [],
     "target_requirements": [],
     "target_agents": [],
@@ -171,7 +136,43 @@
     },
     "fault_injection": null,
     "metadata": {
-      "fuzz_template": "no_discovered_tool"
+      "fuzz_template": "conflicting_instruction",
+      "legacy_type": true
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_TOOLFUZZ_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "fuzz_tool_failure",
+    "objective": "Verify system behavior when a required tool (yfinance) is missing from data_collector's tool list.",
+    "input": "Use yfinance to get the latest balance sheet for MSFT.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2"
+    ],
+    "target_agents": [
+      "data_collector"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 10,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": true,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "gap_aware": true,
+      "note": "Tests graceful degradation when yfinance tool is not registered."
     }
   },
   {
@@ -257,23 +258,23 @@
     "case_id": "system3_financial_analysis_COV_002",
     "system_id": "system3_financial_analysis",
     "case_type": "coverage_guided",
-    "objective": "Cover the orphan agent data_collector by sending a 2-turn message: user_proxy -> data_collector -> financial_analyst, verifying data_collector is reachable and can relay data.",
-    "input": "Collect recent financial data for MSFT and pass it to the financial analyst.",
+    "objective": "Cover R2 by verifying that data_collector attempts to use yfinance for data collection, even if tools are missing.",
+    "input": "Collect historical price data for AAPL from Yahoo Finance.",
     "input_sequence": [],
-    "target_requirements": [],
+    "target_requirements": [
+      "R2"
+    ],
     "target_agents": [
-      "data_collector",
-      "financial_analyst"
+      "data_collector"
     ],
     "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
-      "max_turns": 5,
+      "max_turns": 10,
       "must_not_crash": true,
       "must_visit_agents": [
-        "data_collector",
-        "financial_analyst"
+        "data_collector"
       ],
       "must_call_tools": [],
       "must_cover_edges": [],
@@ -284,8 +285,8 @@
     },
     "fault_injection": null,
     "metadata": {
-      "gap": "orphan agent data_collector has no message edge",
-      "risk": "tool_schema_risk: no tools registered"
+      "gap_aware": true,
+      "note": "data_collector has no tools registered; this test observes how the system handles the missing yfinance tool."
     }
   },
   {
@@ -351,11 +352,11 @@
     "metadata": {}
   },
   {
-    "case_id": "system3_financial_analysis_FUZZ_002",
+    "case_id": "system3_financial_analysis_TOOLFUZZ_002",
     "system_id": "system3_financial_analysis",
-    "case_type": "fuzz_negative",
-    "objective": "Instruction conflict should not crash or wait for human input.",
-    "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
+    "case_type": "fuzz_tool_failure",
+    "objective": "Tool-failure fuzz placeholder when no tool is statically discovered.",
+    "input": "请执行一个可能需要外部工具的任务；若没有工具可用，请优雅说明限制并结束。",
     "input_sequence": [],
     "target_requirements": [],
     "target_agents": [],
@@ -375,8 +376,7 @@
     },
     "fault_injection": null,
     "metadata": {
-      "fuzz_template": "conflicting_instruction",
-      "legacy_type": true
+      "fuzz_template": "no_discovered_tool"
     }
   },
   {

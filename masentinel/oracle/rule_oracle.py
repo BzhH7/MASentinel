@@ -8,6 +8,12 @@ from masentinel.schema import OracleFailure, OracleResult, RunTrace, TestCase
 
 ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
 AUTOGEN_MESSAGE_RE = re.compile(r"^([A-Za-z_][\w.-]*)\s+\(to\s+([A-Za-z_][\w.-]*)\):\s*$")
+AGENT_ALIASES = {
+    "chat_manager": "group_chat_manager",
+    "GroupChatManager": "group_chat_manager",
+    "groupchat_manager": "group_chat_manager",
+}
+ORACLE_WARNING_CODES = {"TURN_BUDGET_EXCEEDED"}
 
 
 class RuleOracle:
@@ -17,6 +23,16 @@ class RuleOracle:
     def evaluate(self, testcase: TestCase, trace: RunTrace) -> OracleResult:
         failures: list[OracleFailure] = []
         text = f"{trace.stdout or ''}\n{trace.stderr or ''}\n{trace.final_output or ''}"
+        provider_failure = self._model_provider_failure(text)
+        if provider_failure:
+            failures.append(
+                OracleFailure(
+                    "MODEL_PROVIDER_FAILURE",
+                    "The run failed because the model/API provider timed out, was unavailable, unauthorized, or rate-limited.",
+                    "low",
+                    provider_failure,
+                )
+            )
         if self._human_input_requested(trace, text):
             failures.append(
                 OracleFailure(
@@ -26,18 +42,12 @@ class RuleOracle:
                     self._evidence(text),
                 )
             )
-        if testcase.oracle.must_not_crash and ("Traceback (most recent call last)" in text or (trace.returncode not in (0, None) and trace.stderr)):
+        if (
+            not provider_failure
+            and testcase.oracle.must_not_crash
+            and ("Traceback (most recent call last)" in text or (trace.returncode not in (0, None) and trace.stderr))
+        ):
             failures.append(OracleFailure("RUNTIME_EXCEPTION", "The process ended with an unhandled runtime error.", "high", self._evidence(text)))
-        provider_failure = self._model_provider_failure(text)
-        if provider_failure:
-            failures.append(
-                OracleFailure(
-                    "MODEL_PROVIDER_FAILURE",
-                    "The run failed because the model/API provider was unavailable, unauthorized, or rate-limited.",
-                    "low",
-                    provider_failure,
-                )
-            )
         business_failure = [] if provider_failure else self._business_task_failure(text)
         if business_failure:
             failures.append(
@@ -71,6 +81,7 @@ class RuleOracle:
             )
             workflow_issue_added = True
         overlong_generated_input_timeout = self._overlong_generated_input_timeout(testcase, trace)
+        can_judge_workflow_expectations = workflow_observed and not provider_failure and not trace.timeout and trace.returncode in (0, None)
         if trace.timeout:
             if overlong_generated_input_timeout:
                 failures.append(
@@ -92,15 +103,30 @@ class RuleOracle:
                 )
             else:
                 failures.append(OracleFailure("TIMEOUT", "The process exceeded the configured timeout.", "high", [str(trace.metadata.get("timeout_seconds", ""))]))
-        if testcase.oracle.must_terminate and ((trace.timeout and workflow_observed and not overlong_generated_input_timeout) or trace.turn_count > testcase.oracle.max_turns):
-            failures.append(OracleFailure("NON_TERMINATION", "The run did not terminate within the expected turn budget.", "high", [f"turn_count={trace.turn_count}"]))
+        if testcase.oracle.must_terminate and not provider_failure:
+            if not trace.timeout and workflow_observed and not trace.terminated:
+                failures.append(OracleFailure("NON_TERMINATION", "The run did not terminate.", "high", [f"turn_count={trace.turn_count}"]))
+            elif (
+                not trace.timeout
+                and trace.terminated
+                and trace.turn_count > testcase.oracle.max_turns
+            ):
+                failures.append(
+                    OracleFailure(
+                        "TURN_BUDGET_EXCEEDED",
+                        "The run terminated, but exceeded the expected soft turn budget.",
+                        "low",
+                        [f"turn_count={trace.turn_count}", f"max_turns={testcase.oracle.max_turns}"],
+                    )
+                )
         visited_agents = self._visited_agents(trace, text)
-        if workflow_observed:
+        if can_judge_workflow_expectations:
             for agent in testcase.oracle.must_visit_agents:
-                if agent and agent not in visited_agents and agent.lower() not in text.lower():
+                canonical = _canon_agent(agent)
+                if canonical and canonical not in visited_agents and agent.lower() not in text.lower():
                     failures.append(OracleFailure("MISSING_AGENT", f"Expected agent was not observed: {agent}", "medium", [agent]))
         called_tools = self._called_tools(trace, text)
-        if workflow_observed:
+        if can_judge_workflow_expectations:
             for tool in testcase.oracle.must_call_tools:
                 if tool and tool not in called_tools and tool.lower() not in text.lower():
                     failures.append(OracleFailure("MISSING_TOOL_CALL", f"Expected tool was not called: {tool}", "medium", [tool]))
@@ -108,12 +134,13 @@ class RuleOracle:
             if tool in called_tools or tool.lower() in text.lower():
                 failures.append(OracleFailure("FORBIDDEN_TOOL_CALL", f"Forbidden tool was called: {tool}", "high", [tool]))
         observed_edges = self._observed_edges(trace, text)
-        if workflow_observed:
+        if can_judge_workflow_expectations:
             for edge in testcase.oracle.must_cover_edges:
-                if edge not in observed_edges:
+                canonical_edge = (_canon_agent(edge[0]), _canon_agent(edge[1]))
+                if canonical_edge not in observed_edges:
                     failures.append(OracleFailure("MISSING_MESSAGE_EDGE", f"Expected message edge was not observed: {edge[0]}->{edge[1]}", "medium", [str(edge)]))
         if self.registered_tools:
-            for tool in called_tools:
+            for tool in self._called_tools(trace, text, llm_only=True):
                 if tool not in self.registered_tools:
                     failures.append(OracleFailure("TOOL_HALLUCINATION", f"Unregistered tool was called: {tool}", "high", [tool]))
         if testcase.oracle.must_not_fabricate_tool_result:
@@ -129,31 +156,39 @@ class RuleOracle:
                 json.loads(trace.final_output or "")
             except json.JSONDecodeError:
                 failures.append(OracleFailure("OUTPUT_SCHEMA_VIOLATION", "Output contract requires JSON but final output is not valid JSON.", "medium", [trace.final_output or ""]))
-        if self._has_repetitive_loop(trace):
+        if can_judge_workflow_expectations and not trace.terminated and self._has_repetitive_loop(trace):
             failures.append(OracleFailure("REPETITIVE_LOOP", "Trace contains highly repetitive consecutive messages.", "medium", []))
-        metamorphic_failure = self._metamorphic_failure(testcase, trace, visited_agents, called_tools) if workflow_observed else None
+        metamorphic_failure = self._metamorphic_failure(testcase, trace, visited_agents, called_tools) if can_judge_workflow_expectations else None
         if metamorphic_failure:
             failures.append(metamorphic_failure)
-        return OracleResult(case_id=testcase.case_id, passed=not failures, failures=failures)
+        hard_failures = [failure for failure in failures if failure.code not in ORACLE_WARNING_CODES]
+        return OracleResult(case_id=testcase.case_id, passed=not hard_failures, failures=failures)
 
     def _visited_agents(self, trace: RunTrace, text: str = "") -> set[str]:
         agents: set[str] = set()
         for event in trace.events:
             if event.sender:
-                agents.add(event.sender)
+                agents.add(_canon_agent(event.sender))
             if event.receiver:
-                agents.add(event.receiver)
+                agents.add(_canon_agent(event.receiver))
             if event.metadata.get("agent"):
-                agents.add(str(event.metadata["agent"]))
+                agents.add(_canon_agent(str(event.metadata["agent"])))
         for sender, receiver in self._stdout_edges(text):
-            agents.add(sender)
-            agents.add(receiver)
+            agents.add(_canon_agent(sender))
+            agents.add(_canon_agent(receiver))
         return agents
 
-    def _called_tools(self, trace: RunTrace, text: str = "") -> set[str]:
-        tools = {event.tool for event in trace.events if event.tool and event.type in {"tool_call", "tool_result", "tool_error"}}
+    def _called_tools(self, trace: RunTrace, text: str = "", llm_only: bool = False) -> set[str]:
+        tools = set()
+        for event in trace.events:
+            if not event.tool or event.type not in {"tool_call", "tool_result", "tool_error"}:
+                continue
+            if llm_only and not event.metadata.get("llm_visible", False):
+                continue
+            tools.add(event.tool)
+        if not llm_only:
+            tools.update(re.findall(r"function(?:_call)?[=:]\s*['\"]?([A-Za-z_]\w*)", text, flags=re.IGNORECASE))
         tools.update(re.findall(r"EXECUTING FUNCTION\s+([A-Za-z_]\w*)", text))
-        tools.update(re.findall(r"function(?:_call)?[=:]\s*['\"]?([A-Za-z_]\w*)", text, flags=re.IGNORECASE))
         return tools
 
     def _fabricated_tool_results(self, trace: RunTrace) -> set[str]:
@@ -167,7 +202,7 @@ class RuleOracle:
         return fabricated
 
     def _observed_edges(self, trace: RunTrace, text: str = "") -> set[tuple[str, str]]:
-        edges = {(event.sender, event.receiver) for event in trace.events if event.type == "message" and event.sender and event.receiver}
+        edges = {(_canon_agent(event.sender), _canon_agent(event.receiver)) for event in trace.events if event.type == "message" and event.sender and event.receiver}
         edges.update(self._stdout_edges(text))
         return edges
 
@@ -177,7 +212,7 @@ class RuleOracle:
             clean_line = ANSI_RE.sub("", line).strip()
             match = AUTOGEN_MESSAGE_RE.match(clean_line)
             if match:
-                edges.add((match.group(1), match.group(2)))
+                edges.add((_canon_agent(match.group(1)), _canon_agent(match.group(2))))
         return edges
 
     def _workflow_observed(self, trace: RunTrace, text: str) -> bool:
@@ -243,6 +278,14 @@ class RuleOracle:
             "yfratelimiterror",
             "model call failed",
             "read operation timed out",
+            "openai.apitimeouterror",
+            "openai api call timed out",
+            "request timed out",
+            "connecttimeout",
+            "httpx.connecttimeout",
+            "httpcore.connecttimeout",
+            "api timeout",
+            "llm timeout",
         )
         if not any(marker in lowered for marker in markers):
             return []
@@ -283,3 +326,10 @@ class RuleOracle:
     def _evidence(self, text: str) -> list[str]:
         lines = [line for line in text.splitlines() if line.strip()]
         return lines[-8:]
+
+
+def _canon_agent(name: str | None) -> str:
+    if not name:
+        return ""
+    value = str(name).strip()
+    return AGENT_ALIASES.get(value, AGENT_ALIASES.get(value.lower(), value))

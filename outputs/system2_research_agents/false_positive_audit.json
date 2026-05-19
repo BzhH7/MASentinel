@@ -5,86 +5,42 @@
     "suspected_false_positive": true,
     "audit": {
       "audit_result": "likely_false_positive",
-      "reason": "The trace shows the conversation terminated successfully with explicit TERMINATE messages sent and received by all agents (chat_manager, researcher, research_manager, director). The returncode is 0 and status is 'passed'. The fault report's own evidence (turn_count=23) exceeds the oracle's max_turns=20, which is an oracle threshold violation, not a non-termination fault. The actual termination mechanism is working correctly. No application code or AutoGen framework fault is demonstrated.",
-      "false_positive_risk": "high",
-      "confidence": 0.95
-    }
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
-    "case_id": "system2_research_agents_COV_001",
-    "suspected_false_positive": true,
-    "audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The test case passed (status: passed, returncode: 0, terminated: true) and the provided trace_summary only contains TERMINATE messages without any tool call logs. The fault is flagged solely by a rule oracle that expects 'google_search' to be called, but there is no concrete evidence (e.g., trace of agent actions, 16 duplicate faults) that the tool was actually missing. The root_cause analysis correctly identifies that the oracle may be misinterpreting the trace or the tool call was not captured. This 16 duplicate faults and passed test status strongly suggest a logging/tracing deficiency or an overly strict oracle rule, not an application-level missing tool call. Therefore, it is a likely false positive.",
+      "reason": "The16 fault diagnosis attributes the timeout to a human input mode error (HUMAN_INPUT_REQUESTED), but the provided trace and evidence do not contain any actual human input prompt or blocking input() call. The trace shows a normal multi-agent conversation loop (19 turns) ending with 'Next speaker: director', which is a standard AutoGen speaker selection message. The timeout is more likely caused by the model service (ds-v4-flash) returning empty content repeatedly, as evidenced by the empty assistant responses and 'Model ds-v4-flash is not found' warnings. This is a model service/infrastructure issue, not an application or framework configuration fault. The16 fault diagnosis appears to have misinterpreted the timeout as a human input request without direct evidence.",
       "false_positive_risk": "high",
       "confidence": 0.85
     }
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
     "case_id": "system2_research_agents_COV_001",
+    "suspected_false_positive": false,
+    "audit": {
+      "audit_result": "confirmed_fault",
+      "reason": "The trace shows a speaker selection loop where speaker_selection_agent returns empty content and no tool_calls, causing checking_agent to re-prompt indefinitely. This is a framework-level issue: the custom speaker selection logic (likely a function or agent in the AutoGen GroupChat configuration) does not handle empty/invalid model responses and lacks a fallback or max retry limit ετυμολογία. The root cause is in the application's AutoGen integration code, not in the model's inherent capability or external service limits. The evidence (19 turns, repeated 'You didn't choose a speaker' messages, 45-second timeout) directly supports this.",
+      "false_positive_risk": "low",
+      "confidence": 0.95
+    }
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "case_id": "system2_research_agents_COV_002",
     "suspected_false_positive": true,
     "audit": {
       "audit_result": "likely_false_positive",
-      "reason": "The fault report itself states the test case passed, terminated cleanly with returncode 0, and the trace shows a normal TERMINATE sequence. The only trigger was exceeding the oracle's max_turns (23 > 20), which is a test oracle threshold issue, not a software fault in the application or AutoGen framework. No evidence of a speaker selection error or repetitive loop exists in the provided trace.",
+      "reason": "The oracle requires a direct director->research_manager message edge, but the trace shows the test passed normally with 11 turns terminated by chat_manager broadcasting TERMINATE to all agents. There is no evidence of a framework-level routing failure, message loss, or configuration error. The missing edge is ​most likely due to the model's decision not to trigger that specific communication path in this run, which is a coverage gap or model behavior issue, not a software fault in the application or AutoGen framework.",
       "false_positive_risk": "high",
-      "confidence": 0.95
+      "confidence": 0.9
     }
   },
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
-    "case_id": "system2_research_agents_COV_002",
+    "case_id": "system2_research_agents_TOOLFUZZ_001",
     "suspected_false_positive": false,
     "audit": {
       "audit_result": "confirmed_fault",
-      "reason": "The trace shows a TimeoutError raised in autogen/oai/client.py:739, which propagates uncaught through conversable_agent.py and crashes the process (returncode 1). This is a framework-level exception that can be mitigated by adding try-except or timeout/retry configuration in the application or AutoGen setup, making it a valid software fault.",
+      "reason": "The trace shows speaker_selection_agent returns ' responsedirector' (with leading whitespace and 'response' prefix), and checking_agent's exact-match validation against ['user_proxy', 'researcher', 'research_manager', 'director'] rejects it, causing an infinite loop and timeout. This is a logic/parsing defect in the application's agent validation code or prompt, not a model capability or service issue. The fix involves normalizing the response string or tightening the prompt, which is a code/config change.",
       "false_positive_risk": "low",
-      "confidence": 0.9
-    }
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
-    "case_id": "system2_research_agents_COV_002",
-    "suspected_false_positive": true,
-    "audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The test failure is directly caused by an OpenAI API TimeoutError, as shown in stderr_tail. The trace only captured initial broadcast messages before the timeout, so the expected director->research_manager edge was never exercised. This is an infrastructure/model service issue, not a defect in application code presuming AutoGen framework routing logic.",
-      "false_positive_risk": "high",
       "confidence": 0.95
-    }
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
-    "case_id": "system2_research_agents_META_001",
-    "suspected_false_positive": true,
-    "audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The test failure is caused by a TimeoutError from the OpenAI API call, which is a model service/infrastructure issue. The trace shows no evidence of application logic or AutoGen framework faults; the missing tool calls and agent visits are consequences of the workflow being interrupted before execution. This ​​does not meet the criteria for a confirmed software fault.",
-      "false_positive_risk": "high",
-      "confidence": 0.95
-    }
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
-    "case_id": "system2_research_agents_PROP_001",
-    "suspected_false_positive": true,
-    "audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The test case passed, terminated normally in 5 turns, and the trace shows agent 'chat_manager' routing messages correctly. The oracle expects 'group_chat_manager', but the system uses 'chat_manager'. This is a naming mismatch in the test oracle, not a genuine routing fault in the application or AutoGen framework. No code logic change is required.",
-      "false_positive_risk": "high",
-      "confidence": 0.9
-    }
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
-    "case_id": "system2_research_agents_R2_001",
-    "suspected_false_positive": false,
-    "audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "Trace shows 23 turns exceeding oracle max_turns=15逾时，stdout尾部重复出现speaker selection提示且无TERMINATE消息，表明GroupChat缺少可靠的终止条件与max_turns/max_round约束，导致无限循环。该问题可通过修改AutoGen GroupChat配置（添加is_termination_msg、设置max_round、human_input_mode='NEVER'）缓解，属于框架层故障。",
-      "false_positive_risk": "low",
-      "confidence": 0.82
     }
   }
 ]

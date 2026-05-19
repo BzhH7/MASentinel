@@ -1,18 +1,16 @@
 {
   "coverage_gaps": [
     {
-      "gap_type": "missing_state_coverage",
-      "target": "state_coverage",
-      "suggested_test_intent": "Generate additional cases to improve state_coverage."
+      "gap_type": "missing_tool_coverage",
+      "target": "write_settled_plan",
+      "suggested_test_intent": "Verify that write_settled_plan actually persists a plan file in the project directory and that the file content matches the approved plan, including handling of special characters and newlines."
     },
     {
-      "gap_type": "missing_fault_mode_coverage",
-      "target": "fault_mode_coverage",
-      "suggested_test_intent": "Generate additional cases to improve fault_mode_coverage."
+      "gap_type": "missing_tool_coverage",
+      "target": "write_latest_iteration",
+      "suggested_test_intent": "Verify that write_latest_iteration correctly increments version numbers across consecutive calls and that only the latest script and comment files are created in the correct project subdirectory."
     }
   ],
   "new_test_requests": [],
-  "confidence": 0.35,
-  "fallback": true,
-  "error": "Agent returned non-JSON or empty JSON; raw_preview={ \"coverage_gaps\": [ { \"gap_type\": \"missing_tool_coverage\", \"target\": \"write_latest_iteration_comments\", \"suggested_test_intent\": \"Verify that the reviewer's comments are persisted via write_latest_iteration_comments and that the programmer can retrieve them in the next iteration.\" }, { \"gap_type..."
+  "confidence": 0.8
 }

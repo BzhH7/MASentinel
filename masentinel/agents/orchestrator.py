@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
 from pathlib import Path
 import re
 import sys
@@ -94,6 +96,8 @@ class AgenticTestOrchestrator:
 
         self._stage(system_id, "step 1/3 generate, validate and freeze testcases")
         testing = config.get("testing", {}) or {}
+        agent_api_workers = self._agent_api_workers(config)
+        self._stage(system_id, f"agent API parallel workers={agent_api_workers}")
         num_cases = int(testing.get("num_cases", 40))
         max_input_chars = int(testing.get("max_case_input_chars", 1200) or 1200)
         agent_design_cases = min(int(testing.get("agent_design_cases", 4) or 4), num_cases)
@@ -104,6 +108,7 @@ class AgenticTestOrchestrator:
             modeling_decision.output,
             total_cases=agent_design_cases,
             batch_size=agent_batch_size,
+            workers=agent_api_workers,
             system_id=system_id,
         )
         self._stage(system_id, f"TestDesignerAgent done agent_cases={len(agent_cases)}, merging deterministic and regression cases")
@@ -123,6 +128,7 @@ class AgenticTestOrchestrator:
                 "testcases_frozen_sha256": testcase_hash,
                 "case_types": sorted({case.case_type for case in cases}),
                 "human_intervention_allowed": False if self.no_human else True,
+                "agent_api_workers": agent_api_workers,
             },
         )
         self._stage(system_id, f"testcases frozen: generated={len(generated_cases)} validated={len(cases)} sha256={testcase_hash[:12]}")
@@ -161,6 +167,7 @@ class AgenticTestOrchestrator:
             traces,
             system_id=system_id,
             phase="initial",
+            workers=agent_api_workers,
         )
         diagnosed_faults = annotate_fault_groups(diagnosed_faults)
         write_json(system_out / "faults.json", diagnosed_faults)
@@ -181,7 +188,7 @@ class AgenticTestOrchestrator:
             }
         )
         write_json(system_out / "coverage_strategy.json", coverage_decision.output)
-        self._stage(system_id, f"initial coverage: MASCov={coverage.get('mascov', 0):.4f} faults={len(diagnosed_faults)}")
+        self._stage(system_id, f"initial coverage: MASCov={_fmt_metric(coverage.get('mascov'))} faults={len(diagnosed_faults)}")
 
         second_round = self._maybe_run_second_round(
             profile,
@@ -218,6 +225,7 @@ class AgenticTestOrchestrator:
                 traces,
                 system_id=system_id,
                 phase="second-round",
+                workers=agent_api_workers,
             )
             diagnosed_faults = annotate_fault_groups(diagnosed_faults)
             write_json(system_out / "faults.json", diagnosed_faults)
@@ -238,7 +246,7 @@ class AgenticTestOrchestrator:
                 }
             )
             write_json(system_out / "coverage_strategy.json", coverage_decision.output)
-            self._stage(system_id, f"second-round coverage: MASCov={coverage.get('mascov', 0):.4f} faults={len(diagnosed_faults)}")
+            self._stage(system_id, f"second-round coverage: MASCov={_fmt_metric(coverage.get('mascov'))} faults={len(diagnosed_faults)}")
         self._stage(system_id, "write regression pool, trace graph, flaky report and patch suggestions")
         update_regression_pool(diagnosed_faults, system_out)
         write_json(system_out / "runs" / "run_summary.json", traces)
@@ -268,6 +276,7 @@ class AgenticTestOrchestrator:
             "run_manifest": manifest,
             "testcases_frozen_sha256": testcase_hash,
             "human_intervention_allowed": not self.no_human,
+            "agent_api_workers": agent_api_workers,
             "semantic_graph_review": modeling_decision.output,
             "interaction_adapter": interaction_decision.output,
             "coverage_strategy": coverage_decision.output,
@@ -286,6 +295,14 @@ class AgenticTestOrchestrator:
         oracle_passed = len([item for item in rule_results if item.get("passed")])
         oracle_failed = len(rule_results) - oracle_passed
         fault_groups = build_fault_groups(diagnosed_faults)
+        primary_confirmed = [
+            fault
+            for fault in diagnosed_faults
+            if fault.get("is_primary_fault", True)
+            and not fault.get("suspected_false_positive")
+            and fault.get("layer") in TARGET_LAYERS
+        ]
+        derived_symptoms = [fault for fault in diagnosed_faults if fault.get("cascades_from")]
         result = {
             "system_id": system_id,
             "cases": len(cases),
@@ -299,13 +316,16 @@ class AgenticTestOrchestrator:
             "faults": len(diagnosed_faults),
             "fault_groups": len(fault_groups),
             "suspected_fp": len([fault for fault in diagnosed_faults if fault.get("suspected_false_positive")]),
+            "confirmed_primary_root_causes": len(primary_confirmed),
+            "derived_symptoms": len(derived_symptoms),
             "agentic": agentic_info,
         }
         write_dashboard(system_out, result)
         self._stage(
             system_id,
             f"done: cases={result['cases']} process_passed={passed} process_failed={result['failed']} "
-            f"oracle_passed={oracle_passed} oracle_failed={oracle_failed} faults={result['faults']} report={system_out / 'report.html'}",
+            f"oracle_passed={oracle_passed} oracle_failed={oracle_failed} faults={result['faults']} "
+            f"primary_root_causes={result['confirmed_primary_root_causes']} report={system_out / 'report.html'}",
         )
         return result
 
@@ -319,6 +339,21 @@ class AgenticTestOrchestrator:
             retries=int(model.get("testing_retries", 1) or 1),
             extra_body=model.get("testing_extra_body") or model.get("testing_extra_body_json") or model.get("extra_body"),
         )
+
+    def _agent_api_workers(self, config: dict[str, Any]) -> int:
+        testing = config.get("testing", {}) or {}
+        model = config.get("model", {}) or {}
+        raw = (
+            os.getenv("MAS_AGENT_API_WORKERS")
+            or testing.get("agent_api_workers")
+            or model.get("testing_parallel_calls")
+            or 1
+        )
+        try:
+            workers = int(raw or 1)
+        except (TypeError, ValueError):
+            workers = 1
+        return max(1, min(workers, 16))
 
     def _agents(self, model_client: ModelClient, trace_logger: AgentTraceLogger) -> dict[str, Any]:
         model_name = self.test_model or model_client.model or "ds-v4-pro"
@@ -588,6 +623,7 @@ class AgenticTestOrchestrator:
         modeling_output: dict[str, Any],
         total_cases: int,
         batch_size: int,
+        workers: int,
         system_id: str,
     ) -> list[TestCase]:
         if total_cases <= 0:
@@ -596,6 +632,18 @@ class AgenticTestOrchestrator:
         compact_profile = self._compact_profile(profile)
         compact_modeling = self._compact_modeling_output(modeling_output)
         batches = (total_cases + batch_size - 1) // batch_size
+        if workers > 1 and batches > 1:
+            return self._run_test_designer_batches_parallel(
+                designer,
+                profile,
+                compact_profile,
+                compact_modeling,
+                total_cases=total_cases,
+                batch_size=batch_size,
+                batches=batches,
+                workers=workers,
+                system_id=system_id,
+            )
         for batch_index in range(batches):
             remaining = total_cases - len(agent_cases)
             current_size = min(batch_size, remaining)
@@ -635,6 +683,85 @@ class AgenticTestOrchestrator:
             )
             if decision.fallback_used and not batch_cases:
                 break
+        return agent_cases[:total_cases]
+
+    def _run_test_designer_batches_parallel(
+        self,
+        designer: TestDesignerAgent,
+        profile: SystemProfile,
+        compact_profile: dict[str, Any],
+        compact_modeling: dict[str, Any],
+        total_cases: int,
+        batch_size: int,
+        batches: int,
+        workers: int,
+        system_id: str,
+    ) -> list[TestCase]:
+        max_workers = min(workers, batches)
+        self._stage(system_id, f"TestDesignerAgent parallel start batches={batches} workers={max_workers}")
+        agent_cases: list[TestCase] = []
+        focuses = [
+            "requirement_positive",
+            "message_edge_coverage",
+            "tool_call_coverage",
+            "fault_injection",
+            "metamorphic_relation",
+            "property_boundary",
+            "regression_probe",
+            "negative_case",
+        ]
+        results: dict[int, tuple[list[TestCase], bool]] = {}
+
+        def run_batch(batch_index: int) -> tuple[int, list[TestCase], bool]:
+            start = batch_index * batch_size
+            current_size = min(batch_size, total_cases - start)
+            focus = focuses[batch_index % len(focuses)]
+            self._stage(
+                system_id,
+                f"TestDesignerAgent batch {batch_index + 1}/{batches} start batch_size={current_size} focus={focus}",
+            )
+            decision = designer.run(
+                {
+                    "profile": compact_profile,
+                    "semantic_graph_review": compact_modeling,
+                    "num_cases": current_size,
+                    "batch_index": batch_index + 1,
+                    "batch_count": batches,
+                    "coverage_focus": focus,
+                    "existing_agent_cases": [],
+                    "instruction": (
+                        "Generate only this independent small batch. Return compact JSON only. "
+                        "Use coverage_focus to make this batch different from other parallel batches. "
+                        "Keep objective/input strings short and directly executable by the target system. "
+                        "Avoid dialogue transcripts, markdown, explanations, and duplicated case intents. "
+                        "Deterministic generator will fill the remaining suite."
+                    ),
+                }
+            )
+            batch_cases = testcases_from_agent_output(decision.output, profile)
+            self._stage(
+                system_id,
+                f"TestDesignerAgent batch {batch_index + 1}/{batches} done new_cases={len(batch_cases)} fallback={decision.fallback_used}",
+            )
+            return batch_index, batch_cases, decision.fallback_used
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_map = {executor.submit(run_batch, batch_index): batch_index for batch_index in range(batches)}
+            for future in as_completed(future_map):
+                batch_index = future_map[future]
+                try:
+                    index, batch_cases, fallback_used = future.result()
+                    results[index] = (batch_cases, fallback_used)
+                except Exception as exc:
+                    results[batch_index] = ([], True)
+                    self._stage(system_id, f"TestDesignerAgent batch {batch_index + 1}/{batches} failed: {exc}")
+
+        for index in sorted(results):
+            batch_cases, _fallback_used = results[index]
+            agent_cases = merge_testcases(agent_cases, batch_cases, limit=total_cases)
+            if len(agent_cases) >= total_cases:
+                break
+        self._stage(system_id, f"TestDesignerAgent parallel complete collected={len(agent_cases)}")
         return agent_cases[:total_cases]
 
     def _rule_results(self, profile: SystemProfile, cases: list[TestCase], traces: list[RunTrace]) -> list[dict[str, Any]]:
@@ -678,7 +805,7 @@ class AgenticTestOrchestrator:
         if float(coverage.get("mascov", 0) or 0) >= target:
             summary["reason"] = "target_reached"
             write_json(system_out / "second_round_summary.json", summary)
-            self._stage(profile.system_id, f"second round skipped: target_reached MASCov={coverage.get('mascov', 0):.4f} target={target:.4f}")
+            self._stage(profile.system_id, f"second round skipped: target_reached MASCov={_fmt_metric(coverage.get('mascov'))} target={target:.4f}")
             return {"extra_cases": [], "extra_traces": [], "summary": summary}
         extra_limit = int(testing.get("second_round_cases", 8) or 8)
         seed = int(testing.get("random_seed", 42)) + 101
@@ -811,59 +938,120 @@ class AgenticTestOrchestrator:
         traces: list[RunTrace],
         system_id: str,
         phase: str,
+        workers: int = 1,
     ) -> list[dict[str, Any]]:
         case_by_id = {case.case_id: case for case in cases}
         trace_by_id = {trace.case_id: trace for trace in traces}
-        audited: list[dict[str, Any]] = []
         total = len(faults)
         self._stage(system_id, f"{phase} agent diagnosis/audit start faults={total}")
-        for index, fault in enumerate(faults, start=1):
-            case = case_by_id.get(fault.get("case_id", ""))
-            trace = trace_by_id.get(fault.get("case_id", ""))
-            self._stage(
-                system_id,
-                f"{phase} FaultDiagnoserAgent {index}/{total} "
-                f"case={fault.get('case_id')} code={fault.get('failure_code')} type={fault.get('fault_type')}",
-            )
-            diagnosis = diagnoser.run(
-                {
-                    "fault": fault,
-                    "testcase": dataclass_to_dict(case) if case else {},
-                    "trace_summary": self._trace_summary(trace) if trace else {},
-                }
-            ).output
-            merged = dict(fault)
-            for key in ("layer", "fault_type", "severity", "root_cause", "suggested_fix", "summary"):
-                if diagnosis.get(key):
-                    merged[key] = diagnosis[key]
-            if diagnosis.get("confidence") is not None:
-                try:
-                    merged["confidence"] = float(diagnosis["confidence"])
-                except (TypeError, ValueError):
-                    pass
-            if diagnosis.get("evidence"):
-                merged["agentic_evidence"] = diagnosis["evidence"]
-            self._stage(system_id, f"{phase} FalsePositiveAuditorAgent {index}/{total} fault={merged.get('fault_id')}")
-            audit = auditor.run({"fault": merged, "trace_summary": self._trace_summary(trace) if trace else {}}).output
-            merged["false_positive_audit"] = audit
-            if audit.get("audit_result") == "likely_false_positive":
-                merged["suspected_false_positive"] = True
-            elif audit.get("audit_result") == "confirmed_fault":
-                merged["suspected_false_positive"] = False
-            if str(merged.get("layer", "")) not in TARGET_LAYERS:
-                self._stage(
-                    system_id,
-                    f"{phase} fault {index}/{total} excluded non_target_layer={merged.get('layer')} fault={merged.get('fault_id')}",
+        if not faults:
+            return []
+
+        max_workers = min(max(1, workers), total)
+        if max_workers <= 1:
+            audited: list[dict[str, Any]] = []
+            for index, fault in enumerate(faults, start=1):
+                merged = self._diagnose_and_audit_one(
+                    diagnoser,
+                    auditor,
+                    fault,
+                    case_by_id,
+                    trace_by_id,
+                    index=index,
+                    total=total,
+                    system_id=system_id,
+                    phase=phase,
                 )
-                continue
-            audited.append(merged)
-            self._stage(
-                system_id,
-                f"{phase} fault {index}/{total} done suspected_fp={merged.get('suspected_false_positive', False)} "
-                f"confidence={merged.get('confidence')}",
-            )
+                if merged is not None:
+                    audited.append(merged)
+            self._stage(system_id, f"{phase} agent diagnosis/audit complete faults={len(audited)}")
+            return audited
+
+        self._stage(system_id, f"{phase} agent diagnosis/audit parallel workers={max_workers}")
+        results: dict[int, dict[str, Any] | None] = {}
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_map = {
+                executor.submit(
+                    self._diagnose_and_audit_one,
+                    diagnoser,
+                    auditor,
+                    fault,
+                    case_by_id,
+                    trace_by_id,
+                    index=index,
+                    total=total,
+                    system_id=system_id,
+                    phase=phase,
+                ): index
+                for index, fault in enumerate(faults, start=1)
+            }
+            for future in as_completed(future_map):
+                index = future_map[future]
+                try:
+                    results[index] = future.result()
+                except Exception as exc:
+                    results[index] = None
+                    self._stage(system_id, f"{phase} fault {index}/{total} agent diagnosis/audit failed: {exc}")
+        audited = [results[index] for index in sorted(results) if results[index] is not None]
         self._stage(system_id, f"{phase} agent diagnosis/audit complete faults={len(audited)}")
         return audited
+
+    def _diagnose_and_audit_one(
+        self,
+        diagnoser: FaultDiagnoserAgent,
+        auditor: FalsePositiveAuditorAgent,
+        fault: dict[str, Any],
+        case_by_id: dict[str, TestCase],
+        trace_by_id: dict[str, RunTrace],
+        index: int,
+        total: int,
+        system_id: str,
+        phase: str,
+    ) -> dict[str, Any] | None:
+        case = case_by_id.get(fault.get("case_id", ""))
+        trace = trace_by_id.get(fault.get("case_id", ""))
+        self._stage(
+            system_id,
+            f"{phase} FaultDiagnoserAgent {index}/{total} "
+            f"case={fault.get('case_id')} code={fault.get('failure_code')} type={fault.get('fault_type')}",
+        )
+        diagnosis = diagnoser.run(
+            {
+                "fault": fault,
+                "testcase": dataclass_to_dict(case) if case else {},
+                "trace_summary": self._trace_summary(trace) if trace else {},
+            }
+        ).output
+        merged = dict(fault)
+        for key in ("layer", "fault_type", "severity", "root_cause", "suggested_fix", "summary"):
+            if diagnosis.get(key):
+                merged[key] = diagnosis[key]
+        if diagnosis.get("confidence") is not None:
+            try:
+                merged["confidence"] = float(diagnosis["confidence"])
+            except (TypeError, ValueError):
+                pass
+        if diagnosis.get("evidence"):
+            merged["agentic_evidence"] = diagnosis["evidence"]
+        self._stage(system_id, f"{phase} FalsePositiveAuditorAgent {index}/{total} fault={merged.get('fault_id')}")
+        audit = auditor.run({"fault": merged, "trace_summary": self._trace_summary(trace) if trace else {}}).output
+        merged["false_positive_audit"] = audit
+        if audit.get("audit_result") == "likely_false_positive":
+            merged["suspected_false_positive"] = True
+        elif audit.get("audit_result") == "confirmed_fault":
+            merged["suspected_false_positive"] = False
+        if str(merged.get("layer", "")) not in TARGET_LAYERS:
+            self._stage(
+                system_id,
+                f"{phase} fault {index}/{total} excluded non_target_layer={merged.get('layer')} fault={merged.get('fault_id')}",
+            )
+            return None
+        self._stage(
+            system_id,
+            f"{phase} fault {index}/{total} done suspected_fp={merged.get('suspected_false_positive', False)} "
+            f"confidence={merged.get('confidence')}",
+        )
+        return merged
 
     def _trace_summary(self, trace: RunTrace | None) -> dict[str, Any]:
         if trace is None:
@@ -879,3 +1067,12 @@ class AgenticTestOrchestrator:
             "stdout_tail": "\n".join((trace.stdout or "").splitlines()[-8:]),
             "events_count": len(trace.events),
         }
+
+
+def _fmt_metric(value: Any) -> str:
+    if value is None:
+        return "N/A"
+    try:
+        return f"{float(value):.4f}"
+    except (TypeError, ValueError):
+        return "N/A"

@@ -87,6 +87,21 @@ model:
 
 `testing_retries: 3` 表示失败后最多重试 3 次；如果仍失败，MASentinel 会记录 fallback，不中断整体评测。
 
+MASentinel 内部 agent 的独立 API 调用可以并行执行，主要作用于 `TestDesignerAgent` 分批生成用例以及 `FaultDiagnoserAgent`/`FalsePositiveAuditorAgent` 逐条故障分析：
+
+```yaml
+testing:
+  agent_api_workers: 3
+```
+
+也可以临时用环境变量覆盖：
+
+```bash
+export MAS_AGENT_API_WORKERS=4
+```
+
+建议从 3 或 4 开始调，太高可能触发网关限流或让失败重试变多。
+
 如果 DeepSeek 网关支持“思考模式”或 reasoning 参数，MASentinel 测试 agent 可以通过额外请求体显式开启。不同 OpenAI-compatible 网关字段名不完全一致，因此默认不开启，可按接口文档选择一种方式：
 
 ```bash
@@ -115,6 +130,29 @@ export INF_API_KEY_FLASH="..."
 
 ```bash
 python scripts/run_with_api_md.py --config configs/all_systems.yaml --test-model ds-v4-pro
+```
+
+Agentic 模式会在三套系统跑完后自动调用 `ProjectReportAgent` 生成赛题提交报告：
+
+```text
+outputs/项目报告.md
+outputs/system1_iterative_coding/故障报告.md
+outputs/system2_research_agents/故障报告.md
+outputs/system3_financial_analysis/故障报告.md
+outputs/project_report.agent.json
+outputs/project_report_agent/agent_trace.jsonl
+```
+
+也可以在已有 `outputs/` 上单独重生成项目报告：
+
+```bash
+python scripts/generate_project_report.py --output-dir outputs --config configs/all_systems.yaml
+```
+
+如果修改了 oracle、coverage 或 fault classifier，希望不重跑被测系统、只用已保存 trace 重新计算结果：
+
+```bash
+python scripts/rebuild_reports_from_outputs.py --output-dir outputs --project-report
 ```
 
 `run_with_api_md.py` 同时支持题目原始 `curl` 写法和新的 OpenAI SDK 写法，例如：
@@ -249,6 +287,11 @@ python -m masentinel.cli report --profile outputs/system1/profile.json --testcas
 outputs/
   index.html
   summary.md
+  项目报告.md
+  project_report.agent.json
+  project_report_agent/
+    agent_trace.jsonl
+    model_usage.json
   system1_iterative_coding/
     agent_trace.jsonl
     model_usage.json
@@ -276,6 +319,7 @@ outputs/
     dashboard.html
     patch_suggestions.md
     flaky_report.json
+    故障报告.md
     report.md
     report.html
     fault_report.md

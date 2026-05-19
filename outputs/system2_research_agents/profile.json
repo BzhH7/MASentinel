@@ -88,7 +88,7 @@
   "requirements": [
     {
       "id": "R1",
-      "description": "The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate cleanly.",
+      "description": "The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate within the configured max_turns or upon receiving a TERMINATE signal.",
       "expected_agents": [
         "user_proxy",
         "researcher",
@@ -126,52 +126,60 @@
     },
     {
       "id": "R3",
-      "description": "The researcher agent must be able to use web_scraping and google_search tools to gather16 information.",
+      "description": "The researcher agent must be able to invoke web_scraping and google_search tools to gather16 information, and16 the director agent must be able to invoke get_airtable_records and update_single_airtable_record to manage Airtable data.",
       "expected_agents": [
-        "researcher"
-      ],
-      "expected_tools": [
-        "web_scraping",
-        "google_search"
-      ],
-      "expected_behavior": [
-        "tool invocation",
-        "information gathering"
-      ],
-      "negative_cases": [
-        "tool_failure",
-        "invalid_search_query"
-      ]
-    },
-    {
-      "id": "R4",
-      "description": "The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data.",
-      "expected_agents": [
+        "researcher",
         "director"
       ],
       "expected_tools": [
+        "web_scraping",
+        "google_search",
         "get_airtable_records",
         "update_single_airtable_record"
       ],
       "expected_behavior": [
-        "tool invocation",
-        "data management"
+        "agent-tool binding",
+        "tool invocation"
       ],
       "negative_cases": [
-        "tool_failure",
-        "invalid_airtable_query"
+        "tool_not_registered",
+        "agent_cannot_call_tool"
+      ]
+    },
+    {
+      "id": "R4",
+      "description": "The group chat manager must coordinate the conversation among agents, allowing any agent to send messages to any other agent as per the group chat configuration.",
+      "expected_agents": [
+        "group_chat_manager",
+        "user_proxy",
+        "researcher",
+        "research_manager",
+        "director"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "message routing",
+        "group chat coordination"
+      ],
+      "negative_cases": [
+        "message_dropped",
+        "routing_loop"
       ]
     },
     {
       "id": "R5",
-      "description": "The group chat manager must coordinate the conversation and enforce termination conditions (TERMINATE, max_turns, process_exit).",
+      "description": "The system must handle termination conditions correctly, including explicit TERMINATE messages and max_turns limit, without hanging or crashing.",
       "expected_agents": [
+        "user_proxy",
+        "researcher",
+        "research_manager",
+        "director",
         "group_chat_manager"
       ],
       "expected_tools": [],
       "expected_behavior": [
-        "conversation coordination",
-        "termination enforcement"
+        "termination",
+        "graceful shutdown"
       ],
       "negative_cases": [
         "infinite_loop",
@@ -304,21 +312,26 @@
     "analyzer": "deterministic_ast_plus_doc_heuristic",
     "agentic": {
       "semantic_graph_review": {
-        "semantic_graph_review": "The message edges are all marked as 'GroupChat potential route', which is consistent with the use of autogen.GroupChat where any agent can speak to any other agent. The agent-tool links match the requirements: researcher has web_scraping and google_search, director has get_airtable_records and update_single_airtable_record. The user_proxy initiates chat with group_chat_manager, which is correct. No missing or spurious edges detected based on the provided profile.",
+        "semantic_graph_review": "The message edges are derived from a GroupChat configuration, which allows any agent to send messages to any other agent. This is semantically correct for a fully connected group chat. The13 edges listed cover all possible pairwise routes among user_proxy, researcher, research_manager, and director, plus the user_proxy->group_chat_manager edge for chat initiation. No missing or spurious edges are detected based on the GroupChat pattern. The agent-tool bindings match the requirements: researcher has web_scraping and google_search; director has get_airtable_records and update_single_airtable_record. The group_chat_manager and user_proxy have no tools, which is expected. The termination conditions include TERMINATE, max_turns, and process_exit, aligning with AutoGen's default behavior.",
         "suspected_risk_points": [
           {
             "type": "tool_schema_risk",
-            "evidence": "The tool functions (web_scraping, google_search, get_airtable_records, update_single_airtable_record) have no signature, docstring, or parameters defined in the profile. This suggests they may be registered without proper type annotations or descriptions, which can cause AutoGen's function calling to fail or produce invalid arguments.",
+            "evidence": "The tool functions (web_scraping, google_search, get_airtable_records, update_single_airtable_record) have no signature, docstring, or parameters defined in the profile. In the source file app.py, these functions are registered with GPTAssistantAgent, which requires a valid JSON schema for function calling. If the schema is missing or malformed, the assistant may fail to call the tools or produce invalid arguments, violating R2 and R3.",
             "related_tool": "web_scraping, google_search, get_airtable_records, update_single_airtable_record"
           },
           {
-            "type": "tool_schema_risk",
-            "evidence": "The profile lists a 'summary' function in raw_notes.functions but it is not registered as a tool for any agent. If it is intendedood to be used, it is missing from the tool list; if not, it is dead code.",
-            "related_tool": "summary"
+            "type": "agent_configuration_risk",
+            "evidence": "The researcher and director agents are GPTAssistantAgent instances. GPTAssistantAgent relies on OpenAI's Assistants API, which requires specific tool registration (e.g., using assistant.add_function) and may have different behavior than standard function calling. If the tools are not properly registered with the assistant's schema, the agents may not be able to invoke them, violating R3.",
+            "related_tool": "web_scraping, google_search, get_airtable_records, update_single_airtable_record"
+          },
+          {
+            "type": "termination_risk",
+            "evidence": "The group chat manager uses the default AutoGen speaker selection method (auto), which may cause infinite loops if no agent sends a TERMINATE message or if the conversation does not converge. The max_turns limit is configured but its value is not specified in the profile. If max_turns is too high or not set, the system may hang, violating R5.",
+            "related_tool": "N/A"
           }
         ],
         "additional_edges": [],
-        "confidence": 0.8
+        "confidence": 0.85
       }
     }
   }

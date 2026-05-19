@@ -149,3 +149,27 @@ REPORT_WRITER_PROMPT = """角色：ReportWriterAgent。
   "next_steps": [],
   "confidence": 0.0
 }"""
+
+
+PROJECT_REPORT_PROMPT = """角色：ProjectReportAgent。
+任务：根据 MASentinel 已生成的三套被测系统证据，汇总一份符合赛题提交要求的项目报告。
+必须覆盖：方案设计、测试覆盖率指标设计、三个多智能体系统上的覆盖率与故障报告、真实故障与误报、效果分析、下一步改进计划。
+所有覆盖率、故障数量、case 数、模型调用数必须来自输入 evidence，不允许编造或改写数字。
+不要输出 API key，不要把模型服务鉴权/限流/超时当作目标系统真实故障。
+输出 JSON：
+{
+  "scheme_design": "...",
+  "coverage_metric_design": "...",
+  "system_analyses": [
+    {
+      "system_id": "...",
+      "coverage_interpretation": "...",
+      "fault_report_summary": "...",
+      "true_fault_summary": "...",
+      "false_positive_summary": "..."
+    }
+  ],
+  "effectiveness_analysis": "...",
+  "next_steps": [],
+  "confidence": 0.0
+}"""

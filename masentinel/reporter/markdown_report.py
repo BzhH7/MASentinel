@@ -182,8 +182,17 @@ def _coverage_table(coverage: dict) -> str:
         ("MASCov", coverage.get("mascov", 0)),
     ]
     lines = ["| Metric | Value |", "|--------|-------|"]
-    lines.extend([f"| {name} | {value:.4f} |" for name, value in rows])
+    lines.extend([f"| {name} | {_format_metric(value)} |" for name, value in rows])
     return "\n".join(lines)
+
+
+def _format_metric(value: object) -> str:
+    if value is None:
+        return "N/A"
+    try:
+        return f"{float(value):.4f}"
+    except (TypeError, ValueError):
+        return "N/A"
 
 
 def _agentic_section(agentic_info: dict | None) -> list[str]:

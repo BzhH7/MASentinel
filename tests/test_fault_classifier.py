@@ -44,3 +44,10 @@ def test_model_provider_failures_are_not_target_faults() -> None:
     assert target_faults == []
     assert {issue["layer"] for issue in non_target} == {"model_provider"}
 
+
+def test_openai_timeout_failures_are_non_target_provider_issues() -> None:
+    stderr = "Traceback (most recent call last)\nopenai.APITimeoutError: Request timed out\nTimeoutError: OpenAI API call timed out"
+    target_faults = classify_faults(profile(), [case()], [trace(stderr)])
+    non_target = classify_non_target_issues(profile(), [case()], [trace(stderr)])
+    assert target_faults == []
+    assert {issue["code"] for issue in non_target} == {"MODEL_PROVIDER_FAILURE"}

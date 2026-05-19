@@ -1,54 +1,56 @@
 [
   {
-    "group_id": "interaction:timeout-or-non-termination",
-    "title": "Conversation timeout or missing termination guard",
-    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
+    "group_id": "generic:autogen_framework-wrong-agent-routing-data_collector-agent-is-likely-0-tool-registered-yfinance-missing-so-it-returns-em",
+    "title": "Wrong Agent Routing",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
     "fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002"
     ],
-    "symptom_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005"
-    ],
+    "symptom_fault_ids": [],
     "affected_cases": [
-      "system3_financial_analysis_COV_001",
       "system3_financial_analysis_COV_002",
       "system3_financial_analysis_COV_003",
-      "system3_financial_analysis_FUZZ_001",
-      "system3_financial_analysis_FUZZ_002",
-      "system3_financial_analysis_META_001",
-      "system3_financial_analysis_PROP_001",
       "system3_financial_analysis_R2_001",
       "system3_financial_analysis_R2_002",
       "system3_financial_analysis_R2_003",
       "system3_financial_analysis_R2_004",
-      "system3_financial_analysis_REG_001",
       "system3_financial_analysis_REQ_001",
       "system3_financial_analysis_REQ_002",
-      "system3_financial_analysis_REQ_003",
-      "system3_financial_analysis_REQ_004",
       "system3_financial_analysis_REQ_005",
       "system3_financial_analysis_REQ_006",
       "system3_financial_analysis_REQ_007",
       "system3_financial_analysis_TOOLFUZZ_001"
     ],
     "failure_codes": [
-      "METAMORPHIC_RELATION_VIOLATION",
-      "MISSING_AGENT",
-      "NON_TERMINATION",
-      "REPETITIVE_LOOP",
+      "MISSING_AGENT"
+    ],
+    "severity": "medium",
+    "confidence": 0.25,
+    "root_cause": "data_collector agent is likely 0 tool registered (yfinance missing), so it returns empty data;sys still routes to data_collector but 0 data causes report_generator to output '数据缺失'. The initial fault detection misinterprets 0acci data as agent not observed.",
+    "suggested_fix": "Register yfinance tool for data_collector or provide a mock tool; if 0 tool is intentional, update oracle to check for 0 data output instead of agent presence.",
+    "summary": "Expected agent was not observed: data_collector"
+  },
+  {
+    "group_id": "interaction:timeout-or-non-termination",
+    "title": "Conversation timeout or missing termination guard",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
+    "fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system3_financial_analysis_COV_001",
+      "system3_financial_analysis_META_001",
+      "system3_financial_analysis_REQ_003",
+      "system3_financial_analysis_REQ_004"
+    ],
+    "failure_codes": [
       "TIMEOUT"
     ],
     "severity": "high",
-    "confidence": 0.9,
-    "root_cause": "The AutoGen agent configuration does not include a reliable termination condition. The 'TERMINATE' keyword in the message is not recognized because no is_termination_msg function is registered. Additionally, the system lacks a max_turns/max_round guard to force termination when the conversation exceeds the expected limit.",
-    "suggested_fix": "1. Register an is_termination_msg function in the agent configuration that checks for 'TERMINATE' keyword in messages. 2. Set human_input_mode='NEVER' for automated runs. 3. Add max_turns/max_round parameter to the group chat or conversation configuration to enforce a hard limit on conversation turns.",
+    "confidence": 0.82,
+    "root_cause": "The AutoGen conversation lacks a reliable termination condition. The user_proxy sent a message containing 'TERMINATE', but the system did not recognize it as a termination signal, likely because the termination checking function (is_termination_msg) is not properly configured or the max_turns limit is not enforced in the runtime configuration.",
+    "suggested_fix": "1. Ensure the termination checking function is registered and checks for the 'TERMINATE' keyword in messages. 2. Set human_input_mode='NEVER' for automated runs. 3. Enforce max_turns/max_round in the runtime configuration to prevent infinite loops. 4. Verify speaker selection constraints to avoid unnecessary agent handoffs.",
     "summary": "The process exceeded the configured timeout."
   }
 ]

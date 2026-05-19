@@ -74,7 +74,10 @@ class CoverageStrategistAgent(BaseTestingAgent):
             ("fault_mode_coverage", "missing_fault_mode_coverage"),
         ]
         for key, gap_type in thresholds:
-            if float(coverage.get(key, 1.0) or 0.0) < 0.8:
+            value = coverage.get(key, 1.0)
+            if value is None:
+                continue
+            if float(value or 0.0) < 0.8:
                 gaps.append({"gap_type": gap_type, "target": key, "suggested_test_intent": f"Generate additional cases to improve {key}."})
         return {"coverage_gaps": gaps, "new_test_requests": [], "confidence": 0.35, "fallback": True, "error": error}
 
@@ -188,3 +191,65 @@ class ReportWriterAgent(BaseTestingAgent):
             "fallback": True,
             "error": error,
         }
+
+
+class ProjectReportAgent(BaseTestingAgent):
+    name = "ProjectReportAgent"
+    role = "project_reporting"
+    purpose = "write_competition_project_report"
+
+    def prompt(self) -> str:
+        return prompts.PROJECT_REPORT_PROMPT
+
+    def fallback(self, task: dict[str, Any], error: str) -> dict[str, Any]:
+        evidence = task.get("evidence", {}) if isinstance(task, dict) else {}
+        systems = evidence.get("systems", []) if isinstance(evidence, dict) else []
+        system_analyses = []
+        for system in systems if isinstance(systems, list) else []:
+            if not isinstance(system, dict):
+                continue
+            coverage = system.get("coverage", {}) or {}
+            counts = system.get("fault_counts", {}) or {}
+            system_analyses.append(
+                {
+                    "system_id": system.get("system_id", ""),
+                    "coverage_interpretation": (
+                        f"MASCov={_format_metric(coverage.get('mascov'))}，"
+                        f"AgentCov={_format_metric(coverage.get('agent_coverage'))}，"
+                        f"ToolCov={_format_metric(coverage.get('tool_coverage'))}，"
+                        f"EdgeCov={_format_metric(coverage.get('message_edge_coverage'))}。"
+                        "该解读由确定性覆盖率产物汇总得到。"
+                    ),
+                    "fault_report_summary": (
+                        f"检测到故障条目 {counts.get('total', 0)} 个，其中确认主根因 "
+                        f"{counts.get('confirmed_primary_root_causes', counts.get('confirmed', 0))} 个，"
+                        f"派生症状 {counts.get('derived_symptoms', 0)} 个，疑似误报 {counts.get('suspected_false_positive', 0)} 个，"
+                        f"根因组 {counts.get('root_groups', 0)} 个。"
+                    ),
+                    "true_fault_summary": "确认/真实故障按 false_positive_audit 未标记为 suspected_false_positive 的 findings 统计。",
+                    "false_positive_summary": "疑似误报来自 FalsePositiveAuditorAgent 或确定性审计标签，主要用于避免把观测不足、模型服务或测试框架问题计入目标故障。",
+                }
+            )
+        return {
+            "scheme_design": "MASentinel 将静态画像、agent 辅助测试设计、确定性用例生成、无人值守执行、规则 oracle、故障诊断、误报审计和报告生成串成闭环。测试系统不修改被测系统源码，而是通过环境变量、运行时 patch、交互适配和隔离目录尽量让被测系统跑起来，并把应用层与 AutoGen 框架层问题作为主要检测对象。",
+            "coverage_metric_design": "MASCov 从多智能体系统的语义结构出发，综合 AgentCov、ToolCov、EdgeCov、ReqCov、StateCov 和 FaultCov。该指标不只统计代码行或分支，而是统计 agent 是否被触达、工具是否被调用、消息边是否被观测、需求是否被绑定、状态空间和故障模式是否被覆盖。",
+            "system_analyses": system_analyses,
+            "effectiveness_analysis": "从当前三套系统的产物看，MASentinel 已经能够自动完成画像、用例冻结、执行、oracle 判定、故障分类、误报审计和汇总报告生成。效果优势在于证据链完整、覆盖率指标贴合多智能体交互，且能把非目标问题和疑似误报从最终故障中区分出来；当前不足主要是长耗时系统和深层 AutoGen trace 仍会影响覆盖率与误报率。",
+            "next_steps": [
+                "继续增强交互式和长耗时系统的输入适配、超时预算和分批执行策略。",
+                "强化 AutoGen send、receive、tool_call、tool_result 级别的运行时 trace 采集。",
+                "结合回归池和误报审计结果持续校准 oracle，降低观测不足导致的疑似误报。",
+            ],
+            "confidence": 0.35,
+            "fallback": True,
+            "error": error,
+        }
+
+
+def _format_metric(value: object) -> str:
+    if value is None:
+        return "N/A"
+    try:
+        return f"{float(value):.2f}"
+    except (TypeError, ValueError):
+        return "N/A"

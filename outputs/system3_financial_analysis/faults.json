@@ -11,54 +11,33 @@
     "evidence": [
       "75"
     ],
-    "root_cause": "The AutoGen agent configuration does not include a reliable termination condition. The 'TERMINATE' keyword in the message is not recognized because no is_termination_msg function is registered. Additionally, the system lacks a max_turns/max_round guard to force termination when the conversation exceeds the expected limit.",
-    "suggested_fix": "1. Register an is_termination_msg function in the agent configuration that checks for 'TERMINATE' keyword in messages. 2. Set human_input_mode='NEVER' for automated runs. 3. Add max_turns/max_round parameter to the group chat or conversation configuration to enforce a hard limit on conversation turns.",
+    "root_cause": "The AutoGen conversation lacks a reliable termination condition. The user_proxy sent a message containing 'TERMINATE', but the system did not recognize it as a termination signal, likely because the termination checking function (is_termination_msg) is not properly configured or the max_turns limit is not enforced in the runtime configuration.",
+    "suggested_fix": "1. Ensure the termination checking function is registered and checks for the 'TERMINATE' keyword in messages. 2. Set human_input_mode='NEVER' for automated runs. 3. Enforce max_turns/max_round in the runtime configuration to prevent infinite loops. 4. Verify speaker selection constraints to avoid unnecessary agent handoffs.",
     "reproduction": {
-      "input": "What is the current ROE of AAPL?",
+      "input": "What is the ROE of AAPL?",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze ROE"
     },
     "suspected_false_positive": false,
     "affected_cases": [
       "system3_financial_analysis_COV_001",
-      "system3_financial_analysis_COV_002",
-      "system3_financial_analysis_COV_003",
-      "system3_financial_analysis_FUZZ_002",
       "system3_financial_analysis_META_001",
-      "system3_financial_analysis_PROP_001",
-      "system3_financial_analysis_REG_001",
-      "system3_financial_analysis_REQ_001",
-      "system3_financial_analysis_REQ_002",
       "system3_financial_analysis_REQ_003",
-      "system3_financial_analysis_REQ_004",
-      "system3_financial_analysis_REQ_006",
-      "system3_financial_analysis_REQ_007",
-      "system3_financial_analysis_R2_001"
+      "system3_financial_analysis_REQ_004"
     ],
     "duplicate_fault_ids": [
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_023",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_026",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_029",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_034",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_038",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_042",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_049",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_053",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_059"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008"
     ],
     "agentic_evidence": [
-      "Trace shows status: timeout, terminated: false, turn_count: 7",
-      "The last message from user_proxy to financial_analyst contains 'TERMINATE' but the conversation did not stop",
-      "No is_termination_msg function is registered in the agent configuration to detect termination keywords",
-      "The system lacks a max_turns/max_round guard, allowing the conversation to exceed the expected 10-turn limit without forced termination",
-      "The oracle requires must_terminate: true and max_turns: 10, but the system timed out without terminating"
+      "Trace shows status: timeout, terminated: false, turn_count: 12 (exceeds max_turns: 10 in oracle).",
+      "stdout_tail shows user_proxy sent message with TERMINATE keyword to risk_analyst, but conversation did not stop.",
+      "stderr_tail shows no crash, only warnings about flaml and model pricing, indicating timeout is not due to application crash.",
+      "Fault summary indicates lack of reliable termination condition, max-turn guard, or speaker selection constraint."
     ],
     "false_positive_audit": {
       "audit_result": "confirmed_fault",
-      "reason": "The evidence clearly shows an AutoGen framework configuration fault: no is_termination_msg function is registered, so the 'TERMINATE' keyword sent by user_proxy is ignored, and no max_turns guard is set. This is a software defect in the agent configuration that can be fixed by modifying the AutoGen setup code, not a model service or test framework issue.",
+      "reason": "The conversation exceeded the configured max_turns (10) and did not terminate despite the user_proxy sending a message containing 'TERMINATE'. The root cause is a missing or misconfigured termination checking function (is_termination_msg) in the AutoGen runtime, which is an application-layer configuration/framework integration fault. The evidence (turn_count: 12, terminated: false, stdout showing TERMINATE message) directly supports this. The fault is reproducible and can be fixed by modifying the AutoGen configuration or code.",
       "false_positive_risk": "low",
       "confidence": 0.95
     },
@@ -69,283 +48,69 @@
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
-    "case_id": "system3_financial_analysis_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Termination Condition Error",
-    "failure_code": "NON_TERMINATION",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "The run did not terminate within the expected turn budget.",
-    "evidence": [
-      "turn_count=16",
-      "turn_count=19",
-      "turn_count=12",
-      "turn_count=7"
-    ],
-    "root_cause": "The AutoGen agent configuration likely lacks a proper termination condition. The user_proxy sends a message containing 'TERMINATE', but the framework does not recognize it as a termination signal, causing the conversation to hang until timeout. Additionally, the max_turns limit may not be enforced or is set too high, allowing the conversation to exceed the expected turn budget in other cases.",
-    "suggested_fix": "1. Set human_input_mode='NEVER' in the user_proxy agent configuration to prevent waiting for human input. 2. Configure is_termination_msg function to check for 'TERMINATE' keyword in messages. 3. Set max_consecutive_auto_reply or max_turns in the GroupChat or TwoAgentChat configuration to enforce a hard limit. 4. Ensure the termination condition is applied to all agents in the conversation.",
-    "reproduction": {
-      "input": "What is the current ROE of AAPL?",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze ROE"
-    },
-    "suspected_false_positive": false,
-    "affected_cases": [
-      "system3_financial_analysis_COV_001",
-      "system3_financial_analysis_COV_002",
-      "system3_financial_analysis_COV_003",
-      "system3_financial_analysis_FUZZ_001",
-      "system3_financial_analysis_FUZZ_002",
-      "system3_financial_analysis_META_001",
-      "system3_financial_analysis_PROP_001",
-      "system3_financial_analysis_REG_001",
-      "system3_financial_analysis_REQ_001",
-      "system3_financial_analysis_REQ_002",
-      "system3_financial_analysis_REQ_003",
-      "system3_financial_analysis_REQ_004",
-      "system3_financial_analysis_REQ_005",
-      "system3_financial_analysis_REQ_006",
-      "system3_financial_analysis_REQ_007",
-      "system3_financial_analysis_TOOLFUZZ_001",
-      "system3_financial_analysis_R2_001",
-      "system3_financial_analysis_R2_002",
-      "system3_financial_analysis_R2_003",
-      "system3_financial_analysis_R2_004"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_019",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_024",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_027",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_030",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_035",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_039",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_043",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_046",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_050",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_054",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_057",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_060",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_063",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_066",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_069"
-    ],
-    "agentic_evidence": [
-      "trace_summary shows status=timeout, terminated=false, turn_count=7, which exceeds oracle max_turns=10? Wait, turn_count=7 is less than 10, but status is timeout. This indicates the run did not finish within the overall time limit, not necessarily exceeding max_turns. However, the fault summary mentions turn_count=16,19,12,7 across multiple cases,16,19,12 exceed max_turns=10. For this specific case, turn_count=7 but still timeout, suggesting the conversation got stuck or took too long per turn.",
-      "stdout_tail shows the last message from user_proxy to financial_analyst contains 'TERMINATE' in the content, but the conversation did not terminate. This indicates the termination condition is not correctly detecting the 'TERMINATE' keyword.",
-      "The oracle specifies must_terminate=trueigin and max_turns=10. The system failed to terminate, violating the oracle.",
-      "The fault is classified as autogen_framework layer because the termination mechanism (is_termination_msg or max_turns enforcement) is a framework configuration issue, not an application logic error in the agents' domain knowledge."
-    ],
-    "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The evidence shows the user_proxy sent a message containing 'TERMINATE' to financial_analyst, but the conversation did not terminate and eventually timed out. The turn_count=7 is within the oracle max_turns=10, indicating the framework's termination condition (is_termination_msg) is not correctly configured to detect the 'TERMINATE' keyword. This is a clear AutoGen framework configuration error, not a model capability or test framework issue.",
-      "false_positive_risk": "low",
-      "confidence": 0.95
-    },
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
-    "is_primary_fault": false,
-    "cascades_from": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001"
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
-    "case_id": "system3_financial_analysis_COV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "REPETITIVE_LOOP",
-    "severity": "high",
-    "confidence": 0.85,
-    "summary": "Trace contains highly repetitive consecutive messages.",
-    "evidence": [],
-    "root_cause": "The AutoGen group chat manager or speaker selection logic fails to detect the 'TERMINATE' keyword in the message content repeatedly sent by user_proxy, causing an infinite loop of the same message being sent to financial_analyst without progressing to the next speaker or ending the conversation.",
-    "suggested_fix": "In the AutoGen configuration or group chat manager implementation, ensure that the 'TERMINATE' keyword is properly recognized as a termination signal. Add a max-turn guard or a check for repetitive messages to break the loop. Specifically, modify the speaker selection function to stop the conversation when a message containing 'TERMINATE' is received, or add a condition to prevent the same message from being sent consecutively more than a threshold number of times.",
-    "reproduction": {
-      "input": "What is the current ROE of AAPL?",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze ROE"
-    },
-    "suspected_false_positive": false,
-    "affected_cases": [
-      "system3_financial_analysis_COV_001",
-      "system3_financial_analysis_COV_002",
-      "system3_financial_analysis_COV_003",
-      "system3_financial_analysis_FUZZ_001",
-      "system3_financial_analysis_FUZZ_002",
-      "system3_financial_analysis_META_001",
-      "system3_financial_analysis_PROP_001",
-      "system3_financial_analysis_REG_001",
-      "system3_financial_analysis_REQ_001",
-      "system3_financial_analysis_REQ_002",
-      "system3_financial_analysis_REQ_003",
-      "system3_financial_analysis_REQ_004",
-      "system3_financial_analysis_REQ_005",
-      "system3_financial_analysis_REQ_006",
-      "system3_financial_analysis_REQ_007",
-      "system3_financial_analysis_TOOLFUZZ_001",
-      "system3_financial_analysis_R2_001",
-      "system3_financial_analysis_R2_002",
-      "system3_financial_analysis_R2_003",
-      "system3_financial_analysis_R2_004"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_021",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_025",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_028",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_033",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_037",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_041",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_045",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_048",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_052",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_056",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_058",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_062",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_065",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_068",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_071"
-    ],
-    "agentic_evidence": [
-      "Trace shows repetitive consecutive messages: user_proxy sends the same message to financial_analyst multiple times.",
-      "Case status is 'timeout' with turn_count=7 and terminated=false, indicating the conversation did not end properly.",
-      "acciording to oracle, must_terminate=true and max_turns=10, but the conversation looped without reaching a natural termination.",
-      "acciording to testcase, no tools are registered, so the agents must rely on collaboration, but the speaker selection logic failed to progress the conversation.",
-      "The repeated message contains 'TERMINATE' keyword, but the conversation did not stop, suggesting the termination condition is not properly handled by the framework's speaker selection or group chat manager."
-    ],
-    "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The trace shows user_proxy repeatedly sending a message containing 'TERMINATE' to financial_analyst, but the conversation does not stop (terminated=false, turn_count=7, status=timeout). The root cause is that the AutoGen group chat manager or speaker selection logic fails to recognize the 'TERMINATE' keyword as a termination signal, leading to an infinite loop. This is a framework-level fault in speaker selection/termination handling, which can be fixed by modifying the AutoGen configuration or group chat manager code to properly handle the termination condition.",
-      "false_positive_risk": "low",
-      "confidence": 0.85
-    },
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
-    "is_primary_fault": false,
-    "cascades_from": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001"
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
     "case_id": "system3_financial_analysis_COV_002",
-    "layer": "application",
+    "layer": "autogen_framework",
     "fault_type": "Wrong Agent Routing",
     "failure_code": "MISSING_AGENT",
-    "severity": "high",
-    "confidence": 0.85,
+    "severity": "medium",
+    "confidence": 0.25,
     "summary": "Expected agent was not observed: data_collector",
     "evidence": [
-      "enterprise_quantitative_analyst",
-      "agent",
-      "investment_advisor",
       "data_collector",
+      "agent",
       "report_generator"
     ],
-    "root_cause": "The application's agent routing logic (in simple_autogen_system.py or its AutoGen configuration) does not include a path from user_proxy to data_collector. When user_proxy receives the user input, it directly selects financial_analyst as the next agent, ignoring data_collector. This is a routing/control flow defect in the application layer, not an AutoGen framework bug.",
-    "suggested_fix": "In simple_autogen_system.py, modify the agent selection or group chat speaker selection logic so that when the user requests data collection, the user_proxy (or group chat manager) routes the message to data_collector first. After data_collector responds, route to financial_analyst. Alternatively, if using a custom state machine, add a transition from user_proxy to data_collector for 'collect data' intents. Also ensure data_collector is registered as a valid agent in the group chat or agent list.",
+    "root_cause": "data_collector agent is likely 0 tool registered (yfinance missing), so it returns empty data;sys still routes to data_collector but 0 data causes report_generator to output '数据缺失'. The initial fault detection misinterprets 0acci data as agent not observed.",
+    "suggested_fix": "Register yfinance tool for data_collector or provide a mock tool; if 0 tool is intentional, update oracle to check for 0 data output instead of agent presence.",
     "reproduction": {
-      "input": "Collect recent financial data for MSFT and pass it to the financial analyst.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
+      "input": "Collect historical price data for AAPL from Yahoo Finance.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false,
     "affected_cases": [
       "system3_financial_analysis_COV_002",
       "system3_financial_analysis_COV_003",
-      "system3_financial_analysis_FUZZ_001",
-      "system3_financial_analysis_META_001",
-      "system3_financial_analysis_REQ_001",
       "system3_financial_analysis_REQ_001",
       "system3_financial_analysis_REQ_002",
-      "system3_financial_analysis_REQ_003",
-      "system3_financial_analysis_REQ_004",
       "system3_financial_analysis_REQ_005",
       "system3_financial_analysis_REQ_006",
       "system3_financial_analysis_REQ_007",
+      "system3_financial_analysis_TOOLFUZZ_001",
       "system3_financial_analysis_R2_001",
       "system3_financial_analysis_R2_002",
       "system3_financial_analysis_R2_003",
       "system3_financial_analysis_R2_004"
     ],
     "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_020",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_031",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_032",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_036",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_040",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_044",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_047",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_051",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_055",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_061",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_064",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_067",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_070"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016"
     ],
     "agentic_evidence": [
-      "Testcase objective: Cover orphan agent data_collector by sending user_proxy -> data_collector -> financial_analyst.",
-      "Oracle must_visit_agents: ['data_collector', 'financial_analyst'].",
-      "Trace shows only user_proxy and financial_analyst in MAS_TRACE messages; data_collector never appears as sender or receiver.",
-      "log shows '开始收集 MSFT 的数据...' and '成功收集 MSFT 的数据' but no agent routing to data_collector.",
-      "user_proxy directly sends message to financial_analyst, bypassing data_collector entirely.",
-      "Result: timeout after 7 turns, oracle must_visit_agents violated."
+      "Trace status: passed, returncode: 0, terminated: true, turn_count: 19",
+      "log: '开始收集 AAPL 的数据...' and '成功收集 AAPL 的数据' indicate data collection step executed",
+      "log: '完成股票 AAPL 的AutoGen智能体协作分析' indicates workflow completed",
+      "log: '数据缺失' in stdout_tail suggests report_generator received 0 financial data, not that data_collector was missing",
+      "No error, crash, or agent-not-found exception in stderr_tail or events_count=34",
+      "Fault initial confidence 0.72 based on 'Expected agent was not observed: data_collector', but16 duplicate fault IDs suggest 16 cases all 'missing' data_collector, likely 0 tool registration issue, not routing failure"
     ],
     "false_positive_audit": {
       "audit_result": "confirmed_fault",
-      "reason": "The evidence shows that the application's agent routing logic (in simple_autogen_system.py or its AutoGen configuration) does not include a path from user_proxy to data_collector. The trace confirms that user_proxy directly sends messages to financial_analyst, bypassing data_collector entirely, which violates the oracle's must_visit_agents requirement. This is a control flow defect in the application layer, not an AutoGen framework bug or a model capability issue.",
-      "false_positive_risk": "low",
-      "confidence": 0.95
-    },
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
-    "is_primary_fault": false,
-    "cascades_from": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
-    "classification_note": "Derived symptom: the target crashed before MASentinel could observe the expected agent/tool/message behavior."
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-    "case_id": "system3_financial_analysis_META_001",
-    "layer": "application",
-    "fault_type": "addressed_agent_mismatch",
-    "failure_code": "METAMORPHIC_RELATION_VIOLATION",
-    "severity": "medium",
-    "confidence": 0.85,
-    "summary": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
-    "evidence": [
-      "missing_agents=['data_collector']",
-      "missing_tools=[]"
-    ],
-    "root_cause": "The system's agent routing logic or agent name mapping does not expose a 'data_collector' agent in the AutoGen conversation trace. The16data collection16step is16performed (as seen in logs) but likely by a differently named agent or16a function call not16registered as a separate conversable agent, causing the metamorphic oracle to fail on must_visit_agents.",
-    "suggested_fix": "1) Ensure the agent responsible for data collection is registered as a ConversableAgent with name 'data_collector' and participates in the group chat. 2)16If data collection is16done by a tool call, register a wrapper agent that invokes the tool and appears in the conversation trace. 3) Add a metamorphic regression test that verifies agent presence for equivalent inputs.",
-    "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
-    },
-    "suspected_false_positive": false,
-    "affected_cases": [
-      "system3_financial_analysis_META_001"
-    ],
-    "duplicate_fault_ids": [],
-    "agentic_evidence": [
-      "Oracle requires must_visit_agents=['data_collector', 'financial_analyst']",
-      "Trace shows only 'financial_analyst'16'user_proxy' agents in events; 'data_collector' is missing",
-      "sys log shows '开始收集 A 的数据...' and '成功收集 A 的数据' but16no agent named 'data_collector' appears in MAS_TRACE events",
-      "accipted_fault evidence: missing_agents=['data_collector']",
-      "Metamorphic relation expects same_agents=['data_collector', 'financial_analyst'] for both inputs"
-    ],
-    "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The metamorphic oracle requires must_visit_agents=['data_collector', 'financial_analyst'], but the AutoGen conversation trace only contains 'user_proxy' and 'financial_analyst'. The system log shows data collection steps ('开始收集 A 的数据...', '成功收集 A 的数据') were executed, but no agent named 'data_collector' appears in MAS_TRACE events. This indicates the data collection16functionality is not exposed as a registered ConversableAgent in the group chat, which is an application-layer agent registration/routing defect. The fault can be mitigated by registering a 'data_collector' agent or a wrapper agent that invokes the data collection tool and appears in the conversation trace.",
+      "reason": "The root cause is a missing tool registration (yfinance) for the data_collector agent, which is an application-level configuration/registration issue in the AutoGen system. The agent is present and routed correctly (logs show '开始收集 AAPL 的数据...' and '成功收集 AAPL 的数据'), but returns empty data because it has no tools. This is a genuine software fault in the agent setup, not a model capability or test framework problem. The initial detection misclassified the symptom as 'agent not observed', but the underlying fault is real and fixable by modifying the tool registration logic.",
       "false_positive_risk": "low",
       "confidence": 0.85
     },
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
-    "is_primary_fault": false,
-    "cascades_from": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
-    "classification_note": "Derived symptom: the target crashed before MASentinel could observe the expected agent/tool/message behavior."
+    "root_cause_group_id": "generic:autogen_framework-wrong-agent-routing-data_collector-agent-is-likely-0-tool-registered-yfinance-missing-so-it-returns-em",
+    "root_cause_group_title": "Wrong Agent Routing",
+    "is_primary_fault": true,
+    "cascades_from": null
   }
 ]

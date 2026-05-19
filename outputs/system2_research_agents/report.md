@@ -22,31 +22,31 @@
 - `update_single_airtable_record` 
 
 ## Requirements
-- `R1` The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate cleanly.
+- `R1` The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate within the configured max_turns or upon receiving a TERMINATE signal.
 - `R2` Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return usable results or handled errors.
-- `R3` The researcher agent must be able to use web_scraping and google_search tools to gather16 information.
-- `R4` The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data.
-- `R5` The group chat manager must coordinate the conversation and enforce termination conditions (TERMINATE, max_turns, process_exit).
+- `R3` The researcher agent must be able to invoke web_scraping and google_search tools to gather16 information, and16 the director agent must be able to invoke get_airtable_records and update_single_airtable_record to manage Airtable data.
+- `R4` The group chat manager must coordinate the conversation among agents, allowing any agent to send messages to any other agent as per the group chat configuration.
+- `R5` The system must handle termination conditions correctly, including explicit TERMINATE messages and max_turns limit, without hanging or crashing.
 
 ## Test Summary
-- Cases: 20
-- Passed process runs: 6
-- Failed/timeout process runs: 14
-- Fault findings: 8
-- Root-cause groups: 3
-- Primary fault findings: 3
-- Suspected false positives: 6
+- Cases: 16
+- Passed process runs: 9
+- Failed/timeout process runs: 7
+- Fault findings: 4
+- Root-cause groups: 4
+- Primary fault findings: 4
+- Suspected false positives: 2
 
 ## Coverage
 | Metric | Value |
 |--------|-------|
 | AgentCov | 1.0000 |
 | ToolCov | 1.0000 |
-| EdgeCov | 0.0000 |
+| EdgeCov | 1.0000 |
 | ReqCov | 1.0000 |
-| StateCov | 0.5625 |
-| FaultCov | 0.5000 |
-| MASCov | 0.6900 |
+| StateCov | 0.6250 |
+| FaultCov | 0.3333 |
+| MASCov | 0.8333 |
 
 ## Agentic Testing Workflow
 - `RequirementAnalystAgent`
@@ -61,25 +61,25 @@
 
 ## Three-Stage Automation Evidence
 - Human intervention allowed: False
-- Testcase frozen SHA256: `8fa8d73642aa4cf43261abe2751ce1fc31d9668590c62a5659e39bbce2371f79`
-- Second-round extra cases: 4
-- Non-target issues excluded from target faults: 0
-- Test harness issues excluded from target faults: 0
+- Testcase frozen SHA256: `41184ba93b9c2a8e34ea7365d0efc06d6a930a1adf59b1e11df5d6ef168e18c6`
+- Second-round extra cases: 0
+- Non-target issues excluded from target faults: 4
+- Test harness issues excluded from target faults: 4
 - Artifacts: `run_manifest.json`, `testcases.generated.json`, `testcases.validated.json`, `oracle_results.json`, `non_target_issues.json`, `test_harness_issues.json`, `faults.json`, `false_positive_audit.json`
 
 ## Testing-Agent Model Usage
-- Total agent calls: 39
-- Successful model calls: 35
-- Fallback calls: 4
-- Estimated input tokens: 90176
-- Estimated output tokens: 10818
+- Total agent calls: 16
+- Successful model calls: 16
+- Fallback calls: 0
+- Estimated input tokens: 46969
+- Estimated output tokens: 7088
 
 | Agent | Calls |
 |-------|-------|
-| CoverageStrategistAgent | 2 |
+| CoverageStrategistAgent | 1 |
 | ExecutionMonitorAgent | 1 |
-| FalsePositiveAuditorAgent | 15 |
-| FaultDiagnoserAgent | 15 |
+| FalsePositiveAuditorAgent | 4 |
+| FaultDiagnoserAgent | 4 |
 | InteractionAdapterAgent | 1 |
 | ReportWriterAgent | 1 |
 | RequirementAnalystAgent | 1 |
@@ -88,47 +88,43 @@
 
 ## Target-System Model Usage
 - Scope: `target_system_subprocess`
-- Traced cases: 20
-- AutoGen model-warning mentions: 42
+- Traced cases: 16
+- AutoGen model-warning mentions: 91
 - API key envs: `INF_API_KEY_FLASH`
 
 | Target Model | Cases |
 |--------------|-------|
-| ds-v4-flash | 20 |
+| ds-v4-flash | 16 |
 
 | Target Base URL | Cases |
 |-----------------|-------|
-| `https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1` | 20 |
+| `https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1` | 16 |
 
 ## Agentic Analysis
-本次运行针对 system2_research_agents 系统执行了完整的 MASentinel 自动化测试流程。系统包含 5 个 Agent（user_proxy, researcher, research_manager, director, group_chat_manager）和 4 个工具（web_scraping, google_search, get_airtable_records, update_single_airtable_record）。测试覆盖了所有 5 个需求（R1-R5），访问了 8 个 Agent，调用了全部 4 个工具，覆盖了 9 种状态和 6 种故障模式。共产生 20 条规则结果，诊断出 8 个唯一故障（FAULT_001 至 FAULT_008），其中 2 个被确认为真实故障（FAULT_004 和 FAULT_008），其余 6 个被审计为误报。模型使用方面，共调用 38 次 ds-v4-pro 模型，成功 34 次，失败 4 次，fallback 4 次，主要用于故障诊断（15 次）和误报审计（15 次）。
+本次自动化测试运行基于 deterministic AST + 文档启发式分析构建的 profile，对 research-agents-3.0 系统进行了覆盖测试。测试覆盖了全部 5 个 agent、4 个工具、13 条消息边和 5 项需求，状态覆盖率为 62.5%，故障模式覆盖率为 33.3%。共发现 4 个故障，其中 一枝 2 个被确认为真实故障（SYSTEM2_RESEARCH_AGENTS_FAULT_002 和 SYSTEM2_RESEARCH_AGENTS_FAULT_004），2 个被判定为疑似误报（SYSTEM2_RESEARCH_AGENTS_FAULT_001 和 SYSTEM2_RESEARCH_AGENTS_FAULT_003）。模型使用方面，共调用 15 次 ds-v4-pro 模型，全部成功，无 fallback 或失败，估计消耗输入 token 39834、输出 token 6182。
 
-本次测试在故障检测方面表现出较高的覆盖率（agent_coverage=1.0, tool_coverage=1.0, requirement_coverage=1.0），但 message_edge_coverage 为 0.0，state_coverage 为 0.5625，fault_mode_coverage 为 0.5，整体 mascov 为 0.69。检测到的 8 个故障中，2 个为真实故障（FAULT_004: 未处理的 TimeoutError 导致运行时崩溃；FAULT_008: 缺少终止条件导致超时），其余 6 个为误报（主要因 oracle 阈值过严、命名不匹配或外部服务超时导致）。真实故障均属于 AutoGen 框架层问题，可通过修改配置或添加错误处理来缓解。误报率较高（6/8=75%），主要源于 oracle 的 max_turns 阈值设置过紧（20 或 15）以及 agent 命名不一致（group_chat_manager vs chat_manager）。测试有效性中等，需要优化 oracle 规则以减少误报。
+本次测试在 agent/tool/消息边/需求覆盖率上均达到 100%，但状态覆盖率仅 62.5%，故障模式覆盖率仅 33.3%，说明测试用例在覆盖正常路径和部分异常路径方面有效，但在覆盖更多运行时状态（如 conflicting_instruction、metamorphic_relation、property_boundary）和故障模式（如 tool_schema_error、agent_configuration_error）方面存在不足。已确认的两个真实故障（FAULT_002 和 FAULT_004）均与 speaker_selection_agent 的响应解析和循环控制缺陷相关，属于框架层和应用层逻辑错误，诊断准确且修复建议具体。两个疑似误报（FAULT_001 和 FAULT_003）经审计后认为更可能是模型服务行为或测试覆盖缺口导致，而非软件缺陷，降低了误报对后续修复的干扰。整体上，测试流程有效识别了关键的非终止和解析错误，但需扩展测试用例以提升状态和故障模式覆盖率。
 
-False positive analysis: 在 8 个故障中，6 个被审计为误报（FAULT_001, FAULT_002, FAULT_003, FAULT_005, FAULT_006, FAULT_007），误报率 75%。主要原因包括：(1) Oracle 阈值过严：FAULT_001 和 FAULT_003 因 turn_count 超过 max_turns（23>20）被误判为 NON_TERMINATION 和 REPETITIVE_LOOP，但实际对话已正常终止；(2) 外部服务超时导致的级联误报：FAULT_005 和 FAULT_006 因 OpenAI API TimeoutError 导致工作流中断，进而触发 MISSING_MESSAGE_EDGE 和 METAMORPHIC_RELATION_VIOLATION，根源为基础设施问题而非软件缺陷；(3) 命名不一致：FAULT_007 因系统使用 'chat_manager' 而 oracle 期望 'group_chat_manager'，导致 MISSING_AGENT 误报；(4) 日志缺失：FAULT_002 因 trace 中无工具调用日志，oracle 无法确认 google_search 是否被调用，但测试本身已通过。这些误报均不涉及应用代码或 AutoGen 框架的实际缺陷，建议调整 oracle 阈值、统一命名规范并增强日志记录。
+False positive analysis: 共 2 个故障被标记为疑似误报。FAULT_001（Human Input Mode Error）的 trace 中未发现实际 human input 提示或阻塞调用，超时更可能由模型服务返回空内容导致，属于基础设施/模型服务问题，非应用或框架配置故障，误报风险高。FAULT_003（Message Routing Error）的测试已正常通过，缺失的 director->research_manager 边是模型决策行为导致的覆盖缺口，无证据表明框架路由失败，误报风险高。两个误报均经 FalsePositiveAuditorAgent 审计并给出详细理由，置信度分别为 0.85 和 0.9，有效避免了将非软件缺陷误判为目标故障。
 
 Agent-proposed next steps:
-- 调整测试 oracle 的 max_turns 阈值：将 system2_research_agents_COV_001 等用例的 max_turns 从 20 提高到 25 或 30，以匹配实际工作流的正常耗时。
-- 统一 Agent 命名：将 oracle 中的 'group_chat_manager' 改为 'chat_manager'，或在系统配置中将 agent 名称改为 'group_chat_manager'，消除命名不一致导致的误报。
-- 增强工具调用日志：在 app.py 中添加工具调用的显式日志输出，确保 MASentinel 能准确捕获 google_search 等工具的调用情况，避免因日志缺失导致的 MISSING_TOOL_CALL 误报。
-- 添加 API 超时处理：在 app.py 或 AutoGen 配置中添加 try-except 块捕获 TimeoutError，实现重试或优雅降级，修复 FAULT_004 的真实故障。
-- 完善终止条件：在 GroupChat 配置中设置 human_input_mode='NEVER'，添加 is_termination_msg 检查，并设置 max_round 参数，修复 FAULT_008 的真实故障。
-- 优化 oracle 规则：对 MISSING_MESSAGE_EDGE 和 METAMORPHIC_RELATION_VIOLATION 规则增加前置条件检查（如确认无 TimeoutError），减少因外部服务中断导致的级联误报。
+- 修复 FAULT_002：在 speaker_selection_agent 的调用逻辑中增加最大重试次数和 fallback 机制，例如连续 3 次空响应后默认选择 'user_proxy' 或 'director'，并在 GroupChat 配置中设置合理的 max_turns 作为兜底。
+- 修复 FAULT_004：在 checking_agent 的 speaker 验证逻辑中增加字符串归一化处理（去除空白字符和已知前缀如 'response'），或修改 speaker_selection_agent 的 prompt 强制输出纯 speaker 名称。
+- 扩展测试用例以覆盖更多状态和故障模式：针对 tool_schema_risk 和 agent_configuration_risk 设计异常参数测试（如无效 JSON、缺失必填字段），覆盖 conflicting_instruction、metamorphic_relation、property_boundary 等状态。
+- 优化测试 oracle 和覆盖率目标：对 FAULT_003 类缺失边问题，调整 oracle 为接受间接通信或增加强制路由的 prompt；对 FAULT_001 类超时问题，增加模型服务健康检查或重试机制，避免误判。
+- 在 CI/CD 中集成自动化测试，并设置 max_turns 和 timeout 阈值，确保回归测试能及时发现 speaker selection 循环和解析错误。
 
 ## Fault Summary
 
 ### Root-Cause Groups
-- `generic:autogen_framework-wrong-agent-routing-the-agent-name-in-the-trace-is-chat_manager-while-the-oracle-expects-group_chat_ma` Wrong Agent Routing primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_007` cases=2 symptoms=0
-- `interaction:timeout-or-non-termination` Conversation timeout or missing termination guard primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_001` cases=20 symptoms=3
-- `runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739` Unhandled startup/runtime exception primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_004` cases=14 symptoms=2
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_001` `system2_research_agents_COV_001` autogen_framework / Termination Condition Error / high / primary: The run did not terminate within the expected turn budget.
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_002` `system2_research_agents_COV_001` application / Missing Tool Call / medium / derived from `SYSTEM2_RESEARCH_AGENTS_FAULT_001`: Expected tool was not called: google_search
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_003` `system2_research_agents_COV_001` autogen_framework / Speaker Selection Error / medium / derived from `SYSTEM2_RESEARCH_AGENTS_FAULT_001`: Trace contains highly repetitive consecutive messages.
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_004` `system2_research_agents_COV_002` autogen_framework / alen / high / primary: The process ended with an unhandled runtime error.
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_005` `system2_research_agents_COV_002` autogen_framework / Message Routing Error / medium / derived from `SYSTEM2_RESEARCH_AGENTS_FAULT_004`: Expected message edge was not observed: director->research_manager
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_006` `system2_research_agents_META_001` application / Metamorphic Relation Violation / medium / derived from `SYSTEM2_RESEARCH_AGENTS_FAULT_004`: Equivalent metamorphic inputs did not preserve expected routing/tool relation.
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_007` `system2_research_agents_PROP_001` autogen_framework / Wrong Agent Routing / medium / primary: Expected agent was not observed: group_chat_manager
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_008` `system2_research_agents_R2_001` autogen_framework / Non-Termination / high / derived from `SYSTEM2_RESEARCH_AGENTS_FAULT_001`: The process exceeded the configured timeout.
+- `generic:autogen_framework-message-routing-error-the-collected-trace-does-not-contain-a-direct-director--research_manager-message` Message Routing Error primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_003` cases=1 symptoms=0
+- `interaction:human-input-or-approval` Unattended run blocked by human input or approval primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_001` cases=1 symptoms=0
+- `interaction:timeout-or-non-termination` Conversation timeout or missing termination guard primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_002` cases=7 symptoms=0
+- `runtime:the-speaker_selection_agent-s-response-is-not-properly-parsed.-the-agent-returns-response-director-instead-of-director-.` Unhandled startup/runtime exception primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_004` cases=1 symptoms=0
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_001` `system2_research_agents_COV_001` autogen_framework / Human Input Mode Error / high / primary: The target system requested human input during an automated no-human run.
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_002` `system2_research_agents_COV_001` autogen_framework /  böjnings Termination / high / primary: The process exceeded the configured timeout.
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_003` `system2_research_agents_COV_002` autogen_framework / Message Routing Error / medium / primary: Expected message edge was not observed: director->research_manager
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_004` `system2_research_agents_TOOLFUZZ_001` application / Encoding/Decoding Error / high / primary: The process ended with an unhandled runtime error.
 
 ## Suspected False Positives
 Findings with confidence below 0.65 are marked as suspected false positives. Missing-agent and missing-edge findings can be caused by limited instrumentation when a target system does not emit MASentinel trace events.

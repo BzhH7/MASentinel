@@ -11,6 +11,7 @@ from masentinel.generator.testcase_generator import generate_testcases
 from masentinel.metrics.coverage import compute_coverage
 from masentinel.reporter.html_report import write_global_index, write_html_report
 from masentinel.reporter.markdown_report import write_markdown_reports
+from masentinel.reporter.project_report import write_project_report
 from masentinel.runner.batch_runner import BatchRunner
 from masentinel.runner.system_adapter import load_system_config
 from masentinel.utils import ensure_dir, load_yaml, resolve_path, write_json, write_text
@@ -23,10 +24,12 @@ def run_all(config_path: str | Path, agentic: bool = False, test_model: str | No
     output_dir = ensure_dir(resolve_path(all_config.get("output_dir", "./outputs"), base_dir) or "./outputs")
     results: list[dict] = []
     systems = list(all_config.get("systems", []))
+    loaded_system_configs: list[dict] = []
     _log(f"config={config_path} systems={len(systems)} output_dir={output_dir} agentic={agentic} no_human={no_human}")
     for index, item in enumerate(systems, start=1):
         system_config_path = Path(resolve_path(str(item), base_dir) or item)
         system_config = load_system_config(system_config_path)
+        loaded_system_configs.append(system_config)
         system_config.setdefault("run", {})["no_human"] = no_human
         system_id = str(system_config.get("system_id") or system_config_path.stem)
         system_out = ensure_dir(output_dir / system_id)
@@ -37,7 +40,8 @@ def run_all(config_path: str | Path, agentic: bool = False, test_model: str | No
             _log(
                 f"system {system_id} done: cases={result['cases']} process_passed={result.get('process_passed', result['passed'])} "
                 f"process_failed={result.get('process_failed', result['failed'])} oracle_passed={result.get('oracle_passed', 'n/a')} "
-                f"oracle_failed={result.get('oracle_failed', 'n/a')} faults={result['faults']} mascov={result['coverage'].get('mascov', 0):.4f}"
+                f"oracle_failed={result.get('oracle_failed', 'n/a')} faults={result['faults']} "
+                f"primary_root_causes={result.get('confirmed_primary_root_causes', 'n/a')} mascov={_fmt_metric(result['coverage'].get('mascov'))}"
             )
             continue
         _log(f"{system_id} step 0/3 analyze code and docs")
@@ -61,6 +65,14 @@ def run_all(config_path: str | Path, agentic: bool = False, test_model: str | No
         write_markdown_reports(profile, cases, traces, faults, coverage, system_out)
         write_html_report(profile, cases, traces, faults, coverage, system_out)
         passed = len([trace for trace in traces if trace.status == "passed"])
+        primary_confirmed = [
+            fault
+            for fault in faults
+            if fault.get("is_primary_fault", True)
+            and not fault.get("suspected_false_positive")
+            and fault.get("layer") in {"application", "autogen_framework"}
+        ]
+        derived_symptoms = [fault for fault in faults if fault.get("cascades_from")]
         result = {
             "system_id": system_id,
             "cases": len(cases),
@@ -72,11 +84,25 @@ def run_all(config_path: str | Path, agentic: bool = False, test_model: str | No
             "faults": len(faults),
             "fault_groups": len(fault_groups),
             "suspected_fp": len([fault for fault in faults if fault.get("suspected_false_positive")]),
+            "confirmed_primary_root_causes": len(primary_confirmed),
+            "derived_symptoms": len(derived_symptoms),
         }
         results.append(result)
-        _log(f"system {system_id} done: cases={result['cases']} passed={result['passed']} failed={result['failed']} faults={result['faults']} mascov={result['coverage'].get('mascov', 0):.4f}")
+        _log(
+            f"system {system_id} done: cases={result['cases']} passed={result['passed']} failed={result['failed']} "
+            f"faults={result['faults']} primary_root_causes={result['confirmed_primary_root_causes']} "
+            f"mascov={_fmt_metric(result['coverage'].get('mascov'))}"
+        )
     _write_summary_md(results, output_dir)
     write_global_index(results, output_dir)
+    if agentic:
+        project_report_path = write_project_report(
+            output_dir,
+            results,
+            model_config=(loaded_system_configs[0].get("model", {}) if loaded_system_configs else {}),
+            test_model=test_model,
+        )
+        _log(f"project report generated: {project_report_path}")
     _log(f"all systems complete: summary={output_dir / 'summary.md'} index={output_dir / 'index.html'}")
     return results
 
@@ -89,23 +115,32 @@ def _write_summary_md(results: list[dict], output_dir: Path) -> None:
     lines = [
         "# MASentinel Summary",
         "",
-        "| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqCov | StateCov | FaultCov | MASCov | Confirmed Faults | Root Groups | Suspected FP | Non-target Excluded | Harness Excluded |",
-        "|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|--------|----------|----------|--------|------------------|-------------|--------------|---------------------|------------------|",
+        "| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqCov | StateCov | FaultCov | MASCov | Confirmed Primary Root Causes | Derived Symptoms | Root Groups | Suspected FP | Non-target Excluded | Harness Excluded |",
+        "|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|--------|----------|----------|--------|-------------------------------|------------------|-------------|--------------|---------------------|------------------|",
     ]
     for result in results:
         cov = result["coverage"]
-        confirmed = result["faults"] - result["suspected_fp"]
         agentic = result.get("agentic", {}) or {}
         non_target = len(agentic.get("non_target_issues", []) or [])
         harness = len(agentic.get("test_harness_issues", []) or [])
         lines.append(
             f"| {result['system_id']} | {result['cases']} | {result.get('process_passed', result['passed'])} | {result.get('process_failed', result['failed'])} | "
             f"{result.get('oracle_passed', '')} | {result.get('oracle_failed', '')} | "
-            f"{cov.get('agent_coverage', 0):.2f} | {cov.get('tool_coverage', 0):.2f} | {cov.get('message_edge_coverage', 0):.2f} | "
-            f"{cov.get('requirement_coverage', 0):.2f} | {cov.get('state_coverage', 0):.2f} | {cov.get('fault_mode_coverage', 0):.2f} | "
-            f"{cov.get('mascov', 0):.2f} | {confirmed} | {result.get('fault_groups', '')} | {result['suspected_fp']} | {non_target} | {harness} |"
+            f"{_fmt_metric(cov.get('agent_coverage'), 2)} | {_fmt_metric(cov.get('tool_coverage'), 2)} | {_fmt_metric(cov.get('message_edge_coverage'), 2)} | "
+            f"{_fmt_metric(cov.get('requirement_coverage'), 2)} | {_fmt_metric(cov.get('state_coverage'), 2)} | {_fmt_metric(cov.get('fault_mode_coverage'), 2)} | "
+            f"{_fmt_metric(cov.get('mascov'), 2)} | {result.get('confirmed_primary_root_causes', result['faults'] - result['suspected_fp'])} | "
+            f"{result.get('derived_symptoms', '')} | {result.get('fault_groups', '')} | {result['suspected_fp']} | {non_target} | {harness} |"
         )
     write_text(output_dir / "summary.md", "\n".join(lines) + "\n")
+
+
+def _fmt_metric(value: object, digits: int = 4) -> str:
+    if value is None:
+        return "N/A"
+    try:
+        return f"{float(value):.{digits}f}"
+    except (TypeError, ValueError):
+        return "N/A"
 
 
 def main() -> None:

@@ -1,29 +1,49 @@
 {
   "suspicious_cases": [
     {
-      "case_id": "system1_iterative_coding_REQ_001",
-      "reason": "High-severity failures: NON_TERMINATION (turn_count=20), TOOL_HALLUCINATION for unregistered tools 'write_latest_iteration_comments' and 'retrieve_latest_iteration', MISSING_TOOL_CALL for 'write_settled_plan', and REPETITIVE_LOOP. This case has the most diverse failure types, including a missing expected tool call, making it  the best candidateood for diagnosing root cause.",
+      "case_id": "system1_iterative_coding_COV_001",
+      "reason": "Failed case with a medium-severity MISSING_TOOL_CALL for write_settled_plan, suggesting the agent did not invoke the expected tool. This is a functional gap in tool usage that may be fixable through AutoGen configuration or tool registration/logic.",
       "rule_failures": [
-        "NON_TERMINATION",
-        "MISSING_TOOL_CALL",
-        "TOOL_HALLUCINATION",
-        "TOOL_HALLUCINATION",
-        "REPETITIVE_LOOP"
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: write_settled_plan",
+          "severity": "medium",
+          "evidence": [
+            "write_settled_plan"
+          ]
+        }
       ],
-      "trace_summary": "Case system1_iterative_coding_REQ_001 failed with 5 rule violations. The run exceeded the turn budget (20 turns). The expected tool 'write_settled_plan' was never called. Two unregistered tools were hallucinated: 'write_latest_iteration_comments' and 'retrieve_latest_iteration'. Repetitive message patterns were detected."
+      "trace_summary": "The run exceeded the soft turn budget (24 vs max 10) and a required tool call write_settled_plan was missing."
     },
     {
-      "case_id": "system1_iterative_coding_META_001",
-      "reason": "High-severity failures: NON_TERMINATION (turn_count=20), TOOL_HALLUCINATION for 'write_latest_iteration_comments' and 'retrieve_latest_iteration', MISSING_TOOL_CALL for 'write_settled_plan', REPETITIVE_LOOP, and METAMORPHIC_RELATION_VIOLATION. This case shares the core failures of REQ_001 but adds a metamorphic relation violation, indicating a potential systemic issue with tool routing under equivalent inputs.",
+      "case_id": "system1_iterative_coding_PROP_001",
+      "reason": "Failed case with a medium-severity MISSING_TOOL_CALL for write_settled_plan, indicating a missing tool invocation that could be resolved by adjusting tool registration, prompt, or AutoGen logic.",
       "rule_failures": [
-        "NON_TERMINATION",
-        "MISSING_TOOL_CALL",
-        "TOOL_HALLUCINATION",
-        "TOOL_HALLUCINATION",
-        "REPETITIVE_LOOP",
-        "METAMORPHIC_RELATION_VIOLATION"
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: write_settled_plan",
+          "severity": "medium",
+          "evidence": [
+            "write_settled_plan"
+          ]
+        }
       ],
-      "trace_summary": "Case system1_iterative_coding_META_001 failed with 6 rule violations. The run exceeded the turn budget (20 turns). The expected tool 'write_settled_plan' was not called. Unregistered tools 'write_latest_iteration_comments' and 'retrieve_latest_iteration' were hallucinated. Repetitive message patterns were detected. Metamorphic relation violation: equivalent inputs did not preserve expected tool routing, missing tools=['write_settled_plan']."
+      "trace_summary": "Run terminated with turn count 24 (max 10) and did not call write_settled_plan."
+    },
+    {
+      "case_id": "system1_iterative_coding_REQ_002",
+      "reason": "Failed case with a medium-severity MISSING_TOOL_CALL for write_settled_plan, indicating a systemic issue in tool invocation that may be fixed by modifying code, tool registration, or prompt templates.",
+      "rule_failures": [
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: write_settled_plan",
+          "severity": "medium",
+          "evidence": [
+            "write_settled_plan"
+          ]
+        }
+      ],
+      "trace_summary": "The run ended with turn count 20 (max 15) and did not call the expected tool write_settled_plan."
     }
   ],
   "confidence": 0.9

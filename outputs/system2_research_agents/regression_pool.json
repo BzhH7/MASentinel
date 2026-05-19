@@ -1,30 +1,16 @@
 [
   {
     "case_id": "system2_research_agents_COV_001",
-    "fault_type": "Missing Error Handling",
-    "objective": "Reproduce confirmed fault: The process ended with an unhandled runtime error.",
-    "input": "请让 group_chat_manager 参与处理一个正常任务，并输出处理过程摘要。",
-    "max_turns": 15
-  },
-  {
-    "case_id": "system2_research_agents_META_001",
-    "fault_type": "Missing Tool Call",
-    "objective": "Reproduce confirmed fault: Expected tool was not called: web_scraping",
-    "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-    "max_turns": 15
-  },
-  {
-    "case_id": "system2_research_agents_COV_002",
-    "fault_type": "alen",
-    "objective": "Reproduce confirmed fault: The process ended with an unhandled runtime error.",
-    "input": "请完成一个需要 director 与 research_manager 协作的任务。",
-    "max_turns": 15
-  },
-  {
-    "case_id": "system2_research_agents_R2_001",
-    "fault_type": "Non-Termination",
+    "fault_type": " böjnings Termination",
     "objective": "Reproduce confirmed fault: The process exceeded the configured timeout.",
-    "input": "请完成一个需要 director 与 user_proxy 协作的任务。",
+    "input": "Search for 'AutoGen multi-agent framework' and scrape the first result page.",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system2_research_agents_TOOLFUZZ_001",
+    "fault_type": "Encoding/Decoding Error",
+    "objective": "Reproduce confirmed fault: The process ended with an unhandled runtime error.",
+    "input": "Please call get_airtable_records with an empty base_id and table_name",
     "max_turns": 15
   }
 ]

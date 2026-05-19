@@ -1,69 +1,69 @@
 {
   "scope": "target_system_subprocess",
   "note": "Target-system LLM calls run inside the evaluated subprocess and are not routed through MASentinel ModelClient, so this is evidence from injected environment metadata and captured stdout/stderr.",
-  "cases": 20,
+  "cases": 16,
   "by_model": {
-    "ds-v4-flash": 20
+    "ds-v4-flash": 16
   },
   "by_base_url": {
-    "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1": 20
+    "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1": 16
   },
   "target_api_key_envs": [
     "INF_API_KEY_FLASH"
   ],
-  "stdout_model_mentions": 42,
+  "stdout_model_mentions": 91,
   "stderr_model_mentions": 0,
-  "autogen_model_warning_count": 42,
+  "autogen_model_warning_count": 91,
   "case_summaries": [
     {
       "case_id": "system2_research_agents_COV_001",
+      "status": "timeout",
+      "target_model": "ds-v4-flash",
+      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+      "target_api_key_env": "INF_API_KEY_FLASH",
+      "stdout_model_mentions": 9,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 9
+    },
+    {
+      "case_id": "system2_research_agents_COV_002",
       "status": "passed",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 7,
+      "stdout_model_mentions": 1,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 7
-    },
-    {
-      "case_id": "system2_research_agents_COV_002",
-      "status": "failed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
-      "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "autogen_model_warning_count": 1
     },
     {
       "case_id": "system2_research_agents_COV_003",
-      "status": "failed",
+      "status": "timeout",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
+      "stdout_model_mentions": 8,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "autogen_model_warning_count": 8
     },
     {
       "case_id": "system2_research_agents_FUZZ_001",
-      "status": "failed",
+      "status": "passed",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 2,
+      "stdout_model_mentions": 3,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 2
+      "autogen_model_warning_count": 3
     },
     {
       "case_id": "system2_research_agents_META_001",
-      "status": "failed",
+      "status": "timeout",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
+      "stdout_model_mentions": 14,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "autogen_model_warning_count": 14
     },
     {
       "case_id": "system2_research_agents_PROP_001",
@@ -87,13 +87,13 @@
     },
     {
       "case_id": "system2_research_agents_REG_001",
-      "status": "failed",
+      "status": "timeout",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
+      "stdout_model_mentions": 5,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "autogen_model_warning_count": 5
     },
     {
       "case_id": "system2_research_agents_REQ_001",
@@ -101,9 +101,9 @@
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 14,
+      "stdout_model_mentions": 10,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 14
+      "autogen_model_warning_count": 10
     },
     {
       "case_id": "system2_research_agents_REQ_002",
@@ -117,33 +117,33 @@
     },
     {
       "case_id": "system2_research_agents_REQ_003",
-      "status": "failed",
+      "status": "passed",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
+      "stdout_model_mentions": 2,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "autogen_model_warning_count": 2
     },
     {
       "case_id": "system2_research_agents_REQ_004",
-      "status": "failed",
+      "status": "timeout",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
+      "stdout_model_mentions": 1,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "autogen_model_warning_count": 1
     },
     {
       "case_id": "system2_research_agents_REQ_005",
-      "status": "failed",
+      "status": "passed",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
+      "stdout_model_mentions": 10,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "autogen_model_warning_count": 10
     },
     {
       "case_id": "system2_research_agents_REQ_006",
@@ -157,63 +157,23 @@
     },
     {
       "case_id": "system2_research_agents_TOOLFUZZ_001",
-      "status": "failed",
+      "status": "timeout",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
+      "stdout_model_mentions": 26,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "autogen_model_warning_count": 26
     },
     {
       "case_id": "system2_research_agents_TOOLFUZZ_002",
-      "status": "failed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
-      "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
-    },
-    {
-      "case_id": "system2_research_agents_R2_001",
       "status": "timeout",
       "target_model": "ds-v4-flash",
       "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
       "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 8,
+      "stdout_model_mentions": 2,
       "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 8
-    },
-    {
-      "case_id": "system2_research_agents_R2_002",
-      "status": "timeout",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 4,
-      "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 4
-    },
-    {
-      "case_id": "system2_research_agents_R2_003",
-      "status": "timeout",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 4,
-      "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 4
-    },
-    {
-      "case_id": "system2_research_agents_R2_004",
-      "status": "timeout",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 3,
-      "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 3
+      "autogen_model_warning_count": 2
     }
   ]
 }
