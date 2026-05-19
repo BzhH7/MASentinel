@@ -1,16 +1,29 @@
 {
   "suspicious_cases": [
     {
-      "case_id": "system1_iterative_coding_META_001",
-      "reason": "This case uniquely exhibits a MISSING_TOOL_CALL for 'write_settled_plan' and a METAMORPHIC_RELATION_VIOLATION, in addition to the common failures seen in other cases. This distinct pattern suggests a06 potential issue in the agent's planning or tool routing logic that is790 not present in the other cases.",
+      "case_id": "system1_iterative_coding_REQ_001",
+      "reason": "High-severity failures: NON_TERMINATION (turn_count=20), TOOL_HALLUCINATION for unregistered tools 'write_latest_iteration_comments' and 'retrieve_latest_iteration', MISSING_TOOL_CALL for 'write_settled_plan', and REPETITIVE_LOOP. This case has the most diverse failure types, including a missing expected tool call, making it  the best candidateood for diagnosing root cause.",
       "rule_failures": [
         "NON_TERMINATION",
         "MISSING_TOOL_CALL",
         "TOOL_HALLUCINATION",
+        "TOOL_HALLUCINATION",
+        "REPETITIVE_LOOP"
+      ],
+      "trace_summary": "Case system1_iterative_coding_REQ_001 failed with 5 rule violations. The run exceeded the turn budget (20 turns). The expected tool 'write_settled_plan' was never called. Two unregistered tools were hallucinated: 'write_latest_iteration_comments' and 'retrieve_latest_iteration'. Repetitive message patterns were detected."
+    },
+    {
+      "case_id": "system1_iterative_coding_META_001",
+      "reason": "High-severity failures: NON_TERMINATION (turn_count=20), TOOL_HALLUCINATION for 'write_latest_iteration_comments' and 'retrieve_latest_iteration', MISSING_TOOL_CALL for 'write_settled_plan', REPETITIVE_LOOP, and METAMORPHIC_RELATION_VIOLATION. This case shares the core failures of REQ_001 but adds a metamorphic relation violation, indicating a potential systemic issue with tool routing under equivalent inputs.",
+      "rule_failures": [
+        "NON_TERMINATION",
+        "MISSING_TOOL_CALL",
+        "TOOL_HALLUCINATION",
+        "TOOL_HALLUCINATION",
         "REPETITIVE_LOOP",
         "METAMORPHIC_RELATION_VIOLATION"
       ],
-      "trace_summary": "The run exceeded the turn budget (turn_count=24). The agent hallucinated unregistered tools 'retrieve_latest_iteration' and 'write_latest_iteration_comments', leading to a repetitive loop. Critically, the expected tool 'write_settled_plan' was not called, violating a metamorphic relation that required its presence."
+      "trace_summary": "Case system1_iterative_coding_META_001 failed with 6 rule violations. The run exceeded the turn budget (20 turns). The expected tool 'write_settled_plan' was not called. Unregistered tools 'write_latest_iteration_comments' and 'retrieve_latest_iteration' were hallucinated. Repetitive message patterns were detected. Metamorphic relation violation: equivalent inputs did not preserve expected tool routing, missing tools=['write_settled_plan']."
     }
   ],
   "confidence": 0.9

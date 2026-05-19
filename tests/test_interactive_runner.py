@@ -67,3 +67,31 @@ def test_case_runner_cleans_only_masentinel_isolated_paths(tmp_path: Path) -> No
     statuses = {item["path"]: item["status"] for item in trace.metadata["isolated_cleanup"]}
     assert statuses[str(isolated.resolve())] == "removed"
     assert statuses[str(tmp_path.resolve())] == "skipped_unsafe"
+
+
+def test_case_runner_deduplicates_send_receive_trace_messages(tmp_path: Path) -> None:
+    script = tmp_path / "trace_messages.py"
+    script.write_text(
+        "import json\n"
+        "event = {'type': 'message', 'timestamp': 1.0, 'sender': 'a', 'receiver': 'b', 'content': 'hello'}\n"
+        "print('MAS_TRACE:' + json.dumps({**event, 'metadata': {'direction': 'send'}}))\n"
+        "print('MAS_TRACE:' + json.dumps({**event, 'metadata': {'direction': 'receive'}}))\n",
+        encoding="utf-8",
+    )
+    config = {
+        "system_id": "toy",
+        "root_path": str(tmp_path),
+        "run": {
+            "command": "python trace_messages.py",
+            "working_dir": str(tmp_path),
+            "input_mode": "stdin",
+            "timeout_seconds": 5,
+        },
+    }
+    case = TestCase(case_id="C1", system_id="toy", case_type="trace", objective="", input="")
+
+    trace = CaseRunner(config, tmp_path / "traces").run_case(case)
+
+    assert trace.status == "passed"
+    assert len([event for event in trace.events if event.type == "message"]) == 2
+    assert trace.turn_count == 1

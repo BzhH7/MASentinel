@@ -1,0 +1,794 @@
+[
+  {
+    "case_id": "system2_research_agents_REQ_001",
+    "system_id": "system2_research_agents",
+    "case_type": "requirement_positive",
+    "objective": "Verify full agent routing and clean termination for a simple task",
+    "input": "Please research the latest AI news and summarize it in 2 sentences.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R1",
+      "R5"
+    ],
+    "target_agents": [
+      "user_proxy",
+      "researcher",
+      "research_manager",
+      "director",
+      "group_chat_manager"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "user_proxy",
+        "researcher",
+        "research_manager",
+        "director"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_COV_001",
+    "system_id": "system2_research_agents",
+    "case_type": "coverage_guided",
+    "objective": "Exercise researcher tools (web_scraping, google_search) and director tools (get_airtable_records, update_single_airtable_record) in a single workflow",
+    "input": "Search for 'climate change 202 cockpit', scrape the first result, then store the summary in Airtable.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2",
+      "R3",
+      "R4"
+    ],
+    "target_agents": [
+      "researcher",
+      "director"
+    ],
+    "target_tools": [
+      "web_scraping",
+      "google_search",
+      "get_airtable_records",
+      "update_single_airtable_record"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 20,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "researcher",
+        "director"
+      ],
+      "must_call_tools": [
+        "google_search",
+        "web_scraping",
+        "get_airtable_records",
+        "update_single_airtable_record"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_PROP_001",
+    "system_id": "system2_research_agents",
+    "case_type": "property_boundary",
+    "objective": "Verify group chat terminates at max_turns boundary when no TERMINATE is sent",
+    "input": "Repeat the word 'hello' exactly 20 times, one per message, and never say TERMINATE.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R5"
+    ],
+    "target_agents": [
+      "group_chat_manager"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 10,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "user_proxy",
+        "group_chat_manager"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "boundary": "max_turns=10",
+      "expected_behavior": "conversation stops after 10 turns even without TERMINATE keyword"
+    }
+  },
+  {
+    "case_id": "system2_research_agents_FUZZ_001",
+    "system_id": "system2_research_agents",
+    "case_type": "fuzz_negative",
+    "objective": "Instruction conflict should not crash or wait for human input.",
+    "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "fuzz_template": "conflicting_instruction",
+      "legacy_type": true
+    }
+  },
+  {
+    "case_id": "system2_research_agents_TOOLFUZZ_001",
+    "system_id": "system2_research_agents",
+    "case_type": "fuzz_tool_failure",
+    "objective": "Verify researcher handles tool failure gracefully when web_scraping receives invalid URL",
+    "input": "Use web_scraping on url 'not-a-valid-url-!!!' and report what happens.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R3"
+    ],
+    "target_agents": [
+      "researcher"
+    ],
+    "target_tools": [
+      "web_scraping"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "user_proxy",
+        "researcher"
+      ],
+      "must_call_tools": [
+        "web_scraping"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "fuzz_type": "invalid_url",
+      "expected_behavior": "tool returns error or empty result, agent reports failure without crashing"
+    }
+  },
+  {
+    "case_id": "system2_research_agents_META_001",
+    "system_id": "system2_research_agents",
+    "case_type": "metamorphic",
+    "objective": "Equivalent phrasing should preserve core routing and tool needs.",
+    "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+    "input_sequence": [
+      {
+        "role": "user",
+        "content": "请查询 A 并总结三点。"
+      },
+      {
+        "role": "user",
+        "content": "帮我了解 A，用三个要点概括。"
+      }
+    ],
+    "target_requirements": [],
+    "target_agents": [
+      "user_proxy",
+      "researcher"
+    ],
+    "target_tools": [
+      "web_scraping",
+      "google_search"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "user_proxy",
+        "researcher"
+      ],
+      "must_call_tools": [
+        "web_scraping",
+        "google_search"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "source_input": "请查询 A 并总结三点",
+      "mutated_input": "帮我了解 A，用三个要点概括",
+      "expected_relation": {
+        "same_tools": [
+          "web_scraping",
+          "google_search"
+        ],
+        "same_agents": [
+          "user_proxy",
+          "researcher"
+        ]
+      }
+    }
+  },
+  {
+    "case_id": "system2_research_agents_REG_001",
+    "system_id": "system2_research_agents",
+    "case_type": "regression",
+    "objective": "Baseline regression smoke test for known automated-run hazards.",
+    "input": "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "source": "seed_regression"
+    }
+  },
+  {
+    "case_id": "system2_research_agents_REQ_002",
+    "system_id": "system2_research_agents",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R1: The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate cleanly.",
+    "input": "请完成以下任务并给出清晰结果：The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate cleanly.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R1"
+    ],
+    "target_agents": [
+      "user_proxy",
+      "researcher",
+      "research_manager",
+      "director"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "user_proxy",
+        "researcher",
+        "research_manager",
+        "director"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_COV_002",
+    "system_id": "system2_research_agents",
+    "case_type": "coverage_guided",
+    "objective": "Exercise message edge director->research_manager",
+    "input": "请完成一个需要 director 与 research_manager 协作的任务。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "director",
+      "research_manager"
+    ],
+    "target_tools": [],
+    "target_edges": [
+      [
+        "director",
+        "research_manager"
+      ]
+    ],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "director",
+        "research_manager"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [
+        [
+          "director",
+          "research_manager"
+        ]
+      ],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_PROP_002",
+    "system_id": "system2_research_agents",
+    "case_type": "property_boundary",
+    "objective": "Boundary/property robustness test: empty_input",
+    "input": "",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "property_template": "empty_input",
+      "fuzz_template": "empty_input"
+    }
+  },
+  {
+    "case_id": "system2_research_agents_TOOLFUZZ_002",
+    "system_id": "system2_research_agents",
+    "case_type": "fuzz_tool_failure",
+    "objective": "Robustness test: tool_failure",
+    "input": "请执行需要工具的任务，并在工具失败时优雅处理。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [
+      "web_scraping"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": true,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": {
+      "tool": "web_scraping",
+      "behavior": "raise_exception",
+      "exception_message": "Injected MASentinel tool failure"
+    },
+    "metadata": {
+      "fuzz_template": "tool_failure"
+    }
+  },
+  {
+    "case_id": "system2_research_agents_REQ_003",
+    "system_id": "system2_research_agents",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R2: Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return usable results or handled errors.",
+    "input": "请完成以下任务并给出清晰结果：Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return usable results or handled errors.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2"
+    ],
+    "target_agents": [
+      "user_proxy",
+      "researcher"
+    ],
+    "target_tools": [
+      "web_scraping",
+      "google_search",
+      "get_airtable_records",
+      "update_single_airtable_record"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "user_proxy",
+        "researcher"
+      ],
+      "must_call_tools": [
+        "web_scraping",
+        "google_search",
+        "get_airtable_records",
+        "update_single_airtable_record"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_REQ_004",
+    "system_id": "system2_research_agents",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R3: The researcher agent must be able to use web_scraping and google_search tools to gather16 information.",
+    "input": "请完成以下任务并给出清晰结果：The researcher agent must be able to use web_scraping and google_search tools to gather16 information.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R3"
+    ],
+    "target_agents": [
+      "researcher"
+    ],
+    "target_tools": [
+      "web_scraping",
+      "google_search"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "researcher"
+      ],
+      "must_call_tools": [
+        "web_scraping",
+        "google_search"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_REQ_005",
+    "system_id": "system2_research_agents",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R4: The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data.",
+    "input": "请完成以下任务并给出清晰结果：The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R4"
+    ],
+    "target_agents": [
+      "director"
+    ],
+    "target_tools": [
+      "get_airtable_records",
+      "update_single_airtable_record"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "director"
+      ],
+      "must_call_tools": [
+        "get_airtable_records",
+        "update_single_airtable_record"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_REQ_006",
+    "system_id": "system2_research_agents",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R5: The group chat manager must coordinate the conversation and enforce termination conditions (TERMINATE, max_turns, process_exit).",
+    "input": "请完成以下任务并给出清晰结果：The group chat manager must coordinate the conversation and enforce termination conditions (TERMINATE, max_turns, process_exit).",
+    "input_sequence": [],
+    "target_requirements": [
+      "R5"
+    ],
+    "target_agents": [
+      "group_chat_manager"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "group_chat_manager"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_COV_003",
+    "system_id": "system2_research_agents",
+    "case_type": "coverage_guided",
+    "objective": "Exercise message edge director->researcher",
+    "input": "请完成一个需要 director 与 researcher 协作的任务。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "director",
+      "researcher"
+    ],
+    "target_tools": [],
+    "target_edges": [
+      [
+        "director",
+        "researcher"
+      ]
+    ],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "director",
+        "researcher"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [
+        [
+          "director",
+          "researcher"
+        ]
+      ],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system2_research_agents_R2_001",
+    "system_id": "system2_research_agents",
+    "case_type": "coverage_guided",
+    "objective": "Exercise message edge director->user_proxy",
+    "input": "请完成一个需要 director 与 user_proxy 协作的任务。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "director",
+      "user_proxy"
+    ],
+    "target_tools": [],
+    "target_edges": [
+      [
+        "director",
+        "user_proxy"
+      ]
+    ],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "director",
+        "user_proxy"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [
+        [
+          "director",
+          "user_proxy"
+        ]
+      ],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "coverage_guided_round": 2
+    }
+  },
+  {
+    "case_id": "system2_research_agents_R2_002",
+    "system_id": "system2_research_agents",
+    "case_type": "coverage_guided",
+    "objective": "Exercise message edge research_manager->director",
+    "input": "请完成一个需要 research_manager 与 director 协作的任务。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "research_manager",
+      "director"
+    ],
+    "target_tools": [],
+    "target_edges": [
+      [
+        "research_manager",
+        "director"
+      ]
+    ],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "research_manager",
+        "director"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [
+        [
+          "research_manager",
+          "director"
+        ]
+      ],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "coverage_guided_round": 2
+    }
+  },
+  {
+    "case_id": "system2_research_agents_R2_003",
+    "system_id": "system2_research_agents",
+    "case_type": "coverage_guided",
+    "objective": "Exercise message edge research_manager->researcher",
+    "input": "请完成一个需要 research_manager 与 researcher 协作的任务。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "research_manager",
+      "researcher"
+    ],
+    "target_tools": [],
+    "target_edges": [
+      [
+        "research_manager",
+        "researcher"
+      ]
+    ],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "research_manager",
+        "researcher"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [
+        [
+          "research_manager",
+          "researcher"
+        ]
+      ],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "coverage_guided_round": 2
+    }
+  },
+  {
+    "case_id": "system2_research_agents_R2_004",
+    "system_id": "system2_research_agents",
+    "case_type": "coverage_guided",
+    "objective": "Exercise message edge research_manager->user_proxy",
+    "input": "请完成一个需要 research_manager 与 user_proxy 协作的任务。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "research_manager",
+      "user_proxy"
+    ],
+    "target_tools": [],
+    "target_edges": [
+      [
+        "research_manager",
+        "user_proxy"
+      ]
+    ],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "research_manager",
+        "user_proxy"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [
+        [
+          "research_manager",
+          "user_proxy"
+        ]
+      ],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "coverage_guided_round": 2
+    }
+  }
+]

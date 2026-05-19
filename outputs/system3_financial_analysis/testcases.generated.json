@@ -1,0 +1,773 @@
+[
+  {
+    "case_id": "system3_financial_analysis_REQ_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Verify that user_proxy can initiate a basic financial analysis workflow for AAPL using the 5 connected agents (data_analyst, financial_analyst, risk_analyst, investment_advisor, report_generator) and the conversation terminates normally.",
+    "input": "Analyze AAPL stock and provide a comprehensive investment report.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R1",
+      "R3"
+    ],
+    "target_agents": [
+      "user_proxy",
+      "data_analyst",
+      "financial_analyst",
+      "risk_analyst",
+      "investment_advisor",
+      "report_generator"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_analyst",
+        "financial_analyst",
+        "risk_analyst",
+        "investment_advisor",
+        "report_generator"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "priority": "high",
+      "gap_type": "missing_agent_activation"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "coverage_guided",
+    "objective": "Verify that the system can handle a request for a specific financial metric (ROE) even though no tools are registered, relying on LLM knowledge and agent collaboration.",
+    "input": "What is the current ROE of AAPL?",
+    "input_sequence": [],
+    "target_requirements": [
+      "R12"
+    ],
+    "target_agents": [
+      "user_proxy",
+      "data_analyst",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 10,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_analyst",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "priority": "medium",
+      "gap_type": "missing_tool_coverage"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_002",
+    "system_id": "system3_financial_analysis",
+    "case_type": "coverage_guided",
+    "objective": "Cover the orphan agent data_collector by sending a 2-turn message: user_proxy -> data_collector -> financial_analyst, verifying data_collector is reachable and can relay data.",
+    "input": "Collect recent financial data for MSFT and pass it to the financial analyst.",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 5,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "gap": "orphan agent data_collector has no message edge",
+      "risk": "tool_schema_risk: no tools registered"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_FUZZ_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "fuzz_negative",
+    "objective": "Send a request to an enterprise agent (enterprise_quantitative_analyst) that has no message edge/null tools, expecting graceful handling (no crash, termination or fallback).",
+    "input": "Run a Monte Carlo VaR simulation for AAPL portfolio.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R4"
+    ],
+    "target_agents": [
+      "enterprise_quantitative_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 10,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "enterprise_quantitative_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "gap": "enterprise_quantitative_analyst has no message edge and no tools",
+      "risk": "tool_schema_risk: no tools registered for quantitative analysis"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_002",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R1: 一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。",
+    "input": "请完成以下任务并给出清晰结果：一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。",
+    "input_sequence": [],
+    "target_requirements": [
+      "R1"
+    ],
+    "target_agents": [
+      "agent"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "agent"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_003",
+    "system_id": "system3_financial_analysis",
+    "case_type": "coverage_guided",
+    "objective": "Exercise agent report_generator",
+    "input": "请让 report_generator 参与处理一个正常任务，并输出处理过程摘要。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "report_generator"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "report_generator"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_PROP_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "property_boundary",
+    "objective": "Boundary/property robustness test: empty_input",
+    "input": "",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "property_template": "empty_input",
+      "fuzz_template": "empty_input"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_FUZZ_002",
+    "system_id": "system3_financial_analysis",
+    "case_type": "fuzz_negative",
+    "objective": "Instruction conflict should not crash or wait for human input.",
+    "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "fuzz_template": "conflicting_instruction",
+      "legacy_type": true
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_TOOLFUZZ_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "fuzz_tool_failure",
+    "objective": "Tool-failure fuzz placeholder when no tool is statically discovered.",
+    "input": "请执行一个可能需要外部工具的任务；若没有工具可用，请优雅说明限制并结束。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "fuzz_template": "no_discovered_tool"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_META_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "metamorphic",
+    "objective": "Equivalent phrasing should preserve core routing and tool needs.",
+    "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+    "input_sequence": [
+      {
+        "role": "user",
+        "content": "请查询 A 并总结三点。"
+      },
+      {
+        "role": "user",
+        "content": "帮我了解 A，用三个要点概括。"
+      }
+    ],
+    "target_requirements": [],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "source_input": "请查询 A 并总结三点",
+      "mutated_input": "帮我了解 A，用三个要点概括",
+      "expected_relation": {
+        "same_tools": [],
+        "same_agents": [
+          "data_collector",
+          "financial_analyst"
+        ]
+      }
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_REG_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "regression",
+    "objective": "Baseline regression smoke test for known automated-run hazards.",
+    "input": "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "source": "seed_regression"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_003",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R2: 多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源",
+    "input": "请完成以下任务并给出清晰结果：多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2"
+    ],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_004",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R3: 智能财务分析**: 基于AutoGen的多Agent协作分析",
+    "input": "请完成以下任务并给出清晰结果：智能财务分析**: 基于AutoGen的多Agent协作分析",
+    "input_sequence": [],
+    "target_requirements": [
+      "R3"
+    ],
+    "target_agents": [
+      "agent"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "agent"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_005",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R4: 量化分析**: 因子模型、投资组合优化、策略回测、机器学习预测",
+    "input": "请完成以下任务并给出清晰结果：量化分析**: 因子模型、投资组合优化、策略回测、机器学习预测",
+    "input_sequence": [],
+    "target_requirements": [
+      "R4"
+    ],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_006",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R5: 数据可视化**: 交互式图表和报告生成",
+    "input": "请完成以下任务并给出清晰结果：数据可视化**: 交互式图表和报告生成",
+    "input_sequence": [],
+    "target_requirements": [
+      "R5"
+    ],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_007",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R6: 微服务架构**: 模块化设计，支持水平扩展",
+    "input": "请完成以下任务并给出清晰结果：微服务架构**: 模块化设计，支持水平扩展",
+    "input_sequence": [],
+    "target_requirements": [
+      "R6"
+    ],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_008",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R7: 容器化**: Docker和Kubernetes部署支持",
+    "input": "请完成以下任务并给出清晰结果：容器化**: Docker和Kubernetes部署支持",
+    "input_sequence": [],
+    "target_requirements": [
+      "R7"
+    ],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_009",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R8: python -m src.main analyze AAPL",
+    "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL",
+    "input_sequence": [],
+    "target_requirements": [
+      "R8"
+    ],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_010",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R9: python -m src.main analyze AAPL --type comprehensive",
+    "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --type comprehensive",
+    "input_sequence": [],
+    "target_requirements": [
+      "R9"
+    ],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_011",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Validate requirement R10: python -m src.main analyze AAPL --format html,pdf",
+    "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --format html,pdf",
+    "input_sequence": [],
+    "target_requirements": [
+      "R10"
+    ],
+    "target_agents": [
+      "data_collector",
+      "financial_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REG_002",
+    "system_id": "system3_financial_analysis",
+    "case_type": "regression",
+    "objective": "Reproduce confirmed fault: Expected agent was not observed: report_generator",
+    "input": "请让 report_generator 参与处理一个正常任务，并输出处理过程摘要。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "derived_from": "system3_financial_analysis_COV_001",
+      "source": "regression_pool"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_REG_003",
+    "system_id": "system3_financial_analysis",
+    "case_type": "regression",
+    "objective": "Reproduce confirmed fault: Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
+    "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "derived_from": "system3_financial_analysis_META_001",
+      "source": "regression_pool"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_REG_004",
+    "system_id": "system3_financial_analysis",
+    "case_type": "regression",
+    "objective": "Reproduce confirmed fault: Trace contains highly repetitive consecutive messages.",
+    "input": "请完成以下任务并给出清晰结果：数据可视化**: 交互式图表和报告生成",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "derived_from": "system3_financial_analysis_REQ_005",
+      "source": "regression_pool"
+    }
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "prompt_responses": [],
+  "isolated_paths": [],
+  "risk_notes": [
+    "Entrypoint app.py is a Gradio web UI (gradio.Blocks.launch), not a CLI with stdin prompts. Automated evaluation via stdin is not applicable; the system requires browser-based interaction or Gradio API calls.",
+    "No input() calls or stdin-based prompts found in the entrypoint or run_config; the current run_config.input_mode is 'stdin' but Gradio does not read from stdin.",
+    "If the evaluation framework cannot drive Gradio's API (e.g., /api/predict), 45-second timeout may be insufficient for model inference and Gradio startup."
+  ],
+  "confidence": 0.95,
+  "applied": {
+    "added_prompt_responses": [],
+    "added_isolated_paths": []
+  }
+}

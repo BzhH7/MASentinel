@@ -89,18 +89,21 @@ def _write_summary_md(results: list[dict], output_dir: Path) -> None:
     lines = [
         "# MASentinel Summary",
         "",
-        "| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqCov | StateCov | FaultCov | MASCov | Confirmed Faults | Root Groups | Suspected FP |",
-        "|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|--------|----------|----------|--------|------------------|-------------|--------------|",
+        "| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqCov | StateCov | FaultCov | MASCov | Confirmed Faults | Root Groups | Suspected FP | Non-target Excluded | Harness Excluded |",
+        "|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|--------|----------|----------|--------|------------------|-------------|--------------|---------------------|------------------|",
     ]
     for result in results:
         cov = result["coverage"]
         confirmed = result["faults"] - result["suspected_fp"]
+        agentic = result.get("agentic", {}) or {}
+        non_target = len(agentic.get("non_target_issues", []) or [])
+        harness = len(agentic.get("test_harness_issues", []) or [])
         lines.append(
             f"| {result['system_id']} | {result['cases']} | {result.get('process_passed', result['passed'])} | {result.get('process_failed', result['failed'])} | "
             f"{result.get('oracle_passed', '')} | {result.get('oracle_failed', '')} | "
             f"{cov.get('agent_coverage', 0):.2f} | {cov.get('tool_coverage', 0):.2f} | {cov.get('message_edge_coverage', 0):.2f} | "
             f"{cov.get('requirement_coverage', 0):.2f} | {cov.get('state_coverage', 0):.2f} | {cov.get('fault_mode_coverage', 0):.2f} | "
-            f"{cov.get('mascov', 0):.2f} | {confirmed} | {result.get('fault_groups', '')} | {result['suspected_fp']} |"
+            f"{cov.get('mascov', 0):.2f} | {confirmed} | {result.get('fault_groups', '')} | {result['suspected_fp']} | {non_target} | {harness} |"
         )
     write_text(output_dir / "summary.md", "\n".join(lines) + "\n")
 

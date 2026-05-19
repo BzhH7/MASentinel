@@ -1,0 +1,478 @@
+{
+  "suspicious_cases": [
+    {
+      "case_id": "system2_research_agents_REQ_001",
+      "reason": "NON_TERMINATION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "NON_TERMINATION",
+          "message": "The run did not terminate within the expected turn budget.",
+          "severity": "high",
+          "evidence": [
+            "turn_count=28"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_COV_001",
+      "reason": "NON_TERMINATION, MISSING_TOOL_CALL, MISSING_TOOL_CALL, MISSING_TOOL_CALL, MISSING_TOOL_CALL, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "NON_TERMINATION",
+          "message": "The run did not terminate within the expected turn budget.",
+          "severity": "high",
+          "evidence": [
+            "turn_count=23"
+          ]
+        },
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: google_search",
+          "severity": "medium",
+          "evidence": [
+            "google_search"
+          ]
+        },
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: web_scraping",
+          "severity": "medium",
+          "evidence": [
+            "web_scraping"
+          ]
+        },
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: get_airtable_records",
+          "severity": "medium",
+          "evidence": [
+            "get_airtable_records"
+          ]
+        },
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: update_single_airtable_record",
+          "severity": "medium",
+          "evidence": [
+            "update_single_airtable_record"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_PROP_001",
+      "reason": "MISSING_AGENT, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "MISSING_AGENT",
+          "message": "Expected agent was not observed: group_chat_manager",
+          "severity": "medium",
+          "evidence": [
+            "group_chat_manager"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_FUZZ_001",
+      "reason": "RUNTIME_EXCEPTION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
+            "--------------------------------------------------------------------------------",
+            "\u001b[33m[autogen.oai.client: 05-19 17:16:08] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+            "\u001b[33m[autogen.oai.client: 05-19 17:16:09] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+            "Next speaker: director"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_TOOLFUZZ_001",
+      "reason": "RUNTIME_EXCEPTION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client",
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "Use web_scraping on url 'not-a-valid-url-!!!' and report what happens.",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_META_001",
+      "reason": "RUNTIME_EXCEPTION, MISSING_TOOL_CALL, MISSING_TOOL_CALL, REPETITIVE_LOOP, METAMORPHIC_RELATION_VIOLATION",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请查询 A 并总结三点。",
+            "帮我了解 A，用三个要点概括。",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: web_scraping",
+          "severity": "medium",
+          "evidence": [
+            "web_scraping"
+          ]
+        },
+        {
+          "code": "MISSING_TOOL_CALL",
+          "message": "Expected tool was not called: google_search",
+          "severity": "medium",
+          "evidence": [
+            "google_search"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        },
+        {
+          "code": "METAMORPHIC_RELATION_VIOLATION",
+          "message": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
+          "severity": "medium",
+          "evidence": [
+            "missing_agents=[]",
+            "missing_tools=['web_scraping', 'google_search']"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_REG_001",
+      "reason": "RUNTIME_EXCEPTION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client",
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_REQ_002",
+      "reason": "REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_COV_002",
+      "reason": "RUNTIME_EXCEPTION, MISSING_MESSAGE_EDGE, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client",
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请完成一个需要 director 与 research_manager 协作的任务。",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "MISSING_MESSAGE_EDGE",
+          "message": "Expected message edge was not observed: director->research_manager",
+          "severity": "medium",
+          "evidence": [
+            "('director', 'research_manager')"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_PROP_002",
+      "reason": "NON_TERMINATION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "NON_TERMINATION",
+          "message": "The run did not terminate within the expected turn budget.",
+          "severity": "high",
+          "evidence": [
+            "turn_count=19"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_TOOLFUZZ_002",
+      "reason": "RUNTIME_EXCEPTION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client",
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请执行需要工具的任务，并在工具失败时优雅处理。",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_REQ_003",
+      "reason": "RUNTIME_EXCEPTION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client",
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请完成以下任务并给出清晰结果：Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return usable results or handled errors.",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_REQ_004",
+      "reason": "RUNTIME_EXCEPTION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client",
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请完成以下任务并给出清晰结果：The researcher agent must be able to use web_scraping and google_search tools to gather16 information.",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_REQ_005",
+      "reason": "RUNTIME_EXCEPTION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client",
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请完成以下任务并给出清晰结果：The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data.",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_REQ_006",
+      "reason": "MISSING_AGENT, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "MISSING_AGENT",
+          "message": "Expected agent was not observed: group_chat_manager",
+          "severity": "medium",
+          "evidence": [
+            "group_chat_manager"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system2_research_agents_COV_003",
+      "reason": "RUNTIME_EXCEPTION, MISSING_MESSAGE_EDGE, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client",
+            "    response = llm_client.create(",
+            "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+            "    raise TimeoutError(",
+            "TimeoutError: OpenAI API call timed out. This could be due to congestion or too small a timeout value. The timeout can be specified by setting the 'timeout' value (in seconds) in the llm_config (if you are using agents) or the OpenAIWrapper constructor (if you are using the OpenAIWrapper directly).",
+            "user_proxy (to chat_manager):",
+            "请完成一个需要 director 与 researcher 协作的任务。",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "MISSING_MESSAGE_EDGE",
+          "message": "Expected message edge was not observed: director->researcher",
+          "severity": "medium",
+          "evidence": [
+            "('director', 'researcher')"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    }
+  ],
+  "confidence": 0.35,
+  "fallback": true,
+  "error": "Model call failed after 2 attempt(s): hard timeout after 90s"
+}

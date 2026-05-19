@@ -1,0 +1,19 @@
+digraph MASentinelTrace {
+  "chat_manager" [shape=ellipse];
+  "checking_agent" [shape=ellipse];
+  "director" [shape=ellipse];
+  "research_manager" [shape=ellipse];
+  "researcher" [shape=ellipse];
+  "speaker_selection_agent" [shape=ellipse];
+  "user_proxy" [shape=ellipse];
+  "chat_manager" -> "director" [label="62"];
+  "chat_manager" -> "research_manager" [label="62"];
+  "chat_manager" -> "researcher" [label="58"];
+  "chat_manager" -> "user_proxy" [label="22"];
+  "checking_agent" -> "speaker_selection_agent" [label="92"];
+  "director" -> "chat_manager" [label="9"];
+  "research_manager" -> "chat_manager" [label="9"];
+  "researcher" -> "chat_manager" [label="15"];
+  "speaker_selection_agent" -> "checking_agent" [label="72"];
+  "user_proxy" -> "chat_manager" [label="88"];
+}

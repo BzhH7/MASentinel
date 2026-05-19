@@ -1,0 +1,15 @@
+digraph MASentinelTrace {
+  "manager" [shape=ellipse];
+  "planner" [shape=ellipse];
+  "programmer" [shape=ellipse];
+  "reviewer" [shape=ellipse];
+  "retrieve_latest_iteration" [shape=box];
+  "write_latest_iteration" [shape=box];
+  "write_latest_iteration_comments" [shape=box];
+  "manager" -> "planner" [label="186"];
+  "manager" -> "programmer" [label="192"];
+  "manager" -> "reviewer" [label="192"];
+  "planner" -> "manager" [label="186"];
+  "programmer" -> "manager" [label="192"];
+  "reviewer" -> "manager" [label="192"];
+}

@@ -1,0 +1,60 @@
+{
+  "suspicious_cases": [
+    {
+      "case_id": "system3_financial_analysis_REQ_001",
+      "reason": "High-severity timeout and non-termination (turn_count=12). Multiple expected agents (investment_advisor, report_generator) are missing.eps. Repetitive loop detected. This case exhibits 5 rule failures, including high-severity ones, and12 turns without termination, indicating a potential orchestration or agent registration issue.",
+      "rule_failures": [
+        "TIMEOUT",
+        "NON_TERMINATION",
+        "MISSING_AGENT:investment_advisor",
+        "MISSING_AGENT:report_generator",
+        "REPETITIVE_LOOP"
+      ],
+      "trace_summary": "Timeout after 75s, 12 turns, missing agents investment_advisor and report_generator, repetitive loop detected."
+    },
+    {
+      "case_id": "system3_financial_analysis_FUZZ_001",
+      "reason": "High-severity non-termination (turn_count=19) and missing agent enterprise_quantitative_analyst.eps. Repetitive loop detected. This case has 3 failures including high-severity non-termination and missing agent, suggesting a possible agent registration or routing issue under fuzzed input.",
+      "rule_failures": [
+        "NON_TERMINATION",
+        "MISSING_AGENT:enterprise_quantitative_analyst",
+        "REPETITIVE_LOOP"
+      ],
+      "trace_summary": "Non-termination after 19 turns, missing agent enterprise_quantitative_analyst, repetitive loop detected."
+    },
+    {
+      "case_id": "system3_financial_analysis_META_001",
+      "reason": "High-severity timeout and non-termination (turn_count=7).eps.eps. Missing agent data_collector.eps. Repetitive loop and metamorphic relation violation detected. This case has 5 failures including high-severity ones and a metamorphic violation, indicating a potential issue in agent routing or tool registration under metamorphic inputs.",
+      "rule_failures": [
+        "TIMEOUT",
+        "NON_TERMINATION",
+        "MISSING_AGENT:data_collector",
+        "REPETITIVE_LOOP",
+        "METAMORPHIC_RELATION_VIOLATION"
+      ],
+      "trace_summary": "Timeout after 75s, 7 turns, missing agent data_collector, repetitive loop, metamorphic relation violation (missing_agents=['data_collector'])."
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_002",
+      "reason": "High-severity timeout and non-termination (turn_count=12).eps. Missing agent 'agent' (generic name, possibly a placeholder or misconfigured agent). Repetitive loop detected. This case has 4 failures including high-severity ones and a missing agent with a generic name, suggesting a configuration or registration issue.",
+      "rule_failures": [
+        "TIMEOUT",
+        "NON_TERMINATION",
+        "MISSING_AGENT:agent",
+        "REPETITIVE_LOOP"
+      ],
+      "trace_summary": "Timeout after 75s, 12 turns, missing agent 'agent', repetitive loop detected."
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_005",
+      "reason": "High-severity non-termination (turn_count=19) and missing agent data_collector.eps. Repetitive loop detected. This case has 3 failures including high-severity non-termination and missing agent, similar to other cases but without timeout, indicating a persistent agent registration or routing issue.",
+      "rule_failures": [
+        "NON_TERMINATION",
+        "MISSING_AGENT:data_collector",
+        "REPETITIVE_LOOP"
+      ],
+      "trace_summary": "Non-termination after 19 turns, missing agent data_collector, repetitive loop detected."
+    }
+  ],
+  "confidence": 0.9
+}

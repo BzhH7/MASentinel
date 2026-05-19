@@ -112,10 +112,7 @@ class CaseRunner:
                     metadata={"case_id": testcase.case_id, "no_human": True},
                 )
             )
-        turn_count = max(
-            recorder.turn_count,
-            len([event for event in recorder.events if event.type == "message"]),
-        )
+        turn_count = max(recorder.turn_count, self._message_turn_count(recorder.events))
         recorder.turn_count = turn_count
         status = "timeout" if timeout else ("failed" if human_input_requested or returncode != 0 else "passed")
         terminated = bool(returncode == 0 and not timeout and not human_input_requested)
@@ -255,6 +252,17 @@ class CaseRunner:
             os.write(master_fd, (response + "\n").encode("utf-8"))
             sent_counts[index] += 1
             responses.append({"trigger": trigger, "response": response})
+
+    def _message_turn_count(self, events: list[TraceEvent]) -> int:
+        explicit_turns = [int(event.turn) for event in events if event.type == "message" and event.turn]
+        seen: set[tuple[str, str, str]] = set()
+        for event in events:
+            if event.type != "message":
+                continue
+            content = (event.content or "").strip()
+            fingerprint = (event.sender or "", event.receiver or "", content[:1000])
+            seen.add(fingerprint)
+        return max(max(explicit_turns, default=0), len(seen))
 
     def _case_input(self, testcase: TestCase) -> str:
         run_cfg = self.config.get("run", {}) or {}

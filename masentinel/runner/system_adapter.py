@@ -33,14 +33,16 @@ def build_command(config: dict[str, Any], testcase: TestCase) -> list[str]:
     if not command:
         entrypoint = config.get("entrypoint")
         command = f"python {Path(entrypoint).name}" if entrypoint else "python main.py"
+    command_text = " ".join(str(item) for item in command) if isinstance(command, list) else str(command)
     if isinstance(command, list):
-        parts = [str(x) for x in command]
+        parts = [render_case_template(str(x), testcase) for x in command]
     else:
-        rendered = render_case_template(str(command), testcase)
+        rendered = render_case_template(command_text, testcase)
         parts = shlex.split(rendered)
     if parts and parts[0] in {"python", "python3"}:
         parts[0] = sys.executable
-    if run.get("input_mode") == "argv" and "{input}" not in str(command):
+    case_markers = ("{input}", "{stock_symbol}", "{case_id}", "{safe_case_id}", "{system_id}")
+    if run.get("input_mode") == "argv" and not any(marker in command_text for marker in case_markers):
         parts.append(_case_input(testcase))
     return parts
 

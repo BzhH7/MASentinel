@@ -11,6 +11,8 @@ import sys
 import time
 import types
 
+_target_message_consumed = False
+
 
 def _flag(name: str, default: bool = False) -> bool:
     value = os.getenv(name)
@@ -186,8 +188,10 @@ def _patch_agent_class(cls) -> None:
 
         @functools.wraps(original_initiate_chat)
         def patched_initiate_chat(self, recipient, *args, **kwargs):
+            global _target_message_consumed
             target_message = os.getenv("MAS_TARGET_MESSAGE", "").strip()
-            if target_message:
+            if target_message and not _target_message_consumed:
+                _target_message_consumed = True
                 kwargs["message"] = target_message
                 _emit_trace_event(
                     {
@@ -214,6 +218,7 @@ def _patch_agent_class(cls) -> None:
                     "sender": getattr(self, "name", self.__class__.__name__),
                     "receiver": getattr(recipient, "name", recipient.__class__.__name__),
                     "content": _message_content(message)[:1000],
+                    "metadata": {"direction": "send"},
                 }
             )
             return original_send(self, message, recipient, *args, **kwargs)
@@ -229,6 +234,7 @@ def _patch_agent_class(cls) -> None:
                     "sender": getattr(sender, "name", sender.__class__.__name__),
                     "receiver": getattr(self, "name", self.__class__.__name__),
                     "content": _message_content(message)[:1000],
+                    "metadata": {"direction": "receive"},
                 }
             )
             return original_receive(self, message, sender, *args, **kwargs)

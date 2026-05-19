@@ -1,0 +1,458 @@
+[
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
+    "case_id": "system2_research_agents_COV_001",
+    "layer": "autogen_framework",
+    "fault_type": "Termination Condition Error",
+    "failure_code": "NON_TERMINATION",
+    "severity": "high",
+    "confidence": 0.85,
+    "summary": "The run did not terminate within the expected turn budget.",
+    "evidence": [
+      "turn_count=11",
+      "turn_count=19",
+      "turn_count=28",
+      "turn_count=23",
+      "turn_count=15"
+    ],
+    "root_cause": "The fault report is likely a false positive for NON_TERMINATION. The trace shows the conversation terminated successfully with explicit TERMINATE messages. The turn_count of 23 exceeds the oracle's max_turns of 20, which may have triggered the fault detection, but this is an oracle threshold violation (performance/constraint issue), not a non-termination fault. The actual termination mechanism (is_termination_msg or max_turns) appears to be working, as the conversation ended with TERMINATE messages.",
+    "suggested_fix": "If the issue is consistently exceeding max_turns, consider increasing the oracle's max_turns threshold to 25 or 30 for this workflow, or optimize the agent conversation to reduce turns. If the termination condition is indeed unreliable in other cases (as suggested by duplicate faults), review the is_termination_msg function and max_turns setting in the AutoGen configuration. However, based on the provided trace, no code fix is required for this specific case.",
+    "reproduction": {
+      "input": "Search for 'climate change 202 cockpit', scrape the first result, then store the summary in Airtable.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_COV_001",
+      "system2_research_agents_PROP_002",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003",
+      "system2_research_agents_R2_004"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_022",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_026",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_042",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_046",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_050",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_054"
+    ],
+    "agentic_evidence": [
+      "The fault report claims NON_TERMINATION with turn counts of 11, 19, 28, 23, 15 across affected cases.",
+      "The trace_summary for system2_research_agents_COV_001 shows status: passed, terminated: true, turn_count: 23, returncode: 0.",
+      "The stdout_tail shows MAS_TRACE messages with content 'TERMINATE' being sent and received by chat_manager, researcher, research_manager, and director, indicating the conversation did terminate.",
+      "The oracle for this test case specifies max_turns: 20, but the actual turn_count is 23, which exceeds the oracle limit.",
+      "The fault report's evidence of turn_count=23 for this case matches the trace_summary, but the trace shows successful termination, contradicting the NON_TERMINATION failure code.",
+      "The stderr_tail contains only deprecation warnings from langchain, no errors or exceptions.",
+      "The fault report lists 6 duplicate fault IDs, suggesting a systemic issue, but the provided trace for this specific case does not demonstrate non-termination."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The trace shows the conversation terminated successfully with explicit TERMINATE messages sent and received by all agents (chat_manager, researcher, research_manager, director). The returncode is 0 and status is 'passed'. The fault report's own evidence (turn_count=23) exceeds the oracle's max_turns=20, which is an oracle threshold violation, not a non-termination fault. The actual termination mechanism is working correctly. No application code or AutoGen framework fault is demonstrated.",
+      "false_positive_risk": "high",
+      "confidence": 0.95
+    },
+    "root_cause_group_id": "interaction:timeout-or-non-termination",
+    "root_cause_group_title": "Conversation timeout or missing termination guard",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
+    "case_id": "system2_research_agents_COV_001",
+    "layer": "application",
+    "fault_type": "Missing Tool Call",
+    "failure_code": "MISSING_TOOL_CALL",
+    "severity": "medium",
+    "confidence": 0.2,
+    "summary": "Expected tool was not called: google_search",
+    "evidence": [
+      "google_search",
+      "web_scraping",
+      "get_airtable_records",
+      "update_single_airtable_record"
+    ],
+    "root_cause": "The rule oracle flagged MISSING_TOOL_CALL for google_search, but   the test case passed (status: passed, no crash, terminated). The   trace_summary lacks tool call logs, so it is impossible to confirm whether google_search was actually called or not. The   confidence of the fault is low because the16 duplicate faults and passed test status suggest the oracle may be   misinterpreting   the trace or   the tool call   was     not captured in the provided summary. Without   concrete   evidence of missing call, this is likely a false positive or non-target issue.",
+    "suggested_fix": "1. Review the full trace to verify if google_search was called. 2. If it was called but not logged, fix the logging/tracing mechanism. 3. If it was not called, investigate why the agent chose not to use it (e.g., prompt, tool registration,  model decision). 4. Re-evaluate the rule oracle to reduce false positives.",
+    "reproduction": {
+      "input": "Search for 'climate change 202 cockpit', scrape the first result, then store the summary in Airtable.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_COV_001",
+      "system2_research_agents_COV_001",
+      "system2_research_agents_COV_001",
+      "system2_research_agents_COV_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_META_001"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_016",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_017"
+    ],
+    "agentic_evidence": [
+      "Trace status: passed, returncode: 0, terminated: true, turn_count: 23 (within max_turns: 20? No, exceeded by 3).",
+      "Oracle requires must_call_tools: ['google_search', 'web_scraping', 'get_airtable_records', 'update_single_airtable_record'].",
+      "Fault summary claims 'Expected tool was not called: google_search' based on rule oracle detection.",
+      "No tool call logs or detailed agent actions are provided in trace_summary; only TERMINATE messages are shown.",
+      "The evidence list in fault input only lists tool names, not call/non-call status.",
+      "accipted_false_positive is false, but16 duplicate fault IDs suggest 5 other faults (003,004,005,016,017)   are   related to same case/system, possibly indicating   systemic oracle or test environment issue."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The test case passed (status: passed, returncode: 0, terminated: true) and the provided trace_summary only contains TERMINATE messages without any tool call logs. The fault is flagged solely by a rule oracle that expects 'google_search' to be called, but there is no concrete evidence (e.g., trace of agent actions, 16 duplicate faults) that the tool was actually missing. The root_cause analysis correctly identifies that the oracle may be misinterpreting the trace or the tool call was not captured. This 16 duplicate faults and passed test status strongly suggest a logging/tracing deficiency or an overly strict oracle rule, not an application-level missing tool call. Therefore, it is a likely false positive.",
+      "false_positive_risk": "high",
+      "confidence": 0.85
+    },
+    "root_cause_group_id": "interaction:timeout-or-non-termination",
+    "root_cause_group_title": "Conversation timeout or missing termination guard",
+    "is_primary_fault": false,
+    "cascades_from": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
+    "classification_note": "Derived symptom: the target crashed before MASentinel could observe the expected agent/tool/message behavior."
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "case_id": "system2_research_agents_COV_001",
+    "layer": "autogen_framework",
+    "fault_type": "Speaker Selection Error",
+    "failure_code": "REPETITIVE_LOOP",
+    "severity": "medium",
+    "confidence": 0.2,
+    "summary": "Trace contains highly repetitive consecutive messages.",
+    "evidence": [],
+    "root_cause": "The  fault was likely flagged due to exceeding the max_turns oracle (23 > 20), but the test case itself passed. The  trace does not show a speaker selection error or a repetitive loop; it shows a normal termination sequence. This is likely a false positive caused by a  strict turn limit check rather than a real software fault.",
+    "suggested_fix": "No fix needed for the application or framework. If the turn count is a concern, adjust the oracle's max_turns to 25 or add a  termination condition check in the test case. Otherwise, this  fault can be dismissed as a non-target issue.",
+    "reproduction": {
+      "input": "Search for 'climate change 202 cockpit', scrape the first result, then store the summary in Airtable.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_COV_001",
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_FUZZ_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_PROP_001",
+      "system2_research_agents_PROP_002",
+      "system2_research_agents_REG_001",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_002",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_005",
+      "system2_research_agents_REQ_006",
+      "system2_research_agents_TOOLFUZZ_001",
+      "system2_research_agents_TOOLFUZZ_002",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003",
+      "system2_research_agents_R2_004"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_009",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_012",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_014",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_018",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_021",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_023",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_025",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_027",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_028",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_030",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_032",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_034",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_036",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_038",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_040",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_044",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_048",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_052",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_056"
+    ],
+    "agentic_evidence": [
+      "Trace summary shows status 'passed', terminated: true, returncode: 0, and no crash.",
+      "Turn count is 23, which exceeds the oracle max_turns of 20, but the test still passed.",
+      "Stdout tail shows TERMINATE messages sent to all agents, indicating a clean shutdown.",
+      "No evidence of a repetitive loop in the provided trace summary; events_count is 58, which is 2.5 events per turn on average,  not indicative of tight infinite loops.",
+      "The original fault summary mentions 'highly repetitive consecutive messages' but  the provided trace snippet does not contain such pattern."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The fault report itself states the test case passed, terminated cleanly with returncode 0, and the trace shows a normal TERMINATE sequence. The only trigger was exceeding the oracle's max_turns (23 > 20), which is a test oracle threshold issue, not a software fault in the application or AutoGen framework. No evidence of a speaker selection error or repetitive loop exists in the provided trace.",
+      "false_positive_risk": "high",
+      "confidence": 0.95
+    },
+    "root_cause_group_id": "interaction:timeout-or-non-termination",
+    "root_cause_group_title": "Conversation timeout or missing termination guard",
+    "is_primary_fault": false,
+    "cascades_from": "SYSTEM2_RESEARCH_AGENTS_FAULT_001"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "case_id": "system2_research_agents_COV_002",
+    "layer": "autogen_framework",
+    "fault_type": "alen",
+    "failure_code": "RUNTIME_EXCEPTION",
+    "severity": "high",
+    "confidence": 0.85,
+    "summary": "The process ended with an unhandled runtime error.",
+    "evidence": [
+      "请完成一个需要 director 与 researcher 协作的任务。",
+      "--------------------------------------------------------------------------------",
+      "帮我了解 A，用三个要点概括。",
+      "    raise TimeoutError(",
+      "Use web_scraping on url 'not-a-valid-url-!!!' and report what happens.",
+      "请完成一个需要 director 与 research_manager 协作的任务。",
+      "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/oai/client.py\", line 739, in create",
+      "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
+      "请完成以下任务并给出清晰结果：The researcher agent must be able to use web_scraping and google_search tools to gather16 information.",
+      "请完成以下任务并给出清晰结果：The director agent must be able to use get_airtable_records and update_single_airtable_record toolsood to manage Airtable data.",
+      "\u001b[33m[autogen.oai.client: 05-19 17:16:09] {329} WARNING - Model ds-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "  File \"/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/autogen/agentchat/conversable_agent.py\", line 1437, in _generate_oai_reply_from_client"
+    ],
+    "root_cause": "The AutoGen framework's OpenAI client raises an unhandled TimeoutError when the API call exceeds the configured timeout. The application does not implement any defensive error handling to catch this exceptionoro and provide a diagnostic error or graceful degradation, leading to a crash.",
+    "suggested_fix": "Add a try-except block around the LLM call in the application's agent logic or in the AutoGen configuration to catch TimeoutError and other API-related exceptions. Implement a fallback mechanism (e.g., retry with backoff, return a controlled error message to the user, or terminate the conversation gracefully) instead of allowing the exception to propagate and crash the process.",
+    "reproduction": {
+      "input": "请完成一个需要 director 与 research_manager 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": false,
+    "affected_cases": [
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_FUZZ_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_REG_001",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_005",
+      "system2_research_agents_TOOLFUZZ_001",
+      "system2_research_agents_TOOLFUZZ_002"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_010",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_013",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_015",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_024",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_029",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_031",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_033",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_037",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_039"
+    ],
+    "agentic_evidence": [
+      "Trace shows TimeoutError: OpenAI API call timed out.",
+      "Stack trace points to autogen/oai/client.py line 739 raising TimeoutError.",
+      "The error is a runtime exception (RUNTIME_EXCEPTION) that caused the process to crash (returncode 1).",
+      "No application-level error handling is present to catch this timeout and fail gracefully."
+    ],
+    "false_positive_audit": {
+      "audit_result": "confirmed_fault",
+      "reason": "The trace shows a TimeoutError raised in autogen/oai/client.py:739, which propagates uncaught through conversable_agent.py and crashes the process (returncode 1). This is a framework-level exception that can be mitigated by adding try-except or timeout/retry configuration in the application or AutoGen setup, making it a valid software fault.",
+      "false_positive_risk": "low",
+      "confidence": 0.9
+    },
+    "root_cause_group_id": "runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739",
+    "root_cause_group_title": "Unhandled startup/runtime exception",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+    "case_id": "system2_research_agents_COV_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Routing Error",
+    "failure_code": "MISSING_MESSAGE_EDGE",
+    "severity": "medium",
+    "confidence": 0.2,
+    "summary": "Expected message edge was not observed: director->research_manager",
+    "evidence": [
+      "('research_manager', 'researcher')",
+      "('director', 'research_manager')",
+      "('research_manager', 'director')",
+      "('director', 'researcher')",
+      "('director', 'user_proxy')",
+      "('research_manager', 'user_proxy')"
+    ],
+    "root_cause": "The test case failed because the OpenAI API call timed out before the conversation could progress to the point where the director->research_manager edge would be exercised. The missing edge is a consequence of premature termination due to external service unavailability, not a routing configuration or code defect.",
+    "suggested_fix": "This is a non-target issue (likely false positive). No code changes are needed in the application or AutoGen framework. To improve test stability, consider increasing the OpenAI API timeout in llm_config or adding retry logic for transient API failures. If the timeout persists, investigate the API service health or network connectivity.",
+    "reproduction": {
+      "input": "请完成一个需要 director 与 research_manager 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003",
+      "system2_research_agents_R2_004"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_011",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_043",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_047",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_051",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_055"
+    ],
+    "agentic_evidence": [
+      "Trace shows chat_manager sent messages to researcher, research_manager, and director, but no direct director->research_manager edge was recorded.",
+      "The test failed due to a TimeoutError from the OpenAI API, not due to a routing logic error in AutoGen.",
+      "The oracle requires the edge director->research_manager, but the trace only captured initial broadcast messages before the timeout occurred.",
+      "The stderr tail indicates the failure was caused by an OpenAI API timeout, which is an infrastructure/model service issue, not a software fault in the application or AutoGen framework."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The test failure is directly caused by an OpenAI API TimeoutError, as shown in stderr_tail. The trace only captured initial broadcast messages before the timeout, so the expected director->research_manager edge was never exercised. This is an infrastructure/model service issue, not a defect in application code presuming AutoGen framework routing logic.",
+      "false_positive_risk": "high",
+      "confidence": 0.95
+    },
+    "root_cause_group_id": "runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739",
+    "root_cause_group_title": "Unhandled startup/runtime exception",
+    "is_primary_fault": false,
+    "cascades_from": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "classification_note": "Derived symptom: the target crashed before MASentinel could observe the expected agent/tool/message behavior."
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
+    "case_id": "system2_research_agents_META_001",
+    "layer": "application",
+    "fault_type": "Metamorphic Relation Violation",
+    "failure_code": "METAMORPHIC_RELATION_VIOLATION",
+    "severity": "medium",
+    "confidence": 0.0,
+    "summary": "Equivalent metamorphic inputs did not preserve expected routing/tool relation.",
+    "evidence": [
+      "missing_agents=[]",
+      "missing_tools=['web_scraping', 'google_search']"
+    ],
+    "root_cause": "The test case failed because the OpenAI API call timed out before the agent workflow could execute any tool calls or agent visits. This is a model service availability/infrastructure issue, not a software fault in the application or AutoGen framework.",
+    "suggested_fix": "This is a non-target issue (likely false positive). No code fix is required. To improve test reliability, consider increasing the API timeout in llm_config, adding retry logic, or running the test when the model service is ​​stable. If this is a recurring issue, investigate API endpoint health.",
+    "reproduction": {
+      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_META_001"
+    ],
+    "duplicate_fault_ids": [],
+    "agentic_evidence": [
+      "Trace shows the test failed due to a TimeoutError from the OpenAI API call, not due to a routing or tool selection logic error.",
+      "The oracle requires must_call_tools=['web_scraping', 'google_search'] and must_visit_agents=['user_proxy', 'researcher'], but the trace ends before any tool calls or agent visits are recorded.",
+      "The stdout trace only shows initial message routing to 'researcher', 'research_manager', 'director' and a speaker selection prompt, with no evidence of 'user_proxy' or 'researcher' beingACTIVATED or any tool being called.",
+      "The stderr tail explicitly states: 'TimeoutError: OpenAI API call timed out.' This is a model service/infrastructure issue, not an application logic fault.",
+      "The initial fault report's evidence 'missing_tools=['web_scraping', 'google_search']' is likely a consequence of the timeout, not a root cause."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The test failure is caused by a TimeoutError from the OpenAI API call, which is a model service/infrastructure issue. The trace shows no evidence of application logic or AutoGen framework faults; the missing tool calls and agent visits are consequences of the workflow being interrupted before execution. This ​​does not meet the criteria for a confirmed software fault.",
+      "false_positive_risk": "high",
+      "confidence": 0.95
+    },
+    "root_cause_group_id": "runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739",
+    "root_cause_group_title": "Unhandled startup/runtime exception",
+    "is_primary_fault": false,
+    "cascades_from": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "classification_note": "Derived symptom: the target crashed before MASentinel could observe the expected agent/tool/message behavior."
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
+    "case_id": "system2_research_agents_PROP_001",
+    "layer": "autogen_framework",
+    "fault_type": "Wrong Agent Routing",
+    "failure_code": "MISSING_AGENT",
+    "severity": "medium",
+    "confidence": 0.2,
+    "summary": "Expected agent was not observed: group_chat_manager",
+    "evidence": [
+      "group_chat_manager"
+    ],
+    "root_cause": "The agent name in the trace is 'chat_manager' while the oracle expects 'group_chat_manager'. This is likely a naming mismatch in the test oracle or a configuration alias, not a genuine routing fault. The test passed and the conversation terminated correctly within the max_turns boundary.",
+    "suggested_fix": "Align the agent name in the test oracle with the actual agent name used in the system (e.g., change 'group_chat_manager' to 'chat_manager' in the oracle's must_visit_agents list) or update the system configuration to use the name 'group_chat_manager' if that is the intended design. No code logic change is required.",
+    "reproduction": {
+      "input": "Repeat the word 'hello' exactly 20 times, one per message, and never say TERMINATE.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "affected_cases": [
+      "system2_research_agents_PROP_001",
+      "system2_research_agents_REQ_006"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_035"
+    ],
+    "agentic_evidence": [
+      "Trace shows sender 'chat_manager' routing to 'researcher', 'research_manager', and 'director', but no 'group_chat_manager' agent name observed.",
+      "Test oracle requires must_visit_agents: ['user_proxy', 'group_chat_manager'], but trace only contains 'chat_manager' (not 'group_chat_manager') and no 'user_proxy'.",
+      "accipted fault summary claims 'Expected agent was not observed: group_chat_manager'.",
+      "However, the test case status is 'passed', terminated normally in 5 turns, returncode 0, no crash, and no timeout.",
+      "accipted fault confidence is 0.72, but16 the16 test16 passed16 and16 the16 trace16 shows16 a16 working16 group16 chat16 with16 agent16 'chat_manager'16 that16 may16 be16 the16 same16 logical16 component16 under16 a16 different16 name16 (naming16 mismatch16 rather16 than16 routing16 fault)."
+    ],
+    "false_positive_audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The test case passed, terminated normally in 5 turns, and the trace shows agent 'chat_manager' routing messages correctly. The oracle expects 'group_chat_manager', but the system uses 'chat_manager'. This is a naming mismatch in the test oracle, not a genuine routing fault in the application or AutoGen framework. No code logic change is required.",
+      "false_positive_risk": "high",
+      "confidence": 0.9
+    },
+    "root_cause_group_id": "generic:autogen_framework-wrong-agent-routing-the-agent-name-in-the-trace-is-chat_manager-while-the-oracle-expects-group_chat_ma",
+    "root_cause_group_title": "Wrong Agent Routing",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
+    "case_id": "system2_research_agents_R2_001",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
+    "evidence": [
+      "45"
+    ],
+    "root_cause": "The GroupChat configuration lacks a reliable termination condition (e.g., is_termination_msg) and does not enforce max_turns/max_round, causing the conversation to loop indefinitely under automated runs.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add a termination message check (e.g., is_termination_msg=lambda x: 'TERMINATE' in x.get('content','')), and enforce max_turns/max_round in the GroupChat configuration.",
+    "reproduction": {
+      "input": "请完成一个需要 director 与 user_proxy 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": false,
+    "affected_cases": [
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003",
+      "system2_research_agents_R2_004"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_045",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_049",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_053"
+    ],
+    "agentic_evidence": [
+      "Trace shows 23 turns, exceeding oracle max_turns=15, and status=timeout.",
+      "Stdout tail shows repeated speaker selection prompts without termination, indicating a loop.",
+      "No termination message or max_turn guard appears to have stopped the conversation.",
+      "Fault summary states 'The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.'"
+    ],
+    "false_positive_audit": {
+      "audit_result": "confirmed_fault",
+      "reason": "Trace shows 23 turns exceeding oracle max_turns=15逾时，stdout尾部重复出现speaker selection提示且无TERMINATE消息，表明GroupChat缺少可靠的终止条件与max_turns/max_round约束，导致无限循环。该问题可通过修改AutoGen GroupChat配置（添加is_termination_msg、设置max_round、human_input_mode='NEVER'）缓解，属于框架层故障。",
+      "false_positive_risk": "low",
+      "confidence": 0.82
+    },
+    "root_cause_group_id": "interaction:timeout-or-non-termination",
+    "root_cause_group_title": "Conversation timeout or missing termination guard",
+    "is_primary_fault": false,
+    "cascades_from": "SYSTEM2_RESEARCH_AGENTS_FAULT_001"
+  }
+]

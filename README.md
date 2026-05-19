@@ -66,9 +66,9 @@ MAS_MODEL_NAME
 MAS_TARGET_MESSAGE
 ```
 
-同时通过 `runtime_patches/sitecustomize.py` 在启动时兼容常见 AutoGen/OpenAI 写法：写死的 OpenAI model 会被替换为 `target_model`，`GPTAssistantAgent` 可降级为普通 `AssistantAgent`，Docker、代码执行和人工输入也可由配置关闭。对于把任务硬编码到 `initiate_chat(message=...)` 的样例，可用 `run.message_template` 由 MASentinel 在运行时注入 `MAS_TARGET_MESSAGE` 并覆盖启动消息，不需要修改被测源码。`model_usage.json` 只统计 MASentinel 测试 agent 的调用；被测系统子进程侧的模型注入和 stdout/stderr 证据会单独写入 `target_model_usage.json`。
+同时通过 `runtime_patches/sitecustomize.py` 在启动时兼容常见 AutoGen/OpenAI 写法：写死的 OpenAI model 会被替换为 `target_model`，`GPTAssistantAgent` 可降级为普通 `AssistantAgent`，Docker、代码执行和人工输入也可由配置关闭。对于把任务硬编码到 `initiate_chat(message=...)` 的样例，可用 `run.message_template` 由 MASentinel 在运行时注入 `MAS_TARGET_MESSAGE` 并覆盖第一次启动消息，不需要修改被测源码，也不会污染后续 agent 间消息。`model_usage.json` 只统计 MASentinel 测试 agent 的调用；被测系统子进程侧的模型注入和 stdout/stderr 证据会单独写入 `target_model_usage.json`。
 
-为避免“测试系统没适配好”被误算成被测系统缺陷，运行器会从 AutoGen stdout 中补充解析 `agent -> agent` 消息边，并通过 runtime patch 捕获 `initiate_chat/send/receive` 生成 `MAS_TRACE`。如果某个 case 没观测到有效 agent workflow，oracle 会把它归为 `TARGET_WORKFLOW_NOT_OBSERVED` 等 test-harness 问题并排除出应用层/AutoGen 框架故障。生成用例默认还会按 `testing.max_case_input_chars` 控制输入长度，防止超长 fuzz prompt 把 LLM 系统卡在启动阶段。
+为避免“测试系统没适配好”被误算成被测系统缺陷，运行器会从 AutoGen stdout 中补充解析 `agent -> agent` 消息边，并通过 runtime patch 捕获 `initiate_chat/send/receive` 生成 `MAS_TRACE`。send/receive 同一条消息会在 turn 统计时去重。如果某个 case 没观测到有效 agent workflow，oracle 会把它归为 `TARGET_WORKFLOW_NOT_OBSERVED` 等 test-harness 问题并排除出应用层/AutoGen 框架故障。生成用例默认还会按 `testing.max_case_input_chars` 控制输入长度，防止超长 fuzz prompt 把 LLM 系统卡在启动阶段。
 
 为了减少慢网关上的重复等待，静态 profile 阶段默认不调用模型抽取文档需求，而是先用启发式解析 README；agentic 流程后续仍会调用 `RequirementAnalystAgent` 做语义需求分析。确实需要在静态分析阶段也调用 pro，可显式开启：
 

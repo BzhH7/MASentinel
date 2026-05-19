@@ -1,0 +1,54 @@
+[
+  {
+    "group_id": "interaction:timeout-or-non-termination",
+    "title": "Conversation timeout or missing termination guard",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
+    "fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005"
+    ],
+    "symptom_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005"
+    ],
+    "affected_cases": [
+      "system3_financial_analysis_COV_001",
+      "system3_financial_analysis_COV_002",
+      "system3_financial_analysis_COV_003",
+      "system3_financial_analysis_FUZZ_001",
+      "system3_financial_analysis_FUZZ_002",
+      "system3_financial_analysis_META_001",
+      "system3_financial_analysis_PROP_001",
+      "system3_financial_analysis_R2_001",
+      "system3_financial_analysis_R2_002",
+      "system3_financial_analysis_R2_003",
+      "system3_financial_analysis_R2_004",
+      "system3_financial_analysis_REG_001",
+      "system3_financial_analysis_REQ_001",
+      "system3_financial_analysis_REQ_002",
+      "system3_financial_analysis_REQ_003",
+      "system3_financial_analysis_REQ_004",
+      "system3_financial_analysis_REQ_005",
+      "system3_financial_analysis_REQ_006",
+      "system3_financial_analysis_REQ_007",
+      "system3_financial_analysis_TOOLFUZZ_001"
+    ],
+    "failure_codes": [
+      "METAMORPHIC_RELATION_VIOLATION",
+      "MISSING_AGENT",
+      "NON_TERMINATION",
+      "REPETITIVE_LOOP",
+      "TIMEOUT"
+    ],
+    "severity": "high",
+    "confidence": 0.9,
+    "root_cause": "The AutoGen agent configuration does not include a reliable termination condition. The 'TERMINATE' keyword in the message is not recognized because no is_termination_msg function is registered. Additionally, the system lacks a max_turns/max_round guard to force termination when the conversation exceeds the expected limit.",
+    "suggested_fix": "1. Register an is_termination_msg function in the agent configuration that checks for 'TERMINATE' keyword in messages. 2. Set human_input_mode='NEVER' for automated runs. 3. Add max_turns/max_round parameter to the group chat or conversation configuration to enforce a hard limit on conversation turns.",
+    "summary": "The process exceeded the configured timeout."
+  }
+]

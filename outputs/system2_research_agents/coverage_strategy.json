@@ -1,0 +1,26 @@
+{
+  "coverage_gaps": [
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "summary",
+      "suggested_test_intent": "Verify that the 'summary' function (listed in raw_notes.functions but not registered as a tool for any agent) is either intentionally dead code or should be registered and tested. If intended for use, register it for an agent (e.g., researcher) and create a test that invokes it with 2-3 sentences of text and checks for a concise summary output."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "update_single_airtable_record",
+      "suggested_test_intent": "Test update_single_airtable_record with invalid or missing record ID to verify error handling and ensure the agent does not crash or fabricate a success response."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "get_airtable_records",
+      "suggested_test_intent": "Test get_airtable_records with an empty or non-existent table name to verify error handling and ensure the agent returns a diagnostic message instead of crashing."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "google_search",
+      "suggested_test_intent": "Test google_search with an empty query string to verify error handling and ensure the agent does not crash or fabricate results."
+    }
+  ],
+  "new_test_requests": [],
+  "confidence": 0.85
+}

@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "manager",
+      "type": "agent"
+    },
+    {
+      "id": "planner",
+      "type": "agent"
+    },
+    {
+      "id": "programmer",
+      "type": "agent"
+    },
+    {
+      "id": "reviewer",
+      "type": "agent"
+    },
+    {
+      "id": "retrieve_latest_iteration",
+      "type": "tool"
+    },
+    {
+      "id": "write_latest_iteration",
+      "type": "tool"
+    },
+    {
+      "id": "write_latest_iteration_comments",
+      "type": "tool"
+    }
+  ],
+  "edges": [
+    {
+      "source": "manager",
+      "target": "planner",
+      "count": 186,
+      "type": "message"
+    },
+    {
+      "source": "manager",
+      "target": "programmer",
+      "count": 192,
+      "type": "message"
+    },
+    {
+      "source": "manager",
+      "target": "reviewer",
+      "count": 192,
+      "type": "message"
+    },
+    {
+      "source": "planner",
+      "target": "manager",
+      "count": 186,
+      "type": "message"
+    },
+    {
+      "source": "programmer",
+      "target": "manager",
+      "count": 192,
+      "type": "message"
+    },
+    {
+      "source": "reviewer",
+      "target": "manager",
+      "count": 192,
+      "type": "message"
+    }
+  ]
+}

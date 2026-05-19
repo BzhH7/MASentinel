@@ -148,8 +148,10 @@ def write_global_index(results: list[dict], output_dir: str | Path) -> None:
             f"<td>{cov.get('mascov', 0):.2f}</td>"
             f"<td>{result.get('faults', 0)}</td>"
             f"<td>{result.get('fault_groups', '')}</td>"
+            f"<td>{len(((result.get('agentic', {}) or {}).get('non_target_issues', []) or []))}</td>"
+            f"<td>{len(((result.get('agentic', {}) or {}).get('test_harness_issues', []) or []))}</td>"
             "</tr>"
         )
     content = f"""<!doctype html><html><head><meta charset="utf-8"><title>MASentinel Summary</title><style>{STYLE}</style></head>
-<body><main><h1>MASentinel Summary</h1><section><table><tr><th>System</th><th>Cases</th><th>Proc Passed</th><th>Proc Failed</th><th>Oracle Passed</th><th>Oracle Failed</th><th>MASCov</th><th>Faults</th><th>Root Groups</th></tr>{''.join(rows)}</table></section></main></body></html>"""
+<body><main><h1>MASentinel Summary</h1><section><table><tr><th>System</th><th>Cases</th><th>Proc Passed</th><th>Proc Failed</th><th>Oracle Passed</th><th>Oracle Failed</th><th>MASCov</th><th>Faults</th><th>Root Groups</th><th>Non-target Excluded</th><th>Harness Excluded</th></tr>{''.join(rows)}</table></section></main></body></html>"""
     write_text(output_dir / "index.html", content)

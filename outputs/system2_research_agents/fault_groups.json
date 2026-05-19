@@ -1,0 +1,112 @@
+[
+  {
+    "group_id": "generic:autogen_framework-wrong-agent-routing-the-agent-name-in-the-trace-is-chat_manager-while-the-oracle-expects-group_chat_ma",
+    "title": "Wrong Agent Routing",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_007"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_PROP_001",
+      "system2_research_agents_REQ_006"
+    ],
+    "failure_codes": [
+      "MISSING_AGENT"
+    ],
+    "severity": "medium",
+    "confidence": 0.2,
+    "root_cause": "The agent name in the trace is 'chat_manager' while the oracle expects 'group_chat_manager'. This is likely a naming mismatch in the test oracle or a configuration alias, not a genuine routing fault. The test passed and the conversation terminated correctly within the max_turns boundary.",
+    "suggested_fix": "Align the agent name in the test oracle with the actual agent name used in the system (e.g., change 'group_chat_manager' to 'chat_manager' in the oracle's must_visit_agents list) or update the system configuration to use the name 'group_chat_manager' if that is the intended design. No code logic change is required.",
+    "summary": "Expected agent was not observed: group_chat_manager"
+  },
+  {
+    "group_id": "interaction:timeout-or-non-termination",
+    "title": "Conversation timeout or missing termination guard",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_008"
+    ],
+    "symptom_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_008"
+    ],
+    "affected_cases": [
+      "system2_research_agents_COV_001",
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_FUZZ_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_PROP_001",
+      "system2_research_agents_PROP_002",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003",
+      "system2_research_agents_R2_004",
+      "system2_research_agents_REG_001",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_002",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_005",
+      "system2_research_agents_REQ_006",
+      "system2_research_agents_TOOLFUZZ_001",
+      "system2_research_agents_TOOLFUZZ_002"
+    ],
+    "failure_codes": [
+      "MISSING_TOOL_CALL",
+      "NON_TERMINATION",
+      "REPETITIVE_LOOP",
+      "TIMEOUT"
+    ],
+    "severity": "high",
+    "confidence": 0.85,
+    "root_cause": "The fault report is likely a false positive for NON_TERMINATION. The trace shows the conversation terminated successfully with explicit TERMINATE messages. The turn_count of 23 exceeds the oracle's max_turns of 20, which may have triggered the fault detection, but this is an oracle threshold violation (performance/constraint issue), not a non-termination fault. The actual termination mechanism (is_termination_msg or max_turns) appears to be working, as the conversation ended with TERMINATE messages.",
+    "suggested_fix": "If the issue is consistently exceeding max_turns, consider increasing the oracle's max_turns threshold to 25 or 30 for this workflow, or optimize the agent conversation to reduce turns. If the termination condition is indeed unreliable in other cases (as suggested by duplicate faults), review the is_termination_msg function and max_turns setting in the AutoGen configuration. However, based on the provided trace, no code fix is required for this specific case.",
+    "summary": "The run did not terminate within the expected turn budget."
+  },
+  {
+    "group_id": "runtime:users-zhbai-code-cz_exp-masentinel-.venv-runtime-lib-python3.9-site-packages-autogen-oai-client.py:739",
+    "title": "Unhandled startup/runtime exception",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_006"
+    ],
+    "symptom_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_006"
+    ],
+    "affected_cases": [
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_FUZZ_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_R2_001",
+      "system2_research_agents_R2_002",
+      "system2_research_agents_R2_003",
+      "system2_research_agents_R2_004",
+      "system2_research_agents_REG_001",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_005",
+      "system2_research_agents_TOOLFUZZ_001",
+      "system2_research_agents_TOOLFUZZ_002"
+    ],
+    "failure_codes": [
+      "METAMORPHIC_RELATION_VIOLATION",
+      "MISSING_MESSAGE_EDGE",
+      "RUNTIME_EXCEPTION"
+    ],
+    "severity": "high",
+    "confidence": 0.85,
+    "root_cause": "The AutoGen framework's OpenAI client raises an unhandled TimeoutError when the API call exceeds the configured timeout. The application does not implement any defensive error handling to catch this exceptionoro and provide a diagnostic error or graceful degradation, leading to a crash.",
+    "suggested_fix": "Add a try-except block around the LLM call in the application's agent logic or in the AutoGen configuration to catch TimeoutError and other API-related exceptions. Implement a fallback mechanism (e.g., retry with backoff, return a controlled error message to the user, or terminate the conversation gracefully) instead of allowing the exception to propagate and crash the process.",
+    "summary": "The process ended with an unhandled runtime error."
+  }
+]

@@ -50,7 +50,8 @@ class BaseTestingAgent:
         self.model_name = model_name or self.model_name
 
     def run(self, task: dict[str, Any]) -> AgentDecision:
-        task_summary = json.dumps(_safe_json(task), ensure_ascii=False)[:12000]
+        prompt_task = _prompt_json(task)
+        task_summary = json.dumps(prompt_task, ensure_ascii=False)[:12000]
         raw_response: str | None = None
         try:
             if not self.model_client.available:
@@ -116,7 +117,7 @@ class BaseTestingAgent:
     def _messages(self, task: dict[str, Any]) -> list[dict[str, str]]:
         return [
             {"role": "system", "content": GLOBAL_GUARDRAILS + "\n\n" + self.prompt()},
-            {"role": "user", "content": json.dumps(_safe_json(task), ensure_ascii=False)},
+            {"role": "user", "content": json.dumps(_prompt_json(task), ensure_ascii=False)},
         ]
 
     def prompt(self) -> str:
@@ -152,3 +153,44 @@ def _safe_json(value: Any) -> Any:
     if isinstance(value, (str, int, float, bool)) or value is None:
         return value
     return shorten(str(value), 1000)
+
+
+def _prompt_json(value: Any) -> Any:
+    return _compact_for_prompt(_safe_json(value))
+
+
+def _compact_for_prompt(value: Any, key: str = "", depth: int = 0) -> Any:
+    if depth > 8:
+        return {"_truncated": True, "reason": "max_depth"}
+    if isinstance(value, dict):
+        return {str(k): _compact_for_prompt(v, str(k), depth + 1) for k, v in value.items()}
+    if isinstance(value, list):
+        limit = _list_limit(key)
+        compacted = [_compact_for_prompt(item, key, depth + 1) for item in value[:limit]]
+        if len(value) > limit:
+            compacted.append({"_truncated_items": len(value) - limit, "_original_items": len(value)})
+        return compacted
+    if isinstance(value, str):
+        limit = _string_limit(key)
+        if len(value) <= limit:
+            return value
+        return value[:limit] + f"\n...[truncated {len(value) - limit} chars]"
+    return value
+
+
+def _list_limit(key: str) -> int:
+    if key in {"events", "case_summaries"}:
+        return 12
+    if key in {"trace_summaries", "rule_results", "testcases", "faults"}:
+        return 20
+    if key in {"requirements", "agents", "tools", "message_edges"}:
+        return 40
+    return 30
+
+
+def _string_limit(key: str) -> int:
+    if key in {"doc_text", "source_text", "code_text", "readme_text"}:
+        return 20000
+    if key in {"stdout", "stderr", "stdout_tail", "stderr_tail", "raw_response", "content", "evidence", "agentic_evidence"}:
+        return 3000
+    return 6000

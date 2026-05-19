@@ -3,25 +3,67 @@
     "case_id": "system1_iterative_coding_REQ_001",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R1: Planning phase: Planner must produce a plan in response to a user request, and the Manager can converse with the Planner to edit the plan until the Manager approves it with 'sounds good'.",
-    "input": "请完成以下任务并给出清晰结果：Planning phase: Planner must produce a plan in response to a user request, and the Manager can converse with the Planner to edit the plan until the Manager approves it with 'sounds good'.",
+    "objective": "Verify planner produces a plan, asks for manager approval, and only calls write_settled_plan after receiving 'sounds good'.",
+    "input": "Manager: 'Create a simple calculator app.'",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
-      "manager",
-      "planner"
+      "planner",
+      "manager"
     ],
-    "target_tools": [],
+    "target_tools": [
+      "write_settled_plan"
+    ],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
-      "max_turns": 15,
+      "max_turns": 10,
       "must_not_crash": true,
       "must_visit_agents": [
-        "manager",
-        "planner"
+        "planner",
+        "manager"
+      ],
+      "must_call_tools": [
+        "write_settled_plan"
+      ],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "priority": "high",
+      "gap_type": "requirement_coverage"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_COV_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "coverage_guided",
+    "objective": "Verifyawn planner does not call write_settled_plan before manager approval.",
+    "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function. I will now save it.'",
+    "input_sequence": [],
+    "target_requirements": [
+      "R1"
+    ],
+    "target_agents": [
+      "planner"
+    ],
+    "target_tools": [
+      "write_settled_plan"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 10,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "planner",
+        "manager"
       ],
       "must_call_tools": [],
       "must_cover_edges": [],
@@ -31,49 +73,10 @@
       "expected_keywords": []
     },
     "fault_injection": null,
-    "metadata": {}
-  },
-  {
-    "case_id": "system1_iterative_coding_COV_001",
-    "system_id": "system1_iterative_coding",
-    "case_type": "coverage_guided",
-    "objective": "Exercise message edge manager->planner",
-    "input": "请完成一个需要 manager 与 planner 协作的任务。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [
-      "manager",
-      "planner"
-    ],
-    "target_tools": [],
-    "target_edges": [
-      [
-        "manager",
-        "planner"
-      ]
-    ],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "manager",
-        "planner"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [
-        [
-          "manager",
-          "planner"
-        ]
-      ],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {}
+    "metadata": {
+      "negative_case": true,
+      "expected_failure": "Planner calls write_settled_plan without manager approval."
+    }
   },
   {
     "case_id": "system1_iterative_coding_PROP_001",
@@ -256,17 +259,18 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_REQ_002",
+    "case_id": "system1_iterative_coding_COV_002",
     "system_id": "system1_iterative_coding",
-    "case_type": "requirement_positive",
-    "objective": "Validate requirement R2: Plan saving: Once the Manager approves the plan with 'sounds good', the Planner must call the write_settled_plan tool to save the plan to the project folder.",
-    "input": "请完成以下任务并给出清晰结果：Plan saving: Once the Manager approves the plan with 'sounds good', the Planner must call the write_settled_plan tool to save the plan to the project folder.",
+    "case_type": "coverage_guided",
+    "objective": "Verify planneraltering plan after manager approval is rejected or reverted.",
+    "input": "Manager: 'Create a simple calculator app.' Planner: 'Here is the plan: 1. Add function. 2. Subtract function.' Manager: 'sounds good' Planner: 'I will now add multiplication to the plan and save it.'",
     "input_sequence": [],
     "target_requirements": [
-      "R2"
+      "R1"
     ],
     "target_agents": [
-      "planner"
+      "planner",
+      "manager"
     ],
     "target_tools": [
       "write_settled_plan"
@@ -274,14 +278,13 @@
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
-      "max_turns": 15,
+      "max_turns": 10,
       "must_not_crash": true,
       "must_visit_agents": [
-        "planner"
+        "planner",
+        "manager"
       ],
-      "must_call_tools": [
-        "write_settled_plan"
-      ],
+      "must_call_tools": [],
       "must_cover_edges": [],
       "must_not_call_tools": [],
       "must_not_fabricate_tool_result": false,
@@ -289,6 +292,8 @@
       "expected_keywords": []
     },
     "fault_injection": null,
-    "metadata": {}
+    "metadata": {
+      "negative_case": "Planner alters plan after manager approval."
+    }
   }
 ]

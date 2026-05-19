@@ -1,0 +1,496 @@
+{
+  "workflow_agents": [
+    "RequirementAnalystAgent",
+    "SystemModelingAgent",
+    "TestDesignerAgent",
+    "InteractionAdapterAgent",
+    "CoverageStrategistAgent",
+    "ExecutionMonitorAgent",
+    "FaultDiagnoserAgent",
+    "FalsePositiveAuditorAgent",
+    "ReportWriterAgent"
+  ],
+  "model_usage": {
+    "run_id": "agentic_1779183976_0e7e41db",
+    "total_calls": 29,
+    "successful_calls": 27,
+    "fallback_calls": 2,
+    "failed_calls": 2,
+    "by_agent": {
+      "RequirementAnalystAgent": 1,
+      "SystemModelingAgent": 1,
+      "InteractionAdapterAgent": 1,
+      "TestDesignerAgent": 2,
+      "ExecutionMonitorAgent": 1,
+      "FaultDiagnoserAgent": 10,
+      "FalsePositiveAuditorAgent": 10,
+      "CoverageStrategistAgent": 2,
+      "ReportWriterAgent": 1
+    },
+    "by_purpose": {
+      "extract_requirements": 1,
+      "review_semantic_graph": 1,
+      "plan_interaction_adapter": 1,
+      "generate_testcases": 2,
+      "summarize_execution": 1,
+      "diagnose_fault": 10,
+      "audit_false_positive": 10,
+      "analyze_coverage_gaps": 2,
+      "write_report_narrative": 1
+    },
+    "by_model": {
+      "ds-v4-pro": 29
+    },
+    "estimated_tokens": {
+      "input_tokens": 244044,
+      "output_tokens": 11123
+    }
+  },
+  "target_model_usage": {
+    "scope": "target_system_subprocess",
+    "note": "Target-system LLM calls run inside the evaluated subprocess and are not routed through MASentinel ModelClient, so this is evidence from injected environment metadata and captured stdout/stderr.",
+    "cases": 20,
+    "by_model": {
+      "ds-v4-flash": 20
+    },
+    "by_base_url": {
+      "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1": 20
+    },
+    "target_api_key_envs": [
+      "INF_API_KEY_FLASH"
+    ],
+    "stdout_model_mentions": 16,
+    "stderr_model_mentions": 32,
+    "autogen_model_warning_count": 32,
+    "case_summaries": [
+      {
+        "case_id": "system3_financial_analysis_COV_001",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_COV_002",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_COV_003",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_FUZZ_001",
+        "status": "passed",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 2,
+        "stderr_model_mentions": 4,
+        "autogen_model_warning_count": 4
+      },
+      {
+        "case_id": "system3_financial_analysis_FUZZ_002",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_META_001",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_PROP_001",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_REG_001",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_001",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_002",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_003",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_004",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_005",
+        "status": "passed",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_006",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_007",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_TOOLFUZZ_001",
+        "status": "passed",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_R2_001",
+        "status": "timeout",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_R2_002",
+        "status": "passed",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_R2_003",
+        "status": "passed",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_R2_004",
+        "status": "passed",
+        "target_model": "ds-v4-flash",
+        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
+        "target_api_key_env": "INF_API_KEY_FLASH",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      }
+    ]
+  },
+  "non_target_issues": [],
+  "test_harness_issues": [],
+  "run_manifest": {
+    "run_id": "system3_financial_analysis_2026-05-19T09:46:16.211983+00:00",
+    "start_time": "2026-05-19T09:46:16.211995+00:00",
+    "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system3.yaml",
+    "config_hash": "1a5961755924b28dc97168241f1b75cda952bcb37f34a10c336489b158bd4c5f",
+    "code_snapshot_hash": "855d4d45762117eb7c93a65b85f71ac2815fb116f7ecf93810c67828d2c69276",
+    "doc_hash": "25dffda68e4f05d766bc1c07a8bd7b6ab509986870de16a4f363f48da7b618ee",
+    "human_intervention_allowed": false,
+    "entry_command": "scripts/run_with_api_md.py --config configs/all_systems.yaml",
+    "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
+    "pid": 60055
+  },
+  "testcases_frozen_sha256": "8879b5a7155c31b7e10266053f444703f6dff44c4f33a0d25e69363379b6026e",
+  "human_intervention_allowed": false,
+  "semantic_graph_review": {
+    "semantic_graph_review": "The provided profile lists 16 agents, but the dispatched message edges only connect user_proxy to 5 of them (data_analyst, financial_analyst, investment_advisor, report_generator, risk_analyst). The remaining 11 agents (data_collector, enterprise_data_collector, enterprise_financial_analyst, enterprise_risk_analyst, enterprise_quantitative_analyst, enterprise_compliance_officer, enterprise_portfolio_manager, agent) are defined but have no message edges, meaning they are unreachable in the current orchestration. This is a significant semantic gap: the system defines a rich set of specialized agents but only activates a subset, leaving 11 agents orphaned. The requirements mention multi-source data collection/null, intelligent multi-agent collaboration/null, quantitative analysis/null, and compliance/null, but the corresponding agents (data_collector, enterprise_* agents) are not connected. This indicates a potential integration or configuration fault where the orchestration logic does not match the agent definitions.",
+    "suspected_risk_points": [
+      {
+        "type": "tool_schema_risk",
+        "evidence": "No tools are registered for any agent in the profile. All agents have empty 'tools' lists. The requirements mention data collection from Yahoo Finance, Alpha Vantage, etc., and quantitative analysis (factor models, portfolio optimization, backtesting), but no corresponding tools (e.g., yfinance, alpha_vantage, custom calculators) are registered. This means agents cannot perform the required data collection or analysis tasks via tool calls, relying solely on LLM knowledge, which is unreliable for real-time financial data.",
+        "related_tool": "all agents"
+      },
+      {
+        "type": "tool_schema_risk",
+        "evidence": "The system defines enterprise-level agents (enterprise_data_collector, enterprise_financial_analyst, etc.) with detailed16 system messages describing advanced capabilities (multi-source integration, real-time processing, compliance, etc.), but these agents have no tools registered and no message edges. This suggests a mismatch between agent design and actual integration: the agents are defined but not operationalized.",
+        "related_tool": "enterprise_data_collector, enterprise_financial_analyst, enterprise_risk_analyst, enterprise_quantitative_analyst, enterprise_compliance_officer, enterprise_portfolio_manager"
+      }
+    ],
+    "additional_edges": [],
+    "confidence": 0.9
+  },
+  "interaction_adapter": {
+    "prompt_responses": [],
+    "isolated_paths": [],
+    "risk_notes": [
+      "Entrypoint uses argv input mode with no interactive prompts detected; no prompt-response rules needed.",
+      "No input() calls or interactive prompts found in the provided excerpts; automated evaluation should proceed without interaction.",
+      "Ensure timeout_seconds (75) is sufficient for the financial analysis task; consider increasing if network calls to external APIs are involved."
+    ],
+    "confidence": 0.95,
+    "applied": {
+      "added_prompt_responses": [],
+      "added_isolated_paths": []
+    }
+  },
+  "coverage_strategy": {
+    "coverage_gaps": [
+      {
+        "gap_type": "missing_agent_coverage",
+        "target": "agent_coverage",
+        "suggested_test_intent": "Generate additional cases to improve agent_coverage."
+      },
+      {
+        "gap_type": "missing_state_coverage",
+        "target": "state_coverage",
+        "suggested_test_intent": "Generate additional cases to improve state_coverage."
+      },
+      {
+        "gap_type": "missing_fault_mode_coverage",
+        "target": "fault_mode_coverage",
+        "suggested_test_intent": "Generate additional cases to improve fault_mode_coverage."
+      }
+    ],
+    "new_test_requests": [],
+    "confidence": 0.35,
+    "fallback": true,
+    "error": "Model call failed after 2 attempt(s): The read operation timed out"
+  },
+  "second_round": {
+    "enabled": true,
+    "target_mascov": 0.8,
+    "initial_mascov": 0.5383,
+    "extra_cases": 4,
+    "reason": "coverage_below_target",
+    "extra_traces": 4,
+    "initial_failed": 13
+  },
+  "trace_graph": {
+    "nodes": 5,
+    "edges": 8
+  },
+  "flaky_report": {
+    "history": {
+      "system3_financial_analysis_COV_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_FUZZ_001": [
+        "passed",
+        "passed"
+      ],
+      "system3_financial_analysis_META_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_PROP_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REG_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_002": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_003": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_004": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_005": [
+        "passed",
+        "passed"
+      ],
+      "system3_financial_analysis_REQ_006": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_007": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_008": [
+        "passed"
+      ],
+      "system3_financial_analysis_REQ_009": [
+        "passed"
+      ],
+      "system3_financial_analysis_REQ_010": [
+        "passed"
+      ],
+      "system3_financial_analysis_TOOLFUZZ_001": [
+        "passed",
+        "passed"
+      ],
+      "system3_financial_analysis_COV_002": [
+        "timeout"
+      ],
+      "system3_financial_analysis_COV_003": [
+        "timeout"
+      ],
+      "system3_financial_analysis_FUZZ_002": [
+        "timeout"
+      ],
+      "system3_financial_analysis_R2_001": [
+        "timeout"
+      ],
+      "system3_financial_analysis_R2_002": [
+        "passed"
+      ],
+      "system3_financial_analysis_R2_003": [
+        "passed"
+      ],
+      "system3_financial_analysis_R2_004": [
+        "passed"
+      ]
+    },
+    "flaky_cases": {
+      "system3_financial_analysis_COV_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_META_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_PROP_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REG_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_001": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_002": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_003": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_004": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_006": [
+        "passed",
+        "timeout"
+      ],
+      "system3_financial_analysis_REQ_007": [
+        "passed",
+        "timeout"
+      ]
+    },
+    "flaky_count": 10
+  },
+  "report_narrative": {
+    "agentic_workflow_summary": "The MASentinel agentic workflow analyzed the system3_financial_analysis system, which is an AutoGen-based multi-agent financial analysis application. The workflow involved 28 model calls across 8 agent roles, including requirement analysis, system modeling, test design, execution monitoring, fault diagnosis, false positive auditing, and coverage analysis. The system defines 16 agents but only 5 are connected via message edges, leaving 11 agents orphaned/null. No tools are registered for any agent, despite requirements for data collection and quantitative analysis. The workflow identified 5 distinct faults, all related to termination handling and agent routing, with a primary root cause in the AutoGen framework configuration (missing is_termination_msg function and max_turns guard). The coverage analysis shows agent coverage of 35.71%, tool coverage of 100% (no tools to cover), message edge coverage of 80%, and requirement coverage of 55%.",
+    "effectiveness_analysis": "The agentic workflow successfully identified a critical framework-level fault (SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001) that cascades to 4 other faults, affecting 14 test cases. The primary fault is a missing termination condition in the AutoGen configuration, which causes non-termination and timeout across multiple test scenarios. The workflow also identified an application-layer agent routing defect where the data_collector agent is never invoked despite being defined. The fault diagnosis achieved high confidence (0.82-0.90) for all identified faults, and the false positive audit confirmed all faults as genuine with low false positive risk. However, the coverage analysis reveals significant gaps: only 5 of 16 agents were visited (35.71% agent coverage), and 11 orphan agents remain untested. The requirement coverage of 55% indicates that many documented requirements (R11-R20) were not exercised. The fault mode coverage of 25% suggests that only 3 of 12 possible fault modes were detected. The overall MASCov score of 0.5703 indicates moderate coverage but significant room for improvement.",
+    "false_positive_analysis": "The false positive auditor reviewed all 5 faults and confirmed them as genuine software defects with low false positive risk (confidence 0.85-0.95). The primary fault (SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001) is clearly an AutoGen framework configuration issue: no is_termination_msg function is registered, causing the 'TERMINATE' keyword to be ignored, and no max_turns guard is set. This is a software defect that can be fixed by modifying the AutoGen setup code, not a model service or test framework issue. The cascading faults (FAULT_002 through FAULT_005) are all symptoms of the same root cause or related agent routing defects. The auditor noted that the system log shows data collection steps were executed, but no agent named 'data_collector' appears in MAS_TRACE events, confirming an application-layer agent registration/routing defect. No false positives were identified among the 5 faults.",
+    "next_steps": [
+      "Fix the primary termination condition fault: Register an is_termination_msg function in the AutoGen agent configuration that checks for 'TERMINATE' keyword, set human_input_mode='NEVER', and add max_turns/max_round parameter to enforce a hard limit on conversation turns.",
+      "Fix the agent routing defect: Modify simple_autogen_system.py to include data_collector in the group chat and ensure the speaker selection logic routes data collection requests to data_collector before financial_analyst.",
+      "Connect orphan agents: Integrate the 11 unconnected agents (enterprise_data_collector, enterprise_financial_analyst, enterprise_risk_analyst, enterprise_quantitative_analyst, enterprise_compliance_officer, enterprise_portfolio_manager, data_collector, report_generator, agent) into the message flow by adding appropriate message edges and orchestration logic.",
+      "Register tools for agents: Add tool registrations for data collection (yfinance, alpha_vantage), financial analysis (ratio calculators), risk analysis (VaR calculators), and quantitative analysis (portfolio optimizers) to enable agents to perform their designated functions via tool calls rather than relying solely on LLM knowledge.",
+      "Expand test coverage: Design additional test cases to cover the remaining 11 orphan agents, uncovered requirements (R11-R20), and additional fault modes (tool_schema_error, hallucinated_tool, etc.) to improve the MASCov score beyond 0.5703.",
+      "Add metamorphic regression tests: Implement tests that verify agent presence for equivalent inputs to prevent future agent routing regressions.",
+      "Validate the fixes by re-running the affected test cases (system3_financial_analysis_COV_001 through COV_003, META_001, and all REQ_* cases) to confirm termination and agent routing work correctly."
+    ],
+    "confidence": 0.92
+  },
+  "fallback_calls": 2
+}

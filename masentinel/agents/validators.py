@@ -28,17 +28,17 @@ def testcases_from_agent_output(output: dict[str, Any], profile: SystemProfile) 
     for index, item in enumerate(output.get("testcases", []) if isinstance(output, dict) else []):
         if not isinstance(item, dict):
             continue
-        input_sequence = [dict(x) for x in item.get("input_sequence", []) if isinstance(x, dict)]
+        input_sequence = [dict(x) for x in _as_list(item.get("input_sequence", [])) if isinstance(x, dict)]
         raw_input = str(item.get("input") or _input_from_sequence(input_sequence))
         if not raw_input and not input_sequence:
             continue
         oracle_data = item.get("oracle") if isinstance(item.get("oracle"), dict) else {}
         must_cover_edges = []
-        for edge in oracle_data.get("must_cover_edges", []) or []:
+        for edge in _as_list(oracle_data.get("must_cover_edges", [])):
             if isinstance(edge, (list, tuple)) and len(edge) >= 2:
                 must_cover_edges.append((str(edge[0]), str(edge[1])))
         target_edges = []
-        for edge in item.get("target_edges", []) or []:
+        for edge in _as_list(item.get("target_edges", [])):
             if isinstance(edge, (list, tuple)) and len(edge) >= 2:
                 target_edges.append((str(edge[0]), str(edge[1])))
         injection_data = item.get("fault_injection") if isinstance(item.get("fault_injection"), dict) else None
@@ -50,21 +50,21 @@ def testcases_from_agent_output(output: dict[str, Any], profile: SystemProfile) 
                 objective=str(item.get("objective") or "Agent-generated test case"),
                 input=raw_input,
                 input_sequence=input_sequence,
-                target_requirements=[str(x) for x in item.get("target_requirements", [])],
-                target_agents=[str(x) for x in item.get("target_agents", [])],
-                target_tools=[str(x) for x in item.get("target_tools", [])],
+                target_requirements=[str(x) for x in _as_list(item.get("target_requirements", []))],
+                target_agents=[str(x) for x in _as_list(item.get("target_agents", []))],
+                target_tools=[str(x) for x in _as_list(item.get("target_tools", []))],
                 target_edges=target_edges,
                 oracle=TestOracleSpec(
-                    must_terminate=bool(oracle_data.get("must_terminate", True)),
-                    max_turns=int(oracle_data.get("max_turns", 15) or 15),
-                    must_not_crash=bool(oracle_data.get("must_not_crash", True)),
-                    must_visit_agents=[str(x) for x in oracle_data.get("must_visit_agents", [])],
-                    must_call_tools=[str(x) for x in oracle_data.get("must_call_tools", [])],
+                    must_terminate=_as_bool(oracle_data.get("must_terminate", True), default=True),
+                    max_turns=_as_int(oracle_data.get("max_turns", 15), default=15, minimum=1, maximum=100),
+                    must_not_crash=_as_bool(oracle_data.get("must_not_crash", True), default=True),
+                    must_visit_agents=[str(x) for x in _as_list(oracle_data.get("must_visit_agents", []))],
+                    must_call_tools=[str(x) for x in _as_list(oracle_data.get("must_call_tools", []))],
                     must_cover_edges=must_cover_edges,
-                    must_not_call_tools=[str(x) for x in oracle_data.get("must_not_call_tools", [])],
-                    must_not_fabricate_tool_result=bool(oracle_data.get("must_not_fabricate_tool_result", False)),
-                    output_contract=oracle_data.get("output_contract"),
-                    expected_keywords=[str(x) for x in oracle_data.get("expected_keywords", [])],
+                    must_not_call_tools=[str(x) for x in _as_list(oracle_data.get("must_not_call_tools", []))],
+                    must_not_fabricate_tool_result=_as_bool(oracle_data.get("must_not_fabricate_tool_result", False), default=False),
+                    output_contract=str(oracle_data.get("output_contract")) if oracle_data.get("output_contract") is not None else None,
+                    expected_keywords=[str(x) for x in _as_list(oracle_data.get("expected_keywords", []))],
                 ),
                 fault_injection=FaultInjectionSpec(**injection_data) if injection_data else None,
                 metadata=dict(item.get("metadata", {})) if isinstance(item.get("metadata"), dict) else {"source": "agent"},
@@ -89,6 +89,54 @@ def merge_testcases(agent_cases: list[TestCase], deterministic_cases: list[TestC
 
 def _input_from_sequence(input_sequence: list[dict[str, str]]) -> str:
     return "\n".join(str(item.get("content", "")) for item in input_sequence if item.get("content")).strip()
+
+
+def _as_list(value: Any) -> list[Any]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    if isinstance(value, tuple):
+        return list(value)
+    if isinstance(value, dict):
+        if "items" in value and isinstance(value["items"], list):
+            return value["items"]
+        if "value" in value:
+            return _as_list(value["value"])
+        return [value]
+    return [value]
+
+
+def _as_int(value: Any, default: int, minimum: int | None = None, maximum: int | None = None) -> int:
+    if isinstance(value, (list, tuple)):
+        value = next((item for item in value if item not in (None, "")), default)
+    if isinstance(value, dict):
+        value = value.get("value", value.get("max_turns", default))
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        parsed = default
+    if minimum is not None:
+        parsed = max(minimum, parsed)
+    if maximum is not None:
+        parsed = min(maximum, parsed)
+    return parsed
+
+
+def _as_bool(value: Any, default: bool) -> bool:
+    if isinstance(value, (list, tuple)):
+        value = next((item for item in value if item not in (None, "")), default)
+    if isinstance(value, dict):
+        value = value.get("value", default)
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in {"1", "true", "yes", "on"}:
+            return True
+        if lowered in {"0", "false", "no", "off"}:
+            return False
+    if value is None:
+        return default
+    return bool(value)
 
 
 def _select_with_required_types(cases: list[TestCase], limit: int) -> list[TestCase]:

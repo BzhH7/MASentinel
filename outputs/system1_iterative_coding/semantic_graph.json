@@ -37,52 +37,42 @@
     {
       "id": "R1",
       "type": "requirement",
-      "description": "Planning phase: Planner must produce a plan in response to a user request, and the Manager can converse with the Planner to edit the plan until the Manager approves it with 'sounds good'."
+      "description": "Planner must produce a plan containing numbered functional requirements and wait for manager approval ('sounds good') before calling write_settled_plan."
     },
     {
       "id": "R2",
       "type": "requirement",
-      "description": "Plan saving: Once the Manager approves the plan with 'sounds good', the Planner must call the write_settled_plan tool to save the plan to the project folder."
+      "description": "Coder must output only well-formatted code blocks, no extra text, and must not participate in conversation."
     },
     {
       "id": "R3",
       "type": "requirement",
-      "description": "Iteration 0: Coder must produce initial code based on the plan, and its output must be recorded to script_v1.py via the write_latest_iteration tool."
+      "description": "Reviewer must evaluate code against the planoro produce a list of criticisms/comments without writing code."
     },
     {
       "id": "R4",
       "type": "requirement",
-      "description": "Iteration 0: Reviewer must evaluate the initial code and produce comments, which are saved to comments_v1.txt via the write_latest_iteration tool."
+      "description": "Manager must be able to test code and provide feedback to Coder or Reviewer before exiting conversation."
     },
     {
       "id": "R5",
       "type": "requirement",
-      "description": "Iteration n: Coder must produce improved code based on the plan, latest script, and latest comments, and the new script version must be incremented (script_v2.py, script_v3.py, etc.)."
+      "description": "Iteration phase must present only the latest script and latest comments to Coder and Reviewer."
     },
     {
       "id": "R6",
       "type": "requirement",
-      "description": "Iteration n: Reviewer must evaluate the latest script and produce updated comments, saved with an incremented version number (comments_v2.txt, comments_v3.txt, etc.)."
+      "description": "Encoding write_latest_iteration must save code to script_v{n}.py and write_settled_plan must save plan to project folder."
     },
     {
       "id": "R7",
       "type": "requirement",
-      "description": "Context management: Only the latest version of code and comments should be presented to agents in each iteration, preventing distraction from previous faulty code or irrelevant comments."
+      "description": "Encoding program must support continuing an existing project by loading planigin latest script and comments."
     },
     {
       "id": "R8",
       "type": "requirement",
-      "description": "Project continuation: When re-running main.py, the system must detect existing projects and allow the user to continue an existing project, resuming the iteration phase with the latest plan, script, and comments."
-    },
-    {
-      "id": "R9",
-      "type": "requirement",
-      "description": "Manager feedback during iteration: The Manager can provide direct feedback to the Coder or Reviewer before exiting the conversation, and the agent must update its output accordingly."
-    },
-    {
-      "id": "R10",
-      "type": "requirement",
-      "description": "Termination: The iteration loop continues until the user is satisfied and terminates the program externally, as there is no built-in exit code."
+      "description": "Encoding iteration loop must terminate only when user is satisfied; no automatic termination after fixed number of iterations."
     }
   ],
   "edges": [
@@ -98,41 +88,26 @@
     },
     {
       "source": "R1",
+      "target": "planner",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
       "target": "manager",
       "type": "requires_agent"
     },
     {
       "source": "R1",
-      "target": "planner",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R2",
-      "target": "planner",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R2",
       "target": "write_settled_plan",
       "type": "requires_tool"
     },
     {
-      "source": "R3",
+      "source": "R2",
       "target": "programmer",
       "type": "requires_agent"
     },
     {
       "source": "R3",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "write_latest_iteration",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R4",
       "target": "reviewer",
       "type": "requires_agent"
     },
@@ -143,8 +118,13 @@
     },
     {
       "source": "R4",
-      "target": "write_latest_iteration",
-      "type": "requires_tool"
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "reviewer",
+      "type": "requires_agent"
     },
     {
       "source": "R5",
@@ -153,7 +133,7 @@
     },
     {
       "source": "R5",
-      "target": "manager",
+      "target": "reviewer",
       "type": "requires_agent"
     },
     {
@@ -162,9 +142,9 @@
       "type": "requires_tool"
     },
     {
-      "source": "R6",
-      "target": "reviewer",
-      "type": "requires_agent"
+      "source": "R5",
+      "target": "write_settled_plan",
+      "type": "requires_tool"
     },
     {
       "source": "R6",
@@ -175,6 +155,16 @@
       "source": "R6",
       "target": "write_latest_iteration",
       "type": "requires_tool"
+    },
+    {
+      "source": "R6",
+      "target": "write_settled_plan",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R7",
+      "target": "manager",
+      "type": "requires_agent"
     },
     {
       "source": "R7",
@@ -182,37 +172,7 @@
       "type": "requires_agent"
     },
     {
-      "source": "R7",
-      "target": "reviewer",
-      "type": "requires_agent"
-    },
-    {
       "source": "R8",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R8",
-      "target": "programmer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R9",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R9",
-      "target": "programmer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R9",
-      "target": "reviewer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R10",
       "target": "manager",
       "type": "requires_agent"
     },
@@ -236,25 +196,13 @@
     },
     {
       "source": "planner",
-      "target": "write_settled_plan",
-      "type": "message",
-      "evidence": "SystemModelingAgent additional edge"
-    },
-    {
-      "source": "manager",
-      "target": "write_latest_iteration",
+      "target": "manager",
       "type": "message",
       "evidence": "SystemModelingAgent additional edge"
     },
     {
       "source": "reviewer",
-      "target": "manager",
-      "type": "message",
-      "evidence": "SystemModelingAgent additional edge"
-    },
-    {
-      "source": "programmer",
-      "target": "manager",
+      "target": "programmer",
       "type": "message",
       "evidence": "SystemModelingAgent additional edge"
     }
