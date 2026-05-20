@@ -1,0 +1,153 @@
+[
+  {
+    "group_id": "filesystem:path-escape",
+    "title": "User-controlled path escaped configured root",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_002"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_FSSAFE_001"
+    ],
+    "failure_codes": [
+      "FILESYSTEM_ESCAPE"
+    ],
+    "severity": "high",
+    "confidence": 0.92,
+    "root_cause": "User-controlled project/file names are resolved without constraining them to the configured safe root.",
+    "suggested_fix": "Resolve candidate paths, reject absolute/parent-directory components, and enforce relative_to(configured_project_root).",
+    "summary": "User-controlled path/name caused writes outside the configured project root."
+  },
+  {
+    "group_id": "generic:application-resume-state-inconsistency-resume-state-detection-logic-in-iterativetools.py-treats-partial-but-meaningful-o",
+    "title": "Resume State Inconsistency",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_006"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_RESUME_001"
+    ],
+    "failure_codes": [
+      "RESUME_STATE_INCOMPLETE"
+    ],
+    "severity": "medium",
+    "confidence": 0.84,
+    "root_cause": "Resume-state detection logic in IterativeTools.py treats partial but meaningful on-disk state (existing MasterPlan.txt and script_v1.py) as absent or silently starts a fresh workflow, violating the test contract to preserve or report existing state.",
+    "suggested_fix": "Implement a discovery step in the resume logic that independently checks for MasterPlan.txt, the latest script, and latest comments. If partial state is detected, explicitly inform the user/agent of the incomplete state and either resume the available state with a warning or report the incomplete state instead of silently falling back to a first-iteration workflow. Update functions in IterativeTools.py (e.g., retrieve_latest_iteration, does_version_one_exist) to distinguish between 'no state' and 'incomplete state'.",
+    "summary": "Existing script state was ignored and the project was treated as a first iteration."
+  },
+  {
+    "group_id": "generic:application-tool-api-pagination-missing-the-external-api-tool-wrapper-does-not-preserve-semantic-parameters-or-iterate-p",
+    "title": "Tool API Pagination Missing",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_009",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_009"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_TOOLAPI_001"
+    ],
+    "failure_codes": [
+      "PAGINATION_NOT_FOLLOWED"
+    ],
+    "severity": "high",
+    "confidence": 0.9,
+    "root_cause": "The external API tool wrapper does not preserve semantic parameters or iterate paginated responses. The tool likely issues a single HTTP request without following offset/next-page links to retrieve all records.",
+    "suggested_fix": "Parse semantic URL fields such as view/base/table, pass them to the API, and follow offset pagination until exhausted. In the get_number function (and other API wrappers), implement a loop that checks for a 'next' page indicator and accumulates results across all pages.",
+    "summary": "External API pagination stopped before all fixture pages were requested."
+  },
+  {
+    "group_id": "generic:application-tool-error-contract-missing-the-tool-wrapper-for-write_latest_iteration-does-not-check-http-status-codes-and",
+    "title": "Tool Error Contract Missing",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_010",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_010"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_TOOLERR_001"
+    ],
+    "failure_codes": [
+      "HTTP_STATUS_NOT_CHECKED"
+    ],
+    "severity": "medium",
+    "confidence": 0.88,
+    "root_cause": "The tool wrapper for write_latest_iteration does not check HTTP status codes and return a structured error envelope. When the mock returns a 401, the wrapper likely returns None or an empty string instead of a typed error object with http_status, error_code, and message fields.",
+    "suggested_fix": "In the write_latest_iteration tool implementation, check the HTTP response status code. If status >= 400, return a structured error object like {'success': False, 'http_status': 401, 'error': 'invalid key', 'error_code': 'AUTH_FAILURE'} instead of None or empty string. The structured error should always include http_status and a machine-readable error_code.",
+    "summary": "HTTP failure status was not captured in the trace envelope."
+  },
+  {
+    "group_id": "handoff:terminate-empty-or-wrong-source",
+    "title": "Message handoff forwarded empty or TERMINATE content",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_001"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_DATAINV_001"
+    ],
+    "failure_codes": [
+      "MESSAGE_HANDOFF_TERMINATE_ONLY"
+    ],
+    "severity": "high",
+    "confidence": 0.9,
+    "root_cause": "The message handoff mechanism (via last_message() in AndyTools.py and IterativeTools.py) forwards only a short termination signal ('sounds good') or an unrelated acknowledgment from the manager to the reviewer agent, instead of including the upstream analysis containing the financial metrics and the missing Total Debt. As a result, the downstream agent never receives the actual data required to check the data invariant, leading to a generic completion response that does not validate the partial-row requirement.",
+    "suggested_fix": "Modify the handoff logic in last_message() (or its caller) to explicitly include the full result or summary from the prior analysis step, rather than only the latest natural-language reply. Ensure that termination messages or short acknowledgments do not strip the payload needed by downstream agents. For example, when invoking reviewer, pass a structured summary containing the computed financial metrics, the missing-row flag, and any relevant analysis outputs, so that the reviewer can act on it instead of receiving only 'sounds good' or an empty/termination-only signal.",
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content."
+  },
+  {
+    "group_id": "interaction:timeout-or-non-termination",
+    "title": "Conversation timeout or missing termination guard",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_011",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_011"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_WIRING_001"
+    ],
+    "failure_codes": [
+      "TIMEOUT"
+    ],
+    "severity": "high",
+    "confidence": 0.45,
+    "root_cause": "The conversation likely lacks a reliable termination condition (e.g., is_termination_msg) or explicit max_turns guard in the AutoGen configuration, causing it to run until the process-level timeout kills it.",
+    "suggested_fix": "Add a termination message check (e.g., is_termination_msg) and/or enforce max_consecutive_auto_reply or max_turns in the GroupChat configuration to ensure determined termination without relying solely on process timeout.",
+    "summary": "The process exceeded the configured timeout."
+  },
+  {
+    "group_id": "interaction:unattended-termination-guard-missing",
+    "title": "Unattended termination / approval guard missing",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_003",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_007"
+    ],
+    "symptom_fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_007"
+    ],
+    "affected_cases": [
+      "system1_iterative_coding_RESUME_001",
+      "system1_iterative_coding_TERM_001"
+    ],
+    "failure_codes": [
+      "HUMAN_INPUT_REQUESTED",
+      "NON_TERMINATION",
+      "REPETITIVE_LOOP",
+      "TERMINATION_SIGNAL_IGNORED"
+    ],
+    "severity": "high",
+    "confidence": 0.9,
+    "root_cause": "The UserProxyAgent (or equivalent) is configured with a human_input_mode that allows or requires manual input, which blocks the automated test run when the agent reaches a point where it expects user confirmation.",
+    "suggested_fix": "Set human_input_mode='NEVER' in the UserProxyAgent configuration to ensure fully automated execution. Remove any blocking input() calls or manual interaction paths from the agent's execution flow.",
+    "summary": "The target system requested human input during an automated no-human run."
+  }
+]

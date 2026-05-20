@@ -19,7 +19,7 @@
         "severity": "low",
         "evidence": [
           "turn_count=23",
-          "max_turns=10"
+          "max_turns=15"
         ]
       }
     ]
@@ -47,14 +47,9 @@
         "message": "User-controlled path/name caused writes outside the configured project root.",
         "severity": "high",
         "evidence": [
-          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db",
-          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db-shm",
-          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db-wal",
-          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_fixture/system1_iterative_coding_RESUME_001/MasterPlan.txt",
-          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_fixture/system1_iterative_coding_RESUME_001/script_v1.py",
-          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_001/mas_system1_iterative_coding_REQ_001/comments_v1.log",
-          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_RESUME_001/mas_system1_iterative_coding_RESUME_001/MasterPlan.txt",
-          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_RESUME_001/mas_system1_iterative_coding_RESUME_001/comments_v1.log"
+          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/MasterPlan.txt",
+          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/comments_v1.log",
+          "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/script_v1.py"
         ]
       }
     ]
@@ -68,11 +63,11 @@
         "message": "The target system requested human input during an automated no-human run.",
         "severity": "high",
         "evidence": [
+          "Glad it all checks out. You've got a solid, working implementation. If you ever need a review of the next iteration or want to discuss enhancements, just let me know. Good luck!",
           "--------------------------------------------------------------------------------",
           "\u001b[33mmanager\u001b[0m (to reviewer):",
           "sounds good",
           "--------------------------------------------------------------------------------",
-          "\u001b[33m[autogen.oai.client: 05-20 09:52:09] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
           "\u001b[33mreviewer\u001b[0m (to manager):",
           "Alright – I'll take that as confirmation. If you need anything else in the future, just say the word. Best of luck with the project!",
           "--------------------------------------------------------------------------------"
@@ -110,117 +105,7 @@
     ]
   },
   {
-    "case_id": "system1_iterative_coding_TOOLAPI_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "VIEW_PARAMETER_IGNORED",
-        "message": "External API request did not preserve documented semantic query parameters.",
-        "severity": "high",
-        "evidence": [
-          "missing_or_mismatched_query_params={'view': 'viwMASentinel'}",
-          "observed_query_params={}"
-        ]
-      },
-      {
-        "code": "PAGINATION_NOT_FOLLOWED",
-        "message": "External API pagination stopped before all fixture pages were requested.",
-        "severity": "high",
-        "evidence": [
-          "expected_pages=2",
-          "observed_pages=[]"
-        ]
-      }
-    ]
-  },
-  {
-    "case_id": "system1_iterative_coding_TOOLERR_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "HTTP_STATUS_NOT_CHECKED",
-        "message": "HTTP failure status was not captured in the trace envelope.",
-        "severity": "medium",
-        "evidence": [
-          "expected_status=401"
-        ]
-      },
-      {
-        "code": "TOOL_UNSTRUCTURED_ERROR",
-        "message": "External tool failure did not produce a structured error envelope.",
-        "severity": "high",
-        "evidence": [
-          "expected_status=401"
-        ]
-      },
-      {
-        "code": "TOOL_RETURNED_NONE",
-        "message": "Tool returned None/empty result for an error path instead of a structured envelope.",
-        "severity": "high",
-        "evidence": [
-          "write_settled_plan"
-        ]
-      },
-      {
-        "code": "TOOL_RETURNED_NONE",
-        "message": "Tool returned None/empty result for an error path instead of a structured envelope.",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration"
-        ]
-      },
-      {
-        "code": "TOOL_RETURNED_NONE",
-        "message": "Tool returned None/empty result for an error path instead of a structured envelope.",
-        "severity": "high",
-        "evidence": [
-          "write_latest_iteration_comments"
-        ]
-      }
-    ]
-  },
-  {
     "case_id": "system1_iterative_coding_HANDOFF_001",
-    "passed": true,
-    "failures": []
-  },
-  {
-    "case_id": "system1_iterative_coding_DATAINV_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "BUSINESS_TASK_FAILED",
-        "message": "The process completed but the target task reported a business-level failure.",
-        "severity": "high",
-        "evidence": [
-          "\u001b[33mmanager\u001b[0m (to reviewer):",
-          "sounds good",
-          "--------------------------------------------------------------------------------",
-          "\u001b[33m[autogen.oai.client: 05-20 09:55:01] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-          "\u001b[33mreviewer\u001b[0m (to manager):",
-          "Awesome, I'm glad everything checks out! You've got a clean, functional, and well-documented app that meets all the requirements.",
-          "If you ever need to modify it or build something new, feel free to come back anytime. Good luck with the project! 🚀",
-          "--------------------------------------------------------------------------------"
-        ]
-      }
-    ]
-  },
-  {
-    "case_id": "system1_iterative_coding_WIRING_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "TIMEOUT",
-        "message": "The process exceeded the configured timeout.",
-        "severity": "high",
-        "evidence": [
-          "120"
-        ]
-      }
-    ]
-  },
-  {
-    "case_id": "system1_iterative_coding_BUDGET_001",
     "passed": true,
     "failures": []
   },
@@ -233,7 +118,7 @@
         "message": "The run terminated, but exceeded the expected soft turn budget.",
         "severity": "low",
         "evidence": [
-          "turn_count=22",
+          "turn_count=24",
           "max_turns=10"
         ]
       }
@@ -294,8 +179,8 @@
         "message": "The run terminated, but exceeded the expected soft turn budget.",
         "severity": "low",
         "evidence": [
-          "turn_count=24",
-          "max_turns=15"
+          "turn_count=21",
+          "max_turns=10"
         ]
       }
     ]
@@ -303,7 +188,17 @@
   {
     "case_id": "system1_iterative_coding_FUZZ_001",
     "passed": true,
-    "failures": []
+    "failures": [
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=25",
+          "max_turns=10"
+        ]
+      }
+    ]
   },
   {
     "case_id": "system1_iterative_coding_TOOLFUZZ_001",
@@ -314,7 +209,7 @@
         "message": "The run terminated, but exceeded the expected soft turn budget.",
         "severity": "low",
         "evidence": [
-          "turn_count=24",
+          "turn_count=23",
           "max_turns=15"
         ]
       }
@@ -334,7 +229,7 @@
         "message": "The run terminated, but exceeded the expected soft turn budget.",
         "severity": "low",
         "evidence": [
-          "turn_count=24",
+          "turn_count=23",
           "max_turns=15"
         ]
       }
@@ -342,15 +237,14 @@
   },
   {
     "case_id": "system1_iterative_coding_REQ_002",
-    "passed": true,
+    "passed": false,
     "failures": [
       {
-        "code": "TURN_BUDGET_EXCEEDED",
-        "message": "The run terminated, but exceeded the expected soft turn budget.",
-        "severity": "low",
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
         "evidence": [
-          "turn_count=24",
-          "max_turns=15"
+          "120"
         ]
       }
     ]
@@ -367,6 +261,91 @@
           "turn_count=22",
           "max_turns=15"
         ]
+      }
+    ]
+  },
+  {
+    "case_id": "system1_iterative_coding_PROP_002",
+    "passed": true,
+    "failures": [
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=24",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system1_iterative_coding_FUZZ_002",
+    "passed": true,
+    "failures": [
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=24",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system1_iterative_coding_TOOLCONTRACT_002",
+    "passed": true,
+    "failures": [
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=25",
+          "max_turns=20"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system1_iterative_coding_OUTCONTRACT_002",
+    "passed": true,
+    "failures": []
+  },
+  {
+    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
+    "passed": false,
+    "failures": [
+      {
+        "code": "HUMAN_INPUT_REQUESTED",
+        "message": "The target system requested human input during an automated no-human run.",
+        "severity": "high",
+        "evidence": [
+          "- Storage for `code` and `comments` as modifiable strings (starting with placeholders like `\"# Initial code v1\"` and `\"// Initial review comments v1\"`).",
+          "- A CLI loop that accepts commands: `view`, `feedback coder <message>`, `feedback reviewer <message>`, `next`, `exit`.",
+          "- The `feedback` commands update the respective string and **do not** change the stage.",
+          "- The `next` command advances the stage only if the current stage is `coding` (→ `reviewing`) or `reviewing` (→ `done`); from `done`, it should do nothing or show a message.",
+          "- The `view` command displays current stage, code, and comments.",
+          "- The `exit` command terminates the program.",
+          "I recommend the programmer produce code that implements these behaviors and then submit it for review. Once code is provided, I can comment on its correctness and suggest improvements.",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "NON_TERMINATION",
+        "message": "The run did not terminate.",
+        "severity": "high",
+        "evidence": [
+          "turn_count=20"
+        ]
+      },
+      {
+        "code": "REPETITIVE_LOOP",
+        "message": "Trace contains highly repetitive consecutive messages.",
+        "severity": "medium",
+        "evidence": []
       }
     ]
   }

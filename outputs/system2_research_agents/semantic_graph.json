@@ -53,12 +53,22 @@
     {
       "id": "R1",
       "type": "requirement",
-      "description": "The multi-agent workflow must route user tasks through declared agents (user_proxy, researcher, research_manager, director) and terminate reliably when a TERMINATE message is issued or max_round=15 is reached."
+      "description": "The system must implement a multi-agent research workflow using a group chat with user_proxy, researcher, research_manager, and director, respecting the defined termination conditions (TERMINATE keyword, max_round=15, and user input mode)."
     },
     {
       "id": "R2",
       "type": "requirement",
-      "description": "Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return results or handle errors gracefully without crashing the agent workflow."
+      "description": "The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors."
+    },
+    {
+      "id": "R3",
+      "type": "requirement",
+      "description": "The system must preserve conversation context across multiple turns in the group chat, allowing agents to refer to previous messages and tool results."
+    },
+    {
+      "id": "R4",
+      "type": "requirement",
+      "description": "The system must enforce termination when the user (or any agent) sends a message containing the keyword 'TERMINATE'."
     }
   ],
   "edges": [
@@ -103,6 +113,11 @@
       "type": "requires_agent"
     },
     {
+      "source": "R1",
+      "target": "group_chat_manager",
+      "type": "requires_agent"
+    },
+    {
       "source": "R2",
       "target": "researcher",
       "type": "requires_agent"
@@ -131,6 +146,41 @@
       "source": "R2",
       "target": "update_single_airtable_record",
       "type": "requires_tool"
+    },
+    {
+      "source": "R3",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "researcher",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "research_manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "director",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "group_chat_manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "group_chat_manager",
+      "type": "requires_agent"
     },
     {
       "source": "director",

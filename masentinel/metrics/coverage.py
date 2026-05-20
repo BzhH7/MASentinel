@@ -64,7 +64,11 @@ AGENT_ALIASES = {
 def compute_coverage(profile: SystemProfile, testcases: list[TestCase], traces: list[RunTrace], faults: list[dict]) -> dict:
     text_by_trace = {trace.case_id: f"{trace.stdout or ''}\n{trace.stderr or ''}\n{trace.final_output or ''}".lower() for trace in traces}
     visited_agents = set()
+    visited_agents_event = set()
+    visited_agents_text = set()
     called_tools = set()
+    called_tools_event = set()
+    called_tools_text = set()
     observed_edges = set()
     profile_agents = {_canon_agent(agent.name) for agent in profile.agents}
     profile_tools = {tool.name for tool in profile.tools}
@@ -77,17 +81,25 @@ def compute_coverage(profile: SystemProfile, testcases: list[TestCase], traces: 
         text = text_by_trace.get(trace.case_id, "")
         for agent in profile.agents:
             if agent.name.lower() in text:
-                visited_agents.add(_canon_agent(agent.name))
+                name = _canon_agent(agent.name)
+                visited_agents.add(name)
+                visited_agents_text.add(name)
         for tool in profile.tools:
             if tool.name.lower() in text:
                 called_tools.add(tool.name)
+                called_tools_text.add(tool.name)
         for event in trace.events:
             if event.sender:
-                visited_agents.add(_canon_agent(event.sender))
+                name = _canon_agent(event.sender)
+                visited_agents.add(name)
+                visited_agents_event.add(name)
             if event.receiver:
-                visited_agents.add(_canon_agent(event.receiver))
+                name = _canon_agent(event.receiver)
+                visited_agents.add(name)
+                visited_agents_event.add(name)
             if event.tool:
                 called_tools.add(event.tool)
+                called_tools_event.add(event.tool)
             if event.type == "message" and event.sender and event.receiver:
                 observed_edges.add((_canon_agent(event.sender), _canon_agent(event.receiver)))
     target_reqs = {req for case in testcases for req in case.target_requirements}
@@ -98,6 +110,10 @@ def compute_coverage(profile: SystemProfile, testcases: list[TestCase], traces: 
     metrics = {
         "agent_coverage": _ratio_or_none(len(visited_agents & profile_agents), len(profile_agents)),
         "tool_coverage": _ratio_or_none(len(called_tools & profile_tools), len(profile_tools)),
+        "agent_event_coverage": _ratio_or_none(len(visited_agents_event & profile_agents), len(profile_agents)),
+        "tool_event_coverage": _ratio_or_none(len(called_tools_event & profile_tools), len(profile_tools)),
+        "avg_case_agent_coverage": _average_case_entity_coverage(profile_agents, traces, entity="agent"),
+        "avg_case_tool_coverage": _average_case_entity_coverage(profile_tools, traces, entity="tool"),
         "message_edge_coverage": _ratio_or_none(len(observed_edges & required_edges), len(required_edges)),
         "requirement_coverage": req_intent_coverage,
         "req_intent_coverage": req_intent_coverage,
@@ -110,7 +126,11 @@ def compute_coverage(profile: SystemProfile, testcases: list[TestCase], traces: 
         "root_cause_evidence_rate": _root_cause_evidence_rate(faults),
         "details": {
             "visited_agents": sorted(visited_agents),
+            "visited_agents_event": sorted(visited_agents_event),
+            "visited_agents_text": sorted(visited_agents_text),
             "called_tools": sorted(called_tools),
+            "called_tools_event": sorted(called_tools_event),
+            "called_tools_text": sorted(called_tools_text),
             "observed_edges": sorted([list(edge) for edge in observed_edges]),
             "covered_requirements": sorted(target_reqs),
             "verified_requirements": sorted(_verified_requirements(testcases, traces, faults)),
@@ -154,6 +174,24 @@ def _weighted_mascov(metrics: dict) -> float | None:
         weighted_sum += weight * float(value)
         weight_sum += weight
     return round(weighted_sum / weight_sum, 4) if weight_sum else None
+
+
+def _average_case_entity_coverage(target_entities: set[str], traces: list[RunTrace], entity: str) -> float | None:
+    if not target_entities or not traces:
+        return None
+    ratios = []
+    for trace in traces:
+        observed: set[str] = set()
+        for event in trace.events:
+            if entity == "agent":
+                if event.sender:
+                    observed.add(_canon_agent(event.sender))
+                if event.receiver:
+                    observed.add(_canon_agent(event.receiver))
+            elif entity == "tool" and event.tool:
+                observed.add(event.tool)
+        ratios.append(len(observed & target_entities) / len(target_entities))
+    return round(sum(ratios) / len(ratios), 4)
 
 
 def _effective_workflow_rate(profile: SystemProfile, traces: list[RunTrace], text_by_trace: dict[str, str]) -> float | None:
@@ -211,6 +249,7 @@ def _contract_coverage(testcases: list[TestCase]) -> float | None:
         "external_api_contract",
         "tool_error_envelope",
         "scalable_budget",
+        "speaker_selection",
         "message_handoff_integrity",
         "partial_data_invariant",
         "numeric_sign_convention",

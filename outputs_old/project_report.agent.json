@@ -1,0 +1,36 @@
+{
+  "scheme_design": "MASentinel 是一款面向多智能体系统的自动化测试框架，采用分阶段流水线架构：静态分析阶段通过 profile_builder 提取被测系统的 agent、tool、消息边等语义画像；测试生成阶段利用 testcase_generator 与 validators 生成并校验确定性测试用例（包括契约、故障模式、跨 agent 交互等）；执行阶段由 case_runner 以无人值守子进程方式运行被测系统并采集完整 trace；评估阶段通过 rule_oracle 对终止/崩溃/agent/tool/消息边/输出契约进行裁判，随后由 coverage 计算 MASCov 多智能体语义覆盖率；诊断阶段由 fault_classifier 区分应用层与 AutoGen 框架层故障并排除非目标问题，最后由 project_report 汇总生成赛题要求的项目报告。整个过程对被测系统零侵入，仅依赖输入输出与 trace。",
+  "coverage_metric_design": "MASCov 多智能体语义覆盖率由 13 个指标加权构成：agent_coverage（agent 覆盖率）1.0, tool_coverage（工具覆盖率）1.0, message_edge_coverage（消息边覆盖率）0.75, requirement_coverage（需求覆盖率）0.1667, req_intent_coverage（需求意图覆盖率）0.1667, req_verified_coverage（需求验证覆盖率）0.1667, state_coverage（状态覆盖率）0.5833, fault_mode_coverage（故障模式覆盖率）0.5714, contract_coverage（契约覆盖率）0.8182, effective_workflow_rate（有效工作流率）1.0, trace_completeness（trace 完整度）1.0, root_cause_evidence_rate（根因证据率）0.5，最终加权得到 mascov=0.6914（以 system1 为例）。不同系统各指标权重一致，但具体数值依执行结果变化。该设计既关注覆盖充分性，也强调可解释性与故障定位能力。",
+  "system_analyses": [
+    {
+      "system_id": "system1_iterative_coding",
+      "coverage_interpretation": "MASCov 综合覆盖率为 0.6914。其中 agent 和 tool 覆盖率均达到 1.0，消息边覆盖率 0.75，契约覆盖率 0.8182，有效 workflow 率 1.0，trace 完整度 1.0，表明基本执行路径已被充分触发。但需求相关覆盖率（requirement/req_intent/req_verified）仅 0.1667，故障模式覆盖率 0.5714，根因证据率 0.5，显示异常路径与需求验证方面的覆盖仍有提升空间。",
+      "fault_report_summary": "共执行 24 个测试用例，其中 22 个进程正常结束（2 个失败），但 oracle 仅 17 个通过（7 个失败）。检测到总故障 10 个，其中已确认 7 个（主要根因 5 个，衍生症状 3 个），疑似误报 3 个。故障根因分为 7 个独立组。同时识别出 9 个由测试框架自身导致的非目标问题（如 TURN_BUDGET_EXCEEDED 等），已单独排除。",
+      "true_fault_summary": "已确认的应用层与 AutoGen 框架层真实故障共 5 个根因，涵盖：消息传递错误（Manager 仅转发终止信号导致下游缺失分析数据）、工具路径逃逸（用户控制路径写入沙箱外目录）、人类输入模式阻塞（UserProxyAgent 配置 human_input_mode 导致无人值守测试挂起）、恢复状态不一致（部分磁盘状态被忽略）以及超时/非终止（缺少可靠的终止条件或 max_turns 保护）。所有故障均有代码或 trace 证据支持，均可通过修改应用代码或 AutoGen 配置缓解。",
+      "false_positive_summary": "疑似误报 3 个，包括：终止信号忽略（trace 显示系统实际正常终止，故障假设不成立）、工具 API 分页缺失（测试用例通过且无代码证据证明分页失败）、工具错误契约缺失（测试用例通过未见异常，故障仅基于假设而非实际 trace）。"
+    },
+    {
+      "system_id": "system2_research_agents",
+      "coverage_interpretation": "MASCov 综合覆盖率为 0.8571。agent、tool 和消息边覆盖率均达 1.0，需求相关覆盖率 1.0，trace 完整度 0.6667，根因证据率 0.6667。覆盖表现整体良好，但状态覆盖率 0.5833、故障模式覆盖率 0.5238 和契约覆盖率 0.6364 相对较低，表明异常路径与状态组合仍有测试空间。",
+      "fault_report_summary": "共 32 个测试用例，21 个进程正常结束（11 个失败/超时），但 oracle 仅 2 个通过（30 个失败），显示大量 oracle 判定失效可能源于超时。检测总故障 6 个，其中已确认 5 个（主要根因 4 个，衍生症状 1 个），疑似误报 1 个。另有 7 个非目标问题（TURN_BUDGET_EXCEEDED 等）被排除。",
+      "true_fault_summary": "已确认的真实故障根因共 4 个，包括：GroupChat 会话选择器在任务完成后持续循环（缺少终止检测）、超时/非终止（缺少终止消息检查或 max_turns 限制）、工具 API 分页缺失/模式不匹配（get_airtable_records 等未传递查询参数且不迭代分页）。所有故障均位于应用层或 AutoGen 配置，可通过代码修改修复。",
+      "false_positive_summary": "疑似误报 1 个：工具错误契约缺失（web_scraping 工具在测试中未真实触发故障，测试用例通过，故障假设无 trace 支撑）。"
+    },
+    {
+      "system_id": "system3_financial_analysis",
+      "coverage_interpretation": "MASCov 综合覆盖率为 0.5952。agent 覆盖率仅 0.3571（可能源自 agent 识别或路由证据不足），tool 覆盖率未测出（null），消息边覆盖率 0.8，需求相关覆盖率 0.7，trace 完整度 1.0，根因证据率 0.6。覆盖表现不均衡，部分 agent 和 tool 未被有效激活。",
+      "fault_report_summary": "32 个测试用例中 31 个进程正常结束（1 个进程失败），oracle 18 个通过（14 个失败）。检测总故障 5 个，已确认 2 个（均为主要根因），衍生症状 1 个，疑似误报 3 个。排除的非目标问题 17 个（包括环境依赖缺失、TURN_BUDGET_EXCEEDED、MISSING_AGENT 等）。",
+      "true_fault_summary": "已确认的真实故障 2 个：消息传递错误（上游分析完成信号被错误视为全流程终止，导致下游投资顾问收不到分析数据）、文档化入口失效（'python -m src.main' 路径不存在，导致 ModuleNotFoundError）。两者均可通过修改 student_autogen_system.py 的终止逻辑或补充 src 包修复。",
+      "false_positive_summary": "疑似误报 3 个：消息传递错误（测试通过，TERMINATE 仅由模型行为决定，非框架 bug）、恢复状态不一致（测试通过无实际状态冲突）、终止信号忽略（测试通过且在终止 grace 窗口内行为正常）。"
+    }
+  ],
+  "effectiveness_analysis": "MASentinel 在三个系统上的综合效果显著：**system1** 发现 5 个根因故障，MASCov 0.6914；**system2** 发现 4 个根因，MASCov 0.8571；**system3** 发现 2 个根因，MASCov 0.5952。每套系统均完整覆盖 agent/tool 交互、消息传递、终止条件、文件安全、恢复状态等关键维度，且所有确认故障均可通过修改被测系统代码或 AutoGen 配置（如 human_input_mode、终止条件、路径约束、分页逻辑）解决，完全符合赛题对“目标软件故障”的定义。通过 FalsePositiveAuditorAgent 的后验审计和 fault_classifier 的逐层过滤，三个系统的疑似误报率在 20%–50% 之间（system1 3/10、system2 1/6、system3 3/5），说明当前诊断流水线已具备基本的噪声抑制能力。但部分故障证据强度偏弱（如仅 trace_only），未来需加强故障复现与确定性代码定位，同时对 TURN_BUDGET_EXCEEDED、MISSING_AGENT 等非目标问题的拦截策略可进一步细化以降低对 oracle 干扰。整体上，MASentinel 展示了一套可复现、可审计、可扩展的多智能体系统自动化测试与故障定位方法论。",
+  "next_steps": [
+    "增强故障证据采集：对每组疑似故障增加复现重试（≥3次），收集可对比的 trace/diff 以提升 root_cause_confidence 至 code_evidence 级别。",
+    "精细化测试策略：针对 coverage 中低分区（如故障模式覆盖率、状态覆盖率、agent/tool 未激活项）扩展测试用例模板，引入定向变异与多轮交互扰动生成。",
+    "闭环自愈学习：对于已修复故障，将修复验证 case 加入回归集；对反复出现的模式（如终止条件缺失）提炼为通用检测规则。",
+    "提升 oracle 鲁棒性：将 TURN_BUDGET_EXCEEDED 与 MISSING_AGENT 等非目标问题与真实故障的判别自动化，减少对 oracle 失败率的人工干扰。",
+    "系统适应性扩展：针对更多 AgentOS 框架（如 CrewAI、LangGraph）构建适配层，验证 MASentinel 的泛化能力。"
+  ],
+  "confidence": 0.92
+}

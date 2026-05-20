@@ -1,136 +1,158 @@
 {
   "suspicious_cases": [
     {
-      "case_id": "system2_research_agents_ARTIFACT_001",
-      "reason": "Same speaker selection loop evidence after task completion, with timeout; indicates GroupChat orchestration not recovering cleanly after agent finishes work.",
+      "case_id": "system2_research_agents_SMOKE_001",
+      "reason": "SPEAKER_SELECTION_LOOP: The GroupChat immediately loops to user_proxy, which sends TERMINATE without any agent performing the requested task. This indicates a failure in speaker selection or message handling logic.",
       "rule_failures": [
-        "SPEAKER_SELECTION_LOOP",
-        "TIMEOUT"
+        "SPEAKER_SELECTION_LOOP"
       ],
-      "trace_summary": "Task execution completed ('hello' printed), but speaker selection continued looping on director and system timed out after 29 turns; stderr shows langchain deprecations but no crash."
+      "trace_summary": "user_proxy sends task prompt; Next speaker: user_proxy; user_proxy sends TERMINATE. No actual task execution."
     },
     {
-      "case_id": "system2_research_agents_BUDGET_001",
-      "reason": "Loop after task completion combined with timeout; suggests orchestration layer fails to exit when all records processed.",
+      "case_id": "system2_research_agents_NOHUMAN_001",
+      "reason": "SPEAKER_SELECTION_LOOP: Similar to SMOKE_001, the GroupChat skips all functional agents and loops back to user_proxy, which terminates immediately.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP"
+      ],
+      "trace_summary": "user_proxy requests autonomous task execution; Next speaker: user_proxy; user_proxy sends TERMINATE."
+    },
+    {
+      "case_id": "system2_research_agents_REQ_001",
+      "reason": "SPEAKER_SELECTION_LOOP and TIMEOUT: The conversation includes repeated prompts and a mention of Airtable without progress, followed by a timeout (45s). This suggests the speaker selection mechanism is stuck or misrouting messages, eventually leading to timeout.",
       "rule_failures": [
         "SPEAKER_SELECTION_LOOP",
         "TIMEOUT"
       ],
-      "trace_summary": "Five records processed successfully, agent acknowledges completion, then enters repeated speaker selection and times out after 36 turns."
+      "trace_summary": "Research manager responds with a summary and asks for Airtable details; further messages include Airtable payload questions; cycle continues; final timeout after 45 seconds."
     },
     {
       "case_id": "system2_research_agents_TOOLAPI_001",
-      "reason": "Tool API call failed (exitcode 1, 'unknown language json'), plus speaker selection loop, timeout, VIEW parameter ignored, pagination not followed - multiple orchestration and tool contract failures.",
+      "reason": "SPEAKER_SELECTION_LOOP: The speaker selection appears to loop on noisy or empty responses, and the test ended without a proper tool API call being exercised (CONTRACT_TEST_NOT_EXERCISED low severity, but the root cause is the loop).",
       "rule_failures": [
         "SPEAKER_SELECTION_LOOP",
-        "TIMEOUT",
-        "VIEW_PARAMETER_IGNORED",
-        "PAGINATION_NOT_FOLLOWED"
+        "CONTRACT_TEST_NOT_EXERCISED"
       ],
-      "trace_summary": "Code execution failed with unknown language json error on a code block; speaker loop then TIMEOUT at 17 turns; external API parameters not propagated and pagination not exercised."
+      "trace_summary": "Agent prints report and suggests filter options; warning about model cost; Next speaker: user_proxy; terminates without Airtable API call."
     },
     {
       "case_id": "system2_research_agents_TOOLERR_001",
-      "reason": "External tool failure with HTTP 401 not captured in trace envelope, and tool error not structured; speaker loop also present.",
+      "reason": "SPEAKER_SELECTION_LOOP: The conversation shows a tool error payload, but the speaker selection then loops to user_proxy which terminates, preventing proper error handling or contract exercise (CONTRACT_TEST_NOT_EXERCISED low).",
       "rule_failures": [
         "SPEAKER_SELECTION_LOOP",
-        "HTTP_STATUS_NOT_CHECKED",
-        "TOOL_UNSTRUCTURED_ERROR"
+        "CONTRACT_TEST_NOT_EXERCISED"
       ],
-      "trace_summary": "Tool error response missing expected 401 status and structured envelope; conversation ends with TERMINATE but still triggers speaker selection loop."
-    },
-    {
-      "case_id": "system2_research_agents_HANDOFF_001",
-      "reason": "Handoff from research_manager to researcher not completing; agent loop persists and times out, likely due to missing handoff confirmation or termination signal.",
-      "rule_failures": [
-        "SPEAKER_SELECTION_LOOP",
-        "TIMEOUT"
-      ],
-      "trace_summary": "Extensive content generation by agents but handoff never closes; speaker selection cycles on researcher and system times out after 13 turns."
+      "trace_summary": "Invalid token JSON attempted; Next speaker: user_proxy; user_proxy sends TERMINATE; no target HTTP request observed."
     },
     {
       "case_id": "system2_research_agents_WIRING_001",
-      "reason": "Immediate speaker selection loop with user_proxy replying 'TERMINATE' right after task, indicating wiring/handshake failure between agents.",
+      "reason": "SPEAKER_SELECTION_LOOP: Identical pattern to SMOKE_001, indicating multi-agent wiring test fails because the GroupChat doesn't engage the correct agents.",
       "rule_failures": [
         "SPEAKER_SELECTION_LOOP"
       ],
-      "trace_summary": "user_proxy sends TERMINATE immediately after receiving task; GroupChat still selects same speaker again, creating empty loop."
-    },
-    {
-      "case_id": "system2_research_agents_TOOLCONTRACT_001",
-      "reason": "Tool contract not fulfilled before termination; speaker loop follows immediately without diagnostic error, suggesting tool registration or schema mismatch.",
-      "rule_failures": [
-        "SPEAKER_SELECTION_LOOP"
-      ],
-      "trace_summary": "Task asks to call web_scraping tool; user_proxy terminates without attempt, then loop ensues."
-    },
-    {
-      "case_id": "system2_research_agents_TOOLFUZZ_001",
-      "reason": "Tool fuzzing scenario: speaker selection loops immediately, no graceful tool failure handling observed, indicating robustness gap.",
-      "rule_failures": [
-        "SPEAKER_SELECTION_LOOP"
-      ],
-      "trace_summary": "user_proxy terminates without any tool interaction after being asked to perform task that may fail; loop follows."
-    },
-    {
-      "case_id": "system2_research_agents_FUZZ_001",
-      "reason": "Fuzzing input triggers paradox detection by director, but speaker selection loops on director after clarification request, and timeout occurs.",
-      "rule_failures": [
-        "SPEAKER_SELECTION_LOOP",
-        "TIMEOUT"
-      ],
-      "trace_summary": "Agent correctly identifies contradictory instruction but gets stuck in director speaker loop; system times out after 34 turns."
-    },
-    {
-      "case_id": "system2_research_agents_SPEAKER_001",
-      "reason": "Explicit speaker selection test: task completed but loop keeps selecting director; timeout occurs despite work being done.",
-      "rule_failures": [
-        "SPEAKER_SELECTION_LOOP",
-        "TIMEOUT"
-      ],
-      "trace_summary": "Agent outputs '任务完成' but speaker selection cycles on director again and again; timeout after 22 turns."
-    },
-    {
-      "case_id": "system2_research_agents_PROP_001",
-      "reason": "Turn budget exceeded while speaker loop continues; agent needs external input but loop prevents graceful degradation.",
-      "rule_failures": [
-        "SPEAKER_SELECTION_LOOP",
-        "TURN_BUDGET_EXCEEDED"
-      ],
-      "trace_summary": "researcher requests data; user_proxy terminates; speaker loops on user_proxy/researcher; exceeds 15-turn soft budget (17 turns)."
+      "trace_summary": "user_proxy requests multi-agent task; Next speaker: user_proxy; user_proxy sends TERMINATE."
     },
     {
       "case_id": "system2_research_agents_COV_001",
-      "reason": "Turn budget exceeded in high-coverage run; speaker loop persists after detailed conversation, exceeding soft limit.",
+      "reason": "SPEAKER_SELECTION_LOOP and MISSING_TOOL_CALL: The GroupChat loops back to user_proxy after a director update request, resulting in termination and the expected tool update_single_airtable_record not being called.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP",
+        "MISSING_TOOL_CALL"
+      ],
+      "trace_summary": "user_proxy asks director to update Airtable record; Next speaker: user_proxy; user_proxy sends TERMINATE; tool update_single_airtable_record not called."
+    },
+    {
+      "case_id": "system2_research_agents_TOOLCONTRACT_001",
+      "reason": "SPEAKER_SELECTION_LOOP: The test requiring tool call web_scraping fails immediately with user_proxy termination, indicating a speaker selection issue.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP"
+      ],
+      "trace_summary": "user_proxy asks to call web_scraping; Next speaker: user_proxy; user_proxy sends TERMINATE."
+    },
+    {
+      "case_id": "system2_research_agents_OUTCONTRACT_001",
+      "reason": "SPEAKER_SELECTION_LOOP: The output contract test fails with immediate termination, no agent executes the required tool sequence.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP"
+      ],
+      "trace_summary": "user_proxy requests requirement R2; Next speaker: user_proxy; user_proxy sends TERMINATE."
+    },
+    {
+      "case_id": "system2_research_agents_PROP_001",
+      "reason": "SPEAKER_SELECTION_LOOP and TURN_BUDGET_EXCEEDED: Researcher responds with inability and then user_proxy terminates despite continuing conversation, and turn budget exceeded (17 turns vs 15 max). Indicates loop in speaker selection.",
       "rule_failures": [
         "SPEAKER_SELECTION_LOOP",
         "TURN_BUDGET_EXCEEDED"
       ],
-      "trace_summary": "37-turn conversation exceeds max_turns=15; speaker selection loops on user_proxy after director summary."
-    },
-    {
-      "case_id": "system2_research_agents_REG_001",
-      "reason": "Standard task triggers immediate speaker loop; no tool callback or error handling activates before user_proxy terminates.",
-      "rule_failures": [
-        "SPEAKER_SELECTION_LOOP"
-      ],
-      "trace_summary": "user_proxy terminates immediately; GroupChat cycles on user_proxy without any agent intervention."
+      "trace_summary": "researcher says cannot access external links; Next speaker: user_proxy; user_proxy terminates after 17 turns."
     },
     {
       "case_id": "system2_research_agents_META_001",
-      "reason": "Meta-request leads to incomplete task and speaker loop; agent expects clarification but terminates without diagnostic.",
+      "reason": "SPEAKER_SELECTION_LOOP: Meta test fails as speaker selection loops to user_proxy after agent response, terminating without fulfilling R1.",
       "rule_failures": [
         "SPEAKER_SELECTION_LOOP"
       ],
-      "trace_summary": "user_proxy provides ambiguous requirements, then terminates; no meaningful output produced and loop ensues."
+      "trace_summary": "Agent asks for clarification on R1; Next speaker: user_proxy; user_proxy sends TERMINATE."
     },
     {
-      "case_id": "system2_research_agents_DATAINV_001",
-      "reason": "Data invariant test: agent identifies missing data, flags incomplete analysis, but speaker loop still triggers.",
+      "case_id": "system2_research_agents_REG_001",
+      "reason": "SPEAKER_SELECTION_LOOP: Regression test immediately loops to user_proxy and terminates without any agent action.",
       "rule_failures": [
         "SPEAKER_SELECTION_LOOP"
       ],
-      "trace_summary": "Agent notes missing debt data and offers hypothetical scenario; user_proxy terminates, loop repeats."
+      "trace_summary": "user_proxy requests error handling task; Next speaker: user_proxy; user_proxy sends TERMINATE."
+    },
+    {
+      "case_id": "system2_research_agents_TOOLFUZZ_001",
+      "reason": "SPEAKER_SELECTION_LOOP and MISSING_TOOL_CALL: The tool fuzzing test loops to user_proxy termination, and google_search tool was expected but not called.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP",
+        "MISSING_TOOL_CALL"
+      ],
+      "trace_summary": "Research output about cybersecurity; Next speaker: user_proxy; user_proxy sends TERMINATE; google_search not called."
+    },
+    {
+      "case_id": "system2_research_agents_TOOLFUZZ_002",
+      "reason": "SPEAKER_SELECTION_LOOP: Immediate termination upon requesting tool task, indicating speaker selection failure.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP"
+      ],
+      "trace_summary": "user_proxy asks for tool task with graceful error handling; Next speaker: user_proxy; user_proxy sends TERMINATE."
+    },
+    {
+      "case_id": "system2_research_agents_HANDOFF_001",
+      "reason": "SPEAKER_SELECTION_LOOP and TIMEOUT: Despite a detailed final report, the process timed out (45s), and the evidence shows repeated messages suggesting a loop in handoff/speaker selection.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP",
+        "TIMEOUT"
+      ],
+      "trace_summary": "Final report generated; warnings; timeout after 45 seconds; speaker selection may have looped."
+    },
+    {
+      "case_id": "system2_research_agents_COV_002",
+      "reason": "SPEAKER_SELECTION_LOOP and TIMEOUT: Timeout (45s) with speaker selection looping to researcher, indicating the GroupChat cannot progress.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP",
+        "TIMEOUT"
+      ],
+      "trace_summary": "User deep-dive request; Next speaker: researcher; timeout after 45 seconds."
+    },
+    {
+      "case_id": "system2_research_agents_COV_003",
+      "reason": "SPEAKER_SELECTION_LOOP and TIMEOUT: Timeout with speaker selection looping to research_manager, indicating similar issue.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP",
+        "TIMEOUT"
+      ],
+      "trace_summary": "User sends detailed request; Next speaker: research_manager; timeout after 45 seconds."
+    },
+    {
+      "case_id": "system2_research_agents_FUZZ_001",
+      "reason": "SPEAKER_SELECTION_LOOP and TURN_BUDGET_EXCEEDED: After facing contradictory commands, director responds and then user_proxy terminates; turn count exceeded significantly (43 vs 15), indicating a loop.",
+      "rule_failures": [
+        "SPEAKER_SELECTION_LOOP",
+        "TURN_BUDGET_EXCEEDED"
+      ],
+      "trace_summary": "Contradictory fuzzing commands; director resolves then termination; turn_count=43."
     }
   ],
   "confidence": 0.95

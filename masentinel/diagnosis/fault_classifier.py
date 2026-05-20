@@ -52,6 +52,29 @@ FAULT_MAP = {
 
 TARGET_LAYERS = {"application", "autogen_framework"}
 NON_TARGET_FAILURE_CODES = {"TESTCASE_SETUP_TIMEOUT", "TARGET_WORKFLOW_NOT_OBSERVED", "CONTRACT_TEST_NOT_EXERCISED", "MODEL_PROVIDER_FAILURE", "TURN_BUDGET_EXCEEDED"}
+HIGH_PRECISION_ORACLE_CODES = {
+    "MARKDOWN_ARTIFACT_CORRUPTION",
+    "ARTIFACT_SCHEMA_MISMATCH",
+    "FILESYSTEM_ESCAPE",
+    "RESUME_STATE_INCOMPLETE",
+    "VIEW_PARAMETER_IGNORED",
+    "PAGINATION_NOT_FOLLOWED",
+    "TOOL_RAW_HTTP_ERROR",
+    "TOOL_RETURNED_NONE",
+    "TOOL_UNSTRUCTURED_ERROR",
+    "HTTP_STATUS_NOT_CHECKED",
+    "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "MESSAGE_HANDOFF_EMPTY",
+    "MESSAGE_HANDOFF_WRONG_SOURCE",
+    "PARTIAL_METRIC_ZEROED",
+    "NUMERIC_SIGN_CONVENTION_ERROR",
+    "DOCUMENTED_ENTRYPOINT_BROKEN",
+    "DOCUMENTED_CLI_COMMAND_MISSING",
+    "AUTOGEN_WIRING_MISSING",
+    "SPEAKER_SELECTION_LOOP",
+    "HUMAN_INPUT_REQUESTED",
+    "TERMINATION_SIGNAL_IGNORED",
+}
 
 
 def classify_faults(profile: SystemProfile, testcases: list[TestCase], traces: list[RunTrace]) -> list[dict]:
@@ -92,9 +115,77 @@ def classify_faults(profile: SystemProfile, testcases: list[TestCase], traces: l
             fault["not_model_fault_because"] = _not_model_fault_because(fault)
             fault["code_locations"] = _code_locations(profile, fault)
             fault["root_cause_confidence"] = _root_cause_confidence(fault, trace)
+            if _is_diagnostic_case(testcase):
+                fault["diagnostic_only"] = True
+            fault = apply_deterministic_confirmation_gate(fault)
             faults.append(fault)
             counter += 1
     return faults
+
+
+def apply_deterministic_confirmation_gate(fault: dict) -> dict:
+    """Set final confirmation from deterministic oracle/code/trace evidence only.
+
+    Agent diagnosis and audit outputs may be attached later as advisory context, but
+    they must not turn weak evidence into a confirmed target fault.
+    """
+
+    gated = dict(fault)
+    code = str(gated.get("failure_code", ""))
+    layer = str(gated.get("layer", ""))
+    confidence = _safe_float(gated.get("confidence"), 0.0)
+    evidence_strength = _safe_float(gated.get("evidence_strength"), 0.0)
+    root_confidence = str(gated.get("root_cause_confidence", "") or "")
+    diagnostic_only = bool(gated.get("diagnostic_only"))
+
+    target_layer = layer in TARGET_LAYERS
+    non_target_code = code in NON_TARGET_FAILURE_CODES
+    has_code_evidence = root_confidence == "code_evidence" and evidence_strength >= 0.55
+    has_strong_trace = root_confidence == "trace_only" and evidence_strength >= 0.65
+    high_precision_trace = code in HIGH_PRECISION_ORACLE_CODES and root_confidence in {"code_evidence", "trace_only"} and evidence_strength >= 0.55
+    deterministic_confirmed = bool(
+        target_layer
+        and not non_target_code
+        and not diagnostic_only
+        and confidence >= 0.65
+        and (has_code_evidence or has_strong_trace or high_precision_trace)
+    )
+
+    reasons: list[str] = []
+    if diagnostic_only:
+        reasons.append("diagnostic_only_pattern")
+    if not target_layer:
+        reasons.append(f"non_target_layer={layer or 'unknown'}")
+    if non_target_code:
+        reasons.append(f"non_target_failure_code={code}")
+    if confidence < 0.65:
+        reasons.append(f"confidence<{0.65:g}")
+    if not (has_code_evidence or has_strong_trace or high_precision_trace):
+        reasons.append("insufficient deterministic code/trace evidence")
+    if deterministic_confirmed:
+        reasons.append("deterministic oracle failure with sufficient code/trace evidence")
+
+    gated["deterministic_confirmation"] = {
+        "confirmed": deterministic_confirmed,
+        "source": "rule_oracle_and_deterministic_evidence",
+        "reason": "; ".join(reasons),
+        "confidence_threshold": 0.65,
+        "code_evidence_strength_threshold": 0.55,
+        "trace_evidence_strength_threshold": 0.65,
+        "evidence_strength": evidence_strength,
+        "root_cause_confidence": root_confidence,
+    }
+    gated["confirmation_status"] = "confirmed_fault" if deterministic_confirmed else "suspected_fault"
+    gated["confirmation_source"] = "deterministic_oracle_evidence"
+    gated["suspected_false_positive"] = not deterministic_confirmed
+    return gated
+
+
+def _is_diagnostic_case(testcase: TestCase | None) -> bool:
+    if testcase is None:
+        return False
+    metadata = testcase.metadata or {}
+    return bool(metadata.get("diagnostic_only") or str(metadata.get("oracle_strength", "")).lower() == "diagnostic")
 
 
 def classify_non_target_issues(profile: SystemProfile, testcases: list[TestCase], traces: list[RunTrace]) -> list[dict]:
@@ -238,6 +329,13 @@ def _combined_text(fault: dict, trace: RunTrace) -> str:
             trace.final_output or "",
         ]
     ).lower()
+
+
+def _safe_float(value: object, default: float = 0.0) -> float:
+    try:
+        return float(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return default
 
 
 def _data_provider_or_tool_gap(text: str) -> bool:

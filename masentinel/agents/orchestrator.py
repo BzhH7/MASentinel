@@ -25,10 +25,17 @@ from masentinel.analyzer.feature_extractor import extract_system_features
 from masentinel.analyzer.profile_builder import build_profile_from_config, save_profile_bundle
 from masentinel.diagnosis.fault_deduplicator import deduplicate_faults
 from masentinel.diagnosis.fault_grouper import annotate_fault_groups, build_fault_groups
-from masentinel.diagnosis.fault_classifier import TARGET_LAYERS, classify_faults, classify_non_target_issues
+from masentinel.diagnosis.fault_classifier import TARGET_LAYERS, apply_deterministic_confirmation_gate, classify_faults, classify_non_target_issues
 from masentinel.diagnosis.patch_suggester import write_patch_suggestions
 from masentinel.generator.testcase_generator import generate_testcases
-from masentinel.generator.pattern_selector import build_test_plan, filter_cases_by_test_plan, pattern_budgets, selected_pattern_names
+from masentinel.generator.pattern_selector import (
+    active_pattern_names,
+    build_test_plan,
+    filter_cases_by_test_plan,
+    pattern_budgets,
+    pattern_strengths,
+    selected_pattern_names,
+)
 from masentinel.metrics.coverage import compute_coverage
 from masentinel.metrics.flaky import update_flaky_report
 from masentinel.model.model_client import ModelClient
@@ -131,8 +138,9 @@ class AgenticTestOrchestrator:
             profile,
             num_cases=num_cases,
             seed=int(testing.get("random_seed", 42)),
-            selected_patterns=selected_pattern_names(test_plan),
+            selected_patterns=active_pattern_names(test_plan),
             pattern_budgets=pattern_budgets(test_plan),
+            pattern_strengths=pattern_strengths(test_plan),
         )
         regression_cases = load_regression_cases(profile.system_id, system_out)
         generated_cases = merge_testcases(agent_cases, filter_cases_by_test_plan(deterministic_cases + regression_cases, test_plan), limit=None)
@@ -199,6 +207,7 @@ class AgenticTestOrchestrator:
 
         self._stage(system_id, "coverage metrics start")
         coverage = compute_coverage(profile, cases, traces, diagnosed_faults)
+        self._attach_test_plan_to_coverage(coverage, test_plan)
         write_json(system_out / "coverage.json", coverage)
         self._stage(system_id, "CoverageStrategistAgent start")
         coverage_decision = agents["coverage"].run(
@@ -257,6 +266,7 @@ class AgenticTestOrchestrator:
             self._stage(system_id, f"second-round agent diagnosis/audit done faults={len(diagnosed_faults)}")
             self._stage(system_id, "second-round coverage metrics start")
             coverage = compute_coverage(profile, cases, traces, diagnosed_faults)
+            self._attach_test_plan_to_coverage(coverage, test_plan)
             write_json(system_out / "coverage.json", coverage)
             self._stage(system_id, "second-round CoverageStrategistAgent start")
             coverage_decision = agents["coverage"].run(
@@ -469,6 +479,7 @@ class AgenticTestOrchestrator:
                 "tool_api_contract",
                 "tool_error_contract",
                 "scalable_budget",
+                "speaker_selection",
                 "message_handoff_integrity",
                 "data_invariant",
                 "cli_doc_conformance",
@@ -896,8 +907,9 @@ class AgenticTestOrchestrator:
             profile,
             num_cases=max(extra_limit * 2, 12),
             seed=seed,
-            selected_patterns=selected_pattern_names(test_plan or {}),
+            selected_patterns=active_pattern_names(test_plan or {}),
             pattern_budgets=pattern_budgets(test_plan or {}),
+            pattern_strengths=pattern_strengths(test_plan or {}),
         )
         candidates = filter_cases_by_test_plan(candidates, test_plan or {})
         existing_keys = {(case.case_type, case.input) for case in existing_cases}
@@ -962,11 +974,31 @@ class AgenticTestOrchestrator:
                     "fault_id": fault.get("fault_id"),
                     "case_id": fault.get("case_id"),
                     "suspected_false_positive": fault.get("suspected_false_positive", False),
+                    "confirmation_status": fault.get("confirmation_status"),
+                    "confirmation_source": fault.get("confirmation_source"),
+                    "deterministic_confirmation": fault.get("deterministic_confirmation", {}),
+                    "agent_audit_influence": fault.get("agent_audit_influence", "advisory_only"),
                     "audit": fault.get("false_positive_audit", {}),
                 }
                 for fault in faults
             ],
         )
+
+    def _attach_test_plan_to_coverage(self, coverage: dict[str, Any], test_plan: dict[str, Any]) -> None:
+        details = coverage.setdefault("details", {})
+        details["selected_patterns"] = selected_pattern_names(test_plan)
+        details["diagnostic_only_patterns"] = [
+            str(item.get("pattern"))
+            for item in test_plan.get("diagnostic_only_patterns", []) or []
+            if isinstance(item, dict) and item.get("pattern")
+        ]
+        details["rejected_patterns"] = [
+            str(item.get("pattern"))
+            for item in test_plan.get("rejected_patterns", []) or []
+            if isinstance(item, dict) and item.get("pattern")
+        ]
+        details["pattern_selection_mode"] = test_plan.get("selection_mode")
+        details["pattern_applicability_precision"] = (test_plan.get("metrics", {}) or {}).get("pattern_applicability_precision")
 
     def _target_model_usage(self, traces: list[RunTrace]) -> dict[str, Any]:
         by_model: dict[str, int] = {}
@@ -1127,23 +1159,17 @@ class AgenticTestOrchestrator:
             }
         ).output
         merged = dict(fault)
-        for key in ("layer", "fault_type", "severity", "root_cause", "suggested_fix", "summary"):
+        merged["agentic_diagnosis"] = diagnosis
+        for key in ("root_cause", "suggested_fix", "summary"):
             if diagnosis.get(key):
                 merged[key] = diagnosis[key]
-        if diagnosis.get("confidence") is not None:
-            try:
-                merged["confidence"] = float(diagnosis["confidence"])
-            except (TypeError, ValueError):
-                pass
         if diagnosis.get("evidence"):
             merged["agentic_evidence"] = diagnosis["evidence"]
         self._stage(system_id, f"{phase} FalsePositiveAuditorAgent {index}/{total} fault={merged.get('fault_id')}")
         audit = auditor.run({"fault": merged, "trace_summary": self._trace_summary(trace) if trace else {}}).output
         merged["false_positive_audit"] = audit
-        if audit.get("audit_result") == "likely_false_positive":
-            merged["suspected_false_positive"] = True
-        elif audit.get("audit_result") == "confirmed_fault":
-            merged["suspected_false_positive"] = False
+        merged["agent_audit_influence"] = "advisory_only"
+        merged = apply_deterministic_confirmation_gate(merged)
         if str(merged.get("layer", "")) not in TARGET_LAYERS:
             self._stage(
                 system_id,
@@ -1193,6 +1219,15 @@ def _compact_test_plan(test_plan: dict[str, Any] | None) -> dict[str, Any]:
                 "reasons": item.get("reasons", [])[:2] if isinstance(item.get("reasons"), list) else [],
             }
             for item in (test_plan.get("selected_patterns", []) or [])[:12]
+            if isinstance(item, dict)
+        ],
+        "diagnostic_only_patterns": [
+            {
+                "pattern": item.get("pattern"),
+                "oracle_strength": item.get("oracle_strength"),
+                "reason": item.get("reason") or item.get("verifier_warning"),
+            }
+            for item in (test_plan.get("diagnostic_only_patterns", []) or [])[:12]
             if isinstance(item, dict)
         ],
         "rejected_patterns": [

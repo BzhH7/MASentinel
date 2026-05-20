@@ -1,0 +1,843 @@
+[
+  {
+    "case_id": "system2_research_agents_SMOKE_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  warnings.warn(",
+          "user_proxy (to chat_manager):",
+          "请执行一个最小正常任务，给出简短结果，并在完成后结束。",
+          "--------------------------------------------------------------------------------",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_NOHUMAN_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  warnings.warn(",
+          "user_proxy (to chat_manager):",
+          "请自动完成任务，不要请求人工输入；如果信息不足，请给出可诊断说明并结束。",
+          "--------------------------------------------------------------------------------",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_REQ_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "- **Agentic RAG** autonomously decides what to retrieve (text, image, table) and how to fuse it, slashing hallucinations in complex queries.  ",
+          "- **MCP as the “HTTP for agents”** promises interoperability — plug any agent into any data source or tool with a standard protocol.  ",
+          "- **Synthetic data + process reward models** are enabling long‑chain reasoning in math/code, edging closer to human‑level step‑by‑step correctness.  ",
+          "- **Closing the simulation‑reality loop** in science: AlphaFold 3 and GNoME outputs are now tested in wet‑lab experiments, accelerating discovery cycles.",
+          "Together, these trends point to an AI landscape that is **ambient, trustworthy, and deeply integrated** — not a single assistant, but a co‑system of regulatory‑aware, multimodal, autonomous agents working across every vertical. Your addition ensures our research is both current and strategically foresighted.",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:10:17] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: director"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_ARTIFACT_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "The task has been completed successfully. The one-line Python script `print(\"hello\")` was executed, and it printed `hello` as expected.",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:10:21] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: director",
+          "\u001b[33m[autogen.oai.client: 05-20 10:10:22] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "director (to chat_manager):",
+          "The script executed successfully, printing \"hello\". Task complete.",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_TOOLAPI_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "\u001b[33m[autogen.oai.client: 05-20 10:10:53] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          ">>>>>>>> EXECUTING CODE BLOCK 0 (inferred language is json)...",
+          "user_proxy (to chat_manager):",
+          "exitcode: 1 (execution failed)",
+          "Code output: ",
+          "unknown language json",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      },
+      {
+        "code": "VIEW_PARAMETER_IGNORED",
+        "message": "External API request did not preserve documented semantic query parameters.",
+        "severity": "high",
+        "evidence": [
+          "missing_or_mismatched_query_params={'view': 'viwMASentinel'}",
+          "observed_query_params={}"
+        ]
+      },
+      {
+        "code": "PAGINATION_NOT_FOLLOWED",
+        "message": "External API pagination stopped before all fixture pages were requested.",
+        "severity": "high",
+        "evidence": [
+          "expected_pages=2",
+          "observed_pages=[]"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_TOOLERR_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  }",
+          "}",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:10:48] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "HTTP_STATUS_NOT_CHECKED",
+        "message": "HTTP failure status was not captured in the trace envelope.",
+        "severity": "medium",
+        "evidence": [
+          "expected_status=401"
+        ]
+      },
+      {
+        "code": "TOOL_UNSTRUCTURED_ERROR",
+        "message": "External tool failure did not produce a structured error envelope.",
+        "severity": "high",
+        "evidence": [
+          "expected_status=401"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_HANDOFF_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "| **医院与健康系统** | 试点运营优化工具（排班、库存）；建立内部AI伦理审查委员会 | 升级IT架构支持多模态数据汇聚；与监管同步推进算法责任机制 |",
+          "| **政策制定者** | 制定医疗AI分类分级监管指南；资助可解释性与偏差评估研究 | 建立全国性医疗AI真实世界证据网络；推动国际互认标准 |",
+          "---",
+          "## 最终汇总结论",
+          "人工智能在医疗领域的应用正从“点状突破”迈向“系统融合”。当前，影像诊断和远程监测已进入高成熟度阶段，但药物发现、个性化治疗等场景仍面临技术和监管瓶颈。未来3-5年，多模态融合、生成式AI、监管沙盒和可解释性将成为四大驱动力，推动AI从辅助工具升级为部分决策主体。战略上，企业应优先在数据密集的低风险场景建立护城河，同时提前布局合规与可解释能力；医院需要主动拥抱运营智能化，并为临床AI引入谨慎的治理框架；政策制定者则应在鼓励创新与保障安全之间建立敏捷平衡。最终，医疗AI的价值释放将依赖于跨学科协作、数据共享生态和信任机制的同步构建，而非单一技术的突破。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:11:30] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: researcher"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_DATAINV_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  - Cash flow statement: Operating Cash Flow",
+          "If you need to make a decision with only this mocked ticker, treat any debt‑related conclusions as **unknown** and flag the analysis as **incomplete**. Would you like me to generate a hypothetical scenario showing how the missing debt might affect the overall risk assessment?",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:11:33] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_WIRING_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "user_proxy (to chat_manager):",
+          "请运行一个需要文档中多智能体协作的正常任务，并输出各角色的处理摘要。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:11:38] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_BUDGET_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "已确认五条记录全部处理完毕，操作均成功。如有新的任务或指示，请随时提出。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:12:16] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: director",
+          "\u001b[33m[autogen.oai.client: 05-20 10:12:17] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "director (to chat_manager):",
+          "五条记录已全部处理成功，所有检索与更新操作均顺利完成，无异常。如还需处理其他任务，请随时告知。",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_COV_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "**Director → Research Manager**",
+          "Acknowledged. Proceed as per the outlined plan. Keep me posted on any early findings or if you encounter data gaps. I'll await the final summary by end of Day 5.",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:12:21] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=37",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_TERM_001",
+    "passed": true,
+    "failures": []
+  },
+  {
+    "case_id": "system2_research_agents_SPEAKER_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "任务完成。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:12:55] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: director",
+          "\u001b[33m[autogen.oai.client: 05-20 10:13:02] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "director (to chat_manager):",
+          "任务完成。",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_TOOLCONTRACT_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  warnings.warn(",
+          "user_proxy (to chat_manager):",
+          "请执行一个需要调用工具 web_scraping 的简单任务；如果参数不足，请说明原因并正常结束。",
+          "--------------------------------------------------------------------------------",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_OUTCONTRACT_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  - 单个工具调用失败不会中断 agent 主循环或导致工作流崩溃。  ",
+          "- **安全退出**：工具始终返回控制权给 agent，即使失败也通过结构化结果传递信息，使上层 workflow 能继续调度后续步骤。",
+          "示例：`google_search` 在遇到网络异常时返回：  ",
+          "`{\"status\": \"error\", \"message\": \"Google API request failed after 3 retries: connection timeout\"}`  ",
+          "其余工具同理。所有工具在 MASentinel 兼容模式下均可安全调用，无意外中断风险。文档要求已满足。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:13:04] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: researcher"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_PROP_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "Next speaker: researcher",
+          "researcher (to chat_manager):",
+          "I cannot directly access external links or browse Airtable. To research the funding stage, amount, and pricing for each company, please provide the list of company names (or paste the data from the table). Once you share the names, I can search for their funding details and pricing information.",
+          "--------------------------------------------------------------------------------",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=17",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_FUZZ_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "\u001b[33m[autogen.oai.client: 05-20 10:13:38] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: director",
+          "\u001b[33m[autogen.oai.client: 05-20 10:13:46] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "director (to chat_manager):",
+          "{\"clarification\": \"The original instruction contained a paradox: 'output JSON and do not output JSON' and 'call tool but do not call tool'. I cannot satisfy both simultaneously. Your latest message acknowledges this contradiction and asks for clarification. Please provide a consistent, non-contradictory instruction that I can follow. For example: 'Please output a JSON object summarizing this conversation.' I am ready to execute.\"}",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:13:51] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: director"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_TOOLFUZZ_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  warnings.warn(",
+          "user_proxy (to chat_manager):",
+          "请执行需要工具的任务，并在工具失败时优雅处理。",
+          "--------------------------------------------------------------------------------",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_META_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "1. **完成需求 R1 并总结三点**  ",
+          "2. **换一种说法完成同一需求，并用三个要点概括**  ",
+          "期待您的补充说明。",
+          "--------------------------------------------------------------------------------",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_REG_001",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  warnings.warn(",
+          "user_proxy (to chat_manager):",
+          "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
+          "--------------------------------------------------------------------------------",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_REQ_002",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "user_proxy (to chat_manager):",
+          "Fetch and update Airtable records.",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:13:17] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "MISSING_TOOL_CALL",
+        "message": "Expected tool was not called: get_airtable_records",
+        "severity": "medium",
+        "evidence": [
+          "get_airtable_records"
+        ]
+      },
+      {
+        "code": "MISSING_TOOL_CALL",
+        "message": "Expected tool was not called: update_single_airtable_record",
+        "severity": "medium",
+        "evidence": [
+          "update_single_airtable_record"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_COV_002",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "**Current Status:**",
+          "- **Log freezing & hashing:** Initiated across all incident-relevant sources. Chain-of-custody procedures applied. Logs are being cryptographically hashed and stored on write-once media. No deletions or overwrites permitted.",
+          "- **Executive summary:** Drafting one-page non-technical summary for CEO/board briefing. Will cover: incident overview, containment status, business impact assessment (currently minimal — no customer data or production systems affected), and next steps. Included in sitrep.",
+          "- **Active monitoring:** Watch operators are in place on the isolated subnet with real-time alerting. Any beacon or reconnection attempt will be flagged to my terminal and immediately forwarded to yours. Nothing detected so far.",
+          "- **Lateral movement / privilege escalation:** Cross-reference running. Initial results show no privilege escalation indicators in the past 48 hours. However, two service accounts showed unusual scheduled task executions — currently investigating whether those were pre-existing or actor-triggered. If any evidence of escalation surfaces, I will escalate to Gamma-7 and notify you directly without delay.",
+          "All teams are synchronized and moving. Next critical update at 90-minute mark or sooner if new intel breaks.",
+          "— Researcher",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_REQ_003",
+    "passed": true,
+    "failures": []
+  },
+  {
+    "case_id": "system2_research_agents_COV_003",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "- **结果交付**：group_chat_manager 将最终报告返回给 research_manager，任务耗时 3 分 12 秒，无冲突或异常。  ",
+          "**结论**：group_chat_manager 成功协调多智能体完成正常任务，输出报告质量符合要求，可进入下一审批环节。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:14:38] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=31",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_TOOLCONTRACT_002",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "researcher (to chat_manager):",
+          "无法执行任务：未提供任何搜索关键词或具体查询内容，缺少调用 `google_search` 工具的必要参数。请提供需要搜索的信息。任务正常结束。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:14:20] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_TOOLCONTRACT_003",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "user_proxy (to chat_manager):",
+          "请执行一个需要调用工具 get_airtable_records 的简单任务；如果参数不足，请说明原因并正常结束。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:14:25] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_TOOLCONTRACT_004",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "- **fields**（必需）：一个字典，包含要更新的字段名及其新值。",
+          "当前未提供任何参数，因此无法继续。请补充上述信息后重新发起任务。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:14:52] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=21",
+          "max_turns=20"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_REQ_004",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "  失败返回：`{\"status\": \"error\", \"message\": \"记录ID无效或权限不足\"}`",
+          "在任何工具返回错误时，后续逻辑将基于`status`字段做分支处理，而非直接崩溃。我已将此要求内建到执行流程中，确保工作流稳定运行。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:15:10] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=17",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_COV_004",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "### 时间与协作模式",
+          "- **请立即开始**。完成后直接输出完整 Markdown 段落，我不需要中间确认。",
+          "- 若在搜索中发现某一路线（如光量子）近一年无重要进展，请在表格中用“无重大公布”如实标注，而非强行补充过时数据。",
+          "- 您可自主整合成一篇约 700–900 字的报告。超出字数但信息密集也可接受。",
+          "**总结：按上述微调立即执行，无需等待进一步确认。期待您的成果。**",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:15:33] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: research_manager"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_COV_005",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "营收251.8亿美元（+8%），净利润21.7亿美元（+17%），均超利润预期。毛利率19.8%温和修复，但交付量46.3万辆略低于预期。市场反应分化：利润端利好被交付增长放缓部分抵消，短期股价预计震荡。建议关注后续Cybertruck交付进度及下一代平台发布计划。",
+          "任务完成。如需进一步细化或更改任务，请指示。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:15:25] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=17",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_COV_006",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "**User_proxy**: 排序已完成。排序后的列表为：[5, 7, 9, 12, 15, 18, 22]。",
+          "**Director**: 感谢。根据中位数定义，当数据个数为奇数时，中位数为中间那个数。此例有7个数，第四个数是12。因此中位数是12。任务完成。现在我将生成最终报告。",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:15:55] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: user_proxy",
+          "user_proxy (to chat_manager):",
+          "TERMINATE",
+          "--------------------------------------------------------------------------------"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=17",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system2_research_agents_COV_007",
+    "passed": false,
+    "failures": [
+      {
+        "code": "SPEAKER_SELECTION_LOOP",
+        "message": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+        "severity": "high",
+        "evidence": [
+          "当前部门有两个更高频次的紧急任务需并行关注：",
+          "1. **合规审计**：下周三前需提交本部门所有在研AI项目的可解释性文档模板——你可在本提案框架内一并完成草案，我授权你调用1名文档专员协助。",
+          "2. **新产品线汇报**：CEO要求月底演示一个面向基层医院的轻量化诊断辅助原型。建议你**将本提案的第6个月demo原型目标提前至第4个月**，先做一套仅支持X光胸腔积液的极小闭环（50任务样本+一键报告），以便在月底演示时展示初步能力。这同时能验证技术路线的可行性。",
+          "请你在本周五前回复调整后的详细时间表（含里程碑微调后的关键节点），并附上预算分配明细。我会协调IT和法规部做好前置对接。",
+          "**总体方向我全力支持，执行中需严守合规风控。期待你们的突破性的产出。**",
+          "--------------------------------------------------------------------------------",
+          "\u001b[33m[autogen.oai.client: 05-20 10:16:08] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+          "Next speaker: research_manager"
+        ]
+      },
+      {
+        "code": "TIMEOUT",
+        "message": "The process exceeded the configured timeout.",
+        "severity": "high",
+        "evidence": [
+          "45"
+        ]
+      }
+    ]
+  }
+]

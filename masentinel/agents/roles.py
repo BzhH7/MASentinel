@@ -64,12 +64,19 @@ class PatternApplicabilityAgent(BaseTestingAgent):
         return prompts.PATTERN_APPLICABILITY_PROMPT
 
     def fallback(self, task: dict[str, Any], error: str) -> dict[str, Any]:
-        from masentinel.generator.pattern_selector import build_test_plan
+        return {
+            "selected_patterns": [],
+            "rejected_patterns": [],
+            "diagnostic_only_patterns": [],
+            "confidence": 0.0,
+            "fallback": True,
+            "error": error,
+        }
 
-        features = task.get("system_features", {}) if isinstance(task, dict) else {}
-        plan = build_test_plan(features if isinstance(features, dict) else {})
-        plan.update({"fallback": True, "error": error})
-        return plan
+
+class SystemTestPlannerAgent(PatternApplicabilityAgent):
+    name = "SystemTestPlannerAgent"
+    purpose = "select_applicable_test_patterns"
 
 
 class CoverageStrategistAgent(BaseTestingAgent):
@@ -181,8 +188,8 @@ class FalsePositiveAuditorAgent(BaseTestingAgent):
         fault = task.get("fault", {}) or {}
         suspected = bool(fault.get("suspected_false_positive", False))
         return {
-            "audit_result": "likely_false_positive" if suspected else "confirmed_fault",
-            "reason": "Fallback audit based on deterministic confidence threshold.",
+            "audit_result": "likely_false_positive" if suspected else "suspected_fault",
+            "reason": "Fallback advisory audit mirrors deterministic evidence status; final confirmation is deterministic.",
             "false_positive_risk": "high" if suspected else "low",
             "confidence": 0.35,
             "fallback": True,
@@ -246,8 +253,8 @@ class ProjectReportAgent(BaseTestingAgent):
                         f"派生症状 {counts.get('derived_symptoms', 0)} 个，疑似误报 {counts.get('suspected_false_positive', 0)} 个，"
                         f"根因组 {counts.get('root_groups', 0)} 个。"
                     ),
-                    "true_fault_summary": "确认/真实故障按 false_positive_audit 未标记为 suspected_false_positive 的 findings 统计。",
-                    "false_positive_summary": "疑似误报来自 FalsePositiveAuditorAgent 或确定性审计标签，主要用于避免把观测不足、模型服务或测试框架问题计入目标故障。",
+                    "true_fault_summary": "确认/真实故障按 deterministic oracle 与代码/trace evidence gate 达标的 findings 统计。",
+                    "false_positive_summary": "疑似误报来自确定性 evidence gate 未达确认阈值的 findings；agent 审计仅作为辅助风险提示。",
                 }
             )
         return {

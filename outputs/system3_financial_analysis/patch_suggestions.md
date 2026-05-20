@@ -1,41 +1,49 @@
 # Patch Suggestions
 
-## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001: Message Handoff Error
-- Layer: autogen_framework
-- Affected cases: system3_financial_analysis_BUDGET_001, system3_financial_analysis_COV_002, system3_financial_analysis_DATAINV_001, system3_financial_analysis_FSSAFE_001, system3_financial_analysis_OUTCONTRACT_002, system3_financial_analysis_REQ_001, system3_financial_analysis_REQ_005, system3_financial_analysis_REQ_007
-- Suggested fix: 1) Modify the termination handoff logic in student_autogen_system.py to distinguish between upstream analysis completion (pass data forward) vs full workflow termination (stop execution). 2) Ensure that when an agent returns TERMINATE due to completing its task, the actual analysis content is extracted and passed to the next agent in the workflow before propagating termination. 3) Update the collection and forwarding functions (collect_stock_data, to_dict) to strip termination markers when assembling messages for downstream consumption.
-
-Suggested patch direction:
-- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
-
-## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002: Documented Entrypoint Broken
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001: Documented Entrypoint Broken
 - Layer: application
 - Affected cases: system3_financial_analysis_CLIDOC_001
-- Suggested fix: Create an 'src' package by adding src/ directory with __init__.py and a main.py that parses the CLI arguments and invokes the system. Alternatively, update the README to reflect the actual entrypoint (e.g., 'python student_autogen_system.py analyze AAPL').
+- Suggested fix: Align the documented command with the actual project structure. If the main entrypoint is in 'student_autogen_system.py' at the project root, update the README command to 'python -m student_autogen_system analyze AAPL'. If a 'src' package is intended, create the directory structure with an __init__.py and move the main module there. Add a CI test that executes the documented command to prevent regression.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
 
-## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003: Message Handoff Error
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002: Message Handoff Error
+- Layer: autogen_framework
+- Affected cases: system3_financial_analysis_COV_002, system3_financial_analysis_FSSAFE_001, system3_financial_analysis_OUTCONTRACT_001, system3_financial_analysis_OUTCONTRACT_002, system3_financial_analysis_REQ_001, system3_financial_analysis_REQ_002, system3_financial_analysis_REQ_003, system3_financial_analysis_REQ_005
+- Suggested fix: Modify the handoff logic in student_autogen_system.py to explicitly pass the previous assistant's analysis message instead of allowing TERMINATE markers to be forwarded. Specifically: 1) In the registered agent transitions, filter out TERMINATE-only messages before triggering downstream agents; 2) Ensure the last substantive message from each agent is stored and passed as context to the next agent; 3) Add validation in the handoff function to check for empty content and fall back to the most recent non-termination message.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003: Data Collection Tool Registration Missing
+- Layer: application
+- Affected cases: system3_financial_analysis_COV_002, system3_financial_analysis_REQ_002, system3_financial_analysis_REQ_005
+- Suggested fix: 1) Explicitly register a data-collection tool (e.g., a yfinance wrapper or API client) in the agent configuration. 2) If a mock/stub is used, ensure it returns a deterministic dataset that satisfies the analyst agent's minimum schema (financial statements, risk metrics, sector classification). 3) Add a pre-flight check in the analyst agent to abort gracefully if required data fields are empty, and log which tool/output was expected. 4) Align report generation requirements with data availability so partial coverage (REQ_005) does not cause silent pass without data.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004: Message Handoff Error
 - Layer: autogen_framework
 - Affected cases: system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001
-- Suggested fix: If the behavior is undesirable, the financial analyst's system prompt or tool configuration should be modified to ensure it always provides a substantive output. No framework or application code fix is required for message forwarding.
+- Suggested fix: Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content. Specifically, in the orchestrating agent's handoff logic, retrieve the last substantive message from the target agent rather than using the default last_message() which may return TERMINATE markers.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
 
-## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004: Resume State Inconsistency
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005: Output Contract Violation
 - Layer: application
-- Affected cases: system3_financial_analysis_RESUME_001
-- Suggested fix: Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly.
+- Affected cases: system3_financial_analysis_OUTCONTRACT_003, system3_financial_analysis_OUTCONTRACT_005
+- Suggested fix: Add a deterministic validation step in the 'data_collector' agent or its associated tool that checks the validity of the stock code. If the code is invalid, the agent should immediately terminate and return a structured error message that includes the keyword '代码' (e.g., '输入的股票代码 META 无效，请检查代码后重试。'). This ensures the output contract is fulfilled when handling non-existent stock codes.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
 
-## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005: Termination Signal Ignored
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006: Termination Signal Ignored
 - Layer: autogen_framework
 - Affected cases: system3_financial_analysis_TERM_001
-- Suggested fix: No fix required for the system. The fault may be a false positive due to misinterpretation of the termination grace window or a non-deterministic model behavior. If the continuation after TERMINATE is a concern, verify that the is_termination_msg function is correctly implemented and that the termination grace window is applied as intended. Otherwise, adjust the oracle expectations to account for graceful shutdown messages.
+- Suggested fix: No specific fix can be recommended until the fault is confirmed with deterministic code/trace evidence. If confirmed, ensure termination condition handlers in smpl_autogen_system.py (or equivalent orchestration module) immediately stop the conversation when a termination marker (e.g., 'TERMINATE') is detected, within the allowed grace messages (max 2).
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.

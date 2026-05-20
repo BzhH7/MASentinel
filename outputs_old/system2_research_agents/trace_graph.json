@@ -1,0 +1,94 @@
+{
+  "nodes": [
+    {
+      "id": "chat_manager",
+      "type": "agent"
+    },
+    {
+      "id": "checking_agent",
+      "type": "agent"
+    },
+    {
+      "id": "director",
+      "type": "agent"
+    },
+    {
+      "id": "research_manager",
+      "type": "agent"
+    },
+    {
+      "id": "researcher",
+      "type": "agent"
+    },
+    {
+      "id": "speaker_selection_agent",
+      "type": "agent"
+    },
+    {
+      "id": "user_proxy",
+      "type": "agent"
+    }
+  ],
+  "edges": [
+    {
+      "source": "chat_manager",
+      "target": "director",
+      "count": 168,
+      "type": "message"
+    },
+    {
+      "source": "chat_manager",
+      "target": "research_manager",
+      "count": 202,
+      "type": "message"
+    },
+    {
+      "source": "chat_manager",
+      "target": "researcher",
+      "count": 194,
+      "type": "message"
+    },
+    {
+      "source": "chat_manager",
+      "target": "user_proxy",
+      "count": 120,
+      "type": "message"
+    },
+    {
+      "source": "checking_agent",
+      "target": "speaker_selection_agent",
+      "count": 186,
+      "type": "message"
+    },
+    {
+      "source": "director",
+      "target": "chat_manager",
+      "count": 90,
+      "type": "message"
+    },
+    {
+      "source": "research_manager",
+      "target": "chat_manager",
+      "count": 39,
+      "type": "message"
+    },
+    {
+      "source": "researcher",
+      "target": "chat_manager",
+      "count": 51,
+      "type": "message"
+    },
+    {
+      "source": "speaker_selection_agent",
+      "target": "checking_agent",
+      "count": 176,
+      "type": "message"
+    },
+    {
+      "source": "user_proxy",
+      "target": "chat_manager",
+      "count": 193,
+      "type": "message"
+    }
+  ]
+}

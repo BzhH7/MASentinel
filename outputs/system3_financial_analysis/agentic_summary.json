@@ -3,6 +3,7 @@
     "RequirementAnalystAgent",
     "SystemModelingAgent",
     "TestDesignerAgent",
+    "PatternApplicabilityAgent",
     "InteractionAdapterAgent",
     "CoverageStrategistAgent",
     "ExecutionMonitorAgent",
@@ -11,39 +12,41 @@
     "ReportWriterAgent"
   ],
   "model_usage": {
-    "run_id": "agentic_1779243672_2c608667",
-    "total_calls": 18,
-    "successful_calls": 18,
+    "run_id": "agentic_1779251669_b7ba2e3c",
+    "total_calls": 21,
+    "successful_calls": 21,
     "fallback_calls": 0,
     "failed_calls": 0,
     "by_agent": {
       "RequirementAnalystAgent": 1,
       "SystemModelingAgent": 1,
+      "PatternApplicabilityAgent": 1,
       "InteractionAdapterAgent": 1,
       "TestDesignerAgent": 2,
       "ExecutionMonitorAgent": 1,
-      "FaultDiagnoserAgent": 5,
-      "FalsePositiveAuditorAgent": 5,
+      "FaultDiagnoserAgent": 6,
+      "FalsePositiveAuditorAgent": 6,
       "CoverageStrategistAgent": 1,
       "ReportWriterAgent": 1
     },
     "by_purpose": {
       "extract_requirements": 1,
       "review_semantic_graph": 1,
+      "select_applicable_test_patterns": 1,
       "plan_interaction_adapter": 1,
       "generate_testcases": 2,
       "summarize_execution": 1,
-      "diagnose_fault": 5,
-      "audit_false_positive": 5,
+      "diagnose_fault": 6,
+      "audit_false_positive": 6,
       "analyze_coverage_gaps": 1,
       "write_report_narrative": 1
     },
     "by_model": {
-      "deepseek-v4-pro": 18
+      "deepseek-v4-pro": 21
     },
     "estimated_tokens": {
-      "input_tokens": 90073,
-      "output_tokens": 28943
+      "input_tokens": 105447,
+      "output_tokens": 37818
     }
   },
   "target_model_usage": {
@@ -59,29 +62,19 @@
     "target_api_key_envs": [
       "BOYUE_API_KEY"
     ],
-    "stdout_model_mentions": 41,
-    "stderr_model_mentions": 41,
-    "autogen_model_warning_count": 82,
+    "stdout_model_mentions": 7,
+    "stderr_model_mentions": 7,
+    "autogen_model_warning_count": 14,
     "case_summaries": [
-      {
-        "case_id": "system3_financial_analysis_ARTIFACT_001",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 8
-      },
       {
         "case_id": "system3_financial_analysis_BUDGET_001",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 8
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_CLIDOC_001",
@@ -99,9 +92,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 2,
-        "stderr_model_mentions": 2,
-        "autogen_model_warning_count": 4
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_COV_002",
@@ -119,19 +112,29 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 2,
-        "stderr_model_mentions": 2,
-        "autogen_model_warning_count": 4
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
-        "case_id": "system3_financial_analysis_DATAINV_001",
+        "case_id": "system3_financial_analysis_COV_004",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 1,
-        "stderr_model_mentions": 1,
-        "autogen_model_warning_count": 2
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_COV_005",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 3,
+        "stderr_model_mentions": 3,
+        "autogen_model_warning_count": 6
       },
       {
         "case_id": "system3_financial_analysis_FSSAFE_001",
@@ -139,9 +142,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 8
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_FUZZ_001",
@@ -149,9 +152,29 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 8
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_FUZZ_002",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_FUZZ_003",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_HANDOFF_001",
@@ -159,9 +182,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 8
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_META_001",
@@ -179,9 +202,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 8
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_OUTCONTRACT_001",
@@ -205,6 +228,26 @@
       },
       {
         "case_id": "system3_financial_analysis_OUTCONTRACT_003",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_OUTCONTRACT_004",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_OUTCONTRACT_005",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -239,9 +282,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 8
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_REQ_002",
@@ -289,9 +332,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 8
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_REQ_007",
@@ -299,52 +342,12 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
-      },
-      {
-        "case_id": "system3_financial_analysis_REQ_008",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
-      },
-      {
-        "case_id": "system3_financial_analysis_REQ_009",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
-      },
-      {
-        "case_id": "system3_financial_analysis_RESUME_001",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
-      },
-      {
-        "case_id": "system3_financial_analysis_SMOKE_001",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 4,
         "stderr_model_mentions": 4,
         "autogen_model_warning_count": 8
       },
       {
-        "case_id": "system3_financial_analysis_SPEAKER_001",
+        "case_id": "system3_financial_analysis_SMOKE_001",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -423,6 +426,37 @@
       "excluded_from_target_faults": true
     },
     {
+      "case_id": "system3_financial_analysis_COV_001",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: agent",
+      "evidence": [
+        "agent"
+      ],
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_COV_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=18",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
       "case_id": "system3_financial_analysis_COV_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
@@ -445,16 +479,125 @@
       "issue_type": "Coverage Gap / Weak Routing Evidence",
       "severity": "medium",
       "confidence": 0.45,
-      "message": "Expected agent was not observed: agent",
+      "message": "Expected agent was not observed: enterprise_risk_analyst",
       "evidence": [
-        "agent"
+        "enterprise_risk_analyst"
       ],
       "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
       "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
       "excluded_from_target_faults": true
     },
     {
+      "case_id": "system3_financial_analysis_COV_004",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=18",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_COV_004",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: enterprise_compliance_officer",
+      "evidence": [
+        "enterprise_compliance_officer"
+      ],
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_COV_005",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
       "case_id": "system3_financial_analysis_FUZZ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=12"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_FUZZ_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=10"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_FUZZ_002",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: enterprise_quantitative_analyst",
+      "evidence": [
+        "enterprise_quantitative_analyst"
+      ],
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_FUZZ_002",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: enterprise_portfolio_manager",
+      "evidence": [
+        "enterprise_portfolio_manager"
+      ],
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_FUZZ_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -502,22 +645,6 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_REQ_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
       "case_id": "system3_financial_analysis_REQ_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
@@ -547,6 +674,21 @@
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_004",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: report_generator",
+      "evidence": [
+        "report_generator"
+      ],
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
       "excluded_from_target_faults": true
     },
     {
@@ -582,6 +724,36 @@
       "excluded_from_target_faults": true
     },
     {
+      "case_id": "system3_financial_analysis_REQ_006",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: enterprise_quantitative_analyst",
+      "evidence": [
+        "enterprise_quantitative_analyst"
+      ],
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_006",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: enterprise_portfolio_manager",
+      "evidence": [
+        "enterprise_portfolio_manager"
+      ],
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+      "excluded_from_target_faults": true
+    },
+    {
       "case_id": "system3_financial_analysis_REQ_007",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
@@ -598,35 +770,18 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_REQ_008",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "case_id": "system3_financial_analysis_REQ_007",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: enterprise_data_collector",
       "evidence": [
-        "turn_count=19",
-        "max_turns=15"
+        "enterprise_data_collector"
       ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_009",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
       "excluded_from_target_faults": true
     },
     {
@@ -678,6 +833,22 @@
       "excluded_from_target_faults": true
     },
     {
+      "case_id": "system3_financial_analysis_COV_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=18",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
       "case_id": "system3_financial_analysis_COV_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
@@ -694,7 +865,71 @@
       "excluded_from_target_faults": true
     },
     {
+      "case_id": "system3_financial_analysis_COV_004",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=18",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_COV_005",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
       "case_id": "system3_financial_analysis_FUZZ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=12"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_FUZZ_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
+        "max_turns=10"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_FUZZ_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -727,22 +962,6 @@
     },
     {
       "case_id": "system3_financial_analysis_REG_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_001",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -836,67 +1055,50 @@
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
       "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_008",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_009",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
     }
   ],
   "run_manifest": {
-    "run_id": "system3_financial_analysis_2026-05-20T02:21:12.599284+00:00",
-    "start_time": "2026-05-20T02:21:12.599299+00:00",
+    "run_id": "system3_financial_analysis_2026-05-20T04:34:29.169332+00:00",
+    "start_time": "2026-05-20T04:34:29.169351+00:00",
     "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system3.yaml",
     "config_hash": "788eebe2f1ffbf38056aa651404bf6696f9998d4afd7c172731a462ecbdb67cf",
-    "code_snapshot_hash": "855d4d45762117eb7c93a65b85f71ac2815fb116f7ecf93810c67828d2c69276",
+    "code_snapshot_hash": "16f4e2d180155c1c226e9d524dcf36d6a199a157da2c89bedd3830acc4cf7680",
     "doc_hash": "25dffda68e4f05d766bc1c07a8bd7b6ab509986870de16a4f363f48da7b618ee",
     "human_intervention_allowed": false,
     "entry_command": "scripts/run_with_boyue_api.py --config configs/all_systems.yaml --testing-model deepseek-v4-pro --target-model deepseek-v4-flash",
     "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
-    "pid": 82922
+    "pid": 89258
   },
-  "testcases_frozen_sha256": "c505ebc4bf29a2086a08d98741f17d07b2a0e28fa25f0523d1e4b5e0efcc8a4a",
+  "testcases_frozen_sha256": "232b3294a8847f6ba51da5b6d75d070994d648cec3e2451159590bcbdea092b8",
   "human_intervention_allowed": false,
   "agent_api_workers": 3,
   "semantic_graph_review": {
-    "semantic_graph_review": "The profile documents five simple_autogen specialist agents (data_analyst, financial_analyst, risk_analyst, investment_advisor, user_proxy) with clear roles and a sequential fan‑out orchestration. Message edges are correctly derived from initiate_chat calls in the source code, matching the requirements. However, the profile also lists additional agents (data_collector, report_generator, enterprise_* agents, 'agent') that are defined but never wired into the active message graph—these unused definitions do not break the functional graph but create unnecessary complexity.",
+    "semantic_graph_review": "系统包含多个智能体定义，分为简单版（simple_autogen）和企业版（enterprise_agents）两套体系。需求R1至R5覆盖了从数据收集、分析、风险评估到报告生成等多步骤协作流程，系统中也存在对应的agent实体。从静态分析的message_edges看，user_proxy向data_analyst、financial_analyst、investment_advisor、report_generator、risk_analyst发起initiate_chat，但同时，系统实现代码中使用了AgentOrchestrator进行编排，且存在两种不同的协作方式（简单版通过AgentOrchestrator和last_message传递数据，企业版则依赖于独立的AssistantAgent），可能导致预期协作流程与实际代码行为不完全一致。此外，部分agent（如report_generator和data_collector）在简单版中的参与路径不明显，而简单版的协作流程实际通过AgentOrchestrator集中调用各个agent的last_message来实现信息传递，这与需求描述的“依次启动”模式有一定差异但功能可兼容。",
     "suspected_risk_points": [
       {
         "type": "tool_schema_risk",
-        "evidence": "No tools are registered for any simple_autogen agent, yet agents are expected to collect stock data and calculate financial ratios. R1 requires data_analyst to extract key information from yfinance data, but yfinance integration is implemented as direct Python calls in the orchestration logic, not as a registered tool, meaning AssistantAgent cannot autonomously invoke data collection.",
-        "related_tool": "yfinance stock data collection"
+        "evidence": "需求要求使用yfinance收集股票数据，但系统中所有agent均未注册任何工具函数。消息传递完全依赖LLM生成文本，无法执行实际API调用。这在R1和R3中会导致数据收集、分析、错误处理等任务无法完成。",
+        "related_tool": "N/A (无工具定义)"
       },
       {
-        "type": "tool_schema_risk",
-        "evidence": "Requirements R2 and R5 assume investment_advisor uses outputs from financial_analyst and risk_analyst, but the investment_advisor system message only mentions synthesizing results, not invoking any external tool or performing calculations. No validation tool is provided to the agent to enforce the output format or check completeness.",
-        "related_tool": "investment_advisor synthesis"
+        "type": "agent_orchestration_risk",
+        "evidence": "在simple_autogen/simple_autogen_system.py中，financial_analyst和risk_analyst的输入通过AgentOrchestrator分别获取data_analyst.last_message()，investment_advisor也类似获取financial_analyst和risk_analyst的输出。但report_generator并未出现在该编排流程中，R2要求report_generator从financial_analyst和risk_analyst获取输出生成报告，缺少代码支持。可能导致R2未实现。",
+        "related_tool": null
+      },
+      {
+        "type": "error_handling_risk",
+        "evidence": "在simple_autogen/main.py中，analyze_stock_command包装了yfinance调用，在股票代码无效时可能抛出异常（如IndexError或Ticker错误），但整个流程中未提供全局异常捕获并转换为用户可读错误消息的逻辑，无法满足R3要求。",
+        "related_tool": null
+      },
+      {
+        "type": "agent_orchestration_risk",
+        "evidence": "企业版agent（enterprise_quantitative_analyst、enterprise_portfolio_manager等）在enterprise_agents.py中被定义但均未注册工具，且未发现将其纳入任何编排流程的代码。R4、R5依赖这些agent完成量化分析、数据质量校验，但系统缺少相应的任务调度和工具调用支持，可能导致这些功能无法实现。",
+        "related_tool": null
+      },
+      {
+        "type": "autogen_integration_risk",
+        "evidence": "src/main.py中AgentOrchestrator({})以一个空字典初始化，未传入任何agent配置，可能导致企业版系统无法正常启动任何agent协作流程。",
+        "related_tool": "AgentOrchestrator"
       }
     ],
     "additional_edges": [],
@@ -906,32 +1108,657 @@
     "prompt_responses": [],
     "isolated_paths": [],
     "risk_notes": [],
-    "confidence": 0.95,
+    "confidence": 1.0,
     "applied": {
       "added_prompt_responses": [],
       "added_isolated_paths": []
     }
   },
   "coverage_strategy": {
-    "coverage_gaps": [
+    "coverage_gaps": [],
+    "new_test_requests": [],
+    "confidence": 1.0
+  },
+  "test_plan": {
+    "selected_patterns": [
       {
-        "gap_type": "missing_tool_coverage",
-        "target": "Tool registration or call for external data collection (yfinance)",
-        "suggested_test_intent": "Register a tool (e.g., 'fetch_stock_data') to wire external data access, then execute a minimal task requiring that tool, verifying that the tool is registered, called, and returns data without crash or silent fallback."
+        "pattern": "autogen_wiring",
+        "applicability": "hard",
+        "confidence": 0.95,
+        "reasons": [
+          "Static risks show AgentOrchestrator initialized with potentially empty mappings, indicating wiring issues.",
+          "Multiple agents declared but no tool registrations; wiring correctness must be verified.",
+          "Requirements describe multi-agent collaboration chains, which need correct wiring to function."
+        ],
+        "required_features": [
+          "uses_autogen",
+          "multi-agent requirements",
+          "message_edges indicating InitiateChat"
+        ],
+        "required_evidence": [
+          "Inspect how agents are registered in AgentOrchestrator or the equivalent wiring mechanism in main.py.",
+          "Verify that each agent in the requirement's expected_agents list is properly wired and reachable."
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 2,
+        "source": "PatternApplicabilityAgent"
       },
       {
-        "gap_type": "missing_tool_coverage",
-        "target": "Investment advisor synthesis tool or validation logic",
-        "suggested_test_intent": "Add a tool to validate or format investment_advisor inputs, then run a task with conflicting inputs and assert that the tool is invoked and produces a diagnostic fallback instead of hallucinating advice."
+        "pattern": "message_handoff_integrity",
+        "applicability": "hard",
+        "confidence": 0.9,
+        "reasons": [
+          "has_last_message_calls and has_multistage_handoff indicate the system relies on message passing between agents.",
+          "Requirements R1, R2, R4 describe sequential handoffs (data_analyst → financial_analyst → risk_analyst → investment_advisor; enterprise_quantitative_analyst → enterprise_portfolio_manager).",
+          "report_generator expects outputs from financial_analyst and risk_analyst, making message completeness critical."
+        ],
+        "required_features": [
+          "has_last_message_calls",
+          "has_multistage_handoff",
+          "multi-agent collaboration requirements"
+        ],
+        "required_evidence": [
+          "Check that sequential agents receive the output of their predecessor (e.g., via last_message or chat_messages).",
+          "Verify no agent starts processing before receiving the required handoff context."
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 2,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "cli_doc_conformance",
+        "applicability": "hard",
+        "confidence": 0.9,
+        "reasons": [
+          "System features show documented_commands explicitly listed in CLI documentation.",
+          "Code uses argparse and the commands are real user-facing entry points (e.g., analyze, quant, portfolio)."
+        ],
+        "required_features": [
+          "documented_commands",
+          "uses_argparse"
+        ],
+        "required_evidence": [
+          "Test each documented command against its expected behavior (e.g., analyze AAPL, quant AAPL --factors momentum value growth).",
+          "Check that invalid commands or arguments produce documented error handling."
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 3,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "filesystem_safety",
+        "applicability": "hard",
+        "confidence": 0.85,
+        "reasons": [
+          "System writes files, has user-controlled paths, and versioned artifacts.",
+          "Requirements mention HTML/PDF output formats, implying file creation.",
+          "No explicit safety constraints documented, creating risk of path traversal or unsafe writes."
+        ],
+        "required_features": [
+          "writes_files",
+          "has_user_controlled_path"
+        ],
+        "required_evidence": [
+          "Check whether output file paths are sanitized or restricted to a safe directory.",
+          "Test with crafted paths (e.g., ../../etc/passwd) to see if the system rejects or sanitizes them."
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 1,
+        "source": "PatternApplicabilityAgent"
       }
     ],
-    "new_test_requests": [],
-    "confidence": 0.85
+    "rejected_patterns": [
+      {
+        "pattern": "scalable_budget",
+        "applicability": "diagnostic",
+        "confidence": 0.7,
+        "reasons": [
+          "Multiple agents chained in sequential workflows (up to 5 agents).",
+          "has_fixed_round_budget is false, but default autogen limits may cause premature termination.",
+          "Not explicitly mentioned in requirements, but chain interruptions could be caused by budget exhaustion."
+        ],
+        "required_features": [
+          "multi_agent_chain",
+          "has_multistage_handoff"
+        ],
+        "required_evidence": [
+          "Check the max_turns or max_consecutive_auto_reply settings in the agent configuration.",
+          "Monitor a full analysis run to see if all agents complete their tasks without hitting the turn limit."
+        ],
+        "oracle_strength": "diagnostic",
+        "source": "PatternApplicabilityAgent",
+        "rejected_by_verifier": true,
+        "verifier_reason": "requires GroupChat/fixed budget plus multi-record or paginated work"
+      },
+      {
+        "pattern": "tool_api_contract",
+        "reason": "No tools registered for any agent; has_tools is false.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "tool_error_contract",
+        "reason": "No tools exist, so no tool error handling can be tested.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "data_invariant",
+        "reason": "No dedicated data processing tools or invariants defined beyond financial metrics, which are outputs, not invariants. Missing explicit data validation rules in requirements.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "artifact_contract",
+        "reason": "No documented artifact schema for reports or files; no resume state artifact. File outputs are unstructured.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "state_resume_contract",
+        "reason": "has_resume_state is false; no persistent state artifacts required to be resumed.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "speaker_selection",
+        "reason": "System does not use GroupChat; has_speaker_selection is false.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "artifact_contract",
+        "reason": "requires file-writing or documented artifacts",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "data_invariant",
+        "reason": "requires financial/risk/dataframe metric calculation code",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "speaker_selection",
+        "reason": "requires GroupChat or speaker-selection configuration",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "state_resume_contract",
+        "reason": "requires real resume/version/state artifacts",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "tool_api_contract",
+        "reason": "requires HTTP/API/Airtable tool evidence",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "tool_error_contract",
+        "reason": "requires request-like external tool wrapper evidence",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      }
+    ],
+    "verifier_omitted_applicable_patterns": [
+      {
+        "pattern": "artifact_contract",
+        "applicability": "hard",
+        "oracle_strength": "hard",
+        "case_budget": 2,
+        "confidence": 0.9,
+        "reasons": [
+          "requires file-writing or documented artifacts"
+        ],
+        "required_evidence": [
+          "observed_artifact_path",
+          "artifact_content_or_compile_result"
+        ],
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "data_invariant",
+        "applicability": "hard",
+        "oracle_strength": "hard",
+        "case_budget": 2,
+        "confidence": 0.9,
+        "reasons": [
+          "requires financial/risk/dataframe metric calculation code"
+        ],
+        "required_evidence": [
+          "mocked_financial_or_price_fixture",
+          "observed_output_metrics_or_report_values"
+        ],
+        "source": "deterministic_feature_extractor"
+      }
+    ],
+    "diagnostic_only_patterns": [
+      {
+        "pattern": "message_handoff_integrity",
+        "reason": "Already selected as hard; no additional diagnostic-only variant needed.",
+        "oracle_strength": "hard",
+        "case_budget": 1,
+        "confidence": 0.85,
+        "required_evidence": [
+          "observed_message_handoff_event_or_prompt"
+        ]
+      },
+      {
+        "pattern": "scalable_budget",
+        "reason": "Budget exhaustion can explain non-failure issues (e.g., incomplete reports) but is not a definite fault; selected as diagnostic for now.",
+        "oracle_strength": "diagnostic",
+        "case_budget": 1,
+        "confidence": 0.5,
+        "required_evidence": [
+          "record_count_or_budget_estimate",
+          "configured_max_round"
+        ],
+        "diagnostic_only": true,
+        "verifier_warning": "requires GroupChat/fixed budget plus multi-record or paginated work"
+      }
+    ],
+    "deterministic_features": {
+      "system_id": "system3_financial_analysis",
+      "source_summary": {
+        "root_path": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main",
+        "doc_path": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/README.md",
+        "python_files_scanned": 61,
+        "doc_chars": 7097,
+        "code_chars": 405971
+      },
+      "framework": {
+        "uses_autogen": true,
+        "uses_groupchat": false,
+        "uses_user_proxy": true,
+        "has_speaker_selection": false,
+        "has_human_input_mode": true,
+        "has_fixed_round_budget": false
+      },
+      "tools": {
+        "has_tools": false,
+        "tool_names": [],
+        "has_http_tools": false,
+        "has_airtable_tools": false,
+        "has_external_api_tools": false,
+        "has_request_like_code": true,
+        "has_pagination_risk": false,
+        "has_multi_record_work": false,
+        "has_structured_error_contract": true
+      },
+      "artifacts": {
+        "writes_files": true,
+        "has_documented_artifacts": false,
+        "has_resume_state": false,
+        "has_versioned_artifacts": true,
+        "has_user_controlled_path": true
+      },
+      "data_processing": {
+        "has_pandas": true,
+        "has_financial_metrics": true,
+        "has_risk_metrics": true,
+        "has_dataframe_metrics": true,
+        "has_yfinance": true
+      },
+      "cli": {
+        "has_documented_commands": true,
+        "documented_commands": [
+          "python -m src.main analyze AAPL",
+          "python -m src.main portfolio AAPL MSFT GOOG",
+          "python -m src.main interactive",
+          "python -m src.main analyze AAPL --type comprehensive",
+          "python -m src.main analyze AAPL --format html,pdf",
+          "python -m src.main analyze AAPL --config custom_config.yaml",
+          "python -m src.main quant AAPL",
+          "python -m src.main quant AAPL --factors momentum value growth"
+        ],
+        "uses_argparse": true
+      },
+      "message_flow": {
+        "has_last_message_calls": true,
+        "has_multistage_handoff": true
+      },
+      "docs": {
+        "claims_multi_agent": true,
+        "claims_financial_analysis": true
+      },
+      "static_risks": {
+        "has_autogen_wiring_risk": true,
+        "autogen_wiring_risks": [
+          {
+            "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py",
+            "line": "115",
+            "risk": "AgentOrchestrator initialized with an empty mapping or no agents.",
+            "call": "AgentOrchestrator({})"
+          }
+        ]
+      },
+      "flat": {
+        "uses_autogen": true,
+        "uses_groupchat": false,
+        "has_speaker_selection": false,
+        "has_human_input_mode": true,
+        "has_http_tools": false,
+        "has_airtable_tools": false,
+        "has_external_api_tools": false,
+        "writes_files": true,
+        "has_user_controlled_path": true,
+        "has_resume_state": false,
+        "has_versioned_artifacts": true,
+        "has_last_message_calls": true,
+        "has_multistage_handoff": true,
+        "has_financial_metrics": true,
+        "has_risk_metrics": true,
+        "has_dataframe_metrics": true,
+        "documented_cli_commands": [
+          "python -m src.main analyze AAPL",
+          "python -m src.main portfolio AAPL MSFT GOOG",
+          "python -m src.main interactive",
+          "python -m src.main analyze AAPL --type comprehensive",
+          "python -m src.main analyze AAPL --format html,pdf",
+          "python -m src.main analyze AAPL --config custom_config.yaml",
+          "python -m src.main quant AAPL",
+          "python -m src.main quant AAPL --factors momentum value growth"
+        ],
+        "docs_claim_multi_agent": true,
+        "enterprise_orchestrator_risks": [
+          {
+            "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py",
+            "line": "115",
+            "risk": "AgentOrchestrator initialized with an empty mapping or no agents.",
+            "call": "AgentOrchestrator({})"
+          }
+        ]
+      }
+    },
+    "agent_rationale": {
+      "selected_patterns": [
+        {
+          "pattern": "autogen_wiring",
+          "applicability": "hard",
+          "confidence": 0.95,
+          "reasons": [
+            "Static risks show AgentOrchestrator initialized with potentially empty mappings, indicating wiring issues.",
+            "Multiple agents declared but no tool registrations; wiring correctness must be verified.",
+            "Requirements describe multi-agent collaboration chains, which need correct wiring to function."
+          ],
+          "required_features": [
+            "uses_autogen",
+            "multi-agent requirements",
+            "message_edges indicating InitiateChat"
+          ],
+          "required_evidence": [
+            "Inspect how agents are registered in AgentOrchestrator or the equivalent wiring mechanism in main.py.",
+            "Verify that each agent in the requirement's expected_agents list is properly wired and reachable."
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 2
+        },
+        {
+          "pattern": "message_handoff_integrity",
+          "applicability": "hard",
+          "confidence": 0.9,
+          "reasons": [
+            "has_last_message_calls and has_multistage_handoff indicate the system relies on message passing between agents.",
+            "Requirements R1, R2, R4 describe sequential handoffs (data_analyst → financial_analyst → risk_analyst → investment_advisor; enterprise_quantitative_analyst → enterprise_portfolio_manager).",
+            "report_generator expects outputs from financial_analyst and risk_analyst, making message completeness critical."
+          ],
+          "required_features": [
+            "has_last_message_calls",
+            "has_multistage_handoff",
+            "multi-agent collaboration requirements"
+          ],
+          "required_evidence": [
+            "Check that sequential agents receive the output of their predecessor (e.g., via last_message or chat_messages).",
+            "Verify no agent starts processing before receiving the required handoff context."
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 2
+        },
+        {
+          "pattern": "cli_doc_conformance",
+          "applicability": "hard",
+          "confidence": 0.9,
+          "reasons": [
+            "System features show documented_commands explicitly listed in CLI documentation.",
+            "Code uses argparse and the commands are real user-facing entry points (e.g., analyze, quant, portfolio)."
+          ],
+          "required_features": [
+            "documented_commands",
+            "uses_argparse"
+          ],
+          "required_evidence": [
+            "Test each documented command against its expected behavior (e.g., analyze AAPL, quant AAPL --factors momentum value growth).",
+            "Check that invalid commands or arguments produce documented error handling."
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 3
+        },
+        {
+          "pattern": "filesystem_safety",
+          "applicability": "hard",
+          "confidence": 0.85,
+          "reasons": [
+            "System writes files, has user-controlled paths, and versioned artifacts.",
+            "Requirements mention HTML/PDF output formats, implying file creation.",
+            "No explicit safety constraints documented, creating risk of path traversal or unsafe writes."
+          ],
+          "required_features": [
+            "writes_files",
+            "has_user_controlled_path"
+          ],
+          "required_evidence": [
+            "Check whether output file paths are sanitized or restricted to a safe directory.",
+            "Test with crafted paths (e.g., ../../etc/passwd) to see if the system rejects or sanitizes them."
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 1
+        },
+        {
+          "pattern": "scalable_budget",
+          "applicability": "diagnostic",
+          "confidence": 0.7,
+          "reasons": [
+            "Multiple agents chained in sequential workflows (up to 5 agents).",
+            "has_fixed_round_budget is false, but default autogen limits may cause premature termination.",
+            "Not explicitly mentioned in requirements, but chain interruptions could be caused by budget exhaustion."
+          ],
+          "required_features": [
+            "multi_agent_chain",
+            "has_multistage_handoff"
+          ],
+          "required_evidence": [
+            "Check the max_turns or max_consecutive_auto_reply settings in the agent configuration.",
+            "Monitor a full analysis run to see if all agents complete their tasks without hitting the turn limit."
+          ],
+          "oracle_strength": "diagnostic"
+        }
+      ],
+      "rejected_patterns": [
+        {
+          "pattern": "tool_api_contract",
+          "reason": "No tools registered for any agent; has_tools is false.",
+          "confidence": 0.0
+        },
+        {
+          "pattern": "tool_error_contract",
+          "reason": "No tools exist, so no tool error handling can be tested.",
+          "confidence": 0.0
+        },
+        {
+          "pattern": "data_invariant",
+          "reason": "No dedicated data processing tools or invariants defined beyond financial metrics, which are outputs, not invariants. Missing explicit data validation rules in requirements.",
+          "confidence": 0.0
+        },
+        {
+          "pattern": "artifact_contract",
+          "reason": "No documented artifact schema for reports or files; no resume state artifact. File outputs are unstructured.",
+          "confidence": 0.0
+        },
+        {
+          "pattern": "state_resume_contract",
+          "reason": "has_resume_state is false; no persistent state artifacts required to be resumed.",
+          "confidence": 0.0
+        },
+        {
+          "pattern": "speaker_selection",
+          "reason": "System does not use GroupChat; has_speaker_selection is false.",
+          "confidence": 0.0
+        }
+      ],
+      "diagnostic_only_patterns": [
+        {
+          "pattern": "message_handoff_integrity",
+          "reason": "Already selected as hard; no additional diagnostic-only variant needed.",
+          "oracle_strength": "hard"
+        },
+        {
+          "pattern": "scalable_budget",
+          "reason": "Budget exhaustion can explain non-failure issues (e.g., incomplete reports) but is not a definite fault; selected as diagnostic for now.",
+          "oracle_strength": "diagnostic"
+        }
+      ],
+      "risk_notes": [
+        "The system defines many enterprise agents (enterprise_data_collector, enterprise_financial_analyst, etc.) that are not part of the core requirements R1-R5. Their wiring and integration are not covered by selected patterns and may introduce hidden risks.",
+        "Static risk at main.py: AgentOrchestrator({}) suggests fallback initialization without agents, which could silently disable entire workflows."
+      ],
+      "confidence": 0.88
+    },
+    "selection_mode": "agent_verified",
+    "metrics": {
+      "pattern_applicability_precision": 0.8,
+      "selected_count": 4,
+      "rejected_count": 13,
+      "diagnostic_only_count": 2,
+      "omitted_applicable_count": 2
+    },
+    "confidence": 0.95,
+    "agent_decision": {
+      "fallback_used": false,
+      "success": true,
+      "error": null,
+      "confidence": 0.88
+    }
+  },
+  "system_features": {
+    "system_id": "system3_financial_analysis",
+    "source_summary": {
+      "root_path": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main",
+      "doc_path": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/README.md",
+      "python_files_scanned": 61,
+      "doc_chars": 7097,
+      "code_chars": 405971
+    },
+    "framework": {
+      "uses_autogen": true,
+      "uses_groupchat": false,
+      "uses_user_proxy": true,
+      "has_speaker_selection": false,
+      "has_human_input_mode": true,
+      "has_fixed_round_budget": false
+    },
+    "tools": {
+      "has_tools": false,
+      "tool_names": [],
+      "has_http_tools": false,
+      "has_airtable_tools": false,
+      "has_external_api_tools": false,
+      "has_request_like_code": true,
+      "has_pagination_risk": false,
+      "has_multi_record_work": false,
+      "has_structured_error_contract": true
+    },
+    "artifacts": {
+      "writes_files": true,
+      "has_documented_artifacts": false,
+      "has_resume_state": false,
+      "has_versioned_artifacts": true,
+      "has_user_controlled_path": true
+    },
+    "data_processing": {
+      "has_pandas": true,
+      "has_financial_metrics": true,
+      "has_risk_metrics": true,
+      "has_dataframe_metrics": true,
+      "has_yfinance": true
+    },
+    "cli": {
+      "has_documented_commands": true,
+      "documented_commands": [
+        "python -m src.main analyze AAPL",
+        "python -m src.main portfolio AAPL MSFT GOOG",
+        "python -m src.main interactive",
+        "python -m src.main analyze AAPL --type comprehensive",
+        "python -m src.main analyze AAPL --format html,pdf",
+        "python -m src.main analyze AAPL --config custom_config.yaml",
+        "python -m src.main quant AAPL",
+        "python -m src.main quant AAPL --factors momentum value growth"
+      ],
+      "uses_argparse": true
+    },
+    "message_flow": {
+      "has_last_message_calls": true,
+      "has_multistage_handoff": true
+    },
+    "docs": {
+      "claims_multi_agent": true,
+      "claims_financial_analysis": true
+    },
+    "static_risks": {
+      "has_autogen_wiring_risk": true,
+      "autogen_wiring_risks": [
+        {
+          "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py",
+          "line": "115",
+          "risk": "AgentOrchestrator initialized with an empty mapping or no agents.",
+          "call": "AgentOrchestrator({})"
+        }
+      ]
+    },
+    "flat": {
+      "uses_autogen": true,
+      "uses_groupchat": false,
+      "has_speaker_selection": false,
+      "has_human_input_mode": true,
+      "has_http_tools": false,
+      "has_airtable_tools": false,
+      "has_external_api_tools": false,
+      "writes_files": true,
+      "has_user_controlled_path": true,
+      "has_resume_state": false,
+      "has_versioned_artifacts": true,
+      "has_last_message_calls": true,
+      "has_multistage_handoff": true,
+      "has_financial_metrics": true,
+      "has_risk_metrics": true,
+      "has_dataframe_metrics": true,
+      "documented_cli_commands": [
+        "python -m src.main analyze AAPL",
+        "python -m src.main portfolio AAPL MSFT GOOG",
+        "python -m src.main interactive",
+        "python -m src.main analyze AAPL --type comprehensive",
+        "python -m src.main analyze AAPL --format html,pdf",
+        "python -m src.main analyze AAPL --config custom_config.yaml",
+        "python -m src.main quant AAPL",
+        "python -m src.main quant AAPL --factors momentum value growth"
+      ],
+      "docs_claim_multi_agent": true,
+      "enterprise_orchestrator_risks": [
+        {
+          "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py",
+          "line": "115",
+          "risk": "AgentOrchestrator initialized with an empty mapping or no agents.",
+          "call": "AgentOrchestrator({})"
+        }
+      ]
+    }
   },
   "second_round": {
     "enabled": true,
     "target_mascov": 0.8,
-    "initial_mascov": 0.5952,
+    "initial_mascov": 0.6096,
     "extra_cases": 0,
     "reason": "no_new_valid_cases"
   },
@@ -941,9 +1768,6 @@
   },
   "flaky_report": {
     "history": {
-      "system3_financial_analysis_ARTIFACT_001": [
-        "passed"
-      ],
       "system3_financial_analysis_BUDGET_001": [
         "passed"
       ],
@@ -959,13 +1783,22 @@
       "system3_financial_analysis_COV_003": [
         "passed"
       ],
-      "system3_financial_analysis_DATAINV_001": [
+      "system3_financial_analysis_COV_004": [
+        "passed"
+      ],
+      "system3_financial_analysis_COV_005": [
         "passed"
       ],
       "system3_financial_analysis_FSSAFE_001": [
         "passed"
       ],
       "system3_financial_analysis_FUZZ_001": [
+        "passed"
+      ],
+      "system3_financial_analysis_FUZZ_002": [
+        "passed"
+      ],
+      "system3_financial_analysis_FUZZ_003": [
         "passed"
       ],
       "system3_financial_analysis_HANDOFF_001": [
@@ -984,6 +1817,12 @@
         "passed"
       ],
       "system3_financial_analysis_OUTCONTRACT_003": [
+        "passed"
+      ],
+      "system3_financial_analysis_OUTCONTRACT_004": [
+        "passed"
+      ],
+      "system3_financial_analysis_OUTCONTRACT_005": [
         "passed"
       ],
       "system3_financial_analysis_PROP_001": [
@@ -1013,19 +1852,7 @@
       "system3_financial_analysis_REQ_007": [
         "passed"
       ],
-      "system3_financial_analysis_REQ_008": [
-        "passed"
-      ],
-      "system3_financial_analysis_REQ_009": [
-        "passed"
-      ],
-      "system3_financial_analysis_RESUME_001": [
-        "passed"
-      ],
       "system3_financial_analysis_SMOKE_001": [
-        "passed"
-      ],
-      "system3_financial_analysis_SPEAKER_001": [
         "passed"
       ],
       "system3_financial_analysis_TERM_001": [
@@ -1042,15 +1869,16 @@
     "flaky_count": 0
   },
   "report_narrative": {
-    "agentic_workflow_summary": "本次任务对金融分析AutoGen系统进行了全面测试，覆盖了5个活跃智能体（data_analyst、financial_analyst、risk_analyst、investment_advisor、user_proxy），执行了32个测试用例。测试发现系统存在两类主要软件故障：1) AutoGen框架层面的消息传递错误（MESSAGE_HANDOFF_TERMINATE_ONLY），导致上游分析结果在转发时被替换为TERMINATE标记；2) 应用层文档化的入口点不可用（DOCUMENTED_ENTRYPOINT_BROKEN），`python -m src.main`命令因包结构缺失而失败。此外，部分故障报告经审计后被判定为误报，涉及模型行为而非框架缺陷。",
-    "effectiveness_analysis": "测试覆盖率达到59.52%（mascov 0.5952），代理覆盖率35.71%，需求覆盖率70%（7/10）。所有执行需求（R1-R7）均被验证。成功识别出两个确认的软件故障：SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001（高严重度消息传递错误）和SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002（高严重度入口点损坏），两者均有明确的代码定位和修复建议。同时，其他三个报告故障（FAULT_003/004/005）经审计被判定为误报。整体测试有效性较好，但代理和工具覆盖率偏低。",
-    "false_positive_analysis": "在5个报告的故障中，3个被审计系统判定为误报：FAULT_003（消息传递误报）实为模型行为而非框架错误，测试通过且系统正常终止；FAULT_004（恢复状态误报）缺乏证据表明状态处理器缺陷，系统成功完成任务；FAULT_005（终止信号误报）的行为符合AutoGen的grace消息窗口机制，属于正常行为。这些误报的共同特征是错误地将模型决策行为归因于框架或应用层缺陷。审计置信度均在0.85以上。",
+    "agentic_workflow_summary": "本次自动化测试面向 system3_financial_analysis 进行确定性 coverage/fault/model_usage 分析。系统包含 14 个 Agent，但仅 5 个（data_analyst, financial_analyst, investment_advisor, risk_analyst, user_proxy）被实际访问，Agent 覆盖率为 0.3571。所有 5 条需求均被覆盖和验证，但工具覆盖率为 null（无注册工具）。消息边覆盖率为 0.8。共发现 6 个故障，其中 HIGH 级别 4 个、MEDIUM 级别 2 个。诊断过程通过 FaultDiagnoserAgent 和 FalsePositiveAuditorAgent 完成，模型成功调用 20 次，无失败或回退。总体有效工作流率 0.9688，MASCov 综合覆盖度量 0.6096。",
+    "effectiveness_analysis": "本次测试在识别关键结构/行为故障方面表现有效。共发现 6 个 faults，涵盖应用层和 AutoGen 框架层：FAULT_001（Documented Entrypoint Broken）和 FAULT_002（Message Handoff Error）具有 0.72 和 0.57 的证据强度，均获得确定性确认（confirmed_fault），直接指向可修复的代码/配置问题。FAULT_002 影响了 8 个测试用例，并关联到多个衍生故障（FAULT_004 等），这表明消息传递机制缺陷是影响系统行为的核心根因。诊断结果高度一致，没有重复根因但未被聚合的情况。agentic 诊断和 false positive audit 提供了第二层验证，增强了故障置信度。然而，FAULT_003、005、006 的证据强度不足（0.55、0.30、0.47），未被确定性确认，仅列为 suspected_fault，揭示了在 trace 证据不足时区分症状与故障的局限性。",
+    "false_positive_analysis": "所有故障均经过 FalsePositiveAuditorAgent 审查。FAULT_001 被判定为低误报风险，证据确凿。FAULT_002 的误报风险较高（false_positive_risk: medium，置信度 0.45），因为观察到的下游 Agent 缺失数据可能由上游数据收集工具故障或模型行为导致，而非严格的框架 handoff 缺陷；但综合多用例交叉验证，其根因仍指向消息传递逻辑。FAULT_003/005/006 的误报风险相对更高（置信度 0.55/0.30/0.10），主要原因是 trace 证据弱，无法排除上游工具未注册、模拟桩环境或测试预言偏差等可能性。报告确认了这些故障的 suspected_fault 状态，并指出了进一步代码审核的必要性。未发现单纯由大模型回答风格、知识不足导致的目标故障判定。",
     "next_steps": [
-      "修复SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001：修改student_autogen_system.py中的消息传递逻辑，确保分析结果在转发前剥离TERMINATE标记",
-      "修复SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002：创建src/__init__.py和src/main.py文件，或更新README文档以反映实际入口点",
-      "提高代理覆盖率：添加对未使用代理（如data_collector、report_generator）的集成测试",
-      "扩展工具覆盖率：为需要数据收集和计算的代理注册适当的工具函数",
-      "优化消息传递架构：实施更健壮的消息提取机制，防止TERMINATE标记误传"
+      "修复 FAULT_001：将 'python -m src.main' 对齐至实际项目入口（如 'python student_autogen_system.py'），并添加 CI 测试。",
+      "优先修复 FAULT_002：重构简单版/学生版系统中 agent 间的消息交接逻辑，确保传递实质性分析结果而非 TERMINATE 标记，这将解决 8 个用例的失败。",
+      "对 FAULT_003：补充数据收集工具注册代码（如 yfinance wrapper），并在数据提供层增加空值检查和友好回退，提升 R3/R4/R5 的验证真实性。",
+      "对 FAULT_005/006：进行有代码审查的根因确认。若无法确认，考虑将其标记为环境/测试预言问题，并增强 trace 日志以记录每个 agent 收到的完整消息，提高未来诊断精度。",
+      "扩展工具注册契约（tool_api_contract, tool_error_contract）测试模式，以覆盖 system3 中未使用的工具调用路径。目前 tool_coverage 为 null，严重制约了 FAULT_003 等故障的确信度。",
+      "引入自动化回归测试套件，验证修复后的消息交接、入口点和输出契约，防止已修复故障在多 Agent 交互场景下重新引入。"
     ],
     "confidence": 0.85
   },

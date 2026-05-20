@@ -1,91 +1,6 @@
 [
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
-    "case_id": "system3_financial_analysis_BUDGET_001",
-    "layer": "autogen_framework",
-    "fault_type": "Message Handoff Error",
-    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
-    "evidence": [
-      "**行动建议**：",
-      "**投资评级**：**暂无**（需补充有效分析数据）",
-      "**目标价格**：**无法确定**（缺乏估值基础）",
-      "net_margin: 25.45%",
-      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
-      "debt_ratio: 80.97%",
-      "current_ratio: 1.11",
-      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
-      "**根本性问题：无法给出有效的投资建议。** 在没有财务分析和实际风险数据的情况下，任何声称能给出“综合投资建议”的结论都是不负责任的。",
-      "    3.  **修正公司基本信息：**",
-      "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
-      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。"
-    ],
-    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
-    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
-    "reproduction": {
-      "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.57,
-    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "31"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "48"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "59"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "collect_stock_data",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "93"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "AssistantAgent",
-        "line": "211"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "affected_cases": [
-      "system3_financial_analysis_BUDGET_001",
-      "system3_financial_analysis_COV_002",
-      "system3_financial_analysis_DATAINV_001",
-      "system3_financial_analysis_FSSAFE_001",
-      "system3_financial_analysis_OUTCONTRACT_002",
-      "system3_financial_analysis_REQ_001",
-      "system3_financial_analysis_REQ_005",
-      "system3_financial_analysis_REQ_007"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016"
-    ]
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
     "case_id": "system3_financial_analysis_CLIDOC_001",
     "layer": "application",
     "fault_type": "Documented Entrypoint Broken",
@@ -145,13 +60,171 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.72,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_CLIDOC_001"
     ],
     "duplicate_fault_ids": []
   },
   {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
+    "case_id": "system3_financial_analysis_COV_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+    "evidence": [
+      "    3.  **修正公司基本信息：**",
+      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。",
+      "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**行动建议**：",
+      "        *   **来源：** 金融数据终端 (如Bloomberg, FactSet) 或券商报告。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "#### **4. 最终结论**",
+      "**投资建议：** **立即终止本次评估，并启动数据搜集工作。** 当前唯一合理的操作是保持现有仓位（如有）并获取完整信息。在获得完整的财务数据、真实的风险指标和正确的行业分类后，再进行一次完整的“财务+风险+估值”综合评估，届时才能给出**明确的买入/持有/卖出评级**和**可信的目标价格**。",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。"
+    ],
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
+    "reproduction": {
+      "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system3_financial_analysis_COV_002",
+      "system3_financial_analysis_FSSAFE_001",
+      "system3_financial_analysis_OUTCONTRACT_001",
+      "system3_financial_analysis_OUTCONTRACT_002",
+      "system3_financial_analysis_REQ_001",
+      "system3_financial_analysis_REQ_002",
+      "system3_financial_analysis_REQ_003",
+      "system3_financial_analysis_REQ_005"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_019",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_020"
+    ],
+    "diagnostic_only": false
+  },
+  {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
+    "case_id": "system3_financial_analysis_COV_002",
+    "layer": "application",
+    "fault_type": "Data Collection Tool Registration Missing",
+    "failure_code": "BUSINESS_TASK_FAILED",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
+    "evidence": [
+      "data_collector",
+      "enterprise_financial_analyst",
+      "report_generator"
+    ],
+    "root_cause": "The documented data collection capability is not backed by a robust registered tool, mock provider, or output contract fallback in the automated run.",
+    "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
+    "reproduction": {
+      "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.55,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.55,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system3_financial_analysis_COV_002",
+      "system3_financial_analysis_REQ_002",
+      "system3_financial_analysis_REQ_005"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_021"
+    ],
+    "diagnostic_only": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
     "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
@@ -161,10 +234,10 @@
     "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
       "caller=_last_msg_as_summary",
-      "agent=financial_analyst",
-      "caller=orchestrate_analysis",
+      "agent=data_analyst",
       "content=TERMINATE",
-      "agent=data_analyst"
+      "agent=financial_analyst",
+      "caller=orchestrate_analysis"
     ],
     "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
     "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
@@ -172,7 +245,7 @@
       "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.58,
     "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
     "code_locations": [
@@ -208,6 +281,19 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
+    "diagnostic_only": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "diagnostic_only_pattern",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_HANDOFF_001",
       "system3_financial_analysis_HANDOFF_001",
@@ -218,60 +304,63 @@
       "system3_financial_analysis_HANDOFF_001"
     ],
     "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011"
     ]
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-    "case_id": "system3_financial_analysis_RESUME_001",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+    "case_id": "system3_financial_analysis_OUTCONTRACT_003",
     "layer": "application",
-    "fault_type": "Resume State Inconsistency",
-    "failure_code": "RESUME_STATE_INCOMPLETE",
+    "fault_type": "Output Contract Violation",
+    "failure_code": "OUTPUT_SCHEMA_VIOLATION",
     "severity": "medium",
-    "confidence": 0.84,
-    "summary": "Partial resume fixture existed, but trace/output did not show the latest script being resumed or explicitly repaired.",
+    "confidence": 0.78,
+    "summary": "Output contract expected keywords or sections were missing.",
     "evidence": [
-      "/users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/.masentinel_fixture/system3_financial_analysis_resume_001/masterplan.txt /users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/.masentinel_fixture/system3_financial_analysis_resume_001/script_v1.py"
+      "=\n分析日期: 2026-05-20 12:39:37\nAutoGen协作摘要: AutoGen多智能体协作分析完成：数据分析师、财务分析师、风险分析师和投资顾问共同协作完成了完整的股票分析流程\n\n\n--- 关键财务指标 (百分比) ---\nroe: 146.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，所有模块均显示“TERMINATE”，即未能获取有效的财务数据、风险评估及公司基本信息。因此，目前无法对TSLA Mock Holdings进行任何有意义的综合投资评估。\n\n作为投资顾问，我建议您首先补充完整的财务分析（如营收、利润、现金流、负债结构等）、风险评估（市场、行业、运营、政策等维度）以及公司最新基本信息（业务模式、竞争地位、管理层背景）。只有在这些核心数据齐全后，我才能提供明确的投资评级（如买入、持有、卖出）及目标价格。\n\n请重新提交完整分析资料，我将为您制定专业的投资建议。",
+      "6.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据。公司基本信息仅知为“META Mock Holdings”（模拟控股公司），属于科技行业。\n\n**综合投资建议：**  \n由于缺乏可量化的财务指标（如营收、利润、现金流、增长率等）和风险因素（如市场、运营、财务、合规风险等）的具体分析，无法形成可靠的投资决策依据。在此情况下，**建议暂停任何投资操作**，并优先完成以下步骤：\n- 重新获取或核实财务分析数据，确保完整性；\n- 补充风险评估报告，明确关键风险敞口；\n- 明确公司实际业务模式及竞争地位（“Mock”可能暗示为模拟测试公司，需确认真实性）。\n\n**评级与目标价格：** 暂不适用（无有效数据支撑）。\n\n**行动建议：** 联系分析师要求重新提交完整分析，或寻找替代研究来源后才可给出具体评级与目标价。",
+      "missing_keywords=['记录']",
+      "missing_keywords=['代码']"
     ],
-    "root_cause": "The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow.",
-    "suggested_fix": "Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly.",
+    "root_cause": "The rule oracle detected OUTPUT_SCHEMA_VIOLATION for system system3_financial_analysis.",
+    "suggested_fix": "Validate output before returning and add deterministic fallback formatting.",
     "reproduction": {
-      "input": "Continue the existing project from the latest script and preserve existing state.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
+      "input": "请完成需求 R3，并按文档要求输出：系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
     },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.31,
-    "not_model_fault_because": "The failure is caused by deterministic filesystem/artifact handling code.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/agents/agent_orchestrator.py",
-        "function": "_prepare_agent_task",
-        "line": "282"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/api/websocket.py",
-        "function": "_remove_from_all_subscriptions",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_models.py",
-        "function": "get_latest_year",
-        "line": "212"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
+    "suspected_false_positive": true,
+    "evidence_strength": 0.3,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.3,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
-      "system3_financial_analysis_RESUME_001"
+      "system3_financial_analysis_OUTCONTRACT_003",
+      "system3_financial_analysis_OUTCONTRACT_005"
     ],
-    "duplicate_fault_ids": []
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015"
+    ],
+    "diagnostic_only": false
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
     "case_id": "system3_financial_analysis_TERM_001",
     "layer": "autogen_framework",
     "fault_type": "Termination Signal Ignored",
@@ -295,11 +384,23 @@
       "input": "请完成一个简单任务，最后明确输出 TERMINATE。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.47,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
     "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.47,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_TERM_001"
     ],

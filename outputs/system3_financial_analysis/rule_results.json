@@ -27,22 +27,8 @@
           "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
           "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
         ]
-      },
-      {
-        "code": "TURN_BUDGET_EXCEEDED",
-        "message": "The run terminated, but exceeded the expected soft turn budget.",
-        "severity": "low",
-        "evidence": [
-          "turn_count=19",
-          "max_turns=15"
-        ]
       }
     ]
-  },
-  {
-    "case_id": "system3_financial_analysis_ARTIFACT_001",
-    "passed": true,
-    "failures": []
   },
   {
     "case_id": "system3_financial_analysis_FSSAFE_001",
@@ -61,20 +47,6 @@
           "**根本性问题：无法给出有效的投资建议。** 在没有财务分析和实际风险数据的情况下，任何声称能给出“综合投资建议”的结论都是不负责任的。",
           "**投资建议：** **立即终止本次评估，并启动数据搜集工作。** 当前唯一合理的操作是保持现有仓位（如有）并获取完整信息。在获得完整的财务数据、真实的风险指标和正确的行业分类后，再进行一次完整的“财务+风险+估值”综合评估，届时才能给出**明确的买入/持有/卖出评级**和**可信的目标价格**。",
           "**请执行此行动路线，我将随时准备基于您提供的新数据进行下一步的分析。**"
-        ]
-      }
-    ]
-  },
-  {
-    "case_id": "system3_financial_analysis_RESUME_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "RESUME_STATE_INCOMPLETE",
-        "message": "Partial resume fixture existed, but trace/output did not show the latest script being resumed or explicitly repaired.",
-        "severity": "medium",
-        "evidence": [
-          "/users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/.masentinel_fixture/system3_financial_analysis_resume_001/masterplan.txt /users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/.masentinel_fixture/system3_financial_analysis_resume_001/script_v1.py"
         ]
       }
     ]
@@ -156,27 +128,6 @@
     ]
   },
   {
-    "case_id": "system3_financial_analysis_DATAINV_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "BUSINESS_TASK_FAILED",
-        "message": "The process completed but the target task reported a business-level failure.",
-        "severity": "high",
-        "evidence": [
-          "**综合投资建议**：",
-          "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
-          "**投资评级**：**暂无**（需补充有效分析数据）",
-          "**目标价格**：**无法确定**（缺乏估值基础）",
-          "**行动建议**：",
-          "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
-          "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
-          "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
-        ]
-      }
-    ]
-  },
-  {
     "case_id": "system3_financial_analysis_CLIDOC_001",
     "passed": false,
     "failures": [
@@ -234,28 +185,12 @@
   },
   {
     "case_id": "system3_financial_analysis_BUDGET_001",
-    "passed": false,
-    "failures": [
-      {
-        "code": "BUSINESS_TASK_FAILED",
-        "message": "The process completed but the target task reported a business-level failure.",
-        "severity": "high",
-        "evidence": [
-          "debt_ratio: 80.97%",
-          "gross_margin: 44.16%",
-          "net_margin: 25.45%",
-          "current_ratio: 1.11",
-          "--- 投资顾问最终建议 ---",
-          "根据您提供的分析结果，所有模块均显示“TERMINATE”，即未能获取有效的财务数据、风险评估及公司基本信息。因此，目前无法对TSLA Mock Holdings进行任何有意义的综合投资评估。",
-          "作为投资顾问，我建议您首先补充完整的财务分析（如营收、利润、现金流、负债结构等）、风险评估（市场、行业、运营、政策等维度）以及公司最新基本信息（业务模式、竞争地位、管理层背景）。只有在这些核心数据齐全后，我才能提供明确的投资评级（如买入、持有、卖出）及目标价格。",
-          "请重新提交完整分析资料，我将为您制定专业的投资建议。"
-        ]
-      }
-    ]
+    "passed": true,
+    "failures": []
   },
   {
     "case_id": "system3_financial_analysis_COV_001",
-    "passed": true,
+    "passed": false,
     "failures": [
       {
         "code": "TURN_BUDGET_EXCEEDED",
@@ -264,6 +199,14 @@
         "evidence": [
           "turn_count=19",
           "max_turns=15"
+        ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: agent",
+        "severity": "medium",
+        "evidence": [
+          "agent"
         ]
       }
     ]
@@ -290,14 +233,25 @@
     ]
   },
   {
-    "case_id": "system3_financial_analysis_SPEAKER_001",
-    "passed": true,
-    "failures": []
-  },
-  {
     "case_id": "system3_financial_analysis_OUTCONTRACT_001",
-    "passed": true,
-    "failures": []
+    "passed": false,
+    "failures": [
+      {
+        "code": "BUSINESS_TASK_FAILED",
+        "message": "The process completed but the target task reported a business-level failure.",
+        "severity": "high",
+        "evidence": [
+          "**综合投资建议**：",
+          "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+          "**投资评级**：**暂无**（需补充有效分析数据）",
+          "**目标价格**：**无法确定**（缺乏估值基础）",
+          "**行动建议**：",
+          "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+          "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+          "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
+        ]
+      }
+    ]
   },
   {
     "case_id": "system3_financial_analysis_TOOLREG_001",
@@ -329,7 +283,7 @@
         "severity": "low",
         "evidence": [
           "turn_count=19",
-          "max_turns=15"
+          "max_turns=12"
         ]
       }
     ]
@@ -356,11 +310,6 @@
   },
   {
     "case_id": "system3_financial_analysis_REQ_002",
-    "passed": true,
-    "failures": []
-  },
-  {
-    "case_id": "system3_financial_analysis_COV_002",
     "passed": false,
     "failures": [
       {
@@ -377,11 +326,80 @@
           "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
           "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
         ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: report_generator",
+        "severity": "medium",
+        "evidence": [
+          "report_generator"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system3_financial_analysis_FUZZ_002",
+    "passed": false,
+    "failures": [
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=19",
+          "max_turns=10"
+        ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: enterprise_quantitative_analyst",
+        "severity": "medium",
+        "evidence": [
+          "enterprise_quantitative_analyst"
+        ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: enterprise_portfolio_manager",
+        "severity": "medium",
+        "evidence": [
+          "enterprise_portfolio_manager"
+        ]
       }
     ]
   },
   {
     "case_id": "system3_financial_analysis_REQ_003",
+    "passed": false,
+    "failures": [
+      {
+        "code": "BUSINESS_TASK_FAILED",
+        "message": "The process completed but the target task reported a business-level failure.",
+        "severity": "high",
+        "evidence": [
+          "**综合投资建议**：",
+          "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+          "**投资评级**：**暂无**（需补充有效分析数据）",
+          "**目标价格**：**无法确定**（缺乏估值基础）",
+          "**行动建议**：",
+          "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+          "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+          "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=19",
+          "max_turns=15"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system3_financial_analysis_FUZZ_003",
     "passed": true,
     "failures": [
       {
@@ -391,29 +409,6 @@
         "evidence": [
           "turn_count=19",
           "max_turns=15"
-        ]
-      }
-    ]
-  },
-  {
-    "case_id": "system3_financial_analysis_COV_003",
-    "passed": false,
-    "failures": [
-      {
-        "code": "TURN_BUDGET_EXCEEDED",
-        "message": "The run terminated, but exceeded the expected soft turn budget.",
-        "severity": "low",
-        "evidence": [
-          "turn_count=19",
-          "max_turns=15"
-        ]
-      },
-      {
-        "code": "MISSING_AGENT",
-        "message": "Expected agent was not observed: agent",
-        "severity": "medium",
-        "evidence": [
-          "agent"
         ]
       }
     ]
@@ -441,12 +436,42 @@
   },
   {
     "case_id": "system3_financial_analysis_OUTCONTRACT_003",
+    "passed": false,
+    "failures": [
+      {
+        "code": "OUTPUT_SCHEMA_VIOLATION",
+        "message": "Output contract expected keywords or sections were missing.",
+        "severity": "medium",
+        "evidence": [
+          "missing_keywords=['代码']",
+          "6.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据。公司基本信息仅知为“META Mock Holdings”（模拟控股公司），属于科技行业。\n\n**综合投资建议：**  \n由于缺乏可量化的财务指标（如营收、利润、现金流、增长率等）和风险因素（如市场、运营、财务、合规风险等）的具体分析，无法形成可靠的投资决策依据。在此情况下，**建议暂停任何投资操作**，并优先完成以下步骤：\n- 重新获取或核实财务分析数据，确保完整性；\n- 补充风险评估报告，明确关键风险敞口；\n- 明确公司实际业务模式及竞争地位（“Mock”可能暗示为模拟测试公司，需确认真实性）。\n\n**评级与目标价格：** 暂不适用（无有效数据支撑）。\n\n**行动建议：** 联系分析师要求重新提交完整分析，或寻找替代研究来源后才可给出具体评级与目标价。"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system3_financial_analysis_OUTCONTRACT_004",
     "passed": true,
     "failures": []
   },
   {
+    "case_id": "system3_financial_analysis_OUTCONTRACT_005",
+    "passed": false,
+    "failures": [
+      {
+        "code": "OUTPUT_SCHEMA_VIOLATION",
+        "message": "Output contract expected keywords or sections were missing.",
+        "severity": "medium",
+        "evidence": [
+          "missing_keywords=['记录']",
+          "=\n分析日期: 2026-05-20 12:39:37\nAutoGen协作摘要: AutoGen多智能体协作分析完成：数据分析师、财务分析师、风险分析师和投资顾问共同协作完成了完整的股票分析流程\n\n\n--- 关键财务指标 (百分比) ---\nroe: 146.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，所有模块均显示“TERMINATE”，即未能获取有效的财务数据、风险评估及公司基本信息。因此，目前无法对TSLA Mock Holdings进行任何有意义的综合投资评估。\n\n作为投资顾问，我建议您首先补充完整的财务分析（如营收、利润、现金流、负债结构等）、风险评估（市场、行业、运营、政策等维度）以及公司最新基本信息（业务模式、竞争地位、管理层背景）。只有在这些核心数据齐全后，我才能提供明确的投资评级（如买入、持有、卖出）及目标价格。\n\n请重新提交完整分析资料，我将为您制定专业的投资建议。"
+        ]
+      }
+    ]
+  },
+  {
     "case_id": "system3_financial_analysis_REQ_004",
-    "passed": true,
+    "passed": false,
     "failures": [
       {
         "code": "TURN_BUDGET_EXCEEDED",
@@ -455,6 +480,14 @@
         "evidence": [
           "turn_count=19",
           "max_turns=15"
+        ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: report_generator",
+        "severity": "medium",
+        "evidence": [
+          "report_generator"
         ]
       }
     ]
@@ -486,12 +519,20 @@
           "turn_count=19",
           "max_turns=15"
         ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: data_collector",
+        "severity": "medium",
+        "evidence": [
+          "data_collector"
+        ]
       }
     ]
   },
   {
     "case_id": "system3_financial_analysis_REQ_006",
-    "passed": true,
+    "passed": false,
     "failures": [
       {
         "code": "TURN_BUDGET_EXCEEDED",
@@ -501,6 +542,22 @@
           "turn_count=18",
           "max_turns=15"
         ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: enterprise_quantitative_analyst",
+        "severity": "medium",
+        "evidence": [
+          "enterprise_quantitative_analyst"
+        ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: enterprise_portfolio_manager",
+        "severity": "medium",
+        "evidence": [
+          "enterprise_portfolio_manager"
+        ]
       }
     ]
   },
@@ -509,21 +566,6 @@
     "passed": false,
     "failures": [
       {
-        "code": "BUSINESS_TASK_FAILED",
-        "message": "The process completed but the target task reported a business-level failure.",
-        "severity": "high",
-        "evidence": [
-          "**综合投资建议**：",
-          "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
-          "**投资评级**：**暂无**（需补充有效分析数据）",
-          "**目标价格**：**无法确定**（缺乏估值基础）",
-          "**行动建议**：",
-          "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
-          "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
-          "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
-        ]
-      },
-      {
         "code": "TURN_BUDGET_EXCEEDED",
         "message": "The run terminated, but exceeded the expected soft turn budget.",
         "severity": "low",
@@ -531,12 +573,58 @@
           "turn_count=19",
           "max_turns=15"
         ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: enterprise_data_collector",
+        "severity": "medium",
+        "evidence": [
+          "enterprise_data_collector"
+        ]
       }
     ]
   },
   {
-    "case_id": "system3_financial_analysis_REQ_008",
-    "passed": true,
+    "case_id": "system3_financial_analysis_COV_002",
+    "passed": false,
+    "failures": [
+      {
+        "code": "BUSINESS_TASK_FAILED",
+        "message": "The process completed but the target task reported a business-level failure.",
+        "severity": "high",
+        "evidence": [
+          "        *   **来源：** 金融数据终端 (如Bloomberg, FactSet) 或券商报告。",
+          "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。",
+          "    3.  **修正公司基本信息：**",
+          "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
+          "#### **4. 最终结论**",
+          "**根本性问题：无法给出有效的投资建议。** 在没有财务分析和实际风险数据的情况下，任何声称能给出“综合投资建议”的结论都是不负责任的。",
+          "**投资建议：** **立即终止本次评估，并启动数据搜集工作。** 当前唯一合理的操作是保持现有仓位（如有）并获取完整信息。在获得完整的财务数据、真实的风险指标和正确的行业分类后，再进行一次完整的“财务+风险+估值”综合评估，届时才能给出**明确的买入/持有/卖出评级**和**可信的目标价格**。",
+          "**请执行此行动路线，我将随时准备基于您提供的新数据进行下一步的分析。**"
+        ]
+      },
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=18",
+          "max_turns=15"
+        ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: enterprise_financial_analyst",
+        "severity": "medium",
+        "evidence": [
+          "enterprise_financial_analyst"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_003",
+    "passed": false,
     "failures": [
       {
         "code": "TURN_BUDGET_EXCEEDED",
@@ -546,11 +634,42 @@
           "turn_count=19",
           "max_turns=15"
         ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: enterprise_risk_analyst",
+        "severity": "medium",
+        "evidence": [
+          "enterprise_risk_analyst"
+        ]
       }
     ]
   },
   {
-    "case_id": "system3_financial_analysis_REQ_009",
+    "case_id": "system3_financial_analysis_COV_004",
+    "passed": false,
+    "failures": [
+      {
+        "code": "TURN_BUDGET_EXCEEDED",
+        "message": "The run terminated, but exceeded the expected soft turn budget.",
+        "severity": "low",
+        "evidence": [
+          "turn_count=18",
+          "max_turns=15"
+        ]
+      },
+      {
+        "code": "MISSING_AGENT",
+        "message": "Expected agent was not observed: enterprise_compliance_officer",
+        "severity": "medium",
+        "evidence": [
+          "enterprise_compliance_officer"
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_005",
     "passed": true,
     "failures": [
       {

@@ -1,0 +1,136 @@
+{
+  "agent_coverage": 1.0,
+  "tool_coverage": 1.0,
+  "message_edge_coverage": 1.0,
+  "requirement_coverage": 1.0,
+  "req_intent_coverage": 1.0,
+  "req_verified_coverage": 1.0,
+  "state_coverage": 0.5833,
+  "fault_mode_coverage": 0.5238,
+  "effective_workflow_rate": 0.9688,
+  "trace_completeness": 0.6667,
+  "contract_coverage": 0.6364,
+  "root_cause_evidence_rate": 0.6667,
+  "details": {
+    "visited_agents": [
+      "checking_agent",
+      "director",
+      "group_chat_manager",
+      "research_manager",
+      "researcher",
+      "speaker_selection_agent",
+      "user_proxy"
+    ],
+    "called_tools": [
+      "get_airtable_records",
+      "google_search",
+      "update_single_airtable_record",
+      "web_scraping"
+    ],
+    "observed_edges": [
+      [
+        "checking_agent",
+        "speaker_selection_agent"
+      ],
+      [
+        "director",
+        "group_chat_manager"
+      ],
+      [
+        "group_chat_manager",
+        "director"
+      ],
+      [
+        "group_chat_manager",
+        "research_manager"
+      ],
+      [
+        "group_chat_manager",
+        "researcher"
+      ],
+      [
+        "group_chat_manager",
+        "user_proxy"
+      ],
+      [
+        "research_manager",
+        "group_chat_manager"
+      ],
+      [
+        "researcher",
+        "group_chat_manager"
+      ],
+      [
+        "speaker_selection_agent",
+        "checking_agent"
+      ],
+      [
+        "user_proxy",
+        "group_chat_manager"
+      ]
+    ],
+    "covered_requirements": [
+      "R1",
+      "R2"
+    ],
+    "verified_requirements": [
+      "R1",
+      "R2"
+    ],
+    "covered_states": [
+      "artifact_contract",
+      "autogen_wiring",
+      "conflicting_instruction",
+      "data_invariant",
+      "empty_input",
+      "human_input_requested",
+      "message_handoff",
+      "metamorphic_relation",
+      "non_termination",
+      "normal_task",
+      "property_boundary",
+      "termination",
+      "tool_api_contract",
+      "tool_failure"
+    ],
+    "covered_fault_modes": [
+      "artifact_corruption",
+      "autogen_wiring_missing",
+      "data_invariant_violation",
+      "human_input_mode_error",
+      "message_handoff_error",
+      "message_routing_error",
+      "missing_error_handling",
+      "missing_tool_call",
+      "non_termination",
+      "tool_api_semantics",
+      "tool_error_contract"
+    ],
+    "covered_contract_patterns": [
+      "artifact_contract",
+      "autogen_wiring_conformance",
+      "external_api_contract",
+      "message_edge_coverage",
+      "message_handoff_integrity",
+      "metamorphic_task_equivalence",
+      "no_human_automation",
+      "output_contract",
+      "partial_data_invariant",
+      "positive_smoke",
+      "scalable_budget",
+      "speaker_selection_robustness",
+      "termination_signal",
+      "tool_contract_positive",
+      "tool_error_envelope",
+      "tool_failure_robustness"
+    ],
+    "applicability": {
+      "agents": 5,
+      "tools": 4,
+      "required_message_edges": 1,
+      "profile_message_edges": 13,
+      "potential_message_edges": 12
+    }
+  },
+  "mascov": 0.8571
+}

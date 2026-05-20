@@ -160,6 +160,8 @@ def build_fault_report(faults: list[dict]) -> str:
                 f"- Fault Type: {fault['fault_type']}",
                 f"- Severity: {fault['severity']}",
                 f"- Confidence: {fault['confidence']}",
+                f"- ConfirmationStatus: {fault.get('confirmation_status', 'n/a')}",
+                f"- ConfirmationSource: {fault.get('confirmation_source', 'n/a')}",
                 f"- EvidenceStrength: {fault.get('evidence_strength', 'n/a')}",
                 f"- RootCauseConfidence: {fault.get('root_cause_confidence', 'n/a')}",
                 f"- NotModelFaultBecause: {_clean_report_text(fault.get('not_model_fault_because', ''), limit=800)}",
@@ -179,6 +181,10 @@ def _coverage_table(coverage: dict) -> str:
     rows = [
         ("AgentCov", coverage.get("agent_coverage", 0)),
         ("ToolCov", coverage.get("tool_coverage", 0)),
+        ("AgentEventCov", coverage.get("agent_event_coverage", None)),
+        ("ToolEventCov", coverage.get("tool_event_coverage", None)),
+        ("AvgCaseAgentCov", coverage.get("avg_case_agent_coverage", None)),
+        ("AvgCaseToolCov", coverage.get("avg_case_tool_coverage", None)),
         ("EdgeCov", coverage.get("message_edge_coverage", 0)),
         ("ReqIntentCov", coverage.get("req_intent_coverage", coverage.get("requirement_coverage", 0))),
         ("ReqVerifiedCov", coverage.get("req_verified_coverage", 0)),
@@ -198,6 +204,10 @@ def _coverage_table(coverage: dict) -> str:
 def _format_metric(value: object) -> str:
     if value is None:
         return "N/A"
+    try:
+        return f"{float(value):.4f}"
+    except (TypeError, ValueError):
+        return "N/A"
 
 
 def _format_code_locations(locations: object) -> str:
@@ -209,10 +219,6 @@ def _format_code_locations(locations: object) -> str:
             continue
         parts.append(f"{item.get('file', '')}:{item.get('line', '')} {item.get('function', '')}".strip())
     return "; ".join(parts) or "n/a"
-    try:
-        return f"{float(value):.4f}"
-    except (TypeError, ValueError):
-        return "N/A"
 
 
 def _agentic_section(agentic_info: dict | None) -> list[str]:
@@ -301,16 +307,39 @@ def _pattern_selection_lines(agentic_info: dict) -> list[str]:
     test_plan = agentic_info.get("test_plan", {}) or {}
     if not test_plan:
         return []
-    selected = [str(item.get("pattern")) for item in test_plan.get("selected_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
-    rejected = [str(item.get("pattern")) for item in test_plan.get("rejected_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
+    selected = [_pattern_item_summary(item) for item in test_plan.get("selected_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
+    diagnostic = [_pattern_item_summary(item) for item in test_plan.get("diagnostic_only_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
+    rejected = [_pattern_item_summary(item) for item in test_plan.get("rejected_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
+    omitted = [
+        str(item.get("pattern"))
+        for item in test_plan.get("verifier_omitted_applicable_patterns", []) or []
+        if isinstance(item, dict) and item.get("pattern")
+    ]
     metrics = test_plan.get("metrics", {}) or {}
     return [
         "",
         "## Pattern Selection Evidence",
+        f"- Selection mode: `{test_plan.get('selection_mode', 'unknown')}`",
         f"- PatternApplicabilityPrecision: {_format_metric(metrics.get('pattern_applicability_precision'))}",
-        f"- Selected patterns: {', '.join(f'`{item}`' for item in selected) or 'None'}",
-        f"- Rejected patterns: {', '.join(f'`{item}`' for item in rejected[:12]) or 'None'}",
+        f"- Selected patterns: {'; '.join(selected) or 'None'}",
+        f"- Diagnostic-only patterns: {'; '.join(diagnostic) or 'None'}",
+        f"- Rejected patterns: {'; '.join(rejected[:12]) or 'None'}",
+        f"- Verifier-applicable but not agent-selected: {', '.join(f'`{item}`' for item in omitted[:12]) or 'None'}",
     ]
+
+
+def _pattern_item_summary(item: dict) -> str:
+    pattern = str(item.get("pattern") or "")
+    reason = item.get("reason") or item.get("verifier_reason") or item.get("verifier_warning")
+    if not reason and isinstance(item.get("reasons"), list) and item.get("reasons"):
+        reason = item["reasons"][0]
+    evidence = item.get("required_evidence", [])
+    parts = [f"`{pattern}`"]
+    if reason:
+        parts.append(_clean_report_text(str(reason), limit=160))
+    if evidence:
+        parts.append("evidence=" + _clean_report_text(",".join(str(x) for x in evidence[:3]), limit=160))
+    return " - ".join(parts)
 
 
 def _clean_report_text(value: object, limit: int = 1600) -> str:

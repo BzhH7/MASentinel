@@ -1,78 +1,16 @@
 [
   {
-    "group_id": "generic:application-tool-api-pagination-missing-the-external-api-tool-wrapper-get_airtable_records-and-update_single_airtable_re",
-    "title": "Tool API Pagination Missing",
-    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
-    "fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_005"
-    ],
-    "symptom_fault_ids": [],
-    "affected_cases": [
-      "system2_research_agents_TOOLAPI_001"
-    ],
-    "failure_codes": [
-      "PAGINATION_NOT_FOLLOWED"
-    ],
-    "severity": "high",
-    "confidence": 0.9,
-    "root_cause": "The external API tool wrapper (get_airtable_records and update_single_airtable_record in app.py) does not properly follow offset pagination or preserve semantic parameters (e.g., view, base, table) when making requests. The tool makes a single API call and does not iterate through all pages to retrieve the complete dataset, failing to satisfy the pagination_followed contract requirement.",
-    "suggested_fix": "Modify the get_airtable_records function in app.py to: (1) Parse and preserve semantic URL parameters such as view/base/table from the request. (2) Implement a loop that follows offset-based pagination, checking for continuation tokens or next page URLs until all pages are retrieved. (3) Aggregate all records from all pages into a single response. (4) Handle rate limits and error responses gracefully.",
-    "summary": "External API pagination stopped before all fixture pages were requested."
-  },
-  {
-    "group_id": "generic:application-tool-error-contract-missing-the-web_scraping-tool-wrapper-does-not-inspect-http-status-codes-and-does-not-wr",
-    "title": "Tool Error Contract Missing",
-    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
-    "fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_006"
-    ],
-    "symptom_fault_ids": [],
-    "affected_cases": [
-      "system2_research_agents_TOOLERR_001"
-    ],
-    "failure_codes": [
-      "HTTP_STATUS_NOT_CHECKED"
-    ],
-    "severity": "medium",
-    "confidence": 0.88,
-    "root_cause": "The web_scraping tool wrapper does not inspect HTTP status codes and does not wrap API errors into a structured typed error envelope (e.g., containing status code, error message, and tool call ID). Instead, it likely returns raw text or None on failure, violating the contract expected by the system's error handling and trace diagnostics.",
-    "suggested_fix": "Modify the web_scraping tool wrapper to check HTTP response status codes. On non-2xx responses, construct and return a structured error dictionary (e.g., {\"error\": True, \"status_code\": 401, \"detail\": \"invalid key\"}) and ensure this error is propagated through the tool result and logged in the MAS_TRACE envelope. This should be implemented in the application-layer tool definition code (e.g., in the function registered for web_scraping).",
-    "summary": "HTTP failure status was not captured in the trace envelope."
-  },
-  {
-    "group_id": "generic:application-tool-schema-mismatch-the-external-api-tool-wrapper-get_airtable_records-update_single_airtable_record-does-n",
-    "title": "Tool Schema Mismatch",
-    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
-    "fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_004"
-    ],
-    "symptom_fault_ids": [],
-    "affected_cases": [
-      "system2_research_agents_TOOLAPI_001"
-    ],
-    "failure_codes": [
-      "VIEW_PARAMETER_IGNORED"
-    ],
-    "severity": "high",
-    "confidence": 0.9,
-    "root_cause": "The external API tool wrapper (get_airtable_records / update_single_airtable_record) does not extract and forward semantic query parameters (like 'view') and does not implement pagination handling. Consequently, the API call omits required filters, returns incomplete/invalid responses, and fails to iterate through paginated results, causing execution errors and timeout.",
-    "suggested_fix": "Modify get_airtable_records and update_single_airtable_record in app.py to: 1) parse and pass semantic fields such as view/base/table into the API request; 2) follow offset-based pagination by iterating until all records are fetched (e.g., checking for 'offset' in responses and issuing subsequent requests); 3) ensure structured error handling for non-200 responses or missing parameters.",
-    "summary": "External API request did not preserve documented semantic query parameters."
-  },
-  {
     "group_id": "interaction:speaker-selection-loop",
     "title": "GroupChat speaker selection loop",
     "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
     "fault_ids": [
       "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_002"
     ],
     "symptom_fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_002"
     ],
     "affected_cases": [
-      "system2_research_agents_ARTIFACT_001",
-      "system2_research_agents_BUDGET_001",
       "system2_research_agents_COV_001",
       "system2_research_agents_COV_002",
       "system2_research_agents_COV_003",
@@ -80,7 +18,8 @@
       "system2_research_agents_COV_005",
       "system2_research_agents_COV_006",
       "system2_research_agents_COV_007",
-      "system2_research_agents_DATAINV_001",
+      "system2_research_agents_COV_008",
+      "system2_research_agents_COV_009",
       "system2_research_agents_FUZZ_001",
       "system2_research_agents_HANDOFF_001",
       "system2_research_agents_META_001",
@@ -89,10 +28,9 @@
       "system2_research_agents_PROP_001",
       "system2_research_agents_REG_001",
       "system2_research_agents_REQ_001",
-      "system2_research_agents_REQ_002",
+      "system2_research_agents_REQ_003",
       "system2_research_agents_REQ_004",
       "system2_research_agents_SMOKE_001",
-      "system2_research_agents_SPEAKER_001",
       "system2_research_agents_TOOLAPI_001",
       "system2_research_agents_TOOLCONTRACT_001",
       "system2_research_agents_TOOLCONTRACT_002",
@@ -100,6 +38,7 @@
       "system2_research_agents_TOOLCONTRACT_004",
       "system2_research_agents_TOOLERR_001",
       "system2_research_agents_TOOLFUZZ_001",
+      "system2_research_agents_TOOLFUZZ_002",
       "system2_research_agents_WIRING_001"
     ],
     "failure_codes": [
@@ -108,38 +47,54 @@
     ],
     "severity": "high",
     "confidence": 0.86,
-    "root_cause": "The AutoGen GroupChat manager's speaker selection mechanism failed to terminate the conversation after task completion. Instead, it continued to invoke the speaker selection agent repeatedly, eventually causing a timeout. The speaker selection prompt or response handling did not properly detect the termination condition, or the 'TERMINATE' keyword was not recognized, leading to a loop.",
-    "suggested_fix": "Harden GroupChat speaker selection logic: 1) Implement explicit termination detection when the conversation indicates task completion (e.g., check for 'Task complete' or final answer). 2) Normalize speaker names and filter invalid selections. 3) Cap the number of consecutive speaker selection retries without progress. 4) Ensure that the GroupChat manager correctly handles a 'TERMINATE' response from the speaker selection agent. 5) Review and update the speaker selection agent's prompt to recognize end-of-task signals.",
+    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
+    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses."
   },
   {
     "group_id": "interaction:timeout-or-non-termination",
     "title": "Conversation timeout or missing termination guard",
-    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
     "fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_002"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system2_research_agents_ARTIFACT_001",
-      "system2_research_agents_BUDGET_001",
       "system2_research_agents_COV_002",
-      "system2_research_agents_COV_004",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_COV_006",
       "system2_research_agents_COV_007",
-      "system2_research_agents_FUZZ_001",
       "system2_research_agents_HANDOFF_001",
-      "system2_research_agents_OUTCONTRACT_001",
       "system2_research_agents_REQ_001",
-      "system2_research_agents_SPEAKER_001",
-      "system2_research_agents_TOOLAPI_001"
+      "system2_research_agents_REQ_003"
     ],
     "failure_codes": [
       "TIMEOUT"
     ],
     "severity": "high",
     "confidence": 0.82,
-    "root_cause": "The conversation lacks a reliable termination condition: the speaker selection agent keeps selecting next roles even after the task is complete, and there is no termination message or max-turn guard that stops the loop.",
-    "suggested_fix": "Add a termination message check (e.g., if 'Task complete' appears, set is_termination_msg=true), enforce a strict max_turns limit, and/or configure human_input_mode='NEVER' with a terminating condition to prevent infinite loops.",
+    "root_cause": "The conversation lacks a reliable termination condition: speaker_selection_agent keeps selecting 'researcher' cycle without producing a termination signal; there is no is_termination_msg check, max_turns guard, or forced exit after exceeding configured limit.",
+    "suggested_fix": "Add a termination message function that checks for keywords like 'TERMINATE' or 'exit'. Configure max_turns=12 in groupchat/agent settings and set human_input_mode='NEVER' for automated runs. Implement a fallback speaker selection logic that picks 'checking_agent' when a cycle is detected.",
     "summary": "The process exceeded the configured timeout."
+  },
+  {
+    "group_id": "runtime:nameerror:name-web_scraping-is-not-defined",
+    "title": "Unhandled startup/runtime exception",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_004"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_REQ_003"
+    ],
+    "failure_codes": [
+      "RUNTIME_EXCEPTION"
+    ],
+    "severity": "high",
+    "confidence": 0.85,
+    "root_cause": "The researcher agent attempted to execute dynamically generated Python code that referenced 'web_scraping' without the tool being previously defined or imported in the execution scope. No error handling was present to catch NameError and recover gracefully, causing a runtime crash that propagated to the agent and resulted in task failure.",
+    "suggested_fix": "Modify the code generation logic or the Python execution environment to ensure all required tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) are properly imported and defined before executing user code. Add a try/except block around the execution to catch NameError and other exceptions, allowing the agent to handle missing tools gracefully rather than crashing. Alternatively, explicitly list tool names injected into the code namespace.",
+    "summary": "The process ended with an unhandled runtime error."
   }
 ]

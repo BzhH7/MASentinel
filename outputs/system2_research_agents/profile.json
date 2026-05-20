@@ -88,29 +88,27 @@
   "requirements": [
     {
       "id": "R1",
-      "description": "The multi-agent workflow must route user tasks through declared agents (user_proxy, researcher, research_manager, director) and terminate reliably when a TERMINATE message is issued or max_round=15 is reached.",
+      "description": "The system must implement a multi-agent research workflow using a group chat with user_proxy, researcher, research_manager, and director, respecting the defined termination conditions (TERMINATE keyword, max_round=15, and user input mode).",
       "expected_agents": [
         "user_proxy",
         "researcher",
         "research_manager",
-        "director"
+        "director",
+        "group_chat_manager"
       ],
       "expected_tools": [],
       "expected_behavior": [
-        "UserProxyAgent initiates group chat with human_input_mode 'ALWAYS' and max_consecutive_auto_reply=1",
-        "GroupChatManager orchestrates agent conversation with max_round=15",
-        "Termination occurs on 'TERMINATE' in message content or when max_round exceeded",
-        "All agents in the group list receive and can respond to messages in the routing order"
+        "The workflow starts with user_proxy initiating a chat with group_chat_manager and terminates when a 'TERMINATE' message appears, after 15 rounds, or via human input interruption.",
+        "All four domain agents (user_proxy, researcher, research_manager, director) are participants in the GroupChat and can communicate (evidence: message_edges show full connectivity)."
       ],
       "negative_cases": [
-        "No TERMINATE signal sent within max_round leads to forced termination without proper state",
-        "Empty or malformed input causes stuck human_input_mode without progress",
-        "Repeated auto-reply loops among agents due to missing termination condition"
+        "empty_input: The user provides an empty or whitespace-only message to user_proxy; the system should not crash and should either prompt again or terminate gracefully.",
+        "termination_stress: The conversation reaches max_round=15 without a TERMINATE message; the system must stop processing and not hang."
       ]
     },
     {
       "id": "R2",
-      "description": "Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return results or handle errors gracefully without crashing the agent workflow.",
+      "description": "The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors.",
       "expected_agents": [
         "researcher",
         "director"
@@ -122,15 +120,48 @@
         "update_single_airtable_record"
       ],
       "expected_behavior": [
-        "researcher agent invokes web_scraping and google_search via registered tool schema",
-        "director agent invokes get_airtable_records and update_single_airtable_record",
-        "Tools return data or descriptive error when external service fails (e.g., network, invalid key)",
-        "Tool invocation failures do not terminate the entire group chat abnormally"
+        "When the researcher agent receives a relevant user instruction, it can invoke google_search and/or web_scraping, and the tool calls return data (e.g., search results, webpage content) or a clear error message.",
+        "When the director agent receives a relevant user instruction, it can invoke get_airtable_records to fetch data from Airtable and update_single_airtable_record to modify a record.",
+        "Tool execution errors (network failures, invalid arguments, authentication issues) are caught and reported back to the calling agent without crashing the whole system."
       ],
       "negative_cases": [
-        "Tool receives invalid JSON arguments leads to unhandled exception in agent call",
-        "Tool service unavailable (API key missing, timeout) causes silent failure with no feedback",
-        "Function call from agent not registered as tool causes GroupChatManager routing deadlock"
+        "tool_failure: A tool like google_search returns an error due to missing API key or network issue; the researcher should handle it and inform the user, not stop the group chat silently.",
+        "tool_invalid_json: An agent passes malformed arguments to a tool (e.g., incorrect JSON structure for update_single_airtable_record); the tool should return a descriptive error message, and the agent should recover or retry."
+      ]
+    },
+    {
+      "id": "R3",
+      "description": "The system must preserve conversation context across multiple turns in the group chat, allowing agents to refer to previous messages and tool results.",
+      "expected_agents": [
+        "user_proxy",
+        "researcher",
+        "research_manager",
+        "director",
+        "group_chat_manager"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "Group chat messages array is initialized empty and grows as agents speak; agents can reference earlier content.",
+        "After a tool call (e.g., web_scraping), the result is included in the chat history and visible to subsequent speakers in the group."
+      ],
+      "negative_cases": [
+        "context_loss: After many turns (e.g., approaching max_round=15), an agent fails to recall earlier tool results or user instructions; the system may generate inconsistent outputs."
+      ]
+    },
+    {
+      "id": "R4",
+      "description": "The system must enforce termination when the user (or any agent) sends a message containing the keyword 'TERMINATE'.",
+      "expected_agents": [
+        "user_proxy",
+        "group_chat_manager"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "The UserProxyAgent's is_termination_msg function checks if 'TERMINATE' is in the message content, and the GroupChatManager should stop selecting speakers and end the conversation.",
+        "If any agent includes 'TERMINATE' in its response, the conversation terminates within one more step at most."
+      ],
+      "negative_cases": [
+        "termination_bypass: An agent sends a message that contains 'terminate' (lowercase) or 'TERMINATE' as part of a larger word; the system should still detect it and terminate if the implementation expects case-sensitive exact match."
       ]
     }
   ],
@@ -287,26 +318,41 @@
     "analyzer": "deterministic_ast_plus_doc_heuristic",
     "agentic": {
       "semantic_graph_review": {
-        "semantic_graph_review": "The message edge graph is derived from the fully connected GroupChat agent list (user_proxy, researcher, research_manager, director), plus the user_proxy -> group_chat_manager edge from initiate_chat. This reflects the GroupChatManager's speaker selection logic, so the edges are structurally accurate. However, no tool-calling edges or execution path dependencies are modeled; tool registration per agent matches the raw notes agent_tool_links (researcher for web_scraping/google_search; director for airtable tools). The termination condition includes TERMINATE in message content (via user_proxy's is_termination_msg) and max_round=15, which aligns with requirements R1.",
+        "semantic_graph_review": "Based on the AST+doc evidence, the group chat connects all five agents (user_proxy, researcher, research_manager, director, group_chat_manager). The message edges are correctly derived from the GroupChat configuration (app.py line 193) where all four domain agents are in the agents list, so any agent can communicate with any other. The edge user_proxy -> group_chat_manager is separately supported by the initiate_chat call. Tool assignments match the AST: researcher has google_search and web_scraping, director has get_airtable_records and update_single_airtable_record. No missing mandatory agent/tool links are evident from the static data. However, the tool registration for GPTAssistantAgent is done via the tools parameter of assistant_config, which is an AutoGen pattern; the actual behavior depends on the LLM endpoint (OpenAI assistants API), which is a runtime concern not modeled here.",
         "suspected_risk_points": [
           {
             "type": "tool_schema_risk",
-            "evidence": "Tools web_scraping, google_search, get_airtable_records, update_single_airtable_record are defined as Python functions but no JSON schema or parameter annotations are provided in the raw analysis. Autogen GPTAssistantAgent requires function schemas in llm_config's 'functions' list to expose tools; absence of schemas can cause agent LLM to never generate function calls, making tools ineffective. In the code, researcher and director are instances of GPTAssistantAgent but no explicit tool registration or schema mapping is visible in the analyzed snippet beyond agent_tool_links mapping.",
-            "related_tool": "web_scraping, google_search, get_airtable_records, update_single_airtable_record"
+            "evidence": "AST shows researcher tools are google_search and web_scraping, but the google_search signature in the profile has null signature and parameters. The functions are defined with parameters (e.g., google_search(search_query), web_scraping(url), get_airtable_records()) but the static analyzer could not capture their JSON schemas. If the function signatures are not properly serializable or conflict with the OpenAI function-calling schema, tool calls may fail at runtime. Related requirements: R2 (tool invocation).",
+            "related_tool": "google_search"
           },
           {
-            "type": "application_logic_risk",
-            "evidence": "Function summary (line 43) reads a file named 'web_summary.txt' using path relative to current working directory without error handling for missing file or permission issues. It is not listed in the tool list but appears as a function; if it is intended to be used by agents and the file is missing, call will raise FileNotFoundError unhandled, potentially crashing the workflow.",
-            "related_tool": "summary"
+            "type": "tool_schema_risk",
+            "evidence": "The researcher's web_scraping function (app.py line 68) uses requests with a timeout but does not clearly propagate exceptions or parse body in a structured way; potential runtime errors (network issues, invalid URLs) could return raw exceptions instead of descriptive error messages. Requirement R2 expects error handling.",
+            "related_tool": "web_scraping"
           },
           {
-            "type": "integration_risk_autogen",
-            "evidence": "UserProxyAgent has human_input_mode='ALWAYS' and max_consecutive_auto_reply=1. GroupChatManager expects agent responses to proceed; if user does not provide input within reasonable time or input is empty, the group chat may stall and rely on max_round only, not a graceful timeout. This matches R1 negative case 'Empty or malformed input causes stuck human_input_mode without progress'.",
+            "type": "tool_schema_risk",
+            "evidence": "The director's get_airtable_records (app.py line 105) uses a hardcoded formula in a ?filterByFormula query string; authentication relies on an environment variable (AIRTABLE_API_KEY). If the key is missing or invalid, the tool returns an error message, but the function has no try/except for network errors—any exception could propagate. Requirement R2 expects caught errors.",
+            "related_tool": "get_airtable_records"
+          },
+          {
+            "type": "tool_schema_risk",
+            "evidence": "The director's update_single_airtable_record (app.py line 120) constructs a PATCH request; the 'fields' parameter is defined but the function does not validate the JSON structure or handle malformed inputs gracefully. Requirement R2 negative case 'tool_invalid_json' could trigger an unhandled exception.",
+            "related_tool": "update_single_airtable_record"
+          },
+          {
+            "type": "termination_risk",
+            "evidence": "The UserProxyAgent's is_termination_msg lambda (app.py line 143) checks 'TERMINATE' in msg['content'], which is case-sensitive. Requirement R4 expects detection; if an agent includes 'terminate' (lowercase) or embeds TERMINATE in a larger word, termination may not trigger. This is a deliberate design choice but could be a mismatch with requirement R4's negative case, though that case mentions 'if the implementation expects case-sensitive exact match'—so it is a known characteristic, not necessarily a bug. However, the group_chat_manager and max_round termination are also in place, so the risk is moderate.",
+            "related_tool": null
+          },
+          {
+            "type": "integration_config_risk",
+            "evidence": "The researcher and director are GPTAssistantAgent instances configured with an assistant_config that includes tools and a model. If the OpenAI assistants API returns cancellation or tool errors, the AutoGen framework's handling (via GPTAssistantAgent) must map those back to messages. The static analyzer cannot verify correct error mapping, but it is a known integration point where failures could violate R2's requirement of handling tool errors.",
             "related_tool": null
           }
         ],
         "additional_edges": [],
-        "confidence": 0.7
+        "confidence": 0.85
       }
     }
   }

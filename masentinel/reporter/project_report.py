@@ -59,6 +59,7 @@ def collect_project_evidence(output_dir: str | Path, results: list[dict[str, Any
         harness_issues = read_json(system_dir / "test_harness_issues.json", []) or []
         run_summary = read_json(system_dir / "runs" / "run_summary.json", []) or []
         agentic_summary = read_json(system_dir / "agentic_summary.json", {}) or {}
+        test_plan = read_json(system_dir / "test_plan.json", {}) or agentic_summary.get("test_plan", {}) or {}
         model_usage = read_json(system_dir / "model_usage.json", {}) or {}
         rule_results = read_json(system_dir / "rule_results.json", []) or []
         manifest = read_json(system_dir / "run_manifest.json", {}) or {}
@@ -94,6 +95,7 @@ def collect_project_evidence(output_dir: str | Path, results: list[dict[str, Any
                     "by_model": model_usage.get("by_model", {}),
                 },
                 "target_model_usage": agentic_summary.get("target_model_usage", {}),
+                "test_plan": _test_plan_summary(test_plan, coverage),
                 "human_intervention_allowed": agentic_summary.get("human_intervention_allowed", manifest.get("no_human") is False),
                 "testcases_frozen_sha256": agentic_summary.get("testcases_frozen_sha256", ""),
                 "report_artifacts": {
@@ -144,7 +146,7 @@ def render_project_report(evidence: dict[str, Any], agent_output: dict[str, Any]
             "- `SystemModelingAgent` 复核 agent、tool 与 message edge 语义图。",
             "- `TestDesignerAgent` 分批生成补充测试，确定性生成器补齐覆盖类型。",
             "- `InteractionAdapterAgent` 为交互式目标系统规划无人值守输入适配。",
-            "- `ExecutionMonitorAgent`、`FaultDiagnoserAgent`、`FalsePositiveAuditorAgent` 完成异常归纳、故障定位与误报审计。",
+            "- `ExecutionMonitorAgent`、`FaultDiagnoserAgent`、`FalsePositiveAuditorAgent` 完成异常归纳、根因解释与误报风险提示；最终确认由确定性 oracle 和 evidence gate 决定。",
             "- `ProjectReportAgent` 汇总三套系统的最终提交报告。",
             "",
             "## 测试覆盖率指标设计",
@@ -217,6 +219,7 @@ def render_project_report(evidence: dict[str, Any], agent_output: dict[str, Any]
                 f"- 根因组：{counts.get('root_groups', 0)}",
                 f"- 非目标问题排除：{counts.get('non_target_excluded', 0)}",
                 f"- 其中测试框架/软预算问题：{counts.get('harness_excluded', 0)}",
+                f"- Pattern 选择：{_format_pattern_selection(system.get('test_plan', {}))}",
                 f"- 覆盖率解读：{_clean(analysis.get('coverage_interpretation'))}",
                 f"- 故障概要：{_clean(analysis.get('fault_report_summary'))}",
             ]
@@ -310,6 +313,7 @@ def render_system_fault_report(system: dict[str, Any], analysis: dict[str, Any] 
         "",
         f"- 覆盖率解读：{_clean(analysis.get('coverage_interpretation'))}",
         f"- 故障概要：{_clean(analysis.get('fault_report_summary'))}",
+        f"- Pattern 选择：{_format_pattern_selection(system.get('test_plan', {}))}",
         f"- 测试框架/软预算类排除：{counts.get('harness_excluded', 0)}",
     ]
     _append_fault_table(lines, "真实故障 / 确认主根因", system.get("true_faults", []))
@@ -322,7 +326,7 @@ def render_system_fault_report(system: dict[str, Any], analysis: dict[str, Any] 
             "## 判定口径",
             "- 真实故障：未被误报审计标记为 suspected false positive，且属于 application 或 autogen_framework 层的主根因。",
             "- 派生症状：由同一主根因级联产生的附带失败，不重复计为新的主根因。",
-            "- 疑似误报：FalsePositiveAuditorAgent 或确定性规则标记为 suspected_false_positive 的目标层发现。",
+            "- 疑似误报：确定性 evidence gate 未达到确认阈值的目标层发现；agent 审计只作为辅助风险提示。",
             "- 非目标排除：模型/API provider 超时、鉴权、测试框架软预算、未观测到有效工作流等，不计入目标系统真实故障。",
         ]
     )
@@ -364,6 +368,10 @@ def _coverage_summary(coverage: dict[str, Any]) -> dict[str, float | None]:
     keys = [
         "agent_coverage",
         "tool_coverage",
+        "agent_event_coverage",
+        "tool_event_coverage",
+        "avg_case_agent_coverage",
+        "avg_case_tool_coverage",
         "message_edge_coverage",
         "requirement_coverage",
         "req_intent_coverage",
@@ -381,6 +389,41 @@ def _coverage_summary(coverage: dict[str, Any]) -> dict[str, float | None]:
         value = coverage.get(key)
         summary[key] = None if value is None else float(value or 0.0)
     return summary
+
+
+def _test_plan_summary(test_plan: dict[str, Any], coverage: dict[str, Any]) -> dict[str, Any]:
+    details = coverage.get("details", {}) if isinstance(coverage, dict) else {}
+    return {
+        "selection_mode": test_plan.get("selection_mode") or details.get("pattern_selection_mode"),
+        "selected_patterns": _pattern_names(test_plan.get("selected_patterns", [])) or details.get("selected_patterns", []),
+        "diagnostic_only_patterns": _pattern_names(test_plan.get("diagnostic_only_patterns", [])) or details.get("diagnostic_only_patterns", []),
+        "rejected_patterns": _pattern_names(test_plan.get("rejected_patterns", [])) or details.get("rejected_patterns", []),
+        "metrics": test_plan.get("metrics", {}),
+    }
+
+
+def _pattern_names(items: object) -> list[str]:
+    if not isinstance(items, list):
+        return []
+    names: list[str] = []
+    for item in items:
+        if isinstance(item, str):
+            names.append(item)
+        elif isinstance(item, dict) and item.get("pattern"):
+            names.append(str(item.get("pattern")))
+    return names
+
+
+def _format_pattern_selection(test_plan: dict[str, Any]) -> str:
+    selected = test_plan.get("selected_patterns", []) or []
+    diagnostic = test_plan.get("diagnostic_only_patterns", []) or []
+    rejected = test_plan.get("rejected_patterns", []) or []
+    return (
+        f"mode={test_plan.get('selection_mode', 'unknown')}；"
+        f"selected={', '.join(f'`{item}`' for item in selected) or 'None'}；"
+        f"diagnostic={', '.join(f'`{item}`' for item in diagnostic) or 'None'}；"
+        f"rejected={len(rejected)}"
+    )
 
 
 def _fault_brief(fault: dict[str, Any]) -> dict[str, Any]:

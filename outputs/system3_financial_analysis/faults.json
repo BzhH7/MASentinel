@@ -1,108 +1,6 @@
 [
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
-    "case_id": "system3_financial_analysis_BUDGET_001",
-    "layer": "autogen_framework",
-    "fault_type": "Message Handoff Error",
-    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
-    "evidence": [
-      "**行动建议**：",
-      "**投资评级**：**暂无**（需补充有效分析数据）",
-      "**目标价格**：**无法确定**（缺乏估值基础）",
-      "net_margin: 25.45%",
-      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
-      "debt_ratio: 80.97%",
-      "current_ratio: 1.11",
-      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
-      "**根本性问题：无法给出有效的投资建议。** 在没有财务分析和实际风险数据的情况下，任何声称能给出“综合投资建议”的结论都是不负责任的。",
-      "    3.  **修正公司基本信息：**",
-      "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
-      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。"
-    ],
-    "root_cause": "The agent termination handoff logic in student_autogen_system.py (lines 31-211) incorrectly treats valid upstream analysis completion as full termination, forwarding only TERMINATE markers instead of passing the analysis results to downstream agents like investment advisor.",
-    "suggested_fix": "1) Modify the termination handoff logic in student_autogen_system.py to distinguish between upstream analysis completion (pass data forward) vs full workflow termination (stop execution). 2) Ensure that when an agent returns TERMINATE due to completing its task, the actual analysis content is extracted and passed to the next agent in the workflow before propagating termination. 3) Update the collection and forwarding functions (collect_stock_data, to_dict) to strip termination markers when assembling messages for downstream consumption.",
-    "reproduction": {
-      "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.57,
-    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "31"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "48"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "59"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "collect_stock_data",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "93"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "AssistantAgent",
-        "line": "211"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "affected_cases": [
-      "system3_financial_analysis_BUDGET_001",
-      "system3_financial_analysis_COV_002",
-      "system3_financial_analysis_DATAINV_001",
-      "system3_financial_analysis_FSSAFE_001",
-      "system3_financial_analysis_OUTCONTRACT_002",
-      "system3_financial_analysis_REQ_001",
-      "system3_financial_analysis_REQ_005",
-      "system3_financial_analysis_REQ_007"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016"
-    ],
-    "agentic_evidence": [
-      "Downstream task reports missing data: '所有模块均显示\"TERMINATE\"'",
-      "Upstream analysis outputs contain valid data (net_margin: 25.45%, debt_ratio: 80.97%, current_ratio: 1.11) but handoff to investment advisor only delivers TERMINATE/empty content",
-      "Evidence from fault report: root_cause='The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.'",
-      "Code locations in student_autogen_system.py lines 31,48,59,62,93,211 indicate termination condition handling in handoff logic",
-      "Termination condition misinterpreted as true, causing downstream agent to receive only terminate signal"
-    ],
-    "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The fault is in the AutoGen framework's message handoff logic within student_autogen_system.py. Upstream agents produced valid analysis data (e.g., net_margin: 25.45%, debt_ratio: 80.97%, current_ratio: 1.11), but the handoff to the downstream investment advisor agent incorrectly translates their completion signal (TERMINATE) into empty or termination-only content, causing the advisor to receive no substantive data. This is a software defect in the application's AutoGen orchestration code (termination condition handling and message forwarding), not a model capability or test framework issue.",
-      "false_positive_risk": "low",
-      "confidence": 0.95
-    },
-    "root_cause_group_id": "handoff:terminate-empty-or-wrong-source",
-    "root_cause_group_title": "Message handoff forwarded empty or TERMINATE content",
-    "is_primary_fault": true,
-    "cascades_from": null
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
     "case_id": "system3_financial_analysis_CLIDOC_001",
     "layer": "application",
     "fault_type": "Documented Entrypoint Broken",
@@ -120,8 +18,8 @@
       "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python: Error while finding module specification for 'src.main' (ModuleNotFoundError: No module named 'src')",
       "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python -m src.main analyze AAPL python -m src.main analyze AAPL"
     ],
-    "root_cause": "The project lacks an 'src' package (no src/__init__.py or src/main.py) and the documented entrypoint 'python -m src.main' does not exist. The directory structure likely uses a different layout (e.g., flat main.py or student_autogen_system.py) instead of an 'src' package, causing the import error.",
-    "suggested_fix": "Create an 'src' package by adding src/ directory with __init__.py and a main.py that parses the CLI arguments and invokes the system. Alternatively, update the README to reflect the actual entrypoint (e.g., 'python student_autogen_system.py analyze AAPL').",
+    "root_cause": "The documented entrypoint 'python -m src.main analyze AAPL' in README or documentation points to a non-existent 'src' package. The actual Python project is rooted at 'autogen-financial-analysis-main', which likely contains a different module structure (e.g., a flat 'student_autogen_system.py' file without a 'src' directory). This causes a deterministic import failure before any agent or model logic is invoked.",
+    "suggested_fix": "Align the documented command with the actual project structure. If the main entrypoint is in 'student_autogen_system.py' at the project root, update the README command to 'python -m student_autogen_system analyze AAPL'. If a 'src' package is intended, create the directory structure with an __init__.py and move the main module there. Add a CI test that executes the documented command to prevent regression.",
     "reproduction": {
       "input": "python -m src.main analyze AAPL",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python -m src.main analyze AAPL python -m src.main analyze AAPL"
@@ -162,45 +60,292 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.72,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_CLIDOC_001"
     ],
     "duplicate_fault_ids": [],
+    "agentic_diagnosis": {
+      "fault_confirmed": true,
+      "layer": "application",
+      "fault_type": "Documented Entrypoint Broken",
+      "severity": "high",
+      "confidence": 0.9,
+      "evidence": [
+        {
+          "type": "trace",
+          "detail": "Execution of 'python -m src.main analyze AAPL' failed with 'ModuleNotFoundError: No module named 'src''"
+        },
+        {
+          "type": "code_structure",
+          "detail": "Project root is 'autogen-financial-analysis-main', but the documented entrypoint assumes a 'src' package that does not exist in the project layout"
+        }
+      ],
+      "root_cause": "The documented entrypoint 'python -m src.main analyze AAPL' in README or documentation points to a non-existent 'src' package. The actual Python project is rooted at 'autogen-financial-analysis-main', which likely contains a different module structure (e.g., a flat 'student_autogen_system.py' file without a 'src' directory). This causes a deterministic import failure before any agent or model logic is invoked.",
+      "suggested_fix": "Align the documented command with the actual project structure. If the main entrypoint is in 'student_autogen_system.py' at the project root, update the README command to 'python -m student_autogen_system analyze AAPL'. If a 'src' package is intended, create the directory structure with an __init__.py and move the main module there. Add a CI test that executes the documented command to prevent regression."
+    },
     "agentic_evidence": [
-      "The documented CLI command 'python -m src.main analyze AAPL' fails with 'ModuleNotFoundError: No module named *src*' when executed from the project root.",
-      "The error is deterministic and occurs before any model inference or tool call, confirming it is not related to model quality, knowledge, or service issues.",
-      "The returncode is 1 and no agent turns were executed.",
-      "The command was invoked as '/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python -m src.main analyze AAPL' and still failed, ruling out environment/Python executable mismatch as the primary cause."
+      {
+        "type": "trace",
+        "detail": "Execution of 'python -m src.main analyze AAPL' failed with 'ModuleNotFoundError: No module named 'src''"
+      },
+      {
+        "type": "code_structure",
+        "detail": "Project root is 'autogen-financial-analysis-main', but the documented entrypoint assumes a 'src' package that does not exist in the project layout"
+      }
     ],
     "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The documented entrypoint 'python -m src.main analyze AAPL' fails deterministically with 'ModuleNotFoundError: No module named 'src''. The error occurs before any model inference or tool call, ruling out model quality or service issues. The root cause is a mismatch between the documented CLI and the actual project structure (missing 'src' package). This is a clear application-level fault in the documented entrypoint.",
+      "audit_result": "suspected_fault",
+      "reason": "The evidence reliably shows a ModuleNotFoundError when running 'python -m src.main analyze AAPL'.  The project structure lacks a 'src' package, confirming a documented entrypoint mismatch.  However, no explicit README or documentation file was inspected; the conclusion that this is a *documented* entrypoint is inferred from the failure's context.  Since this is an application-layer, deterministic CLI failure (not a model behavior issue), it fits the definition of a target software fault.  The false positive risk is low, but limited by the lack of direct documentation evidence.",
       "false_positive_risk": "low",
-      "confidence": 0.95
+      "confidence": 0.85
     },
-    "root_cause_group_id": "generic:application-documented-entrypoint-broken-the-project-lacks-an-src-package-no-src-__init__.py-or-src-main.py-and-the-docu",
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "generic:application-documented-entrypoint-broken-the-documented-entrypoint-python--m-src.main-analyze-aapl-in-readme-or-document",
     "root_cause_group_title": "Documented Entrypoint Broken",
     "is_primary_fault": true,
     "cascades_from": null
   },
   {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
+    "case_id": "system3_financial_analysis_COV_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+    "evidence": [
+      "    3.  **修正公司基本信息：**",
+      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。",
+      "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**行动建议**：",
+      "        *   **来源：** 金融数据终端 (如Bloomberg, FactSet) 或券商报告。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "#### **4. 最终结论**",
+      "**投资建议：** **立即终止本次评估，并启动数据搜集工作。** 当前唯一合理的操作是保持现有仓位（如有）并获取完整信息。在获得完整的财务数据、真实的风险指标和正确的行业分类后，再进行一次完整的“财务+风险+估值”综合评估，届时才能给出**明确的买入/持有/卖出评级**和**可信的目标价格**。",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。"
+    ],
+    "root_cause": "The AutoGen framework's message handoff mechanism between agents forwards only TERMINATE/empty auto-reply content instead of passing the substantive analysis from previous stages. This occurs because the handoff logic in student_autogen_system.py does not properly extract and propagate prior assistant's analysis content when triggering downstream agents.",
+    "suggested_fix": "Modify the handoff logic in student_autogen_system.py to explicitly pass the previous assistant's analysis message instead of allowing TERMINATE markers to be forwarded. Specifically: 1) In the registered agent transitions, filter out TERMINATE-only messages before triggering downstream agents; 2) Ensure the last substantive message from each agent is stored and passed as context to the next agent; 3) Add validation in the handoff function to check for empty content and fall back to the most recent non-termination message.",
+    "reproduction": {
+      "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system3_financial_analysis_COV_002",
+      "system3_financial_analysis_FSSAFE_001",
+      "system3_financial_analysis_OUTCONTRACT_001",
+      "system3_financial_analysis_OUTCONTRACT_002",
+      "system3_financial_analysis_REQ_001",
+      "system3_financial_analysis_REQ_002",
+      "system3_financial_analysis_REQ_003",
+      "system3_financial_analysis_REQ_005"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_019",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_020"
+    ],
+    "diagnostic_only": false,
+    "agentic_diagnosis": {
+      "fault_confirmed": true,
+      "layer": "autogen_framework",
+      "fault_type": "Message Handoff Error",
+      "severity": "high",
+      "confidence": 0.9,
+      "evidence": [
+        "Deterministic oracle confirmed fault with sufficient code/trace evidence (evidence_strength=0.57, root_cause_confidence=code_evidence).",
+        "Trace shows termination after 18 turns with content indicating downstream agents received empty/termination-only messages, leading to 'missing data' and immediate termination recommendation.",
+        "Code locations point to message serialization/handoff logic in student_autogen_system.py (to_dict, collect_stock_data, AssistantAgent) that likely passes TERMINATE/empty content instead of substantive analysis.",
+        "Output contains explicit references to 'TERMINATE原因的说明' and '立即终止本次评估' due to missing prior-stage analysis, matching the handoff error pattern.",
+        "Standard output content shows '完成股票 JPM 的AutoGen智能体协作分析' but internal tool results and analysis are missing, indicating successful completion of framework termination flow but not actual analysis handoff."
+      ],
+      "root_cause": "The AutoGen framework's message handoff mechanism between agents forwards only TERMINATE/empty auto-reply content instead of passing the substantive analysis from previous stages. This occurs because the handoff logic in student_autogen_system.py does not properly extract and propagate prior assistant's analysis content when triggering downstream agents.",
+      "suggested_fix": "Modify the handoff logic in student_autogen_system.py to explicitly pass the previous assistant's analysis message instead of allowing TERMINATE markers to be forwarded. Specifically: 1) In the registered agent transitions, filter out TERMINATE-only messages before triggering downstream agents; 2) Ensure the last substantive message from each agent is stored and passed as context to the next agent; 3) Add validation in the handoff function to check for empty content and fall back to the most recent non-termination message."
+    },
+    "agentic_evidence": [
+      "Deterministic oracle confirmed fault with sufficient code/trace evidence (evidence_strength=0.57, root_cause_confidence=code_evidence).",
+      "Trace shows termination after 18 turns with content indicating downstream agents received empty/termination-only messages, leading to 'missing data' and immediate termination recommendation.",
+      "Code locations point to message serialization/handoff logic in student_autogen_system.py (to_dict, collect_stock_data, AssistantAgent) that likely passes TERMINATE/empty content instead of substantive analysis.",
+      "Output contains explicit references to 'TERMINATE原因的说明' and '立即终止本次评估' due to missing prior-stage analysis, matching the handoff error pattern.",
+      "Standard output content shows '完成股票 JPM 的AutoGen智能体协作分析' but internal tool results and analysis are missing, indicating successful completion of framework termination flow but not actual analysis handoff."
+    ],
+    "false_positive_audit": {
+      "audit_result": "false_positive_risk",
+      "reason": "The reported fault is diagnosed as a Message Handoff Error in the AutoGen framework, claiming that only TERMINATE/empty messages are forwarded between agents. However, the evidence shows: (1) The system terminated normally after 18 turns with consistent output indicating downstream agents received and processed prior-stage requests (e.g., '要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明'). (2) The final output explicitly requests supplementary analysis and explains the termination due to missing data from prior stages, which implies handoff did trigger downstream agents, but the upstream agents may have failed to produce content internally (e.g., due to tool failure, empty API response, or execution error), not due to handoff forwarding error. (3) The trace shows returncode=0, status=passed, and logs '完成股票 JPM 的AutoGen智能体协作分析', which confirms the framework orchestration completed successfully; the symptom of 'missing data' could originate from upstream data collection or model output failures, not necessarily from message handoff logic. (4) Code locations pointed (to_dict, collect_stock_data, AssistantAgent) lack clear evidence that these functions filter out substantive content and forward only TERMINATE markers; the diagnosis relies on correlational inference from output phrases like 'TERMINATE原因的说明', which may be part of normal AutoGen control flow rather than a fault. (5) The deterministic oracle confirmation used evidence_strength=0.57, which is only barely above the acceptance threshold (0.55) and below the trace evidence threshold (0.65), yet trace evidence is insufficient to confirm a handoff forwarding defect. The false positive risk is moderate: the observed behavior could be a non-target issue (e.g., model generation style, upstream tool failure) rather than a software fault in message handoff.",
+      "false_positive_risk": "medium",
+      "confidence": 0.45
+    },
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "handoff:terminate-empty-or-wrong-source",
+    "root_cause_group_title": "Message handoff forwarded empty or TERMINATE content",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
+    "case_id": "system3_financial_analysis_COV_002",
+    "layer": "application",
+    "fault_type": "Data Collection Tool Registration Missing",
+    "failure_code": "BUSINESS_TASK_FAILED",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
+    "evidence": [
+      "data_collector",
+      "enterprise_financial_analyst",
+      "report_generator"
+    ],
+    "root_cause": "The runtime execution path for data collection emits log messages suggesting a successful fetch, but no actual tool invocation (e.g., yfinance, API call) appears in the trace; this points to either a missing registered data-provider tool or an execution branch that returns empty/mocked data without a robust fallback contract, causing downstream financial analysis to fail due to absent fundamental data.",
+    "suggested_fix": "1) Explicitly register a data-collection tool (e.g., a yfinance wrapper or API client) in the agent configuration. 2) If a mock/stub is used, ensure it returns a deterministic dataset that satisfies the analyst agent's minimum schema (financial statements, risk metrics, sector classification). 3) Add a pre-flight check in the analyst agent to abort gracefully if required data fields are empty, and log which tool/output was expected. 4) Align report generation requirements with data availability so partial coverage (REQ_005) does not cause silent pass without data.",
+    "reproduction": {
+      "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.55,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.55,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system3_financial_analysis_COV_002",
+      "system3_financial_analysis_REQ_002",
+      "system3_financial_analysis_REQ_005"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_021"
+    ],
+    "diagnostic_only": false,
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "application",
+      "fault_type": "Data Collection Tool Registration Missing",
+      "severity": "medium",
+      "confidence": 0.55,
+      "evidence": [
+        "Trace shows '开始收集 JPM 的数据...' followed immediately by '成功收集 JPM 的数据' with no actual tool call logged between these INFO lines (evidence of simulated/no-op data fetch).",
+        "Agent 'enterprise_financial_analyst' terminates with '根本性问题：无法给出有效的投资建议' and '在没有财务分析和实际风险数据的情况下', confirming data dependency was not met.",
+        "Deterministic oracle evidence_strength is 0.55 (< 0.65 threshold for full confirmation) and root_cause_confidence is 'trace_only', indicating trace-level suspicion but no code-level proof of missing registration."
+      ],
+      "root_cause": "The runtime execution path for data collection emits log messages suggesting a successful fetch, but no actual tool invocation (e.g., yfinance, API call) appears in the trace; this points to either a missing registered data-provider tool or an execution branch that returns empty/mocked data without a robust fallback contract, causing downstream financial analysis to fail due to absent fundamental data.",
+      "suggested_fix": "1) Explicitly register a data-collection tool (e.g., a yfinance wrapper or API client) in the agent configuration. 2) If a mock/stub is used, ensure it returns a deterministic dataset that satisfies the analyst agent's minimum schema (financial statements, risk metrics, sector classification). 3) Add a pre-flight check in the analyst agent to abort gracefully if required data fields are empty, and log which tool/output was expected. 4) Align report generation requirements with data availability so partial coverage (REQ_005) does not cause silent pass without data."
+    },
+    "agentic_evidence": [
+      "Trace shows '开始收集 JPM 的数据...' followed immediately by '成功收集 JPM 的数据' with no actual tool call logged between these INFO lines (evidence of simulated/no-op data fetch).",
+      "Agent 'enterprise_financial_analyst' terminates with '根本性问题：无法给出有效的投资建议' and '在没有财务分析和实际风险数据的情况下', confirming data dependency was not met.",
+      "Deterministic oracle evidence_strength is 0.55 (< 0.65 threshold for full confirmation) and root_cause_confidence is 'trace_only', indicating trace-level suspicion but no code-level proof of missing registration."
+    ],
+    "false_positive_audit": {
+      "audit_result": "suspected_fault",
+      "reason": "Trace shows '开始收集 JPM 的数据...' followed immediately by '成功收集 JPM 的数据' with no tool call logged in between, which is consistent with a missing or no-op data provider. However, the evidence is purely from trace-level observation and has not been corroborated by code review of tool registration configurations or agent wiring scripts. The deterministic oracle rates evidence_strength at 0.55 (below the 0.65 threshold) and root_cause_confidence as 'trace_only', exactly because there is no direct audit trail confirming a registration defect in code.",
+      "false_positive_risk": "low",
+      "confidence": 0.55
+    },
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "handoff:terminate-empty-or-wrong-source",
+    "root_cause_group_title": "Message handoff forwarded empty or TERMINATE content",
+    "is_primary_fault": false,
+    "cascades_from": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
+    "classification_note": "Derived symptom: the target failed before MASentinel could judge downstream agent/tool/message behavior."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
     "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
     "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
     "severity": "high",
-    "confidence": 0.1,
+    "confidence": 0.92,
     "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
       "caller=_last_msg_as_summary",
-      "agent=financial_analyst",
-      "caller=orchestrate_analysis",
+      "agent=data_analyst",
       "content=TERMINATE",
-      "agent=data_analyst"
+      "agent=financial_analyst",
+      "caller=orchestrate_analysis"
     ],
-    "root_cause": "The reported 'fault' is likely a false positive. The trace shows the test case passed and the system terminated normally. The investment advisor's output indicates it received the message containing 'TERMINATE' from the financial analyst. This is a model decision (the model chose to send 'TERMINATE' as a response or placeholder) rather than a framework or application code bug in message handoff.",
-    "suggested_fix": "If the behavior is undesirable, the financial analyst's system prompt or tool configuration should be modified to ensure it always provides a substantive output. No framework or application code fix is required for message forwarding.",
+    "root_cause": "The handoff mechanism forwards empty or termination-only content from upstream agents, resulting in downstream agents receiving 'TERMINATE' instead of substantive analysis results. This is confirmed by the trace showing the final advisor receiving only 'TERMINATE' and no financial data.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content. Specifically, in the orchestrating agent's handoff logic, retrieve the last substantive message from the target agent rather than using the default last_message() which may return TERMINATE markers.",
     "reproduction": {
       "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
@@ -241,6 +386,19 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
+    "diagnostic_only": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "diagnostic_only_pattern",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_HANDOFF_001",
       "system3_financial_analysis_HANDOFF_001",
@@ -251,92 +409,120 @@
       "system3_financial_analysis_HANDOFF_001"
     ],
     "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011"
     ],
-    "agentic_evidence": [
-      "Fault report claims downstream handoff returned only a termination marker instead of substantive prior analysis, with evidence caller=_last_msg_as_summary, agent=financial_analyst, content=TERMINATE.",
-      "Trace summary shows test case system3_financial_analysis_HANDOFF_001 status=passed, terminated=true, returncode=0, no crash, and the system completed analysis for GOOGL.",
-      "The final output from the investment advisor explicitly states the financial analysis was marked as 'TERMINATE' and the risk assessment required supplementation, indicating the model's own analysis output was 'TERMINATE' or the model decided to terminate, rather than a framework level message handoff error.",
-      "The fault report suggests a framework/application message plumbing error, but the trace shows successful orchestration and handoff (the message was passed and the downstream agent read it). The content being 'TERMINATE' is a model-generated decision, not a framework bug."
-    ],
-    "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The fault claims a framework-level Message Handoff Error where downstream handoff returned only TERMINATE instead of substantive analysis. However, the trace shows the test case passed (status=passed), the system terminated normally (terminated=true, returncode=0), and the final investment advisor output explicitly states it received the TERMINATE marker from the financial analyst. The system properly forwarded the message; the content 'TERMINATE' is a model-generated decision, not a framework or application code bug in message plumbing. No evidence of a handoff failure exists—the orchestration completed 18 turns and produced a coherent final output. This is a model behavior issue, not a software fault.",
-      "false_positive_risk": "high",
-      "confidence": 0.92
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "autogen_framework",
+      "fault_type": "Message Handoff Error",
+      "severity": "high",
+      "confidence": 0.58,
+      "evidence": [],
+      "root_cause": "The handoff mechanism forwards empty or termination-only content from upstream agents, resulting in downstream agents receiving 'TERMINATE' instead of substantive analysis results. This is confirmed by the trace showing the final advisor receiving only 'TERMINATE' and no financial data.",
+      "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content. Specifically, in the orchestrating agent's handoff logic, retrieve the last substantive message from the target agent rather than using the default last_message() which may return TERMINATE markers."
     },
+    "false_positive_audit": {
+      "audit_result": "inconclusive",
+      "reason": "虽然 trace 摘要中投资顾问的输出表明其未收到实际的财务分析和风险评估数据，证据指向可能存在消息传递问题，但当前提供的诊断主要依赖 diagnostic_only 模式，且确定性确认显示未达到确认阈值（confirmed: false, evidence_strength: 0.58）。代码位置指向 to_dict 和 __init__ 等函数，缺乏对具体 handoff 逻辑中为何传递 TERMINATE 的详细代码分析。此外，stderr 显示 SSL 和 flaml 警告，这些可能是环境问题而非软件故障，但暂不影响 handoff。总体来看，证据存在缺口，不能完全排除上游工具调用失败或智能体输出本身为空的可能性，因此暂不能确认为真实故障。",
+      "false_positive_risk": "medium",
+      "confidence": 0.45
+    },
+    "agent_audit_influence": "advisory_only",
     "root_cause_group_id": "handoff:terminate-empty-or-wrong-source",
     "root_cause_group_title": "Message handoff forwarded empty or TERMINATE content",
     "is_primary_fault": false,
-    "cascades_from": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001"
+    "cascades_from": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-    "case_id": "system3_financial_analysis_RESUME_001",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+    "case_id": "system3_financial_analysis_OUTCONTRACT_003",
     "layer": "application",
-    "fault_type": "Resume State Inconsistency",
-    "failure_code": "RESUME_STATE_INCOMPLETE",
+    "fault_type": "Output Contract Violation",
+    "failure_code": "OUTPUT_SCHEMA_VIOLATION",
     "severity": "medium",
-    "confidence": 0.0,
-    "summary": "Partial resume fixture existed, but trace/output did not show the latest script being resumed or explicitly repaired.",
+    "confidence": 0.78,
+    "summary": "Output contract expected keywords or sections were missing.",
     "evidence": [
-      "/users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/.masentinel_fixture/system3_financial_analysis_resume_001/masterplan.txt /users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/.masentinel_fixture/system3_financial_analysis_resume_001/script_v1.py"
+      "=\n分析日期: 2026-05-20 12:39:37\nAutoGen协作摘要: AutoGen多智能体协作分析完成：数据分析师、财务分析师、风险分析师和投资顾问共同协作完成了完整的股票分析流程\n\n\n--- 关键财务指标 (百分比) ---\nroe: 146.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，所有模块均显示“TERMINATE”，即未能获取有效的财务数据、风险评估及公司基本信息。因此，目前无法对TSLA Mock Holdings进行任何有意义的综合投资评估。\n\n作为投资顾问，我建议您首先补充完整的财务分析（如营收、利润、现金流、负债结构等）、风险评估（市场、行业、运营、政策等维度）以及公司最新基本信息（业务模式、竞争地位、管理层背景）。只有在这些核心数据齐全后，我才能提供明确的投资评级（如买入、持有、卖出）及目标价格。\n\n请重新提交完整分析资料，我将为您制定专业的投资建议。",
+      "6.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据。公司基本信息仅知为“META Mock Holdings”（模拟控股公司），属于科技行业。\n\n**综合投资建议：**  \n由于缺乏可量化的财务指标（如营收、利润、现金流、增长率等）和风险因素（如市场、运营、财务、合规风险等）的具体分析，无法形成可靠的投资决策依据。在此情况下，**建议暂停任何投资操作**，并优先完成以下步骤：\n- 重新获取或核实财务分析数据，确保完整性；\n- 补充风险评估报告，明确关键风险敞口；\n- 明确公司实际业务模式及竞争地位（“Mock”可能暗示为模拟测试公司，需确认真实性）。\n\n**评级与目标价格：** 暂不适用（无有效数据支撑）。\n\n**行动建议：** 联系分析师要求重新提交完整分析，或寻找替代研究来源后才可给出具体评级与目标价。",
+      "missing_keywords=['记录']",
+      "missing_keywords=['代码']"
     ],
-    "root_cause": "The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow.",
-    "suggested_fix": "Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly.",
+    "root_cause": "The application layer lacks a validation step for stock code existence before proceeding with data collection. The tool or agent responsible for data collection (likely the 'data_collector' agent) does not check if the provided code is valid and does not generate a friendly error message containing the keyword '代码' when the code is invalid. Instead, it proceeds to collect data (possibly mock or empty data) and passes it to downstream agents, which then produce a generic financial analysis report rather than the required error response.",
+    "suggested_fix": "Add a deterministic validation step in the 'data_collector' agent or its associated tool that checks the validity of the stock code. If the code is invalid, the agent should immediately terminate and return a structured error message that includes the keyword '代码' (e.g., '输入的股票代码 META 无效，请检查代码后重试。'). This ensures the output contract is fulfilled when handling non-existent stock codes.",
     "reproduction": {
-      "input": "Continue the existing project from the latest script and preserve existing state.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
+      "input": "请完成需求 R3，并按文档要求输出：系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
     },
     "suspected_false_positive": true,
-    "evidence_strength": 0.31,
-    "not_model_fault_because": "The failure is caused by deterministic filesystem/artifact handling code.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/agents/agent_orchestrator.py",
-        "function": "_prepare_agent_task",
-        "line": "282"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/api/websocket.py",
-        "function": "_remove_from_all_subscriptions",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_models.py",
-        "function": "get_latest_year",
-        "line": "212"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "affected_cases": [
-      "system3_financial_analysis_RESUME_001"
-    ],
-    "duplicate_fault_ids": [],
-    "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The trace shows a successful pass with return code 0 and complete analysis output. The original fault hypothesis relies on a partial resume fixture and an expectation that the latest script should be resumed, but the trace shows the system proceeded normally without error or incomplete state. The evidence strength is low (0.31) and the suggested root cause is speculative. No code-level or trace evidence demonstrates that a deterministic resume-state handler failed; instead, the system completed the task successfully.",
-      "false_positive_risk": "high",
-      "confidence": 0.85
+    "evidence_strength": 0.3,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.3,
+      "root_cause_confidence": "trace_only"
     },
-    "root_cause_group_id": "generic:application-resume-state-inconsistency-the-resume-state-detector-treats-partial-but-meaningful-on-disk-state-as-absent-o",
-    "root_cause_group_title": "Resume State Inconsistency",
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system3_financial_analysis_OUTCONTRACT_003",
+      "system3_financial_analysis_OUTCONTRACT_005"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015"
+    ],
+    "diagnostic_only": false,
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "application",
+      "fault_type": "Output Contract Violation",
+      "severity": "medium",
+      "confidence": 0.3,
+      "evidence": [
+        "The test case 'system3_financial_analysis_OUTCONTRACT_003' requires the system output to contain the keyword '代码' (code) when handling an invalid stock code (META). The trace shows the system triggered an analysis flow but the final output does not contain the expected keyword '代码'.",
+        "The trace shows the system logged '开始收集 META 的数据...' and '成功收集 META 的数据', indicating the 'data_collector' agent did not detect META as an invalid code and continued processing instead of returning a clear error message as required by R3.",
+        "The input was specifically designed to test the system's handling of invalid stock codes. The oracle expected the keyword '代码', which is present in the Chinese error message pattern but was not found in the final output."
+      ],
+      "root_cause": "The application layer lacks a validation step for stock code existence before proceeding with data collection. The tool or agent responsible for data collection (likely the 'data_collector' agent) does not check if the provided code is valid and does not generate a friendly error message containing the keyword '代码' when the code is invalid. Instead, it proceeds to collect data (possibly mock or empty data) and passes it to downstream agents, which then produce a generic financial analysis report rather than the required error response.",
+      "suggested_fix": "Add a deterministic validation step in the 'data_collector' agent or its associated tool that checks the validity of the stock code. If the code is invalid, the agent should immediately terminate and return a structured error message that includes the keyword '代码' (e.g., '输入的股票代码 META 无效，请检查代码后重试。'). This ensures the output contract is fulfilled when handling non-existent stock codes."
+    },
+    "agentic_evidence": [
+      "The test case 'system3_financial_analysis_OUTCONTRACT_003' requires the system output to contain the keyword '代码' (code) when handling an invalid stock code (META). The trace shows the system triggered an analysis flow but the final output does not contain the expected keyword '代码'.",
+      "The trace shows the system logged '开始收集 META 的数据...' and '成功收集 META 的数据', indicating the 'data_collector' agent did not detect META as an invalid code and continued processing instead of returning a clear error message as required by R3.",
+      "The input was specifically designed to test the system's handling of invalid stock codes. The oracle expected the keyword '代码', which is present in the Chinese error message pattern but was not found in the final output."
+    ],
+    "false_positive_audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The diagnostic points to a missing validation step for stock code existence before data collection, but the evidence only shows that the keyword '代码' is absent from the output and that the system collected data for an invalid code without error. The trace logs indicate that data collection succeeded, which suggests the application might be using mock data or a stub rather than a real invalid code detection failure. The root cause claim that the lack of validation causes the output contract violation is plausible, but there is no concrete code snippet or trace evidence proving that a validation hook exists or is bypassed. The deterministic confirmation is not met, and the evidence strength is low. There is a risk that the system's design treats unknown codes as valid with mock data, making this a specification gap rather than a code fault.",
+      "false_positive_risk": "high",
+      "confidence": 0.3
+    },
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "generic:application-output-contract-violation-the-application-layer-lacks-a-validation-step-for-stock-code-existence-before-proc",
+    "root_cause_group_title": "Output Contract Violation",
     "is_primary_fault": true,
     "cascades_from": null
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
     "case_id": "system3_financial_analysis_TERM_001",
     "layer": "autogen_framework",
     "fault_type": "Termination Signal Ignored",
     "failure_code": "TERMINATION_SIGNAL_IGNORED",
     "severity": "high",
-    "confidence": 0.3,
+    "confidence": 0.88,
     "summary": "The target emitted a termination marker but continued with substantive prompts/messages.",
     "evidence": [
       "根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据。公司基本信息仅知为“META Mock Holdings”（模拟控股公司），属于科技行业。",
@@ -348,8 +534,8 @@
       "**评级与目标价格：** 暂不适用（无有效数据支撑）。",
       "**行动建议：** 联系分析师要求重新提交完整分析，或寻找替代研究来源后才可给出具体评级与目标价。"
     ],
-    "root_cause": "The evidence provided in the fault claim does not align with the deterministic oracle result. The test case passed, and the system terminated successfully within the allowed turns. The reported continuation after TERMINATE likely occurred within the grace window allowed by termination_grace_messages=2, which is expected behavior and does not constitute a fault.",
-    "suggested_fix": "No fix required for the system. The fault may be a false positive due to misinterpretation of the termination grace window or a non-deterministic model behavior. If the continuation after TERMINATE is a concern, verify that the is_termination_msg function is correctly implemented and that the termination grace window is applied as intended. Otherwise, adjust the oracle expectations to account for graceful shutdown messages.",
+    "root_cause": "Insufficient deterministic evidence to confirm the fault. The trace shows the run terminated successfully (status: passed, turn_count: 19, terminated: true) with exit code 0, and no code-level evidence (code_locations are empty) is available to confirm that termination signal handling is broken. The suspected fault is based solely on trace content interpretation, which is weak evidence.",
+    "suggested_fix": "No specific fix can be recommended until the fault is confirmed with deterministic code/trace evidence. If confirmed, ensure termination condition handlers in smpl_autogen_system.py (or equivalent orchestration module) immediately stop the conversation when a termination marker (e.g., 'TERMINATE') is detected, within the allowed grace messages (max 2).",
     "reproduction": {
       "input": "请完成一个简单任务，最后明确输出 TERMINATE。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
@@ -359,21 +545,39 @@
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
     "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.47,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_TERM_001"
     ],
     "duplicate_fault_ids": [],
-    "agentic_evidence": [
-      "The test oracle specifies must_terminate=true, max_turns=30, and the trace shows status=passed, terminated=true, turn_count=19, returncode=0. The system successfully terminated, which contradicts the fault claim.",
-      "The evidence in the fault summary shows the target emitted a TERMINATE marker but the conversation continued with follow-up content like '综合投资建议' and '行动建议'. However, the trace summary indicates the system did terminate without error, suggesting the conversation naturally concluded.",
-      "The fault root_cause_confidence is set to 'trace_only', but the trace summary actually shows a passed test with clean termination, weakening the fault hypothesis."
-    ],
-    "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The trace shows a passed test with successful termination, and the continuation after TERMINATE is consistent with the configured termination_grace_messages window, which is expected AutoGen behavior. There is no evidence of an application-layer or AutoGen framework fault.",
-      "false_positive_risk": "high",
-      "confidence": 0.85
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "autogen_framework",
+      "fault_type": "Termination Signal Ignored",
+      "severity": "high",
+      "confidence": 0.0,
+      "evidence": [],
+      "root_cause": "Insufficient deterministic evidence to confirm the fault. The trace shows the run terminated successfully (status: passed, turn_count: 19, terminated: true) with exit code 0, and no code-level evidence (code_locations are empty) is available to confirm that termination signal handling is broken. The suspected fault is based solely on trace content interpretation, which is weak evidence.",
+      "suggested_fix": "No specific fix can be recommended until the fault is confirmed with deterministic code/trace evidence. If confirmed, ensure termination condition handlers in smpl_autogen_system.py (or equivalent orchestration module) immediately stop the conversation when a termination marker (e.g., 'TERMINATE') is detected, within the allowed grace messages (max 2)."
     },
+    "false_positive_audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The suspected fault is classified as 'Termination Signal Ignored', but the deterministic confirmation review found it failed all thresholds: no code-level evidence, trace evidence strength 0.47 (<0.65), root_cause_confidence 'trace_only', and the run trace shows the system terminated successfully (status: passed, terminated: true, returncode 0, 19 turns) with no exception or error indicating the termination handler is broken. The evidence excerpt shows a 'TERMINATE' reference but framed as a placeholder for missing data, not an ignored termination signal. This is likely a non-target issue (model generating boilerplate wording with 'TERMINATE' as a text element instead of a system termination trigger) or a test oracle misalignment, rather than a confirmed framework-level termination signal handling fault. The case remains suspected_fault with low confidence.",
+      "false_positive_risk": "high",
+      "confidence": 0.1
+    },
+    "agent_audit_influence": "advisory_only",
     "root_cause_group_id": "interaction:timeout-or-non-termination",
     "root_cause_group_title": "Conversation timeout or missing termination guard",
     "is_primary_fault": true,

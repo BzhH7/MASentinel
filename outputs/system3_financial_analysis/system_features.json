@@ -1,0 +1,113 @@
+{
+  "system_id": "system3_financial_analysis",
+  "source_summary": {
+    "root_path": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main",
+    "doc_path": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/README.md",
+    "python_files_scanned": 61,
+    "doc_chars": 7097,
+    "code_chars": 405971
+  },
+  "framework": {
+    "uses_autogen": true,
+    "uses_groupchat": false,
+    "uses_user_proxy": true,
+    "has_speaker_selection": false,
+    "has_human_input_mode": true,
+    "has_fixed_round_budget": false
+  },
+  "tools": {
+    "has_tools": false,
+    "tool_names": [],
+    "has_http_tools": false,
+    "has_airtable_tools": false,
+    "has_external_api_tools": false,
+    "has_request_like_code": true,
+    "has_pagination_risk": false,
+    "has_multi_record_work": false,
+    "has_structured_error_contract": true
+  },
+  "artifacts": {
+    "writes_files": true,
+    "has_documented_artifacts": false,
+    "has_resume_state": false,
+    "has_versioned_artifacts": true,
+    "has_user_controlled_path": true
+  },
+  "data_processing": {
+    "has_pandas": true,
+    "has_financial_metrics": true,
+    "has_risk_metrics": true,
+    "has_dataframe_metrics": true,
+    "has_yfinance": true
+  },
+  "cli": {
+    "has_documented_commands": true,
+    "documented_commands": [
+      "python -m src.main analyze AAPL",
+      "python -m src.main portfolio AAPL MSFT GOOG",
+      "python -m src.main interactive",
+      "python -m src.main analyze AAPL --type comprehensive",
+      "python -m src.main analyze AAPL --format html,pdf",
+      "python -m src.main analyze AAPL --config custom_config.yaml",
+      "python -m src.main quant AAPL",
+      "python -m src.main quant AAPL --factors momentum value growth"
+    ],
+    "uses_argparse": true
+  },
+  "message_flow": {
+    "has_last_message_calls": true,
+    "has_multistage_handoff": true
+  },
+  "docs": {
+    "claims_multi_agent": true,
+    "claims_financial_analysis": true
+  },
+  "static_risks": {
+    "has_autogen_wiring_risk": true,
+    "autogen_wiring_risks": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py",
+        "line": "115",
+        "risk": "AgentOrchestrator initialized with an empty mapping or no agents.",
+        "call": "AgentOrchestrator({})"
+      }
+    ]
+  },
+  "flat": {
+    "uses_autogen": true,
+    "uses_groupchat": false,
+    "has_speaker_selection": false,
+    "has_human_input_mode": true,
+    "has_http_tools": false,
+    "has_airtable_tools": false,
+    "has_external_api_tools": false,
+    "writes_files": true,
+    "has_user_controlled_path": true,
+    "has_resume_state": false,
+    "has_versioned_artifacts": true,
+    "has_last_message_calls": true,
+    "has_multistage_handoff": true,
+    "has_financial_metrics": true,
+    "has_risk_metrics": true,
+    "has_dataframe_metrics": true,
+    "documented_cli_commands": [
+      "python -m src.main analyze AAPL",
+      "python -m src.main portfolio AAPL MSFT GOOG",
+      "python -m src.main interactive",
+      "python -m src.main analyze AAPL --type comprehensive",
+      "python -m src.main analyze AAPL --format html,pdf",
+      "python -m src.main analyze AAPL --config custom_config.yaml",
+      "python -m src.main quant AAPL",
+      "python -m src.main quant AAPL --factors momentum value growth"
+    ],
+    "docs_claim_multi_agent": true,
+    "enterprise_orchestrator_risks": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py",
+        "line": "115",
+        "risk": "AgentOrchestrator initialized with an empty mapping or no agents.",
+        "call": "AgentOrchestrator({})"
+      }
+    ]
+  }
+}

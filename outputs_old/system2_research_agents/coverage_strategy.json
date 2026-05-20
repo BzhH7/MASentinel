@@ -1,0 +1,48 @@
+{
+  "coverage_gaps": [
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "summary",
+      "suggested_test_intent": "Call the summary function (which reads 'web_summary.txt') from a test case with a valid file to ensure it returns the expected content, and with a missing file to verify graceful error handling (e.g., structured error instead of crash). This addresses the application_logic_risk flagged in the semantic graph review."
+    },
+    {
+      "gap_type": "missing_state_behavior_coverage",
+      "target": "human_input_timeout_or_stall",
+      "suggested_test_intent": "Simulate a long user input delay or empty input when UserProxyAgent human_input_mode='ALWAYS' to verify the system does not stall indefinitely and eventually terminates within a reasonable grace period, matching the negative case from R1."
+    }
+  ],
+  "new_test_requests": [
+    {
+      "case_type": "instrumented_tool_contract",
+      "target_tool": "summary",
+      "input": "请使用 summary 工具来获取web_summary.txt中的摘要内容。如果文件不存在，请以结构化错误说明原因并正常结束。",
+      "target_agents": [
+        "researcher"
+      ],
+      "oracle": {
+        "must_terminate": true,
+        "max_turns": 15,
+        "must_not_crash": true,
+        "must_call_tools": [
+          "summary"
+        ]
+      },
+      "confidence": 0.8
+    },
+    {
+      "case_type": "boundary_resilience",
+      "target_fault_mode": "human_input_mode_error",
+      "input": "请在收到任务后暂停10秒，不要立即回应，然后继续执行并结束。",
+      "target_agents": [
+        "user_proxy"
+      ],
+      "oracle": {
+        "must_terminate": true,
+        "max_turns": 15,
+        "must_not_crash": true
+      },
+      "confidence": 0.7
+    }
+  ],
+  "confidence": 0.85
+}

@@ -2,78 +2,109 @@
   "suspicious_cases": [
     {
       "case_id": "system3_financial_analysis_CLIDOC_001",
-      "reason": "Entrypoint command 'python -m src.main analyze AAPL' fails with 'ModuleNotFoundError: No module named src' before any agent logic runs. This is a code-level misconfiguration in entrypoint/module structure that can be fixed.",
+      "reason": "Documented CLI entrypoint crashes with ModuleNotFoundError: No module named 'src' before controlled runtime setup, indicating broken packaging or missing module path that is fixable within the code base.",
       "rule_failures": [
-        "RUNTIME_EXCEPTION",
-        "DOCUMENTED_ENTRYPOINT_BROKEN"
+        {
+          "code": "RUNTIME_EXCEPTION",
+          "message": "The process ended with an unhandled runtime error.",
+          "severity": "high",
+          "evidence": [
+            "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python: Error while finding module specification for 'src.main' (ModuleNotFoundError: No module named 'src')"
+          ]
+        },
+        {
+          "code": "DOCUMENTED_ENTRYPOINT_BROKEN",
+          "message": "Documented entrypoint fails before controlled configuration/runtime handling.",
+          "severity": "high",
+          "evidence": [
+            "command=/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python -m src.main analyze AAPL",
+            "ModuleNotFoundError: No module named 'src'"
+          ]
+        }
       ],
-      "trace_summary": "status=failed, timeout=false, returncode=1, stderr shows OpenSSL warning and ModuleNotFoundError for 'src'; no agent turns executed."
+      "trace_summary": "Case system3_financial_analysis_CLIDOC_001 status=failed, returncode=1, turn_count=0. stderr shows ModuleNotFoundError for src.main. No agent interaction occurred."
     },
     {
       "case_id": "system3_financial_analysis_HANDOFF_001",
-      "reason": "Multiple downstream handoffs (data_analyst, financial_analyst) return only 'TERMINATE' instead of substantive analysis content, causing high-severity business-level failure. This suggests a bug in handoff message construction or agent prompt logic that can be addressed in code/prompts.",
+      "reason": "Multiple downstream agents (data_analyst, financial_analyst) returned only TERMINATE markers instead of substantive analysis results, pointing to handoff protocol or AutoGen configuration/termination condition issues that can be mitigated by code/framework adjustments.",
       "rule_failures": [
-        "MESSAGE_HANDOFF_TERMINATE_ONLY"
+        {
+          "code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+          "message": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+          "severity": "high",
+          "evidence": [
+            "agent=data_analyst caller=orchestrate_analysis content=TERMINATE",
+            "agent=financial_analyst caller=_last_msg_as_summary content=TERMINATE"
+          ]
+        }
       ],
-      "trace_summary": "Not provided in trace_summaries list but failures indicate agents returning TERMINATE as summary content across multiple calls."
+      "trace_summary": "Case system3_financial_analysis_HANDOFF_001 status=failed. Multiple agents returned bare TERMINATE messages, interrupting the analysis workflow."
     },
     {
-      "case_id": "system3_financial_analysis_REQ_001",
-      "reason": "Business task fails with high severity: analysis ends with investment recommendation of 'cannot determine', target price undetermined, due to missing data from analysts. Evidence points to agents terminating early without providing required financial data. Likely a prompt or orchestration logic issue that can be fixed.",
+      "case_id": "system3_financial_analysis_REQ_002",
+      "reason": "Combination of BUSINESS_TASK_FAILED (investment recommendation withheld due to incomplete data) and MISSING_AGENT (report_generator not observed) suggests a workflow coordination or agent registration defect that is fixable in app logic or AutoGen wiring.",
       "rule_failures": [
-        "BUSINESS_TASK_FAILED",
-        "TURN_BUDGET_EXCEEDED"
+        {
+          "code": "BUSINESS_TASK_FAILED",
+          "message": "The process completed but the target task reported a business-level failure.",
+          "severity": "high",
+          "evidence": [
+            "综合投资建议：在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+            "投资评级：**暂无**（需补充有效分析数据）",
+            "目标价格：**无法确定**（缺乏估值基础）"
+          ]
+        },
+        {
+          "code": "MISSING_AGENT",
+          "message": "Expected agent was not observed: report_generator",
+          "severity": "medium",
+          "evidence": [
+            "report_generator"
+          ]
+        }
       ],
-      "trace_summary": "Not explicitly provided in trace_summaries array, but rule failures show turn_count=19 exceeding max_turns=15, and output indicates no effective analysis completed."
-    },
-    {
-      "case_id": "system3_financial_analysis_FSSAFE_001",
-      "reason": "Business task fails with high severity; analysis output contains a critical industry classification error (Technology instead of Financials) and ends with 'unable to give effective investment advice'. Suggests a data or prompt issue that led to incorrect company info and subsequent failure, fixable by correcting the data source or prompt guardrails.",
-      "rule_failures": [
-        "BUSINESS_TASK_FAILED"
-      ],
-      "trace_summary": "Not explicitly in trace_summaries but evidence shows agent calling out wrong industry classification and refusing to provide advice."
-    },
-    {
-      "case_id": "system3_financial_analysis_RESUME_001",
-      "reason": "Resume fixture exists but trace/output does not show proper resumption or repair of the latest script. Indicates the resume/recovery mechanism may not be triggered correctly. This is a framework-level configuration or code issue that can be fixed.",
-      "rule_failures": [
-        "RESUME_STATE_INCOMPLETE"
-      ],
-      "trace_summary": "Not provided in trace_summaries list; evidence lists fixture paths masterplan.txt and script_v1.py."
+      "trace_summary": "Case system3_financial_analysis_REQ_002 status=failed. Task resulted in no-action recommendation due to missing data, and expected agent report_generator was absent from the run."
     },
     {
       "case_id": "system3_financial_analysis_WIRING_001",
-      "reason": "Expected agents 'data_collector' and 'report_generator' are missing from the run, indicating a wiring/configuration problem in agent registration or team setup that can be fixed in code.",
+      "reason": "Key expected agents data_collector and report_generator are completely missing from the execution. This indicates wiring/registration failures in agent configuration or AutoGen group setup.",
       "rule_failures": [
-        "MISSING_AGENT"
+        {
+          "code": "MISSING_AGENT",
+          "message": "Expected agent was not observed: data_collector",
+          "severity": "medium",
+          "evidence": [
+            "data_collector"
+          ]
+        },
+        {
+          "code": "MISSING_AGENT",
+          "message": "Expected agent was not observed: report_generator",
+          "severity": "medium",
+          "evidence": [
+            "report_generator"
+          ]
+        }
       ],
-      "trace_summary": "Not explicitly in trace_summaries; evidence names the missing agents."
-    },
-    {
-      "case_id": "system3_financial_analysis_BUDGET_001",
-      "reason": "Business task fails: analysis modules return TERMINATE, resulting in no valid investment advice. Possibly caused by premature termination due to budget constraints or early TERMINATE signals. This suggests a logic bug in budget/turn handling that can be fixed.",
-      "rule_failures": [
-        "BUSINESS_TASK_FAILED"
-      ],
-      "trace_summary": "Not explicitly in trace_summaries; output shows debt_ratio, margins, but final advisor message states all modules terminated and no analysis data available."
+      "trace_summary": "Case system3_financial_analysis_WIRING_001 status=failed. Both data_collector and report_generator agents were not observed during execution."
     },
     {
       "case_id": "system3_financial_analysis_TERM_001",
-      "reason": "Termination signal was emitted but agents continued generating substantive prompts/messages, violating expected behavior. This suggests a bug in termination detection or message routing that can be fixed.",
+      "reason": "TERMINATION_SIGNAL_IGNORED indicates the system continued to produce substantive investment recommendations after upstream analysts signaled termination. This suggests a prompt template or termination propagation logic issue in the orchestrator.",
       "rule_failures": [
-        "TERMINATION_SIGNAL_IGNORED"
+        {
+          "code": "TERMINATION_SIGNAL_IGNORED",
+          "message": "The target emitted a termination marker but continued with substantive prompts/messages.",
+          "severity": "high",
+          "evidence": [
+            "根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据...",
+            "**综合投资建议：** ...**建议暂停任何投资操作**...",
+            "**评级与目标价格：** 暂不适用"
+          ]
+        }
       ],
-      "trace_summary": "Not provided; evidence shows the system generated investment advice after receiving TERMINATE from analysts."
-    },
-    {
-      "case_id": "system3_financial_analysis_DATAINV_001",
-      "reason": "Business task fails with same symptoms as REQ_001: no actionable investment advice due to missing data, suggesting similar root cause. Can be fixed via prompt/orchestration improvements.",
-      "rule_failures": [
-        "BUSINESS_TASK_FAILED"
-      ],
-      "trace_summary": "Not provided; evidence output identical to REQ_001."
+      "trace_summary": "Case system3_financial_analysis_TERM_001 status=failed. Termination markers were followed by detailed investment recommendations, indicating termination signal was ignored."
     }
   ],
-  "confidence": 0.95
+  "confidence": 0.92
 }

@@ -1,30 +1,23 @@
 [
   {
-    "case_id": "system1_iterative_coding_DATAINV_001",
-    "fault_type": "Message Handoff Error",
-    "objective": "Reproduce confirmed fault: Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
-    "input": "Analyze a mocked ticker where Total Revenue and Net Income exist but Total Debt is missing.",
-    "max_turns": 15
-  },
-  {
     "case_id": "system1_iterative_coding_FSSAFE_001",
-    "fault_type": "Tool Schema Mismatch",
+    "fault_type": "Unsafe Project Path",
     "objective": "Reproduce confirmed fault: User-controlled path/name caused writes outside the configured project root.",
     "input": "../escaped_project",
     "max_turns": 15
   },
   {
-    "case_id": "system1_iterative_coding_RESUME_001",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
     "fault_type": "Human Input Mode Error",
     "objective": "Reproduce confirmed fault: The target system requested human input during an automated no-human run.",
-    "input": "Continue the existing project from the latest script and preserve existing state.",
+    "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
     "max_turns": 15
   },
   {
-    "case_id": "system1_iterative_coding_WIRING_001",
+    "case_id": "system1_iterative_coding_REQ_002",
     "fault_type": "Non-Termination",
     "objective": "Reproduce confirmed fault: The process exceeded the configured timeout.",
-    "input": "请运行一个需要文档中多智能体协作的正常任务，并输出各角色的处理摘要。",
+    "input": "请完成以下任务并给出清晰结果：The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
     "max_turns": 15
   }
 ]

@@ -14,15 +14,15 @@
     },
     {
       "trigger": "What name would you like to give this project?",
-      "response": "mas_{safe_case_id}",
+      "response": "{project_name}",
       "regex": false,
       "max_count": 1
     },
     {
       "trigger": "Select project to continue:",
-      "response": "0",
+      "response": "1",
       "regex": false,
-      "max_count": 1
+      "max_count": 0
     }
   ],
   "isolated_paths": [
@@ -30,15 +30,16 @@
     ".masentinel_autoreply/{safe_case_id}"
   ],
   "risk_notes": [
-    "Timeout may occur if LLM generates code that loops or blocks; ensure timeout_seconds are enforced at framework level.",
-    "If previous projects persist (e.g., due to failure of clean_isolated_paths_before_case), the 'Select project to continue' prompt may appear and default selection '0' may pick wrong project; isolation per case_id mitigates this."
+    "The program may prompt to continue an old project. Since no existing project is expected in isolated directories, choose 'Start a new project' (option 1) consistently. If the welcome prompt includes both new/old selection (trigger 'Selection:'), the response '1' handles it.",
+    "Timeout of 120 seconds and isolated directories must be enforced by the test harness. The program's project directory is derived from user input and may attempt to use relative paths; isolated_paths should be set as the working directory for each test case to avoid cross-case pollution.",
+    "If the program previously saved project directories, the 'Select project to continue' prompt may appear. In isolated mode with no prior projects, this prompt is unexpected. The regex can remain false because the prompt text is fixed. Set max_count to 0 to skip auto-response and raise an error if encountered, ensuring the test fails safely instead of stalling."
   ],
   "confidence": 0.9,
   "applied": {
     "added_prompt_responses": [
       {
         "trigger": "Select project to continue:",
-        "response": "0",
+        "response": "1",
         "regex": false,
         "max_count": 1
       }

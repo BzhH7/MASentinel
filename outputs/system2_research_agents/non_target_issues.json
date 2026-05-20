@@ -1,6 +1,6 @@
 [
   {
-    "case_id": "system2_research_agents_COV_001",
+    "case_id": "system2_research_agents_COV_004",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
     "issue_type": "Soft Turn Budget Exceeded",
@@ -8,23 +8,7 @@
     "confidence": 0.95,
     "message": "The run terminated, but exceeded the expected soft turn budget.",
     "evidence": [
-      "turn_count=37",
-      "max_turns=15"
-    ],
-    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-    "excluded_from_target_faults": true
-  },
-  {
-    "case_id": "system2_research_agents_COV_003",
-    "code": "TURN_BUDGET_EXCEEDED",
-    "layer": "test_harness",
-    "issue_type": "Soft Turn Budget Exceeded",
-    "severity": "low",
-    "confidence": 0.95,
-    "message": "The run terminated, but exceeded the expected soft turn budget.",
-    "evidence": [
-      "turn_count=31",
+      "turn_count=17",
       "max_turns=15"
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -48,7 +32,7 @@
     "excluded_from_target_faults": true
   },
   {
-    "case_id": "system2_research_agents_COV_006",
+    "case_id": "system2_research_agents_COV_008",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
     "issue_type": "Soft Turn Budget Exceeded",
@@ -57,6 +41,38 @@
     "message": "The run terminated, but exceeded the expected soft turn budget.",
     "evidence": [
       "turn_count=17",
+      "max_turns=15"
+    ],
+    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+    "excluded_from_target_faults": true
+  },
+  {
+    "case_id": "system2_research_agents_COV_009",
+    "code": "TURN_BUDGET_EXCEEDED",
+    "layer": "test_harness",
+    "issue_type": "Soft Turn Budget Exceeded",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "The run terminated, but exceeded the expected soft turn budget.",
+    "evidence": [
+      "turn_count=17",
+      "max_turns=15"
+    ],
+    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+    "excluded_from_target_faults": true
+  },
+  {
+    "case_id": "system2_research_agents_FUZZ_001",
+    "code": "TURN_BUDGET_EXCEEDED",
+    "layer": "test_harness",
+    "issue_type": "Soft Turn Budget Exceeded",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "The run terminated, but exceeded the expected soft turn budget.",
+    "evidence": [
+      "turn_count=43",
       "max_turns=15"
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -88,11 +104,27 @@
     "confidence": 0.95,
     "message": "The run terminated, but exceeded the expected soft turn budget.",
     "evidence": [
-      "turn_count=17",
+      "turn_count=23",
       "max_turns=15"
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
     "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+    "excluded_from_target_faults": true
+  },
+  {
+    "case_id": "system2_research_agents_TOOLAPI_001",
+    "code": "CONTRACT_TEST_NOT_EXERCISED",
+    "layer": "test_harness",
+    "issue_type": "Contract Fixture Not Exercised",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "HTTP/API contract was configured, but no target HTTP request was observed; expected fixture values are not target evidence.",
+    "evidence": [
+      "fixture_id=airtable_101_records",
+      "case_type=tool_api_contract"
+    ],
+    "root_cause": "The contract fixture was not exercised by an observed target HTTP/tool event, so no target root cause can be asserted.",
+    "suggested_fix": "Improve the case adapter or instrumentation so the target actually performs the expected HTTP/tool action before judging the contract.",
     "excluded_from_target_faults": true
   },
   {
@@ -109,6 +141,22 @@
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
     "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+    "excluded_from_target_faults": true
+  },
+  {
+    "case_id": "system2_research_agents_TOOLERR_001",
+    "code": "CONTRACT_TEST_NOT_EXERCISED",
+    "layer": "test_harness",
+    "issue_type": "Contract Fixture Not Exercised",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "HTTP/API contract was configured, but no target HTTP request was observed; expected fixture values are not target evidence.",
+    "evidence": [
+      "fixture_id=invalid_auth",
+      "case_type=tool_error_contract"
+    ],
+    "root_cause": "The contract fixture was not exercised by an observed target HTTP/tool event, so no target root cause can be asserted.",
+    "suggested_fix": "Improve the case adapter or instrumentation so the target actually performs the expected HTTP/tool action before judging the contract.",
     "excluded_from_target_faults": true
   }
 ]

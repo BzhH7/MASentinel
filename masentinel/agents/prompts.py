@@ -74,11 +74,13 @@ TEST_DESIGNER_PROMPT = """角色：TestDesignerAgent。
 PATTERN_APPLICABILITY_PROMPT = """角色：PatternApplicabilityAgent。
 任务：根据 deterministic system_features、profile、requirements、agents/tools 和文档命令，选择本系统真正适用的通用测试 pattern。
 你只负责 test pattern selection / applicability planning，不负责判断最终故障。
+你的 selected_patterns 是测试计划的唯一 agent 候选来源；确定性 verifier 只会验证、拒绝或记录遗漏，不会替你自动补选。
 必须遵守：
 - 没有金融/风险/数据处理特征，不要选择 data_invariant。
 - 没有 HTTP/API/Airtable/request-like tool，不要选择 tool_api_contract/tool_error_contract。
 - 没有真实 resume/state artifact，不要选择 state_resume_contract。
 - 没有 documented python CLI command，不要选择 cli_doc_conformance。
+- 没有 GroupChat 或 speaker-selection 配置，不要选择 speaker_selection。
 - 没有 last_message/chat_messages 或明确多阶段 handoff，不要把 message_handoff_integrity 作为 hard pattern。
 输出 JSON：
 {
@@ -144,12 +146,13 @@ EXECUTION_MONITOR_PROMPT = """角色：ExecutionMonitorAgent。
 
 
 FAULT_DIAGNOSER_PROMPT = """角色：FaultDiagnoserAgent。
-任务：根据 testcase、trace、rule oracle 和确定性 fault 初判，判断故障层级、类型、根因和修复建议。
-只允许把 application 或 autogen_framework 作为确认故障层级。
+任务：根据 testcase、trace、rule oracle 和确定性 fault 初判，提供根因解释、修复建议和补充证据线索。
+你不是最终裁判；最终是否确认为真实故障只由 deterministic oracle、代码证据和 trace evidence gate 决定。
+不要覆盖 rule oracle 给出的 failure_code/layer/fault_type/confidence。
 不要把模型回答质量、模型知识不足、模型服务不可用、API 鉴权/限流/超时判成目标软件故障；若证据只指向这些原因，应降低置信度并说明 likely_false_positive/non-target。
 输出 JSON：
 {
-  "fault_confirmed": true,
+  "fault_confirmed": false,
   "layer": "application",
   "fault_type": "Tool Schema Mismatch",
   "severity": "high",
@@ -161,11 +164,12 @@ FAULT_DIAGNOSER_PROMPT = """角色：FaultDiagnoserAgent。
 
 
 FALSE_POSITIVE_AUDITOR_PROMPT = """角色：FalsePositiveAuditorAgent。
-任务：审核故障诊断，区分 confirmed_fault、suspected_fault、likely_false_positive，并解释误报风险。
-只有应用层代码或 AutoGen 框架/配置/工具集成问题才能 confirmed_fault；纯模型能力、模型服务和测试框架问题应判为 likely_false_positive 或 suspected_fault。
+任务：作为 advisory reviewer 审核故障诊断，指出误报风险、证据缺口和可能的非目标原因。
+你不是最终裁判；audit_result 只作为报告中的辅助意见，不能把证据不足的 finding 确认为真实故障。
+最终 confirmed/suspected 状态只由 deterministic oracle、代码证据和 trace evidence gate 决定。
 输出 JSON：
 {
-  "audit_result": "confirmed_fault",
+  "audit_result": "suspected_fault",
   "reason": "...",
   "false_positive_risk": "low",
   "confidence": 0.0

@@ -1,103 +1,20 @@
 [
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
-    "case_id": "system1_iterative_coding_DATAINV_001",
-    "layer": "autogen_framework",
-    "fault_type": "Message Handoff Error",
-    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
-    "evidence": [
-      "\u001b[33mmanager\u001b[0m (to reviewer):",
-      "sounds good",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 09:55:01] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "\u001b[33mreviewer\u001b[0m (to manager):",
-      "Awesome, I'm glad everything checks out! You've got a clean, functional, and well-documented app that meets all the requirements.",
-      "If you ever need to modify it or build something new, feel free to come back anytime. Good luck with the project! 🚀",
-      "--------------------------------------------------------------------------------"
-    ],
-    "root_cause": "The message handoff mechanism (via last_message() in AndyTools.py and IterativeTools.py) forwards only a short termination signal ('sounds good') or an unrelated acknowledgment from the manager to the reviewer agent, instead of including the upstream analysis containing the financial metrics and the missing Total Debt. As a result, the downstream agent never receives the actual data required to check the data invariant, leading to a generic completion response that does not validate the partial-row requirement.",
-    "suggested_fix": "Modify the handoff logic in last_message() (or its caller) to explicitly include the full result or summary from the prior analysis step, rather than only the latest natural-language reply. Ensure that termination messages or short acknowledgments do not strip the payload needed by downstream agents. For example, when invoking reviewer, pass a structured summary containing the computed financial metrics, the missing-row flag, and any relevant analysis outputs, so that the reviewer can act on it instead of receiving only 'sounds good' or an empty/termination-only signal.",
-    "reproduction": {
-      "input": "Analyze a mocked ticker where Total Revenue and Net Income exist but Total Debt is missing.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.57,
-    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/AndyTools.py",
-        "function": "last_message",
-        "line": "54"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "last_message",
-        "line": "299"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "last_message",
-        "line": "308"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "last_message",
-        "line": "331"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "last_message",
-        "line": "335"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "affected_cases": [
-      "system1_iterative_coding_DATAINV_001"
-    ],
-    "duplicate_fault_ids": [],
-    "agentic_evidence": [
-      "manager's message to reviewer is merely 'sounds good', indicating that downstream agent receives only a brief acknowledgment or termination signal, not substantive data from prior analysis.",
-      "reviewer's final message is a generic completion response ('Awesome, I'm glad everything checks out...'), consistent with never having received the actual mocked financial data or analysis results.",
-      "MAS_TRACE entries show type 'message_handoff' for reviewer's reply with no mention of Total Revenue, Net Income, or missing Total Debt—the key elements the test requires.",
-      "Code location evidence points to last_message() functions in AndyTools.py and IterativeTools.py, which are responsible for constructing the message (or summary) passed between agents.",
-      "The observed handoff content lacks any reference to mocked financial values, matching the reported missing data pattern, without evidence that the model itself fabricated or failed to understand data."
-    ],
-    "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "Manager delivers only 'sounds good' to reviewer, omitting the required financial data. Reviewer never sees the missing Total Debt and cannot validate the invariant. This is a handoff plumbing defect: the last_message() or caller forwards a termination acknowledgment instead of the upstream analysis payload. The evidence includes concrete code locations, trace content showing the handoff lacks any financial values, and reviewer’s generic completion response consistent with missing data.",
-      "false_positive_risk": "low",
-      "confidence": 0.9
-    },
-    "root_cause_group_id": "handoff:terminate-empty-or-wrong-source",
-    "root_cause_group_title": "Message handoff forwarded empty or TERMINATE content",
-    "is_primary_fault": true,
-    "cascades_from": null
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
     "case_id": "system1_iterative_coding_FSSAFE_001",
     "layer": "application",
-    "fault_type": "Tool Schema Mismatch",
+    "fault_type": "Unsafe Project Path",
     "failure_code": "FILESYSTEM_ESCAPE",
     "severity": "high",
     "confidence": 0.92,
     "summary": "User-controlled path/name caused writes outside the configured project root.",
     "evidence": [
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db-shm",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db-wal",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_fixture/system1_iterative_coding_RESUME_001/MasterPlan.txt",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_fixture/system1_iterative_coding_RESUME_001/script_v1.py",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_001/mas_system1_iterative_coding_REQ_001/comments_v1.log",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_RESUME_001/mas_system1_iterative_coding_RESUME_001/MasterPlan.txt",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_RESUME_001/mas_system1_iterative_coding_RESUME_001/comments_v1.log"
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/MasterPlan.txt",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/comments_v1.log",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/script_v1.py"
     ],
-    "root_cause": "User-controlled project/file names are resolved without constraining them to the configured safe root.",
-    "suggested_fix": "Resolve candidate paths, reject absolute/parent-directory components, and enforce relative_to(configured_project_root).",
+    "root_cause": "User-supplied project name '../escaped_project' is resolved without sanitization or confinement to the configured project root in multiple IterativeTools.py functions, allowing writes to escape the safe directory.",
+    "suggested_fix": "In all affected functions (write_latest_iteration_manual, write_latest_iteration_comments, write_latest_iteration, write_settled_plan, list_subdirectories), resolve the candidate path relative to the configured safe root using pathlib.Path.resolve() and enforce that the resolved path starts with the safe root. Reject and raise an error or return a controlled validation error for any path containing '..' components or absolute references outside the root.",
     "reproduction": {
       "input": "../escaped_project",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
@@ -133,29 +50,56 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system1_iterative_coding_FSSAFE_001"
     ],
     "duplicate_fault_ids": [],
+    "agentic_diagnosis": {
+      "fault_confirmed": true,
+      "layer": "application",
+      "fault_type": "Unsafe Project Path",
+      "severity": "high",
+      "confidence": 0.92,
+      "evidence": [
+        "deterministic oracle confirmed filesystem escape at /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project (outside project root)",
+        "code locations: IterativeTools.py write_latest_iteration_manual:134, write_latest_iteration_comments:148, write_latest_iteration:175, write_settled_plan:187, list_subdirectories:194",
+        "trace shows tool calls (write_latest_iteration_comments) executed successfully without path constraint rejection"
+      ],
+      "root_cause": "User-supplied project name '../escaped_project' is resolved without sanitization or confinement to the configured project root in multiple IterativeTools.py functions, allowing writes to escape the safe directory.",
+      "suggested_fix": "In all affected functions (write_latest_iteration_manual, write_latest_iteration_comments, write_latest_iteration, write_settled_plan, list_subdirectories), resolve the candidate path relative to the configured safe root using pathlib.Path.resolve() and enforce that the resolved path starts with the safe root. Reject and raise an error or return a controlled validation error for any path containing '..' components or absolute references outside the root."
+    },
     "agentic_evidence": [
-      "Test case input '../escaped_project' caused writes outside the configured project root.",
-      "Written paths include '/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db' and '../escaped_project' relative artifacts.",
-      "Code locations in IterativeTools.py lines 134, 148, 175, 187, 194 resolve user-controlled names/paths without constraining them to a safe root."
+      "deterministic oracle confirmed filesystem escape at /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project (outside project root)",
+      "code locations: IterativeTools.py write_latest_iteration_manual:134, write_latest_iteration_comments:148, write_latest_iteration:175, write_settled_plan:187, list_subdirectories:194",
+      "trace shows tool calls (write_latest_iteration_comments) executed successfully without path constraint rejection"
     ],
     "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "The fault is a deterministic Tool Schema Mismatch in the application layer: IterativeTools.py functions (write_latest_iteration_manual, write_latest_iteration, write_settled_plan, etc.) use user‑supplied project names and paths without constraining them to the configured project root. The supplied test input '../escaped_project' bypasses the sandbox, resulting in writes to arbitrary filesystem locations. This is a classic filesystem‑escape vulnerability in the tool implementation and can be fixed by modifying the code (e.g., resolving paths and enforcing relative_to(sandbox_root)).",
+      "audit_result": "suspected_fault",
+      "reason": "The deterministic oracle confirmed filesystem escape with evidence of files created outside the configured project root. Code locations in IterativeTools.py show that user-supplied project names are used directly without path sanitization or confinement. The trace indicates tool calls succeeded without rejection, consistent with the reported vulnerability. However, the evidence_strength is 0.58, just above the threshold, meaning the code evidence is borderline and could be due to insufficient code inspection depth. There is no indication this is a model behavioral or configuration issue; the fault resides in deterministic application code.",
       "false_positive_risk": "low",
-      "confidence": 0.92
+      "confidence": 0.85
     },
+    "agent_audit_influence": "advisory_only",
     "root_cause_group_id": "filesystem:path-escape",
     "root_cause_group_title": "User-controlled path escaped configured root",
     "is_primary_fault": true,
     "cascades_from": null
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-    "case_id": "system1_iterative_coding_RESUME_001",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
     "layer": "autogen_framework",
     "fault_type": "Human Input Mode Error",
     "failure_code": "HUMAN_INPUT_REQUESTED",
@@ -164,18 +108,22 @@
     "summary": "The target system requested human input during an automated no-human run.",
     "evidence": [
       "--------------------------------------------------------------------------------",
-      "\u001b[33mmanager\u001b[0m (to reviewer):",
-      "sounds good",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 09:52:09] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "- The `exit` command terminates the program.",
       "\u001b[33mreviewer\u001b[0m (to manager):",
+      "- A CLI loop that accepts commands: `view`, `feedback coder <message>`, `feedback reviewer <message>`, `next`, `exit`.",
+      "- The `next` command advances the stage only if the current stage is `coding` (→ `reviewing`) or `reviewing` (→ `done`); from `done`, it should do nothing or show a message.",
+      "Glad it all checks out. You've got a solid, working implementation. If you ever need a review of the next iteration or want to discuss enhancements, just let me know. Good luck!",
       "Alright – I'll take that as confirmation. If you need anything else in the future, just say the word. Best of luck with the project!",
-      "--------------------------------------------------------------------------------"
+      "I recommend the programmer produce code that implements these behaviors and then submit it for review. Once code is provided, I can comment on its correctness and suggest improvements.",
+      "\u001b[33mmanager\u001b[0m (to reviewer):",
+      "- Storage for `code` and `comments` as modifiable strings (starting with placeholders like `\"# Initial code v1\"` and `\"// Initial review comments v1\"`).",
+      "- The `view` command displays current stage, code, and comments.",
+      "sounds good"
     ],
-    "root_cause": "The UserProxyAgent (or equivalent) is configured with a human_input_mode that allows or requires manual input, which blocks the automated test run when the agent reaches a point where it expects user confirmation.",
-    "suggested_fix": "Set human_input_mode='NEVER' in the UserProxyAgent configuration to ensure fully automated execution. Remove any blocking input() calls or manual interaction paths from the agent's execution flow.",
+    "root_cause": "The target system was not configured with human_input_mode='NEVER' and/or still contained blocking input()/CLI prompt loops in the automated execution path. As a result, the agent interaction reached a point where human input was expected, causing the automated run to stall, exceeding max turns and failing to terminate normally.",
+    "suggested_fix": "Ensure AutoGen is instantiated with human_input_mode='NEVER' and remove all blocking input() or CLI prompt loops from the automated execution path. Replace them with programmatic decisions or pre-defined test inputs that satisfy the requirement without human intervention.",
     "reproduction": {
-      "input": "Continue the existing project from the latest script and preserve existing state.",
+      "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
@@ -183,63 +131,130 @@
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [
       {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "UserProxyAgent",
-        "line": "18"
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_NOHUMAN_001/mas_system1_iterative_coding_NOHUMAN_001/script_v1.py",
+        "function": "parse_arguments",
+        "line": "13"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_NOHUMAN_001/mas_system1_iterative_coding_NOHUMAN_001/script_v1.py",
+        "function": "validate_file",
+        "line": "35"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_NOHUMAN_001/mas_system1_iterative_coding_NOHUMAN_001/script_v1.py",
+        "function": "count_lines",
+        "line": "45"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_NOHUMAN_001/mas_system1_iterative_coding_NOHUMAN_001/script_v1.py",
+        "function": "summarize_file",
+        "line": "51"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_NOHUMAN_001/mas_system1_iterative_coding_NOHUMAN_001/script_v1.py",
+        "function": "main",
+        "line": "69"
       }
     ],
     "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
+      "system1_iterative_coding_OUTCONTRACT_003",
       "system1_iterative_coding_RESUME_001"
     ],
-    "duplicate_fault_ids": [],
+    "duplicate_fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_006"
+    ],
+    "diagnostic_only": false,
+    "agentic_diagnosis": {
+      "fault_confirmed": true,
+      "layer": "autogen_framework",
+      "fault_type": "Human Input Mode Error",
+      "severity": "high",
+      "confidence": 0.9,
+      "evidence": [
+        {
+          "source": "trace_summary",
+          "detail": "stdout_tail contains MAS_TRACE with reviewer message recommending code implementation, but no code was provided. Trace shows automated run hung/stalled at human input prompt without termination."
+        },
+        {
+          "source": "rule_oracle",
+          "detail": "failure_code: HUMAN_INPUT_REQUESTED - target system requested human input during automated no-human run."
+        },
+        {
+          "source": "fault_data",
+          "detail": "Evidence excerpt: reviewer output 'I recommend the programmer produce code...' repeated, followed by manager 'sounds good' - indicates manual input loop."
+        },
+        {
+          "source": "fault_data.deterministic_confirmation",
+          "detail": "confirmed: true, reason: deterministic oracle failure with sufficient code/trace evidence. evidence_strength: 0.57, root_cause_confidence: code_evidence."
+        }
+      ],
+      "root_cause": "The target system was not configured with human_input_mode='NEVER' and/or still contained blocking input()/CLI prompt loops in the automated execution path. As a result, the agent interaction reached a point where human input was expected, causing the automated run to stall, exceeding max turns and failing to terminate normally.",
+      "suggested_fix": "Ensure AutoGen is instantiated with human_input_mode='NEVER' and remove all blocking input() or CLI prompt loops from the automated execution path. Replace them with programmatic decisions or pre-defined test inputs that satisfy the requirement without human intervention.",
+      "additional_notes": "Trace shows repeated reviewer messages and manager acknowledgment ('sounds good'), indicating a conversation loop waiting for human input. This is not a model response quality issue but a framework configuration flaw."
+    },
     "agentic_evidence": [
       {
-        "source": "fault_report",
-        "detail": "Failure code: HUMAN_INPUT_REQUESTED. The target system attempted to enter a manual input path after automated evaluation had started."
-      },
-      {
-        "source": "code_location",
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "UserProxyAgent",
-        "line": 18,
-        "detail": "Code evidence indicates UserProxyAgent configuration may allow human input."
-      },
-      {
         "source": "trace_summary",
-        "detail": "Trace shows conversation halted with a farewell message from 'reviewer' and no further tool execution, consistent with the system waiting for human input that never arrives."
+        "detail": "stdout_tail contains MAS_TRACE with reviewer message recommending code implementation, but no code was provided. Trace shows automated run hung/stalled at human input prompt without termination."
+      },
+      {
+        "source": "rule_oracle",
+        "detail": "failure_code: HUMAN_INPUT_REQUESTED - target system requested human input during automated no-human run."
+      },
+      {
+        "source": "fault_data",
+        "detail": "Evidence excerpt: reviewer output 'I recommend the programmer produce code...' repeated, followed by manager 'sounds good' - indicates manual input loop."
+      },
+      {
+        "source": "fault_data.deterministic_confirmation",
+        "detail": "confirmed: true, reason: deterministic oracle failure with sufficient code/trace evidence. evidence_strength: 0.57, root_cause_confidence: code_evidence."
       }
     ],
     "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "故障SYSTEM1_ITERATIVE_CODING_FAULT_003完全符合应用层软件/AutoGen框架故障定义。根因是UserProxyAgent的human_input_mode配置错误，导致在无人工介入的自动化测试中阻塞等待输入。代码证据明确指向文件/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py第18行的UserProxyAgent配置，这与LLM能力无关，也不属于模型服务或测试框架问题。修复方案（设置human_input_mode='NEVER'）是对AutoGen配置的典型缓解，完全在MASentinel可检测和可修改范围内。",
-      "false_positive_risk": "low",
-      "confidence": 0.92
+      "audit_result": "suspected_fault",
+      "reason": "The failure signature (HUMAN_INPUT_REQUESTED during an automated no-human run) strongly suggests the target AutoGen system was not configured with human_input_mode='NEVER' or retained a blocking CLI input loop. The trace shows the reviewer repeatedly requesting code and the manager responding with 'sounds good', indicating a conversation stall typical of human-input blocking. However, the deterministic confirmation relies on a rule_oracle check (failure_code: HUMAN_INPUT_REQUESTED) and an evidence_strength of 0.57, which is below the 0.65 trace_evidence_threshold. The code_locations point to utility functions (parse_arguments, validate_file, count_lines, summarize_file, main) in script_v1.py, but none of these involve AutoGen instantiation or the CLI interaction loop directly, so they do not provide direct evidence of the blocking input mechanism. The diagnosis that this is a framework configuration flaw is plausible, but the evidence is incomplete for a definitive ruling; the failure could also stem from an unexpected interaction pattern or a missing termination condition that triggers an implicit human-input fallback.",
+      "false_positive_risk": "medium",
+      "confidence": 0.72
     },
+    "agent_audit_influence": "advisory_only",
     "root_cause_group_id": "interaction:unattended-termination-guard-missing",
     "root_cause_group_title": "Unattended termination / approval guard missing",
     "is_primary_fault": true,
     "cascades_from": null
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-    "case_id": "system1_iterative_coding_RESUME_001",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
     "layer": "autogen_framework",
     "fault_type": "Termination Condition Error",
     "failure_code": "NON_TERMINATION",
     "severity": "high",
-    "confidence": 0.85,
+    "confidence": 0.8,
     "summary": "The run did not terminate.",
     "evidence": [
-      "turn_count=24"
+      "turn_count=24",
+      "turn_count=20"
     ],
-    "root_cause": "Conversation lacks a reliable termination condition: no is_termination_msg function or max_turns enforced. The reviewer's final message is not recognized as termination, so the conversation loop continues until external timeout.",
-    "suggested_fix": "1. Set human_input_mode='NEVER' for automated runs. 2. Add an is_termination_msg function that detects terminal keywords (e.g., 'TERMINATE', 'completed', 'goodbye') in the last message. 3. Enforce max_turns in the conversation loop (e.g., 15-20 turns). 4. Ensure the runtime stops immediately when termination message is detected.",
+    "root_cause": "The group chat configuration lacks a reliable termination message function (is_termination_msg) and does not enforce a max_turns/max_round limit in the running environment. The reviewer repeatedly asks for code that is never provided, causing the conversation to stall indefinitely rather than terminating or raising an error.",
+    "suggested_fix": "1) Add a termination message check (e.g., return True for messages containing 'TERMINATE' or a specific keyword). 2) Set the group chat's max_round or run's max_turns to a hard limit (e.g., 30). 3) Implement a speaker selection policy that prevents the same agent from sending repeated messages without progress.",
     "reproduction": {
-      "input": "Continue the existing project from the latest script and preserve existing state.",
+      "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.45,
     "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [
@@ -270,70 +285,240 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.45,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
+      "system1_iterative_coding_OUTCONTRACT_003",
       "system1_iterative_coding_RESUME_001"
     ],
-    "duplicate_fault_ids": [],
+    "duplicate_fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_007"
+    ],
+    "diagnostic_only": false,
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "autogen_framework",
+      "fault_type": "Termination Condition Error",
+      "severity": "high",
+      "confidence": 0.0,
+      "evidence": [
+        "Turn count reached 20 without termination (testcase oracle max_turns is 30, but terminated=false).",
+        "Last stdout message shows reviewer waiting for code that never arrives, indicating conversation is stuck in a loop.",
+        "Trace shows repeated 'message_handoff' from reviewer with same content, and no termination message detected."
+      ],
+      "root_cause": "The group chat configuration lacks a reliable termination message function (is_termination_msg) and does not enforce a max_turns/max_round limit in the running environment. The reviewer repeatedly asks for code that is never provided, causing the conversation to stall indefinitely rather than terminating or raising an error.",
+      "suggested_fix": "1) Add a termination message check (e.g., return True for messages containing 'TERMINATE' or a specific keyword). 2) Set the group chat's max_round or run's max_turns to a hard limit (e.g., 30). 3) Implement a speaker selection policy that prevents the same agent from sending repeated messages without progress."
+    },
     "agentic_evidence": [
-      {
-        "type": "oracle_failure",
-        "detail": "must_terminate=true expected termination but run did not terminate. turn_count=24."
-      },
-      {
-        "type": "trace_behavior",
-        "detail": "Last message is conversational handoff ('Alright – I'll take that as confirmation...'), not termination signal."
-      },
-      {
-        "type": "trace_behavior",
-        "detail": "write_latest_iteration_comments silently called at end, indicating runtime continued even after agent sign-off."
-      }
+      "Turn count reached 20 without termination (testcase oracle max_turns is 30, but terminated=false).",
+      "Last stdout message shows reviewer waiting for code that never arrives, indicating conversation is stuck in a loop.",
+      "Trace shows repeated 'message_handoff' from reviewer with same content, and no termination message detected."
     ],
     "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "Run did not terminate after 24 turns. The root cause is a missing or broken AutoGen termination condition—no is_termination_msg was registered, and no max_turns limit was enforced. This is a code/configurable orchestration bug inside the AutoGen framework layer, not a model capability problem.",
+      "audit_result": "suspected_fault",
+      "reason": "Evidence shows non-termination (terminated=false, turn_count=20) and repeated reviewer messages without progress, consistent with a termination condition error. However, deterministic code/trace evidence is insufficient (evidence_strength 0.45 < 0.55 threshold) to rule out non-target causes like model looping or prompt issues, so the finding remains suspected rather than confirmed.",
       "false_positive_risk": "low",
-      "confidence": 0.85
+      "confidence": 0.45
     },
+    "agent_audit_influence": "advisory_only",
     "root_cause_group_id": "interaction:unattended-termination-guard-missing",
     "root_cause_group_title": "Unattended termination / approval guard missing",
     "is_primary_fault": false,
-    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_003"
+    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_002"
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
-    "case_id": "system1_iterative_coding_RESUME_001",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "REPETITIVE_LOOP",
     "severity": "medium",
-    "confidence": 0.0,
+    "confidence": 0.67,
     "summary": "Trace contains highly repetitive consecutive messages.",
     "evidence": [],
-    "root_cause": "Trace evidence only shows repetitive handoff messages without clear application or framework fault. The conversation may simply be continuing because no termination condition was triggered, which could be due to model behavior or prompt design rather than a code defect.",
-    "suggested_fix": "Inspect the termination condition and max-turn configuration. If the loop persists, consider adding explicit termination logic or a max-turn guard, but this may be a design improvement rather than a confirmed fault.",
+    "root_cause": "The AutoGen conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint, causing the reviewer to repeatedly emit the same message when no code is provided, instead of triggering a stop or handing back to the manager. The framework does not enforce speaker rotation or detect content stagnation, leading to the REPETITIVE_LOOP observed in the trace.",
+    "suggested_fix": "Inspect the AutoGen configuration (e.g., GroupChat, speaker selection method, max_consecutive_auto_reply) and add a guard to break loops when the same agent sends consecutive messages with identical content. Implement a max-turn limit or a termination condition based on task progress (e.g., after a manager directive to provide code, the coder must act). Additionally, register a tool to check message uniqueness and force a handoff if repetition is detected.",
     "reproduction": {
-      "input": "Continue the existing project from the latest script and preserve existing state.",
+      "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.27,
     "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [],
     "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.27,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
+      "system1_iterative_coding_OUTCONTRACT_003",
       "system1_iterative_coding_RESUME_001"
     ],
-    "duplicate_fault_ids": [],
+    "duplicate_fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_008"
+    ],
+    "diagnostic_only": false,
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "autogen_framework",
+      "fault_type": "Speaker Selection Error",
+      "severity": "medium",
+      "confidence": 0.67,
+      "evidence": [
+        {
+          "type": "trace",
+          "source": "trace_summary.stdout_tail",
+          "detail": "Trace contains MAS_TRACE events showing multiple message_handoff entries from 'reviewer' with identical content_hash 8cb824d118805e91, indicating repetitive consecutive messages from the same speaker."
+        },
+        {
+          "type": "trace",
+          "source": "trace_summary",
+          "detail": "turn_count is 20 but the conversation did not terminate within max_turns, suggesting a loop without progression."
+        },
+        {
+          "type": "oracle",
+          "source": "fault.deterministic_confirmation",
+          "detail": "Rule oracle assigned failure_code REPETITIVE_LOOP with confidence 0.67, but deterministic confirmation was not achieved due to insufficient code/trace evidence (strength 0.27)."
+        },
+        {
+          "type": "trace",
+          "source": "trace_summary.stdout_tail",
+          "detail": "The same reviewer message content appears twice in stdout_tail, potentially indicating a loop where the same agent repeatedly sends messages without advancing the stage."
+        }
+      ],
+      "root_cause": "The AutoGen conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint, causing the reviewer to repeatedly emit the same message when no code is provided, instead of triggering a stop or handing back to the manager. The framework does not enforce speaker rotation or detect content stagnation, leading to the REPETITIVE_LOOP observed in the trace.",
+      "suggested_fix": "Inspect the AutoGen configuration (e.g., GroupChat, speaker selection method, max_consecutive_auto_reply) and add a guard to break loops when the same agent sends consecutive messages with identical content. Implement a max-turn limit or a termination condition based on task progress (e.g., after a manager directive to provide code, the coder must act). Additionally, register a tool to check message uniqueness and force a handoff if repetition is detected."
+    },
+    "agentic_evidence": [
+      {
+        "type": "trace",
+        "source": "trace_summary.stdout_tail",
+        "detail": "Trace contains MAS_TRACE events showing multiple message_handoff entries from 'reviewer' with identical content_hash 8cb824d118805e91, indicating repetitive consecutive messages from the same speaker."
+      },
+      {
+        "type": "trace",
+        "source": "trace_summary",
+        "detail": "turn_count is 20 but the conversation did not terminate within max_turns, suggesting a loop without progression."
+      },
+      {
+        "type": "oracle",
+        "source": "fault.deterministic_confirmation",
+        "detail": "Rule oracle assigned failure_code REPETITIVE_LOOP with confidence 0.67, but deterministic confirmation was not achieved due to insufficient code/trace evidence (strength 0.27)."
+      },
+      {
+        "type": "trace",
+        "source": "trace_summary.stdout_tail",
+        "detail": "The same reviewer message content appears twice in stdout_tail, potentially indicating a loop where the same agent repeatedly sends messages without advancing the stage."
+      }
+    ],
     "false_positive_audit": {
       "audit_result": "suspected_fault",
-      "reason": "The trace shows a repeating pattern where the 'reviewer' agent sends the same message multiple times, followed by system-level handoff and tool calls. This suggests a loop, but there is no evidence of a specific code defect in the application or AutoGen framework. The behavior could be caused by a missing or inadequate termination condition, a prompt that does not instruct the model to stop, or model behavior. While the issue could be mitigated by code or configuration changes (e.g., adding a max-turn limit or a custom termination check), it cannot be confirmed as a software fault based solely on the provided trace.",
+      "reason": "The trace evidence shows the reviewer agent emitted two consecutive messages with identical content_hash (8cb824d118805e91). While this indicates a repetition, the root cause could be a model-side refusal or reasoning pattern (e.g., reviewer waiting for code and providing the same recommendation) rather than a definitive AutoGen speaker selection bug. The trace turns=20 without timeout suggests the loop may be driven by the model's response content, not a framework-level selection error. The fault is suspected but lacks deterministic code-level confirmation of a framework misconfiguration.",
       "false_positive_risk": "medium",
-      "confidence": 0.3
+      "confidence": 0.4
     },
+    "agent_audit_influence": "advisory_only",
     "root_cause_group_id": "interaction:unattended-termination-guard-missing",
     "root_cause_group_title": "Unattended termination / approval guard missing",
     "is_primary_fault": false,
-    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_003"
+    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_002"
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+    "case_id": "system1_iterative_coding_REQ_002",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
+    "evidence": [
+      "120"
+    ],
+    "root_cause": "The AutoGen group chat executing the two-phase planning+iterative coding workflow (manager, planner, programmer, reviewer) lacks a reliable termination condition. The conversation ran to 16 turns without a speaker selection constraint or termination message, exceeding the oracle max_turns and causing the run to be killed. The default human_input_mode was not set to NEVER, so the automated run could not auto-reply to human prompts, and no is_termination_msg function was configured on the agents to stop when the workflow is complete.",
+    "suggested_fix": "1. Set human_input_mode='NEVER' in the AssistantAgent configuration and group chat manager to allow full automation. 2. Define an is_termination_msg function that returns True on messages containing 'TERMINATE' or final workflow completion signals (e.g., after Reviewer approves with write_latest_iteration). 3. Enforce max_turns/max_round in the group chat configuration to a safe upper bound (e.g., 30) to guard against infinite loops. 4. Ensure the workflow states in IterativeTools.py properly transition to an exit condition.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.75,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "AssistantAgent",
+        "line": "26"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.75,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_REQ_002"
+    ],
+    "duplicate_fault_ids": [],
+    "agentic_diagnosis": {
+      "fault_confirmed": true,
+      "layer": "autogen_framework",
+      "fault_type": "Non-Termination",
+      "severity": "high",
+      "confidence": 0.82,
+      "evidence": [
+        "Test case system1_iterative_coding_REQ_002 timeout after 16 turns (oracle max_turns=15)",
+        "Trace shows process returncode -9 (killed) and state 'timeout', not a clean agent termination",
+        "Code location: /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py line 26 (AssistantAgent configuration)",
+        "Oracle deterministic confirmation with confidence 0.82 and evidence_strength 0.75"
+      ],
+      "root_cause": "The AutoGen group chat executing the two-phase planning+iterative coding workflow (manager, planner, programmer, reviewer) lacks a reliable termination condition. The conversation ran to 16 turns without a speaker selection constraint or termination message, exceeding the oracle max_turns and causing the run to be killed. The default human_input_mode was not set to NEVER, so the automated run could not auto-reply to human prompts, and no is_termination_msg function was configured on the agents to stop when the workflow is complete.",
+      "suggested_fix": "1. Set human_input_mode='NEVER' in the AssistantAgent configuration and group chat manager to allow full automation. 2. Define an is_termination_msg function that returns True on messages containing 'TERMINATE' or final workflow completion signals (e.g., after Reviewer approves with write_latest_iteration). 3. Enforce max_turns/max_round in the group chat configuration to a safe upper bound (e.g., 30) to guard against infinite loops. 4. Ensure the workflow states in IterativeTools.py properly transition to an exit condition."
+    },
+    "agentic_evidence": [
+      "Test case system1_iterative_coding_REQ_002 timeout after 16 turns (oracle max_turns=15)",
+      "Trace shows process returncode -9 (killed) and state 'timeout', not a clean agent termination",
+      "Code location: /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py line 26 (AssistantAgent configuration)",
+      "Oracle deterministic confirmation with confidence 0.82 and evidence_strength 0.75"
+    ],
+    "false_positive_audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The fault diagnosis points to missing termination conditions in the AutoGen group chat (human_input_mode not NEVER, no is_termination_msg, no max_turns guard). The trace evidence shows a timeout after 16 turns with a killed process, which aligns with an unmanaged conversation. However, without seeing the exact code at IterativeTools.py line 26 and the full group chat configuration, it is ambiguous whether the 16th turn was truly an infinite loop or a slow execution that merely exceeded the aggressive oracle max_turns of 15. The timeout could also be caused by a model API call hang or a blocking tool execution, which are non-target infrastructure issues. The current evidence is circumstantial for a framework-level non-termination bug.",
+      "false_positive_risk": "medium",
+      "confidence": 0.55
+    },
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "interaction:human-input-or-approval",
+    "root_cause_group_title": "Unattended run blocked by human input or approval",
+    "is_primary_fault": true,
+    "cascades_from": null
   },
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_006",
@@ -354,13 +539,13 @@
       "mas_system1_iterative_coding_resume_001",
       "target system requested human input during a no-human masentinel run."
     ],
-    "root_cause": "Resume-state detection logic in IterativeTools.py treats partial but meaningful on-disk state (existing MasterPlan.txt and script_v1.py) as absent or silently starts a fresh workflow, violating the test contract to preserve or report existing state.",
-    "suggested_fix": "Implement a discovery step in the resume logic that independently checks for MasterPlan.txt, the latest script, and latest comments. If partial state is detected, explicitly inform the user/agent of the incomplete state and either resume the available state with a warning or report the incomplete state instead of silently falling back to a first-iteration workflow. Update functions in IterativeTools.py (e.g., retrieve_latest_iteration, does_version_one_exist) to distinguish between 'no state' and 'incomplete state'.",
+    "root_cause": "The 'write_latest_iteration_comments' tool was called without first calling 'retrieve_latest_iteration' or 'does_version_one_exist', and the generated Last Message was the same 'Alright – I'll take that as confirmation...' repeated, indicating the system did not attempt to detect or resume the existing project state from the fixture files ('MasterPlan.txt', 'script_v1.py').",
+    "suggested_fix": "Modify the iterative coding workflow to call 'retrieve_latest_iteration' or 'does_version_one_exist' at the start of a resume session to detect the existing plan and script files. If an existing iteration is found, populate the agent's context with the retrieved state instead of treating the project as a first iteration.",
     "reproduction": {
       "input": "Continue the existing project from the latest script and preserve existing state.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.31,
     "not_model_fault_because": "The failure is caused by deterministic filesystem/artifact handling code.",
     "code_locations": [
@@ -391,30 +576,59 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.31,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system1_iterative_coding_RESUME_001"
     ],
     "duplicate_fault_ids": [],
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "application",
+      "fault_type": "Resume State Inconsistency",
+      "severity": "medium",
+      "confidence": 0.0,
+      "evidence": [
+        "trace_summary.status: failed",
+        "trace_summary.terminated: false",
+        "trace_summary.turn_count: 24",
+        "stdout_tail shows the same 'Alright – I'll take that as confirmation...' message repeated multiple times, suggesting the system did not resume the existing project but instead ended prematurely or in a loop",
+        "testcase.oracle.must_terminate is true but the system did not terminate within 24 turns",
+        "testcase.metadata.fixture.create_files contains 'MasterPlan.txt' and 'script_v1.py', indicating pre-existing project state that should have been detected and resumed",
+        "trace_summary events include 'write_latest_iteration_comments' tool call, but no evidence of 'retrieve_latest_iteration' or 'does_version_one_exist' calls, which are the tools that would detect and resume existing state",
+        "code_locations point to IterativeTools.py functions that handle state persistence and retrieval, suggesting the bug is in the application logic that checks whether to start fresh or resume"
+      ],
+      "root_cause": "The 'write_latest_iteration_comments' tool was called without first calling 'retrieve_latest_iteration' or 'does_version_one_exist', and the generated Last Message was the same 'Alright – I'll take that as confirmation...' repeated, indicating the system did not attempt to detect or resume the existing project state from the fixture files ('MasterPlan.txt', 'script_v1.py').",
+      "suggested_fix": "Modify the iterative coding workflow to call 'retrieve_latest_iteration' or 'does_version_one_exist' at the start of a resume session to detect the existing plan and script files. If an existing iteration is found, populate the agent's context with the retrieved state instead of treating the project as a first iteration."
+    },
     "agentic_evidence": [
-      "Testcase fixture created partial state: 'MasterPlan.txt' and 'script_v1.py' exist, but 'comments_v1.log' and 'comments_v1.txt' are omitted.",
-      "Testcase objective: 'A partial on-disk state should be resumed or reported explicitly instead of silently ignored.'",
-      "Testcase assertions: 'existing_script_not_ignored', 'existing_file_not_overwritten', 'recovery_path_explicit'.",
-      "Trace summary shows status 'failed', terminated=false, turn_count=24, no timeout.",
-      "stdout_tail indicates system acted as a first iteration: 'Alright – I'll take that as confirmation. If you need anything else in the future, just say the word. Best of luck with the project!' – this is a generic completion message, not a resume acknowledgment.",
-      "Fault analysis summary: 'Existing script state was ignored and the project was treated as a first iteration.'",
-      "Root cause analysis: 'The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow.'",
-      "Suggested fix aligns with defect: 'Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly.'",
-      "Evidence strength: 0.31 (code evidence, not model hallucination).",
-      "Not model fault because: 'The failure is caused by deterministic filesystem/artifact handling code.'",
-      "Affected functions in IterativeTools.py: write_latest_iteration_manual, write_latest_iteration_comments, retrieve_latest_iteration, write_latest_iteration, does_version_one_exist."
+      "trace_summary.status: failed",
+      "trace_summary.terminated: false",
+      "trace_summary.turn_count: 24",
+      "stdout_tail shows the same 'Alright – I'll take that as confirmation...' message repeated multiple times, suggesting the system did not resume the existing project but instead ended prematurely or in a loop",
+      "testcase.oracle.must_terminate is true but the system did not terminate within 24 turns",
+      "testcase.metadata.fixture.create_files contains 'MasterPlan.txt' and 'script_v1.py', indicating pre-existing project state that should have been detected and resumed",
+      "trace_summary events include 'write_latest_iteration_comments' tool call, but no evidence of 'retrieve_latest_iteration' or 'does_version_one_exist' calls, which are the tools that would detect and resume existing state",
+      "code_locations point to IterativeTools.py functions that handle state persistence and retrieval, suggesting the bug is in the application logic that checks whether to start fresh or resume"
     ],
     "false_positive_audit": {
-      "audit_result": "confirmed_fault",
-      "reason": "Root cause analysis identifies deterministic filesystem/artifact handling code in IterativeTools.py that fails to detect partial but meaningful on-disk state (MasterPlan.txt and script_v1.py exist). The test expectations require explicit resumption or reporting of incomplete state, but the current implementation silently ignores it and starts a fresh workflow. The trace confirms the system responded with a generic completion message, not a resume acknowledgment, and the stalled turn 24 exit aligns with the fault signature. This is logically mappable to the ranked functions (write_latest_iteration_manual, write_latest_iteration_comments, retrieve_latest_iteration, write_latest_iteration, does_version_one_exist) which should implement state detection and reporting. The evidence meets sufficient documentation, reproduction command, and code location granularity for confirmation.",
-      "false_positive_risk": "low",
-      "confidence": 0.92
+      "audit_result": "suspected_fault",
+      "reason": "The evidence shows no calls to retrieve_latest_iteration or does_version_one_exist, which are needed to resume state. However, the observed failure (repeated 'Alright' message, no termination) could also be caused by an LLM misunderstanding of the resume intent, a prompt/instruction gap not instructing the model to call state‑retrieval tools, or a general conversation termination pattern unrelated to state inconsistency. No deterministic code path was traced; the diagnosis relies on absence of tool calls and indirect behavior without a runtime trace that confirms the exact control flow. Thus, while an application‑level resume‑state inconsistency is plausible, other causes (LLM behavior, configuration) cannot be ruled out, making this a suspected fault with moderate false‑positive risk.",
+      "false_positive_risk": "medium",
+      "confidence": 0.5
     },
-    "root_cause_group_id": "generic:application-resume-state-inconsistency-resume-state-detection-logic-in-iterativetools.py-treats-partial-but-meaningful-o",
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "generic:application-resume-state-inconsistency-the-write_latest_iteration_comments-tool-was-called-without-first-calling-retriev",
     "root_cause_group_title": "Resume State Inconsistency",
     "is_primary_fault": true,
     "cascades_from": null
@@ -426,7 +640,7 @@
     "fault_type": "Termination Signal Ignored",
     "failure_code": "TERMINATION_SIGNAL_IGNORED",
     "severity": "high",
-    "confidence": 0.0,
+    "confidence": 0.88,
     "summary": "The target emitted a termination marker but continued with substantive prompts/messages.",
     "evidence": [
       "You're all set then! If you ever need another review or want to expand the script, just let me know. Happy coding!",
@@ -438,8 +652,8 @@
       "Great, glad everything is clear. If you need anything else in the future, don’t hesitate to ask. Have a great day!",
       "--------------------------------------------------------------------------------"
     ],
-    "root_cause": "The provided evidence and trace summary indicate that the test passed and the system terminated appropriately. The initial fault hypothesis was based on a perceived failure, but the actual execution shows the system stopped after a natural conclusion. There is no evidence of an autogen framework fault where a termination signal was ignored because no fault occurred.",
-    "suggested_fix": "No fix required for this specific trace and test case. The system behaved as expected and terminated within the constraints. If the fault was reproduced in other runs, that trace would need to be analyzed, but based on this evidence, the system is working correctly.",
+    "root_cause": "The target system emitted a termination marker but continued asking for follow-up input or routing messages.",
+    "suggested_fix": "Add or fix is_termination_msg handling so TERMINATE stops the conversation within a small grace window.",
     "reproduction": {
       "input": "请完成一个简单任务，最后明确输出 TERMINATE。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
@@ -449,196 +663,61 @@
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
     "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.47,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system1_iterative_coding_TERM_001"
     ],
     "duplicate_fault_ids": [],
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "autogen_framework",
+      "fault_type": "Termination Signal Ignored",
+      "severity": "high",
+      "confidence": 0.88,
+      "evidence": [
+        "You're all set then! If you ever need another review or want to expand the script, just let me know. Happy coding!",
+        "--------------------------------------------------------------------------------",
+        "\u001b[33mmanager\u001b[0m (to reviewer):",
+        "sounds good",
+        "--------------------------------------------------------------------------------",
+        "\u001b[33mreviewer\u001b[0m (to manager):",
+        "Great, glad everything is clear. If you need anything else in the future, don’t hesitate to ask. Have a great day!",
+        "--------------------------------------------------------------------------------"
+      ],
+      "root_cause": "The target system emitted a termination marker but continued asking for follow-up input or routing messages.",
+      "suggested_fix": "Add or fix is_termination_msg handling so TERMINATE stops the conversation within a small grace window."
+    },
     "agentic_evidence": [
-      "The trace shows the conversation ended with 'Great, glad everything is clear. If you need anything else in the future, don’t hesitate to ask. Have a great day!' and the system terminated successfully with returncode 0 and no error.",
-      "The oracle required termination, and the test status is 'passed', indicating the system stopped within the allowed turns (20 turns, which is within the max_turns of 30).",
-      "The termination marker 'TERMINATE' was not explicitly found in the provided tail of the conversation, but the system did stop and did not continue with substantive tasks, as the last messages are farewells."
-    ],
-    "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The trace shows the conversation ended naturally with farewells and the system terminated successfully within the allowed turn limit (20 turns, returncode 0). The test case passed, and there is no evidence of a termination signal being ignored. The initial fault hypothesis is not supported by the provided metrics/oracle results, which indicate correct termination behavior.",
-      "false_positive_risk": "high",
-      "confidence": 0.85
-    },
-    "root_cause_group_id": "interaction:unattended-termination-guard-missing",
-    "root_cause_group_title": "Unattended termination / approval guard missing",
-    "is_primary_fault": false,
-    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_003"
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_009",
-    "case_id": "system1_iterative_coding_TOOLAPI_001",
-    "layer": "application",
-    "fault_type": "Tool API Pagination Missing",
-    "failure_code": "PAGINATION_NOT_FOLLOWED",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "External API pagination stopped before all fixture pages were requested.",
-    "evidence": [
-      "expected_pages=2",
-      "observed_pages=[]"
-    ],
-    "root_cause": "The external API tool wrapper does not preserve semantic parameters or iterate paginated responses. The tool likely issues a single HTTP request without following offset/next-page links to retrieve all records.",
-    "suggested_fix": "Parse semantic URL fields such as view/base/table, pass them to the API, and follow offset pagination until exhausted. In the get_number function (and other API wrappers), implement a loop that checks for a 'next' page indicator and accumulates results across all pages.",
-    "reproduction": {
-      "input": "请使用一个包含筛选视图和多页结果的外部数据源完成任务。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.57,
-    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_autoreply/system1_smoke_api_001/tmp_code_18e1bdf22d98fbf80f254fbcf2369c40.py",
-        "function": "get_number",
-        "line": "1"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_META_001/换一种说法完成同一需求 R1，并用三个要点概括。/script_v1.py",
-        "function": "get_input",
-        "line": "15"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_001/mas_system1_iterative_coding_R2_001/script_v1.py",
-        "function": "get_tasks_from_manager",
-        "line": "22"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_001/mas_system1_iterative_coding_R2_001/script_v1.py",
-        "function": "manager_approval",
-        "line": "100"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "affected_cases": [
-      "system1_iterative_coding_TOOLAPI_001"
-    ],
-    "duplicate_fault_ids": [],
-    "agentic_evidence": [
-      "expected_pages=2",
-      "observed_pages=[]",
-      "trace showed tool 'write_latest_iteration_comments' but not the target tool 'write_latest_iteration'",
-      "code location in get_number function without pagination loop"
-    ],
-    "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The fault targets Tool API Pagination Missing, claiming the external API pagination was not followed. However, the test case status is 'passed' with return code 0 and termination, indicating the test oracle accepted the outcome. No code evidence confirms that the get_number function or related wrappers actually failed to paginate; the evidence cites 'observed_pages=[]' which could be expected if the test environment/fixture returned a single page or the pagination logic was not invoked. The trace does not show calls to the target tool 'write_latest_iteration', only 'write_latest_iteration_comments', weakening the link to the alleged fault. The failure is not demonstrably a software defect in application code or AutoGen tool integration; it may stem from test fixture design or inconclusive trace artifacts. Therefore, it is likely a false positive.",
-      "false_positive_risk": "high",
-      "confidence": 0.2
-    },
-    "root_cause_group_id": "generic:application-tool-api-pagination-missing-the-external-api-tool-wrapper-does-not-preserve-semantic-parameters-or-iterate-p",
-    "root_cause_group_title": "Tool API Pagination Missing",
-    "is_primary_fault": true,
-    "cascades_from": null
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_010",
-    "case_id": "system1_iterative_coding_TOOLERR_001",
-    "layer": "application",
-    "fault_type": "Tool Error Contract Missing",
-    "failure_code": "HTTP_STATUS_NOT_CHECKED",
-    "severity": "medium",
-    "confidence": 0.88,
-    "summary": "HTTP failure status was not captured in the trace envelope.",
-    "evidence": [
-      "write_settled_plan",
-      "expected_status=401",
-      "write_latest_iteration",
-      "write_latest_iteration_comments"
-    ],
-    "root_cause": "The tool wrapper for write_latest_iteration does not check HTTP status codes and return a structured error envelope. When the mock returns a 401, the wrapper likely returns None or an empty string instead of a typed error object with http_status, error_code, and message fields.",
-    "suggested_fix": "In the write_latest_iteration tool implementation, check the HTTP response status code. If status >= 400, return a structured error object like {'success': False, 'http_status': 401, 'error': 'invalid key', 'error_code': 'AUTH_FAILURE'} instead of None or empty string. The structured error should always include http_status and a machine-readable error_code.",
-    "reproduction": {
-      "input": "请调用工具 write_latest_iteration，模拟外部服务鉴权失败或非 200 响应，并以结构化错误结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.3,
-    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only",
-    "affected_cases": [
-      "system1_iterative_coding_TOOLERR_001",
-      "system1_iterative_coding_TOOLERR_001",
-      "system1_iterative_coding_TOOLERR_001",
-      "system1_iterative_coding_TOOLERR_001",
-      "system1_iterative_coding_TOOLERR_001"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_011",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_012",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_013",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_014"
-    ],
-    "agentic_evidence": [
-      "write_settled_plan",
-      "expected_status=401",
-      "write_latest_iteration",
-      "write_latest_iteration_comments"
-    ],
-    "false_positive_audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "The trace shows the test case 'system1_iterative_coding_TOOLERR_001' passed with returncode 0, and the stdout extract ends with a normal message handoff and tool call chain without any visible 401 error or structured error object. The fault report claims an HTTP 401 was not captured, but the only supporting evidence ('write_settled_plan', 'expected_status=401', etc.) appears to be inferred from the test scenario rather than from actual trace output. Without concrete trace artifacts showing a real 401 response being mishandled by the tool wrapper, this is not a confirmed application‑layer fault; it could be a test scenario that did not actually trigger a failure, or a misinterpretation of the trace.",
-      "false_positive_risk": "high",
-      "confidence": 0.8
-    },
-    "root_cause_group_id": "generic:application-tool-error-contract-missing-the-tool-wrapper-for-write_latest_iteration-does-not-check-http-status-codes-and",
-    "root_cause_group_title": "Tool Error Contract Missing",
-    "is_primary_fault": true,
-    "cascades_from": null
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_011",
-    "case_id": "system1_iterative_coding_WIRING_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.45,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "120"
-    ],
-    "root_cause": "The conversation likely lacks a reliable termination condition (e.g., is_termination_msg) or explicit max_turns guard in the AutoGen configuration, causing it to run until the process-level timeout kills it.",
-    "suggested_fix": "Add a termination message check (e.g., is_termination_msg) and/or enforce max_consecutive_auto_reply or max_turns in the GroupChat configuration to ensure determined termination without relying solely on process timeout.",
-    "reproduction": {
-      "input": "请运行一个需要文档中多智能体协作的正常任务，并输出各角色的处理摘要。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.75,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "AssistantAgent",
-        "line": "26"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "affected_cases": [
-      "system1_iterative_coding_WIRING_001"
-    ],
-    "duplicate_fault_ids": [],
-    "agentic_evidence": [
-      "Trace shows status: timeout, terminated: false, turn_count: 17, returncode: -9",
-      "Fault summary states process exceeded configured timeout of 120s",
-      "Case oracle max_turns is 35, but termination didn't occur within time limit",
-      "No termination message or max_turn guard explicitly found in trace or configuration snippet"
+      "You're all set then! If you ever need another review or want to expand the script, just let me know. Happy coding!",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33mmanager\u001b[0m (to reviewer):",
+      "sounds good",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33mreviewer\u001b[0m (to manager):",
+      "Great, glad everything is clear. If you need anything else in the future, don’t hesitate to ask. Have a great day!",
+      "--------------------------------------------------------------------------------"
     ],
     "false_positive_audit": {
       "audit_result": "suspected_fault",
-      "reason": "The trace clearly shows a 120-second timeout at turn 17, well before the oracle's max_turns of 35. This indicates a missing or ineffective termination condition that could be fixed by modifying the AutoGen configuration (e.g., adding `is_termination_msg` or `max_turns` guard). However, the provided code location points to a file and function that do not contain the relevant group chat or termination logic. Without being able to verify the actual configuration responsible for the non-termination loop, we cannot fully confirm it is a software defect rather than an extreme edge case in model behavior.",
-      "false_positive_risk": "Medium. The timeout is a real failure, but the root cause could be a model's inability to produce a termination signal, which is not a fixable software fault under our mandate. The agentic evidence confirms a termination issue but doesn't pinpoint the exact configuration component at fault.",
-      "confidence": 0.55
+      "reason": "Trace evidence shows no explicit TERMINATE string in the last message, and stdout contains polite closing remarks followed by continued handoff events. The conversation may have ended gracefully without a clear termination marker, so the 'termination signal ignored' claim lacks definitive proof.",
+      "false_positive_risk": "medium",
+      "confidence": 0.3
     },
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
-    "is_primary_fault": true,
-    "cascades_from": null
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "interaction:unattended-termination-guard-missing",
+    "root_cause_group_title": "Unattended termination / approval guard missing",
+    "is_primary_fault": false,
+    "cascades_from": "SYSTEM1_ITERATIVE_CODING_FAULT_002"
   }
 ]

@@ -65,7 +65,13 @@ def main() -> None:
     parser.add_argument("--output-dir", default="outputs", help="Directory containing MASentinel per-system outputs.")
     args = parser.parse_args()
 
-    output_dir = Path(args.output_dir)
+    index_path = build_output_site(args.output_dir)
+    systems_count = len(discover_system_dirs(Path(args.output_dir)))
+    print(f"Site generated: {index_path.as_posix()}  ({systems_count} systems loaded)")
+
+
+def build_output_site(output_dir: str | Path = "outputs") -> Path:
+    output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     site_dir = output_dir / "site"
     assets_dir = site_dir / "assets"
@@ -82,8 +88,7 @@ def main() -> None:
     (assets_dir / "style.css").write_text(STYLE_CSS, encoding="utf-8")
     (assets_dir / "app.js").write_text(APP_JS, encoding="utf-8")
 
-    index_path = site_dir / "index.html"
-    print(f"Site generated: {index_path.as_posix()}  ({len(systems)} systems loaded)")
+    return site_dir / "index.html"
 
 
 def discover_system_dirs(output_dir: Path) -> list[Path]:

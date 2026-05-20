@@ -57,6 +57,11 @@ def extract_system_features(profile: SystemProfile) -> dict[str, Any]:
         ),
     )
     has_airtable_tools = bool(profile.tools) and "airtable" in tool_lower
+    has_external_api_tools = bool(profile.tools) and (
+        has_http_tools
+        or has_airtable_tools
+        or _has_any(tool_lower, ("api", "http", "serper", "browserless", "yfinance", "external"))
+    )
     has_request_like_code = _has_any(code_lower, ("requests.", "httpx", "aiohttp", "urllib.request", "api.airtable.com"))
     has_pagination_risk = has_airtable_tools and ("offset" not in tool_lower or "view" not in tool_lower)
     has_multi_record_work = _has_any(
@@ -79,6 +84,7 @@ def extract_system_features(profile: SystemProfile) -> dict[str, Any]:
         lowered,
         ("resume", "continue", "latest iteration", "masterplan", "script_v", "comments_v", "恢复", "继续"),
     ) and _has_any(code_lower, ("script_v", "comments_v", "masterplan"))
+    has_versioned_artifacts = _has_any(code_lower, ("script_v", "comments_v", "version", "latest_iteration", "latest.py"))
     has_pandas = _has_any(code_lower, ("import pandas", "pd.", "dataframe"))
     has_financial_metrics = _has_any(
         code_lower,
@@ -99,6 +105,7 @@ def extract_system_features(profile: SystemProfile) -> dict[str, Any]:
         code_lower,
         ("calculate_risk_metrics", "var_95", "value_at_risk", "max_drawdown", "maximum_drawdown", "sharpe", "drawdown"),
     )
+    has_dataframe_metrics = bool(has_pandas and _has_any(code_lower, ("sum(", "mean(", "pct_change", "rolling(", "financials", "balance_sheet", "metrics")))
     has_last_message_calls = "last_message" in code_lower
     has_multistage_handoff = has_last_message_calls or _has_any(
         code_lower,
@@ -110,7 +117,7 @@ def extract_system_features(profile: SystemProfile) -> dict[str, Any]:
     )
     has_orchestrator_static_risk = bool(profile.raw_notes.get("autogen_wiring_risks"))
 
-    return {
+    nested = {
         "system_id": profile.system_id,
         "source_summary": {
             "root_path": str(root),
@@ -132,6 +139,7 @@ def extract_system_features(profile: SystemProfile) -> dict[str, Any]:
             "tool_names": [tool.name for tool in profile.tools],
             "has_http_tools": has_http_tools,
             "has_airtable_tools": has_airtable_tools,
+            "has_external_api_tools": has_external_api_tools,
             "has_request_like_code": has_request_like_code,
             "has_pagination_risk": has_pagination_risk,
             "has_multi_record_work": has_multi_record_work,
@@ -141,12 +149,14 @@ def extract_system_features(profile: SystemProfile) -> dict[str, Any]:
             "writes_files": writes_files,
             "has_documented_artifacts": has_documented_artifacts,
             "has_resume_state": has_resume_state,
+            "has_versioned_artifacts": has_versioned_artifacts,
             "has_user_controlled_path": has_user_controlled_path,
         },
         "data_processing": {
             "has_pandas": has_pandas,
             "has_financial_metrics": has_financial_metrics,
             "has_risk_metrics": has_risk_metrics,
+            "has_dataframe_metrics": has_dataframe_metrics,
             "has_yfinance": "yfinance" in code_lower,
         },
         "cli": {
@@ -167,6 +177,28 @@ def extract_system_features(profile: SystemProfile) -> dict[str, Any]:
             "autogen_wiring_risks": profile.raw_notes.get("autogen_wiring_risks", []) or [],
         },
     }
+    nested["flat"] = {
+        "uses_autogen": uses_autogen,
+        "uses_groupchat": uses_groupchat,
+        "has_speaker_selection": nested["framework"]["has_speaker_selection"],
+        "has_human_input_mode": nested["framework"]["has_human_input_mode"],
+        "has_http_tools": has_http_tools,
+        "has_airtable_tools": has_airtable_tools,
+        "has_external_api_tools": has_external_api_tools,
+        "writes_files": writes_files,
+        "has_user_controlled_path": has_user_controlled_path,
+        "has_resume_state": has_resume_state,
+        "has_versioned_artifacts": has_versioned_artifacts,
+        "has_last_message_calls": has_last_message_calls,
+        "has_multistage_handoff": has_multistage_handoff,
+        "has_financial_metrics": has_financial_metrics,
+        "has_risk_metrics": has_risk_metrics,
+        "has_dataframe_metrics": has_dataframe_metrics,
+        "documented_cli_commands": commands,
+        "docs_claim_multi_agent": claims_multi_agent,
+        "enterprise_orchestrator_risks": profile.raw_notes.get("autogen_wiring_risks", []) or [],
+    }
+    return nested
 
 
 def _has_any(text: str, markers: tuple[str, ...]) -> bool:

@@ -1,0 +1,78 @@
+{
+  "coverage_gaps": [
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "write_latest_iteration",
+      "suggested_test_intent": "Verify that when a programmer or reviewer agent emits a valid code block or review comments respectively, the manager agent correctly triggers write_latest_iteration in response to the 'exit' command, saving the output to the correct script_vN.py or comments_vN.txt file with proper version incrementing, and that system state updates correctly for subsequent iterations."
+    }
+  ],
+  "new_test_requests": [
+    {
+      "priority": "high",
+      "case_type": "requirement_positive",
+      "target_requirement": "R2",
+      "objective": "Verify that write_latest_iteration is called and saves coder output correctly on 'exit'.",
+      "target_agents": [
+        "manager",
+        "programmer"
+      ],
+      "target_tools": [
+        "write_latest_iteration"
+      ],
+      "oracle_spec": {
+        "must_terminate": true,
+        "must_call_tools": [
+          "write_latest_iteration"
+        ],
+        "artifacts": [
+          "script_v1.py exists and contains coder's code block content, not markdown fences."
+        ]
+      }
+    },
+    {
+      "priority": "high",
+      "case_type": "requirement_positive",
+      "target_requirement": "R3",
+      "objective": "Verify that write_latest_iteration is called and saves reviewer comments correctly on 'exit'.",
+      "target_agents": [
+        "manager",
+        "reviewer"
+      ],
+      "target_tools": [
+        "write_latest_iteration"
+      ],
+      "oracle_spec": {
+        "must_terminate": true,
+        "must_call_tools": [
+          "write_latest_iteration"
+        ],
+        "artifacts": [
+          "comments_v1.txt exists and contains reviewer's explanation, no code blocks."
+        ]
+      }
+    },
+    {
+      "priority": "high",
+      "case_type": "requirement_negative",
+      "target_requirement": "R2",
+      "objective": "Verify that system does not crash or save corrupted output when 'exit' is typed before the coder produces any code.",
+      "target_agents": [
+        "manager",
+        "programmer"
+      ],
+      "target_tools": [
+        "write_latest_iteration"
+      ],
+      "oracle_spec": {
+        "must_not_crash": true,
+        "must_call_tools": [
+          "write_latest_iteration"
+        ],
+        "artifact_checks": [
+          "script_v1.py content is empty or a valid comment indicating no code generated."
+        ]
+      }
+    }
+  ],
+  "confidence": 0.8
+}

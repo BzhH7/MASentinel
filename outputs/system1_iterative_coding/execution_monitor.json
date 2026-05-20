@@ -1,52 +1,333 @@
 {
   "suspicious_cases": [
     {
-      "case_id": "system1_iterative_coding_RESUME_001",
-      "reason": "在自动化无人类模式下请求了人类输入，运行未终止且存在重复循环，同时忽略现有脚本状态，这些均指向 AutoGen 框架的对话策略、终止条件或 resume 逻辑可能存在缺陷。",
+      "case_id": "system1_iterative_coding_REQ_001",
+      "reason": "TURN_BUDGET_EXCEEDED",
       "rule_failures": [
-        "HUMAN_INPUT_REQUESTED",
-        "NON_TERMINATION",
-        "REPETITIVE_LOOP",
-        "RESUME_STATE_INCOMPLETE"
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=23",
+            "max_turns=15"
+          ]
+        }
       ],
-      "trace_summary": "status=failed, terminated=false, turn_count=24, stdout_tail 显示多次重复的 'Alright – I'll take that as confirmation...' 消息，提示人类输入请求。"
+      "trace_summary": "Fallback summary from rule oracle failures."
     },
     {
       "case_id": "system1_iterative_coding_FSSAFE_001",
-      "reason": "存在高严重性的 FILESYSTEM_ESCAPE 违规，表明文件写入路径未受正确约束，可能由工具实现或 AutoGen 沙箱配置不当引起。",
+      "reason": "TURN_BUDGET_EXCEEDED, FILESYSTEM_ESCAPE",
       "rule_failures": [
-        "FILESYSTEM_ESCAPE",
-        "TURN_BUDGET_EXCEEDED"
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=23",
+            "max_turns=20"
+          ]
+        },
+        {
+          "code": "FILESYSTEM_ESCAPE",
+          "message": "User-controlled path/name caused writes outside the configured project root.",
+          "severity": "high",
+          "evidence": [
+            "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/MasterPlan.txt",
+            "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/comments_v1.log",
+            "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/script_v1.py"
+          ]
+        }
       ],
-      "trace_summary": "status=failed, evidence 中包含多个路径超出项目根目录，如 .cache 及 .masentinel_fixture 目录。"
+      "trace_summary": "Fallback summary from rule oracle failures."
     },
     {
-      "case_id": "system1_iterative_coding_TOOLERR_001",
-      "reason": "工具在错误路径下返回 None 而非结构化错误信封，且未检测 HTTP 状态码，这违反了工具契约，属于 AutoGen 工具注册/调用逻辑的故障。",
+      "case_id": "system1_iterative_coding_RESUME_001",
+      "reason": "HUMAN_INPUT_REQUESTED, NON_TERMINATION, REPETITIVE_LOOP, RESUME_STATE_INCOMPLETE",
       "rule_failures": [
-        "TOOL_RETURNED_NONE",
-        "TOOL_UNSTRUCTURED_ERROR",
-        "HTTP_STATUS_NOT_CHECKED"
+        {
+          "code": "HUMAN_INPUT_REQUESTED",
+          "message": "The target system requested human input during an automated no-human run.",
+          "severity": "high",
+          "evidence": [
+            "Glad it all checks out. You've got a solid, working implementation. If you ever need a review of the next iteration or want to discuss enhancements, just let me know. Good luck!",
+            "--------------------------------------------------------------------------------",
+            "\u001b[33mmanager\u001b[0m (to reviewer):",
+            "sounds good",
+            "--------------------------------------------------------------------------------",
+            "\u001b[33mreviewer\u001b[0m (to manager):",
+            "Alright – I'll take that as confirmation. If you need anything else in the future, just say the word. Best of luck with the project!",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "NON_TERMINATION",
+          "message": "The run did not terminate.",
+          "severity": "high",
+          "evidence": [
+            "turn_count=24"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        },
+        {
+          "code": "RESUME_STATE_INCOMPLETE",
+          "message": "Existing script state was ignored and the project was treated as a first iteration.",
+          "severity": "medium",
+          "evidence": [
+            "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
+            "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
+            "autogen stdout message boundary",
+            "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
+            "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
+            "build a small python command-line app for this request: continue the existing project from the latest script and preserve existing state.",
+            "mas_system1_iterative_coding_resume_001",
+            "target system requested human input during a no-human masentinel run."
+          ]
+        }
       ],
-      "trace_summary": "status=failed, 涉及 write_settled_plan, write_latest_iteration, write_latest_iteration_comments 工具。"
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_COV_001",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=24",
+            "max_turns=10"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
     },
     {
       "case_id": "system1_iterative_coding_TERM_001",
-      "reason": "系统发出终止标记后仍继续发送实质性消息，表明 AutoGen 的终止信号未正确处理，可能是框架适配或提示模板问题。",
+      "reason": "TERMINATION_SIGNAL_IGNORED",
       "rule_failures": [
-        "TERMINATION_SIGNAL_IGNORED"
+        {
+          "code": "TERMINATION_SIGNAL_IGNORED",
+          "message": "The target emitted a termination marker but continued with substantive prompts/messages.",
+          "severity": "high",
+          "evidence": [
+            "You're all set then! If you ever need another review or want to expand the script, just let me know. Happy coding!",
+            "--------------------------------------------------------------------------------",
+            "\u001b[33mmanager\u001b[0m (to reviewer):",
+            "sounds good",
+            "--------------------------------------------------------------------------------",
+            "\u001b[33mreviewer\u001b[0m (to manager):",
+            "Great, glad everything is clear. If you need anything else in the future, don’t hesitate to ask. Have a great day!",
+            "--------------------------------------------------------------------------------"
+          ]
+        }
       ],
-      "trace_summary": "status=failed, evidence 显示 manager 和 reviewer 在类似 '...happy coding!' 消息后仍继续对话。"
+      "trace_summary": "Fallback summary from rule oracle failures."
     },
     {
-      "case_id": "system1_iterative_coding_TOOLAPI_001",
-      "reason": "外部 API 请求丢失语义查询参数且未执行分页，可能是工具注册时参数映射错误或调用逻辑未遵循文档。",
+      "case_id": "system1_iterative_coding_TOOLCONTRACT_001",
+      "reason": "TURN_BUDGET_EXCEEDED",
       "rule_failures": [
-        "VIEW_PARAMETER_IGNORED",
-        "PAGINATION_NOT_FOLLOWED"
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=22",
+            "max_turns=20"
+          ]
+        }
       ],
-      "trace_summary": "status=failed, missing_or_mismatched_query_params={'view': 'viwMASentinel'}, observed_query_params={}，expected_pages=2, observed_pages=[]。"
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_PROP_001",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=21",
+            "max_turns=10"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_FUZZ_001",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=25",
+            "max_turns=10"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_TOOLFUZZ_001",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=23",
+            "max_turns=15"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_REG_001",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=23",
+            "max_turns=15"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_REQ_002",
+      "reason": "TIMEOUT",
+      "rule_failures": [
+        {
+          "code": "TIMEOUT",
+          "message": "The process exceeded the configured timeout.",
+          "severity": "high",
+          "evidence": [
+            "120"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_COV_002",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=22",
+            "max_turns=15"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_PROP_002",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=24",
+            "max_turns=15"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_FUZZ_002",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=24",
+            "max_turns=15"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_TOOLCONTRACT_002",
+      "reason": "TURN_BUDGET_EXCEEDED",
+      "rule_failures": [
+        {
+          "code": "TURN_BUDGET_EXCEEDED",
+          "message": "The run terminated, but exceeded the expected soft turn budget.",
+          "severity": "low",
+          "evidence": [
+            "turn_count=25",
+            "max_turns=20"
+          ]
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
+    },
+    {
+      "case_id": "system1_iterative_coding_OUTCONTRACT_003",
+      "reason": "HUMAN_INPUT_REQUESTED, NON_TERMINATION, REPETITIVE_LOOP",
+      "rule_failures": [
+        {
+          "code": "HUMAN_INPUT_REQUESTED",
+          "message": "The target system requested human input during an automated no-human run.",
+          "severity": "high",
+          "evidence": [
+            "- Storage for `code` and `comments` as modifiable strings (starting with placeholders like `\"# Initial code v1\"` and `\"// Initial review comments v1\"`).",
+            "- A CLI loop that accepts commands: `view`, `feedback coder <message>`, `feedback reviewer <message>`, `next`, `exit`.",
+            "- The `feedback` commands update the respective string and **do not** change the stage.",
+            "- The `next` command advances the stage only if the current stage is `coding` (→ `reviewing`) or `reviewing` (→ `done`); from `done`, it should do nothing or show a message.",
+            "- The `view` command displays current stage, code, and comments.",
+            "- The `exit` command terminates the program.",
+            "I recommend the programmer produce code that implements these behaviors and then submit it for review. Once code is provided, I can comment on its correctness and suggest improvements.",
+            "--------------------------------------------------------------------------------"
+          ]
+        },
+        {
+          "code": "NON_TERMINATION",
+          "message": "The run did not terminate.",
+          "severity": "high",
+          "evidence": [
+            "turn_count=20"
+          ]
+        },
+        {
+          "code": "REPETITIVE_LOOP",
+          "message": "Trace contains highly repetitive consecutive messages.",
+          "severity": "medium",
+          "evidence": []
+        }
+      ],
+      "trace_summary": "Fallback summary from rule oracle failures."
     }
   ],
-  "confidence": 0.9
+  "confidence": 0.35,
+  "fallback": true,
+  "error": "Model call failed after 3 attempt(s): The read operation timed out"
 }

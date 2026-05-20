@@ -1,10 +1,10 @@
 [
   {
-    "group_id": "generic:application-documented-entrypoint-broken-the-project-lacks-an-src-package-no-src-__init__.py-or-src-main.py-and-the-docu",
+    "group_id": "generic:application-documented-entrypoint-broken-the-documented-entrypoint-python--m-src.main-analyze-aapl-in-readme-or-document",
     "title": "Documented Entrypoint Broken",
-    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
     "fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
@@ -15,67 +15,71 @@
     ],
     "severity": "high",
     "confidence": 0.9,
-    "root_cause": "The project lacks an 'src' package (no src/__init__.py or src/main.py) and the documented entrypoint 'python -m src.main' does not exist. The directory structure likely uses a different layout (e.g., flat main.py or student_autogen_system.py) instead of an 'src' package, causing the import error.",
-    "suggested_fix": "Create an 'src' package by adding src/ directory with __init__.py and a main.py that parses the CLI arguments and invokes the system. Alternatively, update the README to reflect the actual entrypoint (e.g., 'python student_autogen_system.py analyze AAPL').",
+    "root_cause": "The documented entrypoint 'python -m src.main analyze AAPL' in README or documentation points to a non-existent 'src' package. The actual Python project is rooted at 'autogen-financial-analysis-main', which likely contains a different module structure (e.g., a flat 'student_autogen_system.py' file without a 'src' directory). This causes a deterministic import failure before any agent or model logic is invoked.",
+    "suggested_fix": "Align the documented command with the actual project structure. If the main entrypoint is in 'student_autogen_system.py' at the project root, update the README command to 'python -m student_autogen_system analyze AAPL'. If a 'src' package is intended, create the directory structure with an __init__.py and move the main module there. Add a CI test that executes the documented command to prevent regression.",
     "summary": "Documented entrypoint fails before controlled configuration/runtime handling."
   },
   {
-    "group_id": "generic:application-resume-state-inconsistency-the-resume-state-detector-treats-partial-but-meaningful-on-disk-state-as-absent-o",
-    "title": "Resume State Inconsistency",
-    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
+    "group_id": "generic:application-output-contract-violation-the-application-layer-lacks-a-validation-step-for-stock-code-existence-before-proc",
+    "title": "Output Contract Violation",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
     "fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system3_financial_analysis_RESUME_001"
+      "system3_financial_analysis_OUTCONTRACT_003",
+      "system3_financial_analysis_OUTCONTRACT_005"
     ],
     "failure_codes": [
-      "RESUME_STATE_INCOMPLETE"
+      "OUTPUT_SCHEMA_VIOLATION"
     ],
     "severity": "medium",
-    "confidence": 0.0,
-    "root_cause": "The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow.",
-    "suggested_fix": "Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly.",
-    "summary": "Partial resume fixture existed, but trace/output did not show the latest script being resumed or explicitly repaired."
+    "confidence": 0.78,
+    "root_cause": "The application layer lacks a validation step for stock code existence before proceeding with data collection. The tool or agent responsible for data collection (likely the 'data_collector' agent) does not check if the provided code is valid and does not generate a friendly error message containing the keyword '代码' when the code is invalid. Instead, it proceeds to collect data (possibly mock or empty data) and passes it to downstream agents, which then produce a generic financial analysis report rather than the required error response.",
+    "suggested_fix": "Add a deterministic validation step in the 'data_collector' agent or its associated tool that checks the validity of the stock code. If the code is invalid, the agent should immediately terminate and return a structured error message that includes the keyword '代码' (e.g., '输入的股票代码 META 无效，请检查代码后重试。'). This ensures the output contract is fulfilled when handling non-existent stock codes.",
+    "summary": "Output contract expected keywords or sections were missing."
   },
   {
     "group_id": "handoff:terminate-empty-or-wrong-source",
     "title": "Message handoff forwarded empty or TERMINATE content",
-    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
     "fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004"
     ],
     "symptom_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004"
     ],
     "affected_cases": [
-      "system3_financial_analysis_BUDGET_001",
       "system3_financial_analysis_COV_002",
-      "system3_financial_analysis_DATAINV_001",
       "system3_financial_analysis_FSSAFE_001",
       "system3_financial_analysis_HANDOFF_001",
+      "system3_financial_analysis_OUTCONTRACT_001",
       "system3_financial_analysis_OUTCONTRACT_002",
       "system3_financial_analysis_REQ_001",
-      "system3_financial_analysis_REQ_005",
-      "system3_financial_analysis_REQ_007"
+      "system3_financial_analysis_REQ_002",
+      "system3_financial_analysis_REQ_003",
+      "system3_financial_analysis_REQ_005"
     ],
     "failure_codes": [
+      "BUSINESS_TASK_FAILED",
       "MESSAGE_HANDOFF_TERMINATE_ONLY"
     ],
     "severity": "high",
-    "confidence": 0.9,
-    "root_cause": "The agent termination handoff logic in student_autogen_system.py (lines 31-211) incorrectly treats valid upstream analysis completion as full termination, forwarding only TERMINATE markers instead of passing the analysis results to downstream agents like investment advisor.",
-    "suggested_fix": "1) Modify the termination handoff logic in student_autogen_system.py to distinguish between upstream analysis completion (pass data forward) vs full workflow termination (stop execution). 2) Ensure that when an agent returns TERMINATE due to completing its task, the actual analysis content is extracted and passed to the next agent in the workflow before propagating termination. 3) Update the collection and forwarding functions (collect_stock_data, to_dict) to strip termination markers when assembling messages for downstream consumption.",
+    "confidence": 0.92,
+    "root_cause": "The AutoGen framework's message handoff mechanism between agents forwards only TERMINATE/empty auto-reply content instead of passing the substantive analysis from previous stages. This occurs because the handoff logic in student_autogen_system.py does not properly extract and propagate prior assistant's analysis content when triggering downstream agents.",
+    "suggested_fix": "Modify the handoff logic in student_autogen_system.py to explicitly pass the previous assistant's analysis message instead of allowing TERMINATE markers to be forwarded. Specifically: 1) In the registered agent transitions, filter out TERMINATE-only messages before triggering downstream agents; 2) Ensure the last substantive message from each agent is stored and passed as context to the next agent; 3) Add validation in the handoff function to check for empty content and fall back to the most recent non-termination message.",
     "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content."
   },
   {
     "group_id": "interaction:timeout-or-non-termination",
     "title": "Conversation timeout or missing termination guard",
-    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
     "fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
@@ -85,9 +89,9 @@
       "TERMINATION_SIGNAL_IGNORED"
     ],
     "severity": "high",
-    "confidence": 0.3,
-    "root_cause": "The evidence provided in the fault claim does not align with the deterministic oracle result. The test case passed, and the system terminated successfully within the allowed turns. The reported continuation after TERMINATE likely occurred within the grace window allowed by termination_grace_messages=2, which is expected behavior and does not constitute a fault.",
-    "suggested_fix": "No fix required for the system. The fault may be a false positive due to misinterpretation of the termination grace window or a non-deterministic model behavior. If the continuation after TERMINATE is a concern, verify that the is_termination_msg function is correctly implemented and that the termination grace window is applied as intended. Otherwise, adjust the oracle expectations to account for graceful shutdown messages.",
+    "confidence": 0.88,
+    "root_cause": "Insufficient deterministic evidence to confirm the fault. The trace shows the run terminated successfully (status: passed, turn_count: 19, terminated: true) with exit code 0, and no code-level evidence (code_locations are empty) is available to confirm that termination signal handling is broken. The suspected fault is based solely on trace content interpretation, which is weak evidence.",
+    "suggested_fix": "No specific fix can be recommended until the fault is confirmed with deterministic code/trace evidence. If confirmed, ensure termination condition handlers in smpl_autogen_system.py (or equivalent orchestration module) immediately stop the conversation when a termination marker (e.g., 'TERMINATE') is detected, within the allowed grace messages (max 2).",
     "summary": "The target emitted a termination marker but continued with substantive prompts/messages."
   }
 ]

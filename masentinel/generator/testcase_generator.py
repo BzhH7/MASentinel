@@ -34,12 +34,14 @@ class TestCaseGenerator:
         pattern_context: PatternContext | None = None,
         selected_patterns: list[str] | set[str] | None = None,
         pattern_budgets: dict[str, int] | None = None,
+        pattern_strengths: dict[str, str] | None = None,
     ) -> None:
         self.random = random.Random(seed)
         self.max_tools_per_system = max_tools_per_system
         self.pattern_context = pattern_context or PatternContext(max_tools_per_system=max_tools_per_system)
         self.selected_patterns = set(selected_patterns) if selected_patterns is not None else None
         self.pattern_budgets = pattern_budgets or {}
+        self.pattern_strengths = pattern_strengths or {}
 
     def generate(self, profile: SystemProfile, num_cases: int = 40) -> list[TestCase]:
         cases: list[TestCase] = []
@@ -102,17 +104,28 @@ class TestCaseGenerator:
 
     def _contract_patterns(self, profile: SystemProfile) -> list[TestCase]:
         cases: list[TestCase] = []
+        if self.selected_patterns is None:
+            return cases
         for pattern in PATTERN_REGISTRY:
             try:
-                if self.selected_patterns is not None:
-                    if pattern.name not in self.selected_patterns:
-                        continue
-                    budget = self.pattern_budgets.get(pattern.name, self.pattern_context.max_cases_per_pattern)
-                    cases.extend(pattern.instantiate(profile, budget=budget))
-                elif pattern.applicable(profile):
-                    cases.extend(pattern.instantiate(profile, budget=self.pattern_context.max_cases_per_pattern))
+                if pattern.name not in self.selected_patterns:
+                    continue
+                budget = self.pattern_budgets.get(pattern.name, self.pattern_context.max_cases_per_pattern)
+                cases.extend(self._apply_pattern_plan(pattern.instantiate(profile, budget=budget), pattern.name))
             except Exception:
                 continue
+        return cases
+
+    def _pattern_selected(self, pattern: str) -> bool:
+        return self.selected_patterns is not None and pattern in self.selected_patterns
+
+    def _apply_pattern_plan(self, cases: list[TestCase], pattern: str) -> list[TestCase]:
+        strength = self.pattern_strengths.get(pattern, "hard")
+        for case in cases:
+            case.metadata["selected_pattern"] = pattern
+            case.metadata["oracle_strength"] = strength
+            if strength == "diagnostic":
+                case.metadata["diagnostic_only"] = True
         return cases
 
     def _positive_smoke(self, profile: SystemProfile) -> list[TestCase]:
@@ -174,10 +187,13 @@ class TestCaseGenerator:
         ]
 
     def _speaker_selection_robustness(self, profile: SystemProfile) -> list[TestCase]:
+        if not self._pattern_selected("speaker_selection"):
+            return []
         if not self._groupchat_like(profile):
             return []
         agent_names = [agent.name for agent in profile.agents[:3]]
-        return [
+        return self._apply_pattern_plan(
+            [
             TestCase(
                 case_id=f"{profile.system_id}_SPEAKER_001",
                 system_id=profile.system_id,
@@ -187,13 +203,15 @@ class TestCaseGenerator:
                 target_agents=agent_names,
                 oracle=TestOracleSpec(must_terminate=True, max_turns=30, must_not_crash=True),
                 metadata={
-                    "generic_pattern": "speaker_selection_robustness",
+                    "generic_pattern": "speaker_selection",
                     "applicability_reason": "profile indicates GroupChat or multi-agent routing",
                     "target_fault_mode": "speaker_selection_loop",
                     "oracle_strength": "hard",
                 },
             )
-        ]
+            ],
+            "speaker_selection",
+        )
 
     def _tool_contract_positive(self, profile: SystemProfile) -> list[TestCase]:
         cases: list[TestCase] = []
@@ -624,5 +642,11 @@ def generate_testcases(
     seed: int = 42,
     selected_patterns: list[str] | set[str] | None = None,
     pattern_budgets: dict[str, int] | None = None,
+    pattern_strengths: dict[str, str] | None = None,
 ) -> list[TestCase]:
-    return TestCaseGenerator(seed=seed, selected_patterns=selected_patterns, pattern_budgets=pattern_budgets).generate(profile, num_cases=num_cases)
+    return TestCaseGenerator(
+        seed=seed,
+        selected_patterns=selected_patterns,
+        pattern_budgets=pattern_budgets,
+        pattern_strengths=pattern_strengths,
+    ).generate(profile, num_cases=num_cases)

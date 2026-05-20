@@ -1,4 +1,4 @@
-from masentinel.diagnosis.fault_classifier import classify_faults, classify_non_target_issues
+from masentinel.diagnosis.fault_classifier import apply_deterministic_confirmation_gate, classify_faults, classify_non_target_issues
 from masentinel.schema import RunTrace, SystemProfile, TestCase, TestOracleSpec, TraceEvent
 
 
@@ -159,3 +159,72 @@ def test_bare_timeout_is_inconclusive_not_target_fault() -> None:
     assert classify_faults(profile(), [test_case], [run_trace]) == []
     issues = classify_non_target_issues(profile(), [test_case], [run_trace])
     assert issues[0]["layer"] == "inconclusive"
+
+
+def test_deterministic_gate_confirms_only_strong_code_or_trace_evidence() -> None:
+    fault = {
+        "failure_code": "DOCUMENTED_ENTRYPOINT_BROKEN",
+        "layer": "application",
+        "confidence": 0.9,
+        "evidence_strength": 0.58,
+        "root_cause_confidence": "code_evidence",
+        "suspected_false_positive": True,
+    }
+
+    gated = apply_deterministic_confirmation_gate(fault)
+
+    assert gated["confirmation_status"] == "confirmed_fault"
+    assert gated["confirmation_source"] == "deterministic_oracle_evidence"
+    assert gated["suspected_false_positive"] is False
+
+
+def test_agent_audit_cannot_confirm_weak_oracle_evidence() -> None:
+    fault = {
+        "failure_code": "MISSING_AGENT",
+        "layer": "autogen_framework",
+        "confidence": 0.72,
+        "evidence_strength": 0.28,
+        "root_cause_confidence": "oracle_assumption",
+        "false_positive_audit": {"audit_result": "confirmed_fault", "confidence": 0.99},
+        "suspected_false_positive": False,
+    }
+
+    gated = apply_deterministic_confirmation_gate(fault)
+
+    assert gated["confirmation_status"] == "suspected_fault"
+    assert gated["suspected_false_positive"] is True
+    assert gated["deterministic_confirmation"]["confirmed"] is False
+
+
+def test_diagnostic_only_case_failure_is_not_confirmed_primary_fault() -> None:
+    test_case = TestCase(
+        case_id="C1",
+        system_id="toy",
+        case_type="cli_doc_conformance",
+        objective="",
+        input="",
+        oracle=TestOracleSpec(),
+        metadata={"oracle_strength": "diagnostic", "diagnostic_only": True},
+    )
+    run_trace = RunTrace(
+        case_id="C1",
+        system_id="toy",
+        started_at="now",
+        ended_at="later",
+        status="failed",
+        terminated=False,
+        timeout=False,
+        turn_count=0,
+        events=[],
+        final_output="",
+        stdout="",
+        stderr="Traceback (most recent call last)\nValueError: broken deterministic path",
+        returncode=1,
+    )
+
+    faults = classify_faults(profile(), [test_case], [run_trace])
+
+    assert faults
+    assert faults[0]["diagnostic_only"] is True
+    assert faults[0]["confirmation_status"] == "suspected_fault"
+    assert faults[0]["suspected_false_positive"] is True

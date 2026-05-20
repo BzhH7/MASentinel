@@ -1,0 +1,214 @@
+{
+  "nodes": [
+    {
+      "id": "user_proxy",
+      "type": "agent",
+      "var_name": "user_proxy",
+      "class_name": "UserProxyAgent"
+    },
+    {
+      "id": "researcher",
+      "type": "agent",
+      "var_name": "researcher",
+      "class_name": "GPTAssistantAgent"
+    },
+    {
+      "id": "research_manager",
+      "type": "agent",
+      "var_name": "research_manager",
+      "class_name": "GPTAssistantAgent"
+    },
+    {
+      "id": "director",
+      "type": "agent",
+      "var_name": "director",
+      "class_name": "GPTAssistantAgent"
+    },
+    {
+      "id": "group_chat_manager",
+      "type": "agent",
+      "var_name": "group_chat_manager",
+      "class_name": "GroupChatManager"
+    },
+    {
+      "id": "web_scraping",
+      "type": "tool",
+      "function_name": "web_scraping"
+    },
+    {
+      "id": "google_search",
+      "type": "tool",
+      "function_name": "google_search"
+    },
+    {
+      "id": "get_airtable_records",
+      "type": "tool",
+      "function_name": "get_airtable_records"
+    },
+    {
+      "id": "update_single_airtable_record",
+      "type": "tool",
+      "function_name": "update_single_airtable_record"
+    },
+    {
+      "id": "R1",
+      "type": "requirement",
+      "description": "The multi-agent workflow must route user tasks through declared agents (user_proxy, researcher, research_manager, director) and terminate reliably when a TERMINATE message is issued or max_round=15 is reached."
+    },
+    {
+      "id": "R2",
+      "type": "requirement",
+      "description": "Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return results or handle errors gracefully without crashing the agent workflow."
+    }
+  ],
+  "edges": [
+    {
+      "source": "researcher",
+      "target": "web_scraping",
+      "type": "tool_call"
+    },
+    {
+      "source": "researcher",
+      "target": "google_search",
+      "type": "tool_call"
+    },
+    {
+      "source": "director",
+      "target": "get_airtable_records",
+      "type": "tool_call"
+    },
+    {
+      "source": "director",
+      "target": "update_single_airtable_record",
+      "type": "tool_call"
+    },
+    {
+      "source": "R1",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "researcher",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "research_manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "director",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "researcher",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "director",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "web_scraping",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R2",
+      "target": "google_search",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R2",
+      "target": "get_airtable_records",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R2",
+      "target": "update_single_airtable_record",
+      "type": "requires_tool"
+    },
+    {
+      "source": "director",
+      "target": "research_manager",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "director",
+      "target": "researcher",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "director",
+      "target": "user_proxy",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "research_manager",
+      "target": "director",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "research_manager",
+      "target": "researcher",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "research_manager",
+      "target": "user_proxy",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "researcher",
+      "target": "director",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "researcher",
+      "target": "research_manager",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "researcher",
+      "target": "user_proxy",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "user_proxy",
+      "target": "director",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "user_proxy",
+      "target": "group_chat_manager",
+      "type": "message",
+      "evidence": "initiate_chat"
+    },
+    {
+      "source": "user_proxy",
+      "target": "research_manager",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    },
+    {
+      "source": "user_proxy",
+      "target": "researcher",
+      "type": "message",
+      "evidence": "GroupChat potential route"
+    }
+  ]
+}

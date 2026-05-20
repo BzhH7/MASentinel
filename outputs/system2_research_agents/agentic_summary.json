@@ -3,6 +3,7 @@
     "RequirementAnalystAgent",
     "SystemModelingAgent",
     "TestDesignerAgent",
+    "PatternApplicabilityAgent",
     "InteractionAdapterAgent",
     "CoverageStrategistAgent",
     "ExecutionMonitorAgent",
@@ -11,39 +12,41 @@
     "ReportWriterAgent"
   ],
   "model_usage": {
-    "run_id": "agentic_1779242823_1f012b9b",
-    "total_calls": 20,
-    "successful_calls": 20,
+    "run_id": "agentic_1779250806_351c1bb8",
+    "total_calls": 17,
+    "successful_calls": 17,
     "fallback_calls": 0,
     "failed_calls": 0,
     "by_agent": {
       "RequirementAnalystAgent": 1,
       "SystemModelingAgent": 1,
+      "PatternApplicabilityAgent": 1,
       "InteractionAdapterAgent": 1,
       "TestDesignerAgent": 2,
       "ExecutionMonitorAgent": 1,
-      "FaultDiagnoserAgent": 6,
-      "FalsePositiveAuditorAgent": 6,
+      "FaultDiagnoserAgent": 4,
+      "FalsePositiveAuditorAgent": 4,
       "CoverageStrategistAgent": 1,
       "ReportWriterAgent": 1
     },
     "by_purpose": {
       "extract_requirements": 1,
       "review_semantic_graph": 1,
+      "select_applicable_test_patterns": 1,
       "plan_interaction_adapter": 1,
       "generate_testcases": 2,
       "summarize_execution": 1,
-      "diagnose_fault": 6,
-      "audit_false_positive": 6,
+      "diagnose_fault": 4,
+      "audit_false_positive": 4,
       "analyze_coverage_gaps": 1,
       "write_report_narrative": 1
     },
     "by_model": {
-      "deepseek-v4-pro": 20
+      "deepseek-v4-pro": 17
     },
     "estimated_tokens": {
-      "input_tokens": 68299,
-      "output_tokens": 27665
+      "input_tokens": 65920,
+      "output_tokens": 26310
     }
   },
   "target_model_usage": {
@@ -59,62 +62,22 @@
     "target_api_key_envs": [
       "BOYUE_API_KEY"
     ],
-    "stdout_model_mentions": 129,
+    "stdout_model_mentions": 46,
     "stderr_model_mentions": 0,
-    "autogen_model_warning_count": 129,
+    "autogen_model_warning_count": 46,
     "case_summaries": [
-      {
-        "case_id": "system2_research_agents_ARTIFACT_001",
-        "status": "timeout",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 9,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 9
-      },
-      {
-        "case_id": "system2_research_agents_BUDGET_001",
-        "status": "timeout",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
-      },
       {
         "case_id": "system2_research_agents_COV_001",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 11,
+        "stdout_model_mentions": 1,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 11
+        "autogen_model_warning_count": 1
       },
       {
         "case_id": "system2_research_agents_COV_002",
-        "status": "timeout",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 10,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 10
-      },
-      {
-        "case_id": "system2_research_agents_COV_003",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 9,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 9
-      },
-      {
-        "case_id": "system2_research_agents_COV_004",
         "status": "timeout",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -124,24 +87,44 @@
         "autogen_model_warning_count": 7
       },
       {
+        "case_id": "system2_research_agents_COV_003",
+        "status": "timeout",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system2_research_agents_COV_004",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
         "case_id": "system2_research_agents_COV_005",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system2_research_agents_COV_006",
-        "status": "passed",
+        "status": "timeout",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
+        "stdout_model_mentions": 2,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
+        "autogen_model_warning_count": 2
       },
       {
         "case_id": "system2_research_agents_COV_007",
@@ -149,29 +132,39 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 5,
+        "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 5
+        "autogen_model_warning_count": 3
       },
       {
-        "case_id": "system2_research_agents_DATAINV_001",
+        "case_id": "system2_research_agents_COV_008",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 5,
+        "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 5
+        "autogen_model_warning_count": 3
       },
       {
-        "case_id": "system2_research_agents_FUZZ_001",
-        "status": "timeout",
+        "case_id": "system2_research_agents_COV_009",
+        "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 9,
+        "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 9
+        "autogen_model_warning_count": 3
+      },
+      {
+        "case_id": "system2_research_agents_FUZZ_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 2,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 2
       },
       {
         "case_id": "system2_research_agents_HANDOFF_001",
@@ -179,9 +172,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
+        "stdout_model_mentions": 5,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
+        "autogen_model_warning_count": 5
       },
       {
         "case_id": "system2_research_agents_META_001",
@@ -205,13 +198,13 @@
       },
       {
         "case_id": "system2_research_agents_OUTCONTRACT_001",
-        "status": "timeout",
+        "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 8,
+        "stdout_model_mentions": 1,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 8
+        "autogen_model_warning_count": 1
       },
       {
         "case_id": "system2_research_agents_PROP_001",
@@ -239,9 +232,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 7,
+        "stdout_model_mentions": 5,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 7
+        "autogen_model_warning_count": 5
       },
       {
         "case_id": "system2_research_agents_REQ_002",
@@ -249,19 +242,19 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 1,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 1
-      },
-      {
-        "case_id": "system2_research_agents_REQ_003",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system2_research_agents_REQ_003",
+        "status": "timeout",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 3,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 3
       },
       {
         "case_id": "system2_research_agents_REQ_004",
@@ -274,7 +267,7 @@
         "autogen_model_warning_count": 5
       },
       {
-        "case_id": "system2_research_agents_SMOKE_001",
+        "case_id": "system2_research_agents_REQ_005",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -284,14 +277,14 @@
         "autogen_model_warning_count": 0
       },
       {
-        "case_id": "system2_research_agents_SPEAKER_001",
-        "status": "timeout",
+        "case_id": "system2_research_agents_SMOKE_001",
+        "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 6,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 6
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system2_research_agents_TERM_001",
@@ -305,7 +298,7 @@
       },
       {
         "case_id": "system2_research_agents_TOOLAPI_001",
-        "status": "timeout",
+        "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
@@ -329,9 +322,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system2_research_agents_TOOLCONTRACT_003",
@@ -339,9 +332,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 1,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 1
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system2_research_agents_TOOLCONTRACT_004",
@@ -349,12 +342,22 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 5,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 5
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system2_research_agents_TOOLERR_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system2_research_agents_TOOLFUZZ_001",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -364,7 +367,7 @@
         "autogen_model_warning_count": 3
       },
       {
-        "case_id": "system2_research_agents_TOOLFUZZ_001",
+        "case_id": "system2_research_agents_TOOLFUZZ_002",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -379,15 +382,15 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 1,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 1
+        "autogen_model_warning_count": 0
       }
     ]
   },
   "non_target_issues": [
     {
-      "case_id": "system2_research_agents_COV_001",
+      "case_id": "system2_research_agents_COV_004",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -395,23 +398,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=37",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system2_research_agents_COV_003",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=31",
+        "turn_count=17",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -435,7 +422,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system2_research_agents_COV_006",
+      "case_id": "system2_research_agents_COV_008",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -444,6 +431,38 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=17",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_COV_009",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=17",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_FUZZ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=43",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -475,11 +494,27 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=17",
+        "turn_count=23",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_TOOLAPI_001",
+      "code": "CONTRACT_TEST_NOT_EXERCISED",
+      "layer": "test_harness",
+      "issue_type": "Contract Fixture Not Exercised",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "HTTP/API contract was configured, but no target HTTP request was observed; expected fixture values are not target evidence.",
+      "evidence": [
+        "fixture_id=airtable_101_records",
+        "case_type=tool_api_contract"
+      ],
+      "root_cause": "The contract fixture was not exercised by an observed target HTTP/tool event, so no target root cause can be asserted.",
+      "suggested_fix": "Improve the case adapter or instrumentation so the target actually performs the expected HTTP/tool action before judging the contract.",
       "excluded_from_target_faults": true
     },
     {
@@ -496,12 +531,28 @@
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_TOOLERR_001",
+      "code": "CONTRACT_TEST_NOT_EXERCISED",
+      "layer": "test_harness",
+      "issue_type": "Contract Fixture Not Exercised",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "HTTP/API contract was configured, but no target HTTP request was observed; expected fixture values are not target evidence.",
+      "evidence": [
+        "fixture_id=invalid_auth",
+        "case_type=tool_error_contract"
+      ],
+      "root_cause": "The contract fixture was not exercised by an observed target HTTP/tool event, so no target root cause can be asserted.",
+      "suggested_fix": "Improve the case adapter or instrumentation so the target actually performs the expected HTTP/tool action before judging the contract.",
       "excluded_from_target_faults": true
     }
   ],
   "test_harness_issues": [
     {
-      "case_id": "system2_research_agents_COV_001",
+      "case_id": "system2_research_agents_COV_004",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -509,23 +560,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=37",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system2_research_agents_COV_003",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=31",
+        "turn_count=17",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -549,7 +584,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system2_research_agents_COV_006",
+      "case_id": "system2_research_agents_COV_008",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -558,6 +593,38 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=17",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_COV_009",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=17",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_FUZZ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=43",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -589,11 +656,27 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=17",
+        "turn_count=23",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_TOOLAPI_001",
+      "code": "CONTRACT_TEST_NOT_EXERCISED",
+      "layer": "test_harness",
+      "issue_type": "Contract Fixture Not Exercised",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "HTTP/API contract was configured, but no target HTTP request was observed; expected fixture values are not target evidence.",
+      "evidence": [
+        "fixture_id=airtable_101_records",
+        "case_type=tool_api_contract"
+      ],
+      "root_cause": "The contract fixture was not exercised by an observed target HTTP/tool event, so no target root cause can be asserted.",
+      "suggested_fix": "Improve the case adapter or instrumentation so the target actually performs the expected HTTP/tool action before judging the contract.",
       "excluded_from_target_faults": true
     },
     {
@@ -611,11 +694,27 @@
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
       "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_TOOLERR_001",
+      "code": "CONTRACT_TEST_NOT_EXERCISED",
+      "layer": "test_harness",
+      "issue_type": "Contract Fixture Not Exercised",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "HTTP/API contract was configured, but no target HTTP request was observed; expected fixture values are not target evidence.",
+      "evidence": [
+        "fixture_id=invalid_auth",
+        "case_type=tool_error_contract"
+      ],
+      "root_cause": "The contract fixture was not exercised by an observed target HTTP/tool event, so no target root cause can be asserted.",
+      "suggested_fix": "Improve the case adapter or instrumentation so the target actually performs the expected HTTP/tool action before judging the contract.",
+      "excluded_from_target_faults": true
     }
   ],
   "run_manifest": {
-    "run_id": "system2_research_agents_2026-05-20T02:07:03.713438+00:00",
-    "start_time": "2026-05-20T02:07:03.713449+00:00",
+    "run_id": "system2_research_agents_2026-05-20T04:20:06.212203+00:00",
+    "start_time": "2026-05-20T04:20:06.212218+00:00",
     "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system2.yaml",
     "config_hash": "ca73ded2a2082548837a3fab0fea15e4553f1aaeb388ddc440680cd20e101139",
     "code_snapshot_hash": "bf309e6f5b2a651789a56a09c82a42b9851ab6f0c05b1b6a358fd2d041610ee9",
@@ -623,40 +722,109 @@
     "human_intervention_allowed": false,
     "entry_command": "scripts/run_with_boyue_api.py --config configs/all_systems.yaml --testing-model deepseek-v4-pro --target-model deepseek-v4-flash",
     "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
-    "pid": 82922
+    "pid": 89258
   },
-  "testcases_frozen_sha256": "a31073deb2eb8cc3107c12c823dc75f75a5a1c2942aab66721f3c8dc0d1a8ddb",
+  "testcases_frozen_sha256": "7b5938b978a5fb31ff5e8cb09671ffa45ed5411228fd1155cecae044de76137f",
   "human_intervention_allowed": false,
   "agent_api_workers": 3,
   "semantic_graph_review": {
-    "semantic_graph_review": "The message edge graph is derived from the fully connected GroupChat agent list (user_proxy, researcher, research_manager, director), plus the user_proxy -> group_chat_manager edge from initiate_chat. This reflects the GroupChatManager's speaker selection logic, so the edges are structurally accurate. However, no tool-calling edges or execution path dependencies are modeled; tool registration per agent matches the raw notes agent_tool_links (researcher for web_scraping/google_search; director for airtable tools). The termination condition includes TERMINATE in message content (via user_proxy's is_termination_msg) and max_round=15, which aligns with requirements R1.",
+    "semantic_graph_review": "Based on the AST+doc evidence, the group chat connects all five agents (user_proxy, researcher, research_manager, director, group_chat_manager). The message edges are correctly derived from the GroupChat configuration (app.py line 193) where all four domain agents are in the agents list, so any agent can communicate with any other. The edge user_proxy -> group_chat_manager is separately supported by the initiate_chat call. Tool assignments match the AST: researcher has google_search and web_scraping, director has get_airtable_records and update_single_airtable_record. No missing mandatory agent/tool links are evident from the static data. However, the tool registration for GPTAssistantAgent is done via the tools parameter of assistant_config, which is an AutoGen pattern; the actual behavior depends on the LLM endpoint (OpenAI assistants API), which is a runtime concern not modeled here.",
     "suspected_risk_points": [
       {
         "type": "tool_schema_risk",
-        "evidence": "Tools web_scraping, google_search, get_airtable_records, update_single_airtable_record are defined as Python functions but no JSON schema or parameter annotations are provided in the raw analysis. Autogen GPTAssistantAgent requires function schemas in llm_config's 'functions' list to expose tools; absence of schemas can cause agent LLM to never generate function calls, making tools ineffective. In the code, researcher and director are instances of GPTAssistantAgent but no explicit tool registration or schema mapping is visible in the analyzed snippet beyond agent_tool_links mapping.",
-        "related_tool": "web_scraping, google_search, get_airtable_records, update_single_airtable_record"
+        "evidence": "AST shows researcher tools are google_search and web_scraping, but the google_search signature in the profile has null signature and parameters. The functions are defined with parameters (e.g., google_search(search_query), web_scraping(url), get_airtable_records()) but the static analyzer could not capture their JSON schemas. If the function signatures are not properly serializable or conflict with the OpenAI function-calling schema, tool calls may fail at runtime. Related requirements: R2 (tool invocation).",
+        "related_tool": "google_search"
       },
       {
-        "type": "application_logic_risk",
-        "evidence": "Function summary (line 43) reads a file named 'web_summary.txt' using path relative to current working directory without error handling for missing file or permission issues. It is not listed in the tool list but appears as a function; if it is intended to be used by agents and the file is missing, call will raise FileNotFoundError unhandled, potentially crashing the workflow.",
-        "related_tool": "summary"
+        "type": "tool_schema_risk",
+        "evidence": "The researcher's web_scraping function (app.py line 68) uses requests with a timeout but does not clearly propagate exceptions or parse body in a structured way; potential runtime errors (network issues, invalid URLs) could return raw exceptions instead of descriptive error messages. Requirement R2 expects error handling.",
+        "related_tool": "web_scraping"
       },
       {
-        "type": "integration_risk_autogen",
-        "evidence": "UserProxyAgent has human_input_mode='ALWAYS' and max_consecutive_auto_reply=1. GroupChatManager expects agent responses to proceed; if user does not provide input within reasonable time or input is empty, the group chat may stall and rely on max_round only, not a graceful timeout. This matches R1 negative case 'Empty or malformed input causes stuck human_input_mode without progress'.",
+        "type": "tool_schema_risk",
+        "evidence": "The director's get_airtable_records (app.py line 105) uses a hardcoded formula in a ?filterByFormula query string; authentication relies on an environment variable (AIRTABLE_API_KEY). If the key is missing or invalid, the tool returns an error message, but the function has no try/except for network errors—any exception could propagate. Requirement R2 expects caught errors.",
+        "related_tool": "get_airtable_records"
+      },
+      {
+        "type": "tool_schema_risk",
+        "evidence": "The director's update_single_airtable_record (app.py line 120) constructs a PATCH request; the 'fields' parameter is defined but the function does not validate the JSON structure or handle malformed inputs gracefully. Requirement R2 negative case 'tool_invalid_json' could trigger an unhandled exception.",
+        "related_tool": "update_single_airtable_record"
+      },
+      {
+        "type": "termination_risk",
+        "evidence": "The UserProxyAgent's is_termination_msg lambda (app.py line 143) checks 'TERMINATE' in msg['content'], which is case-sensitive. Requirement R4 expects detection; if an agent includes 'terminate' (lowercase) or embeds TERMINATE in a larger word, termination may not trigger. This is a deliberate design choice but could be a mismatch with requirement R4's negative case, though that case mentions 'if the implementation expects case-sensitive exact match'—so it is a known characteristic, not necessarily a bug. However, the group_chat_manager and max_round termination are also in place, so the risk is moderate.",
+        "related_tool": null
+      },
+      {
+        "type": "integration_config_risk",
+        "evidence": "The researcher and director are GPTAssistantAgent instances configured with an assistant_config that includes tools and a model. If the OpenAI assistants API returns cancellation or tool errors, the AutoGen framework's handling (via GPTAssistantAgent) must map those back to messages. The static analyzer cannot verify correct error mapping, but it is a known integration point where failures could violate R2's requirement of handling tool errors.",
         "related_tool": null
       }
     ],
     "additional_edges": [],
-    "confidence": 0.7
+    "confidence": 0.85
   },
   "interaction_adapter": {
-    "prompt_responses": [],
-    "isolated_paths": [],
-    "risk_notes": [],
-    "confidence": 0.0,
+    "prompt_responses": [
+      {
+        "trigger": "How many different topics would you like to generate blogs for? (Enter a number)",
+        "response": "2",
+        "regex": false,
+        "max_count": 1
+      },
+      {
+        "trigger": "Enter the topic (or a set of topics comma separated) for which you want to generate the content about:",
+        "response": "Artificial Intelligence,Climate Change",
+        "regex": false,
+        "max_count": 1
+      },
+      {
+        "trigger": "Enter the objective of the report (e.g., 'Write a report about the current state of the global economy'):",
+        "response": "Write a report about {input}",
+        "regex": false,
+        "max_count": 1
+      },
+      {
+        "trigger": "How many maximum sub-topics to research per topic (max 5)?",
+        "response": "2",
+        "regex": false,
+        "max_count": 1
+      }
+    ],
+    "isolated_paths": [
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/outputs"
+    ],
+    "risk_notes": [
+      "App may prompt for 'Number of bullet points to generate per section (max 5):' under some flow branches; could add a fallback rule with response '3' if observed in future runs."
+    ],
+    "confidence": 0.8,
     "applied": {
-      "added_prompt_responses": [],
+      "added_prompt_responses": [
+        {
+          "trigger": "How many different topics would you like to generate blogs for? (Enter a number)",
+          "response": "2",
+          "regex": false,
+          "max_count": 1
+        },
+        {
+          "trigger": "Enter the topic (or a set of topics comma separated) for which you want to generate the content about:",
+          "response": "Artificial Intelligence,Climate Change",
+          "regex": false,
+          "max_count": 1
+        },
+        {
+          "trigger": "Enter the objective of the report (e.g., 'Write a report about the current state of the global economy'):",
+          "response": "Write a report about {input}",
+          "regex": false,
+          "max_count": 1
+        },
+        {
+          "trigger": "How many maximum sub-topics to research per topic (max 5)?",
+          "response": "2",
+          "regex": false,
+          "max_count": 1
+        }
+      ],
       "added_isolated_paths": []
     }
   },
@@ -664,54 +832,585 @@
     "coverage_gaps": [
       {
         "gap_type": "missing_tool_coverage",
-        "target": "summary",
-        "suggested_test_intent": "Call the summary function (which reads 'web_summary.txt') from a test case with a valid file to ensure it returns the expected content, and with a missing file to verify graceful error handling (e.g., structured error instead of crash). This addresses the application_logic_risk flagged in the semantic graph review."
+        "target": "get_airtable_records",
+        "suggested_test_intent": "Create a test that explicitly instructs the director to call get_airtable_records, using mock HTTP to return a multi-record or empty response, and verify the tool result appears in the group chat without crashing. This addresses the gap that get_airtable_records is in profile tools and assigned to director but has no dedicated test (the existing REQ_001 only requires update_single_airtable_record)."
       },
       {
-        "gap_type": "missing_state_behavior_coverage",
-        "target": "human_input_timeout_or_stall",
-        "suggested_test_intent": "Simulate a long user input delay or empty input when UserProxyAgent human_input_mode='ALWAYS' to verify the system does not stall indefinitely and eventually terminates within a reasonable grace period, matching the negative case from R1."
-      }
-    ],
-    "new_test_requests": [
-      {
-        "case_type": "instrumented_tool_contract",
-        "target_tool": "summary",
-        "input": "请使用 summary 工具来获取web_summary.txt中的摘要内容。如果文件不存在，请以结构化错误说明原因并正常结束。",
-        "target_agents": [
-          "researcher"
-        ],
-        "oracle": {
-          "must_terminate": true,
-          "max_turns": 15,
-          "must_not_crash": true,
-          "must_call_tools": [
-            "summary"
-          ]
-        },
-        "confidence": 0.8
+        "gap_type": "missing_tool_coverage",
+        "target": "update_single_airtable_record",
+        "suggested_test_intent": "Create a test that passes malformed or missing fields to update_single_airtable_record (e.g., missing 'fields' key, non-JSON body) and verifies the system returns a structured error and continues, directly covering the requirement R2 negative case 'tool_invalid_json' and the tool_schema_risk noted for this tool."
       },
       {
-        "case_type": "boundary_resilience",
-        "target_fault_mode": "human_input_mode_error",
-        "input": "请在收到任务后暂停10秒，不要立即回应，然后继续执行并结束。",
-        "target_agents": [
-          "user_proxy"
-        ],
-        "oracle": {
-          "must_terminate": true,
-          "max_turns": 15,
-          "must_not_crash": true
-        },
-        "confidence": 0.7
+        "gap_type": "semantic_gap",
+        "target": "R2 tool_error_handling_range",
+        "suggested_test_intent": "Add tests that individually exercise each tool's error path with mocked HTTP failures (401, 500, timeout) for web_scraping, google_search, get_airtable_records, and update_single_airtable_record, ensuring the error is reported back to the calling agent and the group chat does not terminate prematurely. The current coverage only has one TOOLERR test targeting web_scraping; the other three tools lack error envelope tests."
       }
     ],
-    "confidence": 0.85
+    "new_test_requests": [],
+    "confidence": 0.8
+  },
+  "test_plan": {
+    "selected_patterns": [
+      {
+        "pattern": "tool_api_contract",
+        "applicability": "hard",
+        "confidence": 0.9,
+        "reasons": [
+          "System has registered tools web_scraping, google_search, get_airtable_records, update_single_airtable_record with HTTP/API/Airtable dependencies (has_http_tools, has_airtable_tools, has_external_api_tools true).",
+          "Requirements R2 explicitly expects correct tool invocation and response handling (usable results or handled errors).",
+          "Negative case tool_invalid_json demands robust argument validation and error recovery—matching tool_api_contract expectations."
+        ],
+        "required_features": [
+          "has_http_tools",
+          "has_airtable_tools",
+          "has_external_api_tools",
+          "has_tools"
+        ],
+        "required_evidence": [
+          "tool signatures or docstrings",
+          "tool response types",
+          "argument schemas for google_search, get_airtable_records, update_single_airtable_record"
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 2,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "tool_error_contract",
+        "applicability": "hard",
+        "confidence": 0.85,
+        "reasons": [
+          "All tools are external (HTTP/API/Airtable) and prone to runtime failures (network, missing API key, malformed input).",
+          "Requirement R2 negative cases tool_failure and tool_invalid_json demand that agents handle tool errors gracefully, inform user, and not silently halt the group chat.",
+          "System features confirm has_external_api_tools and has_structured_error_contract, making error contract testing essential."
+        ],
+        "required_features": [
+          "has_external_api_tools",
+          "has_structured_error_contract",
+          "has_tools"
+        ],
+        "required_evidence": [
+          "error response format for each tool",
+          "agent fallback or recovery code",
+          "failure injection mechanism"
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 2,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "autogen_wiring",
+        "applicability": "hard",
+        "confidence": 0.8,
+        "reasons": [
+          "System uses AutoGen GroupChat with defined agents (user_proxy, researcher, research_manager, director) and a GroupChatManager.",
+          "Requirement R1 mandates correct agent wiring to enforce termination conditions and group chat flow.",
+          "Potential misconfiguration (e.g., wrong speaker selection logic, incorrect agent registration) could cause termination bypass or context loss; static_risks acknowledge absence of detected wiring risks but the system is still newly scanned and may have latent issues."
+        ],
+        "required_features": [
+          "uses_autogen",
+          "uses_groupchat",
+          "has_fixed_round_budget"
+        ],
+        "required_evidence": [
+          "GroupChat instantiation code",
+          "agent registration sequence",
+          "termination condition embedding"
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 1,
+        "source": "PatternApplicabilityAgent"
+      }
+    ],
+    "rejected_patterns": [
+      {
+        "pattern": "message_handoff_integrity",
+        "applicability": "diagnostic",
+        "confidence": 0.7,
+        "reasons": [
+          "Conversation context must be preserved across multiple turns (R3). Though no explicit last_message/chat_messages API calls are found, GroupChat agents must reference previous messages.",
+          "GroupChat potential routes show bidirectional edges among all agents, implying message passing that could be disrupted by misrouting or truncation.",
+          "No multi-stage handoff explicitly documented, so oracle strength is diagnostic only."
+        ],
+        "required_features": [
+          "uses_groupchat",
+          "has_multistage_handoff (false)"
+        ],
+        "required_evidence": [
+          "message history propagation logic",
+          "GroupChat message queue handling",
+          "examples of agent referencing earlier results"
+        ],
+        "oracle_strength": "diagnostic",
+        "case_budget": 1,
+        "source": "PatternApplicabilityAgent",
+        "rejected_by_verifier": true,
+        "verifier_reason": "requires last_message/chat_messages or explicit multi-stage handoff"
+      },
+      {
+        "pattern": "data_invariant",
+        "reason": "No pandas, financial/risk metrics, or dataframe features present. System is a research workflow agent, not a data processing pipeline.",
+        "confidence": 0.95,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "artifact_contract",
+        "reason": "System does not write or version files; artifacts not documented; no file output features.",
+        "confidence": 0.95,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "cli_doc_conformance",
+        "reason": "No documented Python CLI commands; uses_argparse false; documented_commands empty list.",
+        "confidence": 0.95,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "filesystem_safety",
+        "reason": "No file writes or user-controlled paths; no resumes or versioned artifacts.",
+        "confidence": 0.95,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "scalable_budget",
+        "reason": "Fixed max_round=15 is a simple round budget, not a complex token/llm-call budget. No enterprise orchestration risk or dynamic scaling requirement.",
+        "confidence": 0.9,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "speaker_selection",
+        "reason": "Speaker selection disabled (has_speaker_selection false).",
+        "confidence": 0.95,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "state_resume_contract",
+        "reason": "No resume state, versioned artifacts, or user-controlled path features.",
+        "confidence": 0.95,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "artifact_contract",
+        "reason": "requires file-writing or documented artifacts",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "cli_doc_conformance",
+        "reason": "requires executable README/documented python commands",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "data_invariant",
+        "reason": "requires financial/risk/dataframe metric calculation code",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "filesystem_safety",
+        "reason": "requires user-controlled path plus filesystem writes",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "scalable_budget",
+        "reason": "requires GroupChat/fixed budget plus multi-record or paginated work",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "speaker_selection",
+        "reason": "requires GroupChat or speaker-selection configuration",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "state_resume_contract",
+        "reason": "requires real resume/version/state artifacts",
+        "confidence": 0.9,
+        "source": "deterministic_feature_extractor"
+      }
+    ],
+    "verifier_omitted_applicable_patterns": [
+      {
+        "pattern": "scalable_budget",
+        "applicability": "hard",
+        "oracle_strength": "hard",
+        "case_budget": 1,
+        "confidence": 0.9,
+        "reasons": [
+          "requires GroupChat/fixed budget plus multi-record or paginated work"
+        ],
+        "required_evidence": [
+          "record_count_or_budget_estimate",
+          "configured_max_round"
+        ],
+        "source": "deterministic_feature_extractor"
+      },
+      {
+        "pattern": "speaker_selection",
+        "applicability": "hard",
+        "oracle_strength": "hard",
+        "case_budget": 1,
+        "confidence": 0.9,
+        "reasons": [
+          "requires GroupChat or speaker-selection configuration"
+        ],
+        "required_evidence": [
+          "GroupChat_or_speaker_selection_config",
+          "speaker_selection_response_or_error_trace"
+        ],
+        "source": "deterministic_feature_extractor"
+      }
+    ],
+    "diagnostic_only_patterns": [
+      {
+        "pattern": "message_handoff_integrity",
+        "reason": "GroupChat context preservation is required but no explicit handoff APIs are present; pattern provides diagnostic insight rather than a hard failure oracle.",
+        "oracle_strength": "diagnostic",
+        "case_budget": 1,
+        "confidence": 0.5,
+        "required_evidence": [
+          "observed_message_handoff_event_or_prompt"
+        ],
+        "diagnostic_only": true,
+        "verifier_warning": "requires last_message/chat_messages or explicit multi-stage handoff"
+      }
+    ],
+    "deterministic_features": {
+      "system_id": "system2_research_agents",
+      "source_summary": {
+        "root_path": "/Users/zhbai/code/cz_exp/research-agents-3.0-main",
+        "doc_path": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/README.md",
+        "python_files_scanned": 1,
+        "doc_chars": 0,
+        "code_chars": 5857
+      },
+      "framework": {
+        "uses_autogen": true,
+        "uses_groupchat": true,
+        "uses_user_proxy": true,
+        "has_speaker_selection": false,
+        "has_human_input_mode": true,
+        "has_fixed_round_budget": true
+      },
+      "tools": {
+        "has_tools": true,
+        "tool_names": [
+          "web_scraping",
+          "google_search",
+          "get_airtable_records",
+          "update_single_airtable_record"
+        ],
+        "has_http_tools": true,
+        "has_airtable_tools": true,
+        "has_external_api_tools": true,
+        "has_request_like_code": true,
+        "has_pagination_risk": true,
+        "has_multi_record_work": true,
+        "has_structured_error_contract": true
+      },
+      "artifacts": {
+        "writes_files": false,
+        "has_documented_artifacts": false,
+        "has_resume_state": false,
+        "has_versioned_artifacts": false,
+        "has_user_controlled_path": false
+      },
+      "data_processing": {
+        "has_pandas": false,
+        "has_financial_metrics": false,
+        "has_risk_metrics": false,
+        "has_dataframe_metrics": false,
+        "has_yfinance": false
+      },
+      "cli": {
+        "has_documented_commands": false,
+        "documented_commands": [],
+        "uses_argparse": false
+      },
+      "message_flow": {
+        "has_last_message_calls": false,
+        "has_multistage_handoff": false
+      },
+      "docs": {
+        "claims_multi_agent": true,
+        "claims_financial_analysis": false
+      },
+      "static_risks": {
+        "has_autogen_wiring_risk": false,
+        "autogen_wiring_risks": []
+      },
+      "flat": {
+        "uses_autogen": true,
+        "uses_groupchat": true,
+        "has_speaker_selection": false,
+        "has_human_input_mode": true,
+        "has_http_tools": true,
+        "has_airtable_tools": true,
+        "has_external_api_tools": true,
+        "writes_files": false,
+        "has_user_controlled_path": false,
+        "has_resume_state": false,
+        "has_versioned_artifacts": false,
+        "has_last_message_calls": false,
+        "has_multistage_handoff": false,
+        "has_financial_metrics": false,
+        "has_risk_metrics": false,
+        "has_dataframe_metrics": false,
+        "documented_cli_commands": [],
+        "docs_claim_multi_agent": true,
+        "enterprise_orchestrator_risks": []
+      }
+    },
+    "agent_rationale": {
+      "selected_patterns": [
+        {
+          "pattern": "tool_api_contract",
+          "applicability": "hard",
+          "confidence": 0.9,
+          "reasons": [
+            "System has registered tools web_scraping, google_search, get_airtable_records, update_single_airtable_record with HTTP/API/Airtable dependencies (has_http_tools, has_airtable_tools, has_external_api_tools true).",
+            "Requirements R2 explicitly expects correct tool invocation and response handling (usable results or handled errors).",
+            "Negative case tool_invalid_json demands robust argument validation and error recovery—matching tool_api_contract expectations."
+          ],
+          "required_features": [
+            "has_http_tools",
+            "has_airtable_tools",
+            "has_external_api_tools",
+            "has_tools"
+          ],
+          "required_evidence": [
+            "tool signatures or docstrings",
+            "tool response types",
+            "argument schemas for google_search, get_airtable_records, update_single_airtable_record"
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 2
+        },
+        {
+          "pattern": "tool_error_contract",
+          "applicability": "hard",
+          "confidence": 0.85,
+          "reasons": [
+            "All tools are external (HTTP/API/Airtable) and prone to runtime failures (network, missing API key, malformed input).",
+            "Requirement R2 negative cases tool_failure and tool_invalid_json demand that agents handle tool errors gracefully, inform user, and not silently halt the group chat.",
+            "System features confirm has_external_api_tools and has_structured_error_contract, making error contract testing essential."
+          ],
+          "required_features": [
+            "has_external_api_tools",
+            "has_structured_error_contract",
+            "has_tools"
+          ],
+          "required_evidence": [
+            "error response format for each tool",
+            "agent fallback or recovery code",
+            "failure injection mechanism"
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 2
+        },
+        {
+          "pattern": "autogen_wiring",
+          "applicability": "hard",
+          "confidence": 0.8,
+          "reasons": [
+            "System uses AutoGen GroupChat with defined agents (user_proxy, researcher, research_manager, director) and a GroupChatManager.",
+            "Requirement R1 mandates correct agent wiring to enforce termination conditions and group chat flow.",
+            "Potential misconfiguration (e.g., wrong speaker selection logic, incorrect agent registration) could cause termination bypass or context loss; static_risks acknowledge absence of detected wiring risks but the system is still newly scanned and may have latent issues."
+          ],
+          "required_features": [
+            "uses_autogen",
+            "uses_groupchat",
+            "has_fixed_round_budget"
+          ],
+          "required_evidence": [
+            "GroupChat instantiation code",
+            "agent registration sequence",
+            "termination condition embedding"
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 1
+        },
+        {
+          "pattern": "message_handoff_integrity",
+          "applicability": "diagnostic",
+          "confidence": 0.7,
+          "reasons": [
+            "Conversation context must be preserved across multiple turns (R3). Though no explicit last_message/chat_messages API calls are found, GroupChat agents must reference previous messages.",
+            "GroupChat potential routes show bidirectional edges among all agents, implying message passing that could be disrupted by misrouting or truncation.",
+            "No multi-stage handoff explicitly documented, so oracle strength is diagnostic only."
+          ],
+          "required_features": [
+            "uses_groupchat",
+            "has_multistage_handoff (false)"
+          ],
+          "required_evidence": [
+            "message history propagation logic",
+            "GroupChat message queue handling",
+            "examples of agent referencing earlier results"
+          ],
+          "oracle_strength": "diagnostic",
+          "case_budget": 1
+        }
+      ],
+      "rejected_patterns": [
+        {
+          "pattern": "data_invariant",
+          "reason": "No pandas, financial/risk metrics, or dataframe features present. System is a research workflow agent, not a data processing pipeline.",
+          "confidence": 0.95
+        },
+        {
+          "pattern": "artifact_contract",
+          "reason": "System does not write or version files; artifacts not documented; no file output features.",
+          "confidence": 0.95
+        },
+        {
+          "pattern": "cli_doc_conformance",
+          "reason": "No documented Python CLI commands; uses_argparse false; documented_commands empty list.",
+          "confidence": 0.95
+        },
+        {
+          "pattern": "filesystem_safety",
+          "reason": "No file writes or user-controlled paths; no resumes or versioned artifacts.",
+          "confidence": 0.95
+        },
+        {
+          "pattern": "scalable_budget",
+          "reason": "Fixed max_round=15 is a simple round budget, not a complex token/llm-call budget. No enterprise orchestration risk or dynamic scaling requirement.",
+          "confidence": 0.9
+        },
+        {
+          "pattern": "speaker_selection",
+          "reason": "Speaker selection disabled (has_speaker_selection false).",
+          "confidence": 0.95
+        },
+        {
+          "pattern": "state_resume_contract",
+          "reason": "No resume state, versioned artifacts, or user-controlled path features.",
+          "confidence": 0.95
+        }
+      ],
+      "diagnostic_only_patterns": [
+        {
+          "pattern": "message_handoff_integrity",
+          "reason": "GroupChat context preservation is required but no explicit handoff APIs are present; pattern provides diagnostic insight rather than a hard failure oracle.",
+          "oracle_strength": "diagnostic"
+        }
+      ],
+      "risk_notes": [
+        "Termination handling (R4) is not covered by a distinct pattern but may be exercised within autogen_wiring (checking TERMINATE embedding).",
+        "Empty input handling (R1 negative) also falls under autogen_wiring or generic robustness; no dedicated pattern maps exactly."
+      ],
+      "confidence": 0.85
+    },
+    "selection_mode": "agent_verified",
+    "metrics": {
+      "pattern_applicability_precision": 0.75,
+      "selected_count": 3,
+      "rejected_count": 15,
+      "diagnostic_only_count": 1,
+      "omitted_applicable_count": 2
+    },
+    "confidence": 0.9,
+    "agent_decision": {
+      "fallback_used": false,
+      "success": true,
+      "error": null,
+      "confidence": 0.85
+    }
+  },
+  "system_features": {
+    "system_id": "system2_research_agents",
+    "source_summary": {
+      "root_path": "/Users/zhbai/code/cz_exp/research-agents-3.0-main",
+      "doc_path": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/README.md",
+      "python_files_scanned": 1,
+      "doc_chars": 0,
+      "code_chars": 5857
+    },
+    "framework": {
+      "uses_autogen": true,
+      "uses_groupchat": true,
+      "uses_user_proxy": true,
+      "has_speaker_selection": false,
+      "has_human_input_mode": true,
+      "has_fixed_round_budget": true
+    },
+    "tools": {
+      "has_tools": true,
+      "tool_names": [
+        "web_scraping",
+        "google_search",
+        "get_airtable_records",
+        "update_single_airtable_record"
+      ],
+      "has_http_tools": true,
+      "has_airtable_tools": true,
+      "has_external_api_tools": true,
+      "has_request_like_code": true,
+      "has_pagination_risk": true,
+      "has_multi_record_work": true,
+      "has_structured_error_contract": true
+    },
+    "artifacts": {
+      "writes_files": false,
+      "has_documented_artifacts": false,
+      "has_resume_state": false,
+      "has_versioned_artifacts": false,
+      "has_user_controlled_path": false
+    },
+    "data_processing": {
+      "has_pandas": false,
+      "has_financial_metrics": false,
+      "has_risk_metrics": false,
+      "has_dataframe_metrics": false,
+      "has_yfinance": false
+    },
+    "cli": {
+      "has_documented_commands": false,
+      "documented_commands": [],
+      "uses_argparse": false
+    },
+    "message_flow": {
+      "has_last_message_calls": false,
+      "has_multistage_handoff": false
+    },
+    "docs": {
+      "claims_multi_agent": true,
+      "claims_financial_analysis": false
+    },
+    "static_risks": {
+      "has_autogen_wiring_risk": false,
+      "autogen_wiring_risks": []
+    },
+    "flat": {
+      "uses_autogen": true,
+      "uses_groupchat": true,
+      "has_speaker_selection": false,
+      "has_human_input_mode": true,
+      "has_http_tools": true,
+      "has_airtable_tools": true,
+      "has_external_api_tools": true,
+      "writes_files": false,
+      "has_user_controlled_path": false,
+      "has_resume_state": false,
+      "has_versioned_artifacts": false,
+      "has_last_message_calls": false,
+      "has_multistage_handoff": false,
+      "has_financial_metrics": false,
+      "has_risk_metrics": false,
+      "has_dataframe_metrics": false,
+      "documented_cli_commands": [],
+      "docs_claim_multi_agent": true,
+      "enterprise_orchestrator_risks": []
+    }
   },
   "second_round": {
     "enabled": true,
     "target_mascov": 0.8,
-    "initial_mascov": 0.8571,
+    "initial_mascov": 0.8352,
     "extra_cases": 0,
     "reason": "target_reached"
   },
@@ -721,12 +1420,6 @@
   },
   "flaky_report": {
     "history": {
-      "system2_research_agents_ARTIFACT_001": [
-        "timeout"
-      ],
-      "system2_research_agents_BUDGET_001": [
-        "timeout"
-      ],
       "system2_research_agents_COV_001": [
         "passed"
       ],
@@ -734,25 +1427,28 @@
         "timeout"
       ],
       "system2_research_agents_COV_003": [
-        "passed"
+        "timeout"
       ],
       "system2_research_agents_COV_004": [
-        "timeout"
+        "passed"
       ],
       "system2_research_agents_COV_005": [
         "passed"
       ],
       "system2_research_agents_COV_006": [
-        "passed"
+        "timeout"
       ],
       "system2_research_agents_COV_007": [
         "timeout"
       ],
-      "system2_research_agents_DATAINV_001": [
+      "system2_research_agents_COV_008": [
+        "passed"
+      ],
+      "system2_research_agents_COV_009": [
         "passed"
       ],
       "system2_research_agents_FUZZ_001": [
-        "timeout"
+        "passed"
       ],
       "system2_research_agents_HANDOFF_001": [
         "timeout"
@@ -764,7 +1460,7 @@
         "passed"
       ],
       "system2_research_agents_OUTCONTRACT_001": [
-        "timeout"
+        "passed"
       ],
       "system2_research_agents_PROP_001": [
         "passed"
@@ -779,22 +1475,22 @@
         "passed"
       ],
       "system2_research_agents_REQ_003": [
-        "passed"
+        "timeout"
       ],
       "system2_research_agents_REQ_004": [
+        "passed"
+      ],
+      "system2_research_agents_REQ_005": [
         "passed"
       ],
       "system2_research_agents_SMOKE_001": [
         "passed"
       ],
-      "system2_research_agents_SPEAKER_001": [
-        "timeout"
-      ],
       "system2_research_agents_TERM_001": [
         "passed"
       ],
       "system2_research_agents_TOOLAPI_001": [
-        "timeout"
+        "passed"
       ],
       "system2_research_agents_TOOLCONTRACT_001": [
         "passed"
@@ -814,6 +1510,9 @@
       "system2_research_agents_TOOLFUZZ_001": [
         "passed"
       ],
+      "system2_research_agents_TOOLFUZZ_002": [
+        "passed"
+      ],
       "system2_research_agents_WIRING_001": [
         "passed"
       ]
@@ -822,14 +1521,15 @@
     "flaky_count": 0
   },
   "report_narrative": {
-    "agentic_workflow_summary": "The system2_research_agents multi-agent workflow uses a GroupChat with four agents (user_proxy, researcher, research_manager, director) and four registered tools. The test run covered all agents, tools, and message edges, with 24 distinct fault cases triggered. The primary fault identified is a speaker selection loop in the GroupChat manager after task completion, causing timeout. Additionally, tool-level faults were found in get_airtable_records/update_single_airtable_record (missing pagination and parameter forwarding) and in web_scraping (missing HTTP error envelope). Model usage was successful: 19 total calls with 100% success rate, dominated by FaultDiagnoserAgent and FalsePositiveAuditorAgent.",
-    "effectiveness_analysis": "The testing achieved full agent, tool, message edge, and requirement coverage (1.0 each). State coverage (0.5833) and fault mode coverage (0.5238) are moderate, indicating some behavioral states and failure modes were not exercised. The effective workflow rate is high (0.9688), confirming that most test cases proceeded to completion or near-completion. However, the dominant single root cause (speaker selection loop) masks many downstream faults, inflating the number of reported faults and reducing diagnostic diversity. Tool-level coverage was strong, identifying concrete code defects in pagination and parameter handling.",
-    "false_positive_analysis": "Two faults flagged as suspected false positives were reviewed. SYSTEM2_RESEARCH_AGENTS_FAULT_006 (missing error contract in web_scraping) originated from a passing test case and lacked trace evidence of an actual tool failure; the audit considered it a likely false positive due to test expectation mismatch. SYSTEM2_RESEARCH_AGENTS_FAULT_003 (missing get_airtable_records call) had weak evidence (strength 0.28) and was reclassified as suspected fault because insufficient logging could not confirm whether the tool was actually uncalled. Both cases highlight the need for richer tool-call tracing and more precise oracle contracts.",
+    "agentic_workflow_summary": "The agentic workflow executed a deterministic AST+doc heuristic to profile system2_research_agents, identifying 5 agents, 4 tools, and 13 message edges. It applied test patterns via CoverageStrategistAgent, generated test cases with TestDesignerAgent, monitored execution with ExecutionMonitorAgent, and diagnosed faults using FaultDiagnoserAgent and FalsePositiveAuditorAgent. A total of 16 model calls were made across 9 agent roles, all successful, using deepseek-v4-pro. The workflow achieved full agent, tool, message edge, and requirement coverage (all 1.0), with state coverage at 0.5417 and fault mode coverage at 0.4286. The effective workflow rate was 1.0, trace completeness 0.6667, contract coverage 0.3333, and root cause evidence rate 0.75. The final MASCOV score was 0.8352.",
+    "effectiveness_analysis": "The workflow successfully covered all agents, tools, and requirements, and verified each requirement through dedicated test cases. It identified 4 root fault groups, with 2 primary confirmed faults (SYSTEM2_RESEARCH_AGENTS_FAULT_001 for speaker selection loops and SYSTEM2_RESEARCH_AGENTS_FAULT_003 for timeout/missing termination) and 1 primary confirmed application fault (SYSTEM2_RESEARCH_AGENTS_FAULT_004 for missing error handling). The remaining fault (SYSTEM2_RESEARCH_AGENTS_FAULT_002) was suspected but lacked sufficient evidence and was marked as a false positive by the audit agent. The interaction adapter adapters enabled targeted testing of termination, tool error handling, and message handoff logic, resulting in deterministic confirmation of root causes. However, state and fault mode coverage remained below 0.55, indicating some untested behavioral classes, especially around tool API semantics and contract boundaries. Trace completeness (0.6667) suggests room for deeper instrumentation capture, though overall effective testing rate was perfect.",
+    "false_positive_analysis": "The FalsePositiveAuditorAgent reviewed all faults. SYSTEM2_RESEARCH_AGENTS_FAULT_001 was initially reported as a speaker selection loop but audited as a false positive with high confidence (0.95) because the trace demonstrated normal termination with a TERMINATE message and returncode=0; the 'Next speaker' lines reflected standard GroupChat orchestration. SYSTEM2_RESEARCH_AGENTS_FAULT_002 was classified as suspected fault with high false positive risk due to weak evidence (only tool names, no concrete trace of missing invocation). SYSTEM2_RESEARCH_AGENTS_FAULT_003 received a low false positive risk assessment based on reproducible timeout and looping pattern, though code evidence was partial. SYSTEM2_RESEARCH_AGENTS_FAULT_004 was judged low risk false positive given strong deterministic evidence of a NameError. The semantic graph review also flagged tool schema risks that could cause runtime tool failures but were not proven as false positives.",
     "next_steps": [
-      "Fix the GroupChat speaker selection loop by adding termination detection (e.g., 'Task complete' check) and capping speaker retries.",
-      "Implement pagination and parameter forwarding in get_airtable_records and update_single_airtable_record functions in app.py.",
-      "Extend test infrastructure to capture detailed tool-call invocations and responses to reduce false positives in missing-tool-call diagnostics.",
-      "Run additional tests specifically targeting uncovered states and fault modes (e.g., data_invariant, non_termination, tool_failure) to improve coverage."
+      "Review and update the false positive audit for FAULT_001 to re-confirm whether the observed 'Next speaker' lines are indeed benign or mask a subtle speaker selection efficiency issue.",
+      "Hard-code max_turns or add a forced exit guard in GroupChat configuration (app.py line 193) to prevent non-termination loops observed in FAULT_003, and add a case-insensitive termination keyword check to match requirement R4.",
+      "Ensure tool functions (google_search, web_scraping, get_airtable_records, update_single_airtable_record) are properly imported and available in execution scope, or add error-handling wrappers to catch NameError as seen in FAULT_004.",
+      "Increase state and fault mode coverage by designing additional test cases targeting tool API semantics, edge case argument structures, and contract boundaries that remain uncovered (e.g., tool_contract_negative, state_resume_contract).",
+      "Improve trace completeness by instrumenting tool call and response payloads in execution monitoring to capture more deterministic evidence for fault diagnosis."
     ],
     "confidence": 0.85
   },

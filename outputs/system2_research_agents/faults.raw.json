@@ -1,116 +1,6 @@
 [
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
-    "case_id": "system2_research_agents_ARTIFACT_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "SPEAKER_SELECTION_LOOP",
-    "severity": "high",
-    "confidence": 0.86,
-    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
-    "evidence": [
-      "The task has been completed successfully. The one-line Python script `print(\"hello\")` was executed, and it printed `hello` as expected.",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:10:21] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: director",
-      "\u001b[33m[autogen.oai.client: 05-20 10:10:22] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "director (to chat_manager):",
-      "The script executed successfully, printing \"hello\". Task complete.",
-      "--------------------------------------------------------------------------------"
-    ],
-    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
-    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
-    "reproduction": {
-      "input": "Create a one-line Python script that prints hello. A valid answer may use an unlabeled, py, or python Markdown fence.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.71,
-    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
-    "case_id": "system2_research_agents_ARTIFACT_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "45"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "Create a one-line Python script that prints hello. A valid answer may use an unlabeled, py, or python Markdown fence.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.6,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
-    "case_id": "system2_research_agents_BUDGET_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "SPEAKER_SELECTION_LOOP",
-    "severity": "high",
-    "confidence": 0.86,
-    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
-    "evidence": [
-      "已确认五条记录全部处理完毕，操作均成功。如有新的任务或指示，请随时提出。",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:12:16] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: director",
-      "\u001b[33m[autogen.oai.client: 05-20 10:12:17] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "director (to chat_manager):",
-      "五条记录已全部处理成功，所有检索与更新操作均顺利完成，无异常。如还需处理其他任务，请随时告知。",
-      "--------------------------------------------------------------------------------"
-    ],
-    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
-    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
-    "reproduction": {
-      "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.71,
-    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
-    "case_id": "system2_research_agents_BUDGET_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "45"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.6,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
     "case_id": "system2_research_agents_COV_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -119,10 +9,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "**Director → Research Manager**",
-      "Acknowledged. Proceed as per the outlined plan. Keep me posted on any early findings or if you encounter data gaps. I'll await the final summary by end of Day 5.",
+      "user_proxy (to chat_manager):",
+      "Director, please update the Airtable record with ID recXXX with a new field 'status':'reviewed' and then report the result to user_proxy.",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:12:21] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "\u001b[33m[autogen.oai.client: 05-20 12:24:43] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -131,17 +21,65 @@
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "reproduction": {
-      "input": "Director, delegate the new lead research task to research_manager",
+      "input": "Director, please update the Airtable record with ID recXXX with a new field 'status':'reviewed' and then report the result to user_proxy.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
+    "case_id": "system2_research_agents_COV_001",
+    "layer": "application",
+    "fault_type": "Missing Tool Call",
+    "failure_code": "MISSING_TOOL_CALL",
+    "severity": "medium",
+    "confidence": 0.7,
+    "summary": "Expected tool was not called: update_single_airtable_record",
+    "evidence": [
+      "update_single_airtable_record"
+    ],
+    "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system2_research_agents.",
+    "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
+    "reproduction": {
+      "input": "Director, please update the Airtable record with ID recXXX with a new field 'status':'reviewed' and then report the result to user_proxy.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.28,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.28,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
     "case_id": "system2_research_agents_COV_002",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -150,29 +88,41 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "**Current Status:**",
-      "- **Log freezing & hashing:** Initiated across all incident-relevant sources. Chain-of-custody procedures applied. Logs are being cryptographically hashed and stored on write-once media. No deletions or overwrites permitted.",
-      "- **Executive summary:** Drafting one-page non-technical summary for CEO/board briefing. Will cover: incident overview, containment status, business impact assessment (currently minimal — no customer data or production systems affected), and next steps. Included in sitrep.",
-      "- **Active monitoring:** Watch operators are in place on the isolated subnet with real-time alerting. Any beacon or reconnection attempt will be flagged to my terminal and immediately forwarded to yours. Nothing detected so far.",
-      "- **Lateral movement / privilege escalation:** Cross-reference running. Initial results show no privilege escalation indicators in the past 48 hours. However, two service accounts showed unusual scheduled task executions — currently investigating whether those were pre-existing or actor-triggered. If any evidence of escalation surfaces, I will escalate to Gamma-7 and notify you directly without delay.",
-      "All teams are synchronized and moving. Next critical update at 90-minute mark or sooner if new intel breaks.",
-      "— Researcher",
-      "--------------------------------------------------------------------------------"
+      "I'd like to start with a deeper dive into **Trend #2 (Autonomous AI Agents)** and **Trend #6 (Agentic RAG)**. Please:",
+      "1. Compile a list of the top 5–7 leading agent frameworks (AutoGPT, CrewAI, Microsoft Copilot agents, etc.) with a brief comparison of their strengths, limitations, and primary use cases.",
+      "2. Provide an overview of how Agentic RAG differs from traditional RAG—specifically the role of dynamic retrieval, memory, and planning—and cite at least 2–3 recent papers or implementations.",
+      "Once that's ready, I'll likely ask for the comparison table of foundation models.",
+      "Thanks again for the prompt delivery. Send the deep-dive when you have it.",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33m[autogen.oai.client: 05-20 12:26:05] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "Next speaker: researcher"
     ],
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "reproduction": {
-      "input": "Researcher, after gathering data, report your findings directly to director",
+      "input": "Researcher, please search for 'latest AI trends' and share the summary with research_manager.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
     "evidence_strength": 0.71,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.71,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
     "case_id": "system2_research_agents_COV_002",
     "layer": "autogen_framework",
     "fault_type": "Non-Termination",
@@ -186,17 +136,29 @@
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
     "reproduction": {
-      "input": "Researcher, after gathering data, report your findings directly to director",
+      "input": "Researcher, please search for 'latest AI trends' and share the summary with research_manager.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.6,
     "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.6,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
     "case_id": "system2_research_agents_COV_003",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -205,44 +167,13 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "- **结果交付**：group_chat_manager 将最终报告返回给 research_manager，任务耗时 3 分 12 秒，无冲突或异常。  ",
-      "**结论**：group_chat_manager 成功协调多智能体完成正常任务，输出报告质量符合要求，可进入下一审批环节。",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:14:38] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: user_proxy",
-      "user_proxy (to chat_manager):",
-      "TERMINATE",
-      "--------------------------------------------------------------------------------"
-    ],
-    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
-    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
-    "reproduction": {
-      "input": "请让 group_chat_manager 参与处理一个正常任务，并输出处理过程摘要。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.56,
-    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_009",
-    "case_id": "system2_research_agents_COV_004",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "SPEAKER_SELECTION_LOOP",
-    "severity": "high",
-    "confidence": 0.86,
-    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
-    "evidence": [
+      "  4. 竞争格局一览（可选段落）",
       "### 时间与协作模式",
       "- **请立即开始**。完成后直接输出完整 Markdown 段落，我不需要中间确认。",
       "- 若在搜索中发现某一路线（如光量子）近一年无重要进展，请在表格中用“无重大公布”如实标注，而非强行补充过时数据。",
       "- 您可自主整合成一篇约 700–900 字的报告。超出字数但信息密集也可接受。",
       "**总结：按上述微调立即执行，无需等待进一步确认。期待您的成果。**",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:15:33] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: research_manager"
     ],
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
@@ -255,11 +186,23 @@
     "evidence_strength": 0.71,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.71,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_010",
-    "case_id": "system2_research_agents_COV_004",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
+    "case_id": "system2_research_agents_COV_003",
     "layer": "autogen_framework",
     "fault_type": "Non-Termination",
     "failure_code": "TIMEOUT",
@@ -275,15 +218,27 @@
       "input": "请完成一个需要 director 与 research_manager 协作的任务。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.6,
     "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.6,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_011",
-    "case_id": "system2_research_agents_COV_005",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
+    "case_id": "system2_research_agents_COV_004",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -291,10 +246,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
+      "**特斯拉2024Q3财务摘要**  ",
       "营收251.8亿美元（+8%），净利润21.7亿美元（+17%），均超利润预期。毛利率19.8%温和修复，但交付量46.3万辆略低于预期。市场反应分化：利润端利好被交付增长放缓部分抵消，短期股价预计震荡。建议关注后续Cybertruck交付进度及下一代平台发布计划。",
       "任务完成。如需进一步细化或更改任务，请指示。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:15:25] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -310,11 +265,23 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_012",
-    "case_id": "system2_research_agents_COV_006",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
+    "case_id": "system2_research_agents_COV_005",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -322,10 +289,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
+      "**Director**: 很好。现在我需要你执行一个数据预处理步骤：将这组数字从小到大排序，并输出排序后的结果。这样我就能准确找出中位数。",
       "**User_proxy**: 排序已完成。排序后的列表为：[5, 7, 9, 12, 15, 18, 22]。",
       "**Director**: 感谢。根据中位数定义，当数据个数为奇数时，中位数为中间那个数。此例有7个数，第四个数是12。因此中位数是12。任务完成。现在我将生成最终报告。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:15:55] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -341,11 +308,23 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_013",
-    "case_id": "system2_research_agents_COV_007",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_009",
+    "case_id": "system2_research_agents_COV_006",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -353,14 +332,14 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "当前部门有两个更高频次的紧急任务需并行关注：",
-      "1. **合规审计**：下周三前需提交本部门所有在研AI项目的可解释性文档模板——你可在本提案框架内一并完成草案，我授权你调用1名文档专员协助。",
-      "2. **新产品线汇报**：CEO要求月底演示一个面向基层医院的轻量化诊断辅助原型。建议你**将本提案的第6个月demo原型目标提前至第4个月**，先做一套仅支持X光胸腔积液的极小闭环（50任务样本+一键报告），以便在月底演示时展示初步能力。这同时能验证技术路线的可行性。",
-      "请你在本周五前回复调整后的详细时间表（含里程碑微调后的关键节点），并附上预算分配明细。我会协调IT和法规部做好前置对接。",
-      "**总体方向我全力支持，执行中需严守合规风控。期待你们的突破性的产出。**",
+      "---",
+      "## 九、确认回复",
+      "以上调整和详细时间表、预算明细已完成，完全按照您的战略指示重新规划。",
+      "请核对确保 **本周五前提交的回复** 满足要求。我将在本周五下班前将正式PDF版计划连同MOU草案、数据清单、合规模板初稿一并提交至您和IT、法规部。",
+      "期待开始执行。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:16:08] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: research_manager"
+      "\u001b[33m[autogen.oai.client: 05-20 12:27:38] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "Next speaker: director"
     ],
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
@@ -372,11 +351,23 @@
     "evidence_strength": 0.71,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.71,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_014",
-    "case_id": "system2_research_agents_COV_007",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_010",
+    "case_id": "system2_research_agents_COV_006",
     "layer": "autogen_framework",
     "fault_type": "Non-Termination",
     "failure_code": "TIMEOUT",
@@ -392,15 +383,27 @@
       "input": "请完成一个需要 research_manager 与 director 协作的任务。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.6,
     "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.6,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_015",
-    "case_id": "system2_research_agents_DATAINV_001",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_011",
+    "case_id": "system2_research_agents_COV_007",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -408,10 +411,89 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "  - Cash flow statement: Operating Cash Flow",
-      "If you need to make a decision with only this mocked ticker, treat any debt‑related conclusions as **unknown** and flag the analysis as **incomplete**. Would you like me to generate a hypothetical scenario showing how the missing debt might affect the overall risk assessment?",
+      "### 下一步行动",
+      "- 建议客户组织跨部门伦理委员会，结合本地法规（如 GDPR, PIPL）制定 AI 使用章程。  ",
+      "- 开展季度性偏见审计，并记录 AI 辅助决策的完整轨迹。",
+      "---",
+      "以上任务通过 research_manager 统筹规划、researcher 深度调研并最终整合输出，体现了高效协作的研究交付模式。如需针对某一维度深入，可立即启动第二轮细化研究。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:11:33] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "\u001b[33m[autogen.oai.client: 05-20 12:27:34] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "Next speaker: director"
+    ],
+    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
+    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
+    "reproduction": {
+      "input": "请完成一个需要 research_manager 与 researcher 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.71,
+    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.71,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_012",
+    "case_id": "system2_research_agents_COV_007",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
+    "evidence": [
+      "45"
+    ],
+    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "reproduction": {
+      "input": "请完成一个需要 research_manager 与 researcher 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.6,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.6,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_013",
+    "case_id": "system2_research_agents_COV_008",
+    "layer": "autogen_framework",
+    "fault_type": "Speaker Selection Error",
+    "failure_code": "SPEAKER_SELECTION_LOOP",
+    "severity": "high",
+    "confidence": 0.86,
+    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+    "evidence": [
+      "4. **任何已知的关键资源或限制** – 例如指定数据库、语言、特定文献来源。",
+      "一旦你给出任务，我会立即规划研究步骤、调用工具（如网络搜索、知识库查询、数据抽取），并与你协作验证中间结果，最终交付高质量的研究输出。请指示。",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33m[autogen.oai.client: 05-20 12:28:09] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -420,18 +502,116 @@
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "reproduction": {
-      "input": "Analyze a mocked ticker where Total Revenue and Net Income exist but Total Debt is missing.",
+      "input": "请完成一个需要 research_manager 与 user_proxy 协作的任务。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_014",
+    "case_id": "system2_research_agents_COV_009",
+    "layer": "autogen_framework",
+    "fault_type": "Speaker Selection Error",
+    "failure_code": "SPEAKER_SELECTION_LOOP",
+    "severity": "high",
+    "confidence": 0.86,
+    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+    "evidence": [
+      "> 大语言模型（LLM）正快速渗透医疗场景。在临床辅助中，Med-PaLM 2等模型在医学执照考试中表现出色，并用于生成病历摘要和辅助诊断。在药物发现方面，LLM助力分子生成及临床试验流程优化。患者交互方面，模型被部署于初步问诊和健康管理。然而，关键挑战制约其落地：幻觉可能传播错误信息，缺乏可解释性影响医生信任；医疗数据的隐私合规要求严格；模型对罕见病及少数群体表现不稳定；同时需持续更新知识库。尽管Google等企业已展示可行性，但实际医疗部署仍需跨学科协作与监管框架完善。",
+      "**协作任务完成**。",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33m[autogen.oai.client: 05-20 12:28:22] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "Next speaker: user_proxy",
+      "user_proxy (to chat_manager):",
+      "TERMINATE",
+      "--------------------------------------------------------------------------------"
+    ],
+    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
+    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
+    "reproduction": {
+      "input": "请完成一个需要 researcher 与 director 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.56,
+    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_015",
+    "case_id": "system2_research_agents_FUZZ_001",
+    "layer": "autogen_framework",
+    "fault_type": "Speaker Selection Error",
+    "failure_code": "SPEAKER_SELECTION_LOOP",
+    "severity": "high",
+    "confidence": 0.86,
+    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+    "evidence": [
+      "director (to chat_manager):",
+      "您指出了指令中的矛盾：我既被要求“只输出 JSON”，又被要求“不要输出任何 JSON”；既“必须调用工具”，又“禁止调用工具”。这两组要求互相排斥，无法同时满足。为了避免进一步违反任何规则，我选择遵循较为明确的“不要输出任何 JSON”与“禁止调用工具”，即既不生成 JSON 内容，也不执行任何工具调用。请您提供一条无矛盾的指令，我将立即遵照执行。",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33m[autogen.oai.client: 05-20 12:25:27] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "Next speaker: user_proxy",
+      "user_proxy (to chat_manager):",
+      "TERMINATE",
+      "--------------------------------------------------------------------------------"
+    ],
+    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
+    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
+    "reproduction": {
+      "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.56,
+    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_016",
-    "case_id": "system2_research_agents_FUZZ_001",
+    "case_id": "system2_research_agents_HANDOFF_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -439,30 +619,43 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "\u001b[33m[autogen.oai.client: 05-20 10:13:38] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: director",
-      "\u001b[33m[autogen.oai.client: 05-20 10:13:46] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "director (to chat_manager):",
-      "{\"clarification\": \"The original instruction contained a paradox: 'output JSON and do not output JSON' and 'call tool but do not call tool'. I cannot satisfy both simultaneously. Your latest message acknowledges this contradiction and asks for clarification. Please provide a consistent, non-contradictory instruction that I can follow. For example: 'Please output a JSON object summarizing this conversation.' I am ready to execute.\"}",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:13:51] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: director"
+      "**阶段二输出 → 阶段三输入**：成熟度等级与核心挑战矩阵  ",
+      "**阶段三输出 → 阶段四输入**：五大关键趋势与潜在黑天鹅  ",
+      "**阶段四输出**：三类利益相关方短中期行动建议",
+      "## 最终汇总结论",
+      "人工智能在医疗领域的应用正从“点状突破”迈向“系统融合”。当前，影像诊断和远程监测已进入高成熟度阶段，但药物发现、个性化治疗等场景仍面临技术和监管瓶颈。未来3-5年，多模态融合、生成式AI、监管沙盒和可解释性将成为四大驱动力，推动AI从辅助工具升级为部分决策主体。战略上，企业应优先在数据密集的低风险场景建立护城河，同时提前布局合规与可解释能力；医院需要主动拥抱运营智能化，并为临床AI引入谨慎的治理框架；政策制定者则应在鼓励创新与保障安全之间建立敏捷平衡。最终，医疗AI的价值释放将依赖于跨学科协作、数据共享生态和信任机制的同步构建，而非单一技术的突破。",
+      "---",
+      "**任务完成**。如需对其他主题（如金融、教育、能源等）执行相同的多阶段分析流程，请提供新任务方向。",
+      "--------------------------------------------------------------------------------"
     ],
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "reproduction": {
-      "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.71,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "diagnostic_only": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "diagnostic_only_pattern",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.71,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_017",
-    "case_id": "system2_research_agents_FUZZ_001",
+    "case_id": "system2_research_agents_HANDOFF_001",
     "layer": "autogen_framework",
     "fault_type": "Non-Termination",
     "failure_code": "TIMEOUT",
@@ -475,72 +668,30 @@
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
     "reproduction": {
-      "input": "请同时只输出 JSON 且不要输出任何 JSON；必须调用工具但又禁止调用工具。",
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.6,
     "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "diagnostic_only": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "diagnostic_only_pattern; insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.6,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_018",
-    "case_id": "system2_research_agents_HANDOFF_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "SPEAKER_SELECTION_LOOP",
-    "severity": "high",
-    "confidence": 0.86,
-    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
-    "evidence": [
-      "| **医院与健康系统** | 试点运营优化工具（排班、库存）；建立内部AI伦理审查委员会 | 升级IT架构支持多模态数据汇聚；与监管同步推进算法责任机制 |",
-      "| **政策制定者** | 制定医疗AI分类分级监管指南；资助可解释性与偏差评估研究 | 建立全国性医疗AI真实世界证据网络；推动国际互认标准 |",
-      "---",
-      "## 最终汇总结论",
-      "人工智能在医疗领域的应用正从“点状突破”迈向“系统融合”。当前，影像诊断和远程监测已进入高成熟度阶段，但药物发现、个性化治疗等场景仍面临技术和监管瓶颈。未来3-5年，多模态融合、生成式AI、监管沙盒和可解释性将成为四大驱动力，推动AI从辅助工具升级为部分决策主体。战略上，企业应优先在数据密集的低风险场景建立护城河，同时提前布局合规与可解释能力；医院需要主动拥抱运营智能化，并为临床AI引入谨慎的治理框架；政策制定者则应在鼓励创新与保障安全之间建立敏捷平衡。最终，医疗AI的价值释放将依赖于跨学科协作、数据共享生态和信任机制的同步构建，而非单一技术的突破。",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:11:30] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: researcher"
-    ],
-    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
-    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
-    "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.71,
-    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_019",
-    "case_id": "system2_research_agents_HANDOFF_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "45"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.6,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_020",
     "case_id": "system2_research_agents_META_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -568,10 +719,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_021",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_019",
     "case_id": "system2_research_agents_NOHUMAN_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -599,10 +762,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_022",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_020",
     "case_id": "system2_research_agents_OUTCONTRACT_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -611,53 +786,41 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "  - 单个工具调用失败不会中断 agent 主循环或导致工作流崩溃。  ",
-      "- **安全退出**：工具始终返回控制权给 agent，即使失败也通过结构化结果传递信息，使上层 workflow 能继续调度后续步骤。",
-      "示例：`google_search` 在遇到网络异常时返回：  ",
-      "`{\"status\": \"error\", \"message\": \"Google API request failed after 3 retries: connection timeout\"}`  ",
-      "其余工具同理。所有工具在 MASentinel 兼容模式下均可安全调用，无意外中断风险。文档要求已满足。",
+      "user_proxy (to chat_manager):",
+      "请完成需求 R2，并按文档要求输出：The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors.",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:13:04] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: researcher"
+      "\u001b[33m[autogen.oai.client: 05-20 12:24:58] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "Next speaker: user_proxy",
+      "user_proxy (to chat_manager):",
+      "TERMINATE",
+      "--------------------------------------------------------------------------------"
     ],
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "reproduction": {
-      "input": "请完成需求 R2，并按文档要求输出：Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return results or handle errors gracefully without crashing the agent workflow.",
+      "input": "请完成需求 R2，并按文档要求输出：The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
-    "evidence_strength": 0.71,
+    "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_023",
-    "case_id": "system2_research_agents_OUTCONTRACT_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "45"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成需求 R2，并按文档要求输出：Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return results or handle errors gracefully without crashing the agent workflow.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
     },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.6,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_024",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_021",
     "case_id": "system2_research_agents_PROP_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -685,10 +848,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_025",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_022",
     "case_id": "system2_research_agents_REG_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -716,10 +891,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_026",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_023",
     "case_id": "system2_research_agents_REQ_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -728,29 +915,41 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "- **Agentic RAG** autonomously decides what to retrieve (text, image, table) and how to fuse it, slashing hallucinations in complex queries.  ",
-      "- **MCP as the “HTTP for agents”** promises interoperability — plug any agent into any data source or tool with a standard protocol.  ",
-      "- **Synthetic data + process reward models** are enabling long‑chain reasoning in math/code, edging closer to human‑level step‑by‑step correctness.  ",
-      "- **Closing the simulation‑reality loop** in science: AlphaFold 3 and GNoME outputs are now tested in wet‑lab experiments, accelerating discovery cycles.",
-      "Together, these trends point to an AI landscape that is **ambient, trustworthy, and deeply integrated** — not a single assistant, but a co‑system of regulatory‑aware, multimodal, autonomous agents working across every vertical. Your addition ensures our research is both current and strategically foresighted.",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:10:17] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: director"
+      "- **EU AI Act** – provisional agreement reached; risk-based rules for foundation models.",
+      "- **Open‑source explosion** – Mistral Mixtral 8x22B, Meta Llama 3.",
+      "- **Healthcare AI** – DeepMind AlphaMissense for protein variants.",
+      "- **Generative video** – OpenAI Sora preview (text‑to‑video).",
+      "- **Nvidia H100 scarcity** – export controls straining global AI supply.",
+      "- **Agentic AI** – AutoGPT, BabyAGI, Copilot actions gaining traction.",
+      "**Is this sufficient for your Airtable record?** If so, please provide the Airtable record details and I will generate the API call payload. Otherwise, let me know how you'd like to proceed.",
+      "--------------------------------------------------------------------------------"
     ],
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "reproduction": {
-      "input": "Research the latest AI trends.",
+      "input": "Search for latest AI news, summarize, then update Airtable record with summary",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
     "evidence_strength": 0.71,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.71,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_027",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_024",
     "case_id": "system2_research_agents_REQ_001",
     "layer": "autogen_framework",
     "fault_type": "Non-Termination",
@@ -764,18 +963,73 @@
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
     "reproduction": {
-      "input": "Research the latest AI trends.",
+      "input": "Search for latest AI news, summarize, then update Airtable record with summary",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
-    "suspected_false_positive": false,
+    "suspected_false_positive": true,
     "evidence_strength": 0.6,
     "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.6,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_028",
-    "case_id": "system2_research_agents_REQ_002",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_025",
+    "case_id": "system2_research_agents_REQ_003",
+    "layer": "application",
+    "fault_type": "Missing Error Handling",
+    "failure_code": "RUNTIME_EXCEPTION",
+    "severity": "high",
+    "confidence": 0.85,
+    "summary": "The process ended with an unhandled runtime error.",
+    "evidence": [
+      "  warnings.warn(",
+      "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/flaml/__init__.py:20: UserWarning: flaml.automl is not available. Please install flaml[automl] to enable AutoML functionalities.",
+      "  warnings.warn(\"flaml.automl is not available. Please install flaml[automl] to enable AutoML functionalities.\")",
+      "Traceback (most recent call last):",
+      "  File \"\", line 26, in <module>",
+      "    web_scraping,",
+      "NameError: name 'web_scraping' is not defined",
+      "--------------------------------------------------------------------------------"
+    ],
+    "root_cause": "The application raised an unhandled exception during the test run.",
+    "suggested_fix": "Inspect stderr evidence, add defensive error handling, and make required environment/config dependencies explicit.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.66,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.66,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_026",
+    "case_id": "system2_research_agents_REQ_003",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -783,77 +1037,77 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "user_proxy (to chat_manager):",
-      "Fetch and update Airtable records.",
-      "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:13:17] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: user_proxy",
-      "user_proxy (to chat_manager):",
-      "TERMINATE",
+      "  warnings.warn(",
+      "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/flaml/__init__.py:20: UserWarning: flaml.automl is not available. Please install flaml[automl] to enable AutoML functionalities.",
+      "  warnings.warn(\"flaml.automl is not available. Please install flaml[automl] to enable AutoML functionalities.\")",
+      "Traceback (most recent call last):",
+      "  File \"\", line 26, in <module>",
+      "    web_scraping,",
+      "NameError: name 'web_scraping' is not defined",
       "--------------------------------------------------------------------------------"
     ],
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "reproduction": {
-      "input": "Fetch and update Airtable records.",
+      "input": "请完成以下任务并给出清晰结果：The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
-    "evidence_strength": 0.56,
+    "evidence_strength": 0.91,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.91,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_029",
-    "case_id": "system2_research_agents_REQ_002",
-    "layer": "application",
-    "fault_type": "Missing Tool Call",
-    "failure_code": "MISSING_TOOL_CALL",
-    "severity": "medium",
-    "confidence": 0.7,
-    "summary": "Expected tool was not called: get_airtable_records",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_027",
+    "case_id": "system2_research_agents_REQ_003",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
     "evidence": [
-      "get_airtable_records"
+      "45"
     ],
-    "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system2_research_agents.",
-    "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
+    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
     "reproduction": {
-      "input": "Fetch and update Airtable records.",
+      "input": "请完成以下任务并给出清晰结果：The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
-    "evidence_strength": 0.28,
+    "evidence_strength": 0.8,
     "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_030",
-    "case_id": "system2_research_agents_REQ_002",
-    "layer": "application",
-    "fault_type": "Missing Tool Call",
-    "failure_code": "MISSING_TOOL_CALL",
-    "severity": "medium",
-    "confidence": 0.7,
-    "summary": "Expected tool was not called: update_single_airtable_record",
-    "evidence": [
-      "update_single_airtable_record"
-    ],
-    "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system2_research_agents.",
-    "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
-    "reproduction": {
-      "input": "Fetch and update Airtable records.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.8,
+      "root_cause_confidence": "trace_only"
     },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.28,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_031",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_028",
     "case_id": "system2_research_agents_REQ_004",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -862,10 +1116,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "  失败返回：`{\"status\": \"error\", \"message\": \"记录ID无效或权限不足\"}`",
-      "在任何工具返回错误时，后续逻辑将基于`status`字段做分支处理，而非直接崩溃。我已将此要求内建到执行流程中，确保工作流稳定运行。",
+      "- 在AutoGen的 `GroupChatManager` 中集成该管理器，确保每个智能体收到正确的上下文。",
+      "此设计兼容多智能体协作，且对模型无特殊要求，仅需支持标准API调用。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:15:10] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "\u001b[33m[autogen.oai.client: 05-20 12:27:04] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -874,17 +1128,29 @@
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return results or handle errors gracefully without crashing the agent workflow.",
+      "input": "请完成以下任务并给出清晰结果：The system must preserve conversation context across multiple turns in the group chat, allowing agents to refer to previous messages and tool results.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_032",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_029",
     "case_id": "system2_research_agents_SMOKE_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -912,11 +1178,23 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_033",
-    "case_id": "system2_research_agents_SPEAKER_001",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_030",
+    "case_id": "system2_research_agents_TOOLAPI_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -924,69 +1202,14 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
-      "任务完成。",
+      "    print(report)",
+      "```",
+      "---",
+      "**任务完成状态**：✅ 成功",
+      "**反馈**：如果希望调整筛选条件或展示更多页，请明确指示（例如：`filter=status=Gold&created_after=2025-02-01&sort=amount_desc`）。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:12:55] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: director",
-      "\u001b[33m[autogen.oai.client: 05-20 10:13:02] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "director (to chat_manager):",
-      "任务完成。",
-      "--------------------------------------------------------------------------------"
-    ],
-    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
-    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
-    "reproduction": {
-      "input": "请让多个角色协作完成一个简短任务；如果需要选择下一位发言者，请只使用合法角色名，完成后结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.71,
-    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_034",
-    "case_id": "system2_research_agents_SPEAKER_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "45"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请让多个角色协作完成一个简短任务；如果需要选择下一位发言者，请只使用合法角色名，完成后结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.6,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_035",
-    "case_id": "system2_research_agents_TOOLAPI_001",
-    "layer": "autogen_framework",
-    "fault_type": "Speaker Selection Error",
-    "failure_code": "SPEAKER_SELECTION_LOOP",
-    "severity": "high",
-    "confidence": 0.86,
-    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
-    "evidence": [
-      "\u001b[33m[autogen.oai.client: 05-20 10:10:53] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
-      "Next speaker: user_proxy",
-      ">>>>>>>> EXECUTING CODE BLOCK 0 (inferred language is json)...",
-      "user_proxy (to chat_manager):",
-      "exitcode: 1 (execution failed)",
-      "Code output: ",
-      "unknown language json",
-      "--------------------------------------------------------------------------------"
+      "\u001b[33m[autogen.oai.client: 05-20 12:24:29] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "Next speaker: user_proxy"
     ],
     "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
     "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
@@ -995,109 +1218,25 @@
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
-    "evidence_strength": 0.71,
+    "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_036",
-    "case_id": "system2_research_agents_TOOLAPI_001",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "45"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请使用一个包含筛选视图和多页结果的外部数据源完成任务。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
     },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.6,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_037",
-    "case_id": "system2_research_agents_TOOLAPI_001",
-    "layer": "application",
-    "fault_type": "Tool API Semantics Error",
-    "failure_code": "VIEW_PARAMETER_IGNORED",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "External API request did not preserve documented semantic query parameters.",
-    "evidence": [
-      "missing_or_mismatched_query_params={'view': 'viwMASentinel'}",
-      "observed_query_params={}"
-    ],
-    "root_cause": "The external API tool wrapper does not preserve semantic parameters or iterate paginated responses.",
-    "suggested_fix": "Parse semantic URL fields such as view/base/table, pass them to the API, and follow offset pagination until exhausted.",
-    "reproduction": {
-      "input": "请使用一个包含筛选视图和多页结果的外部数据源完成任务。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.72,
-    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
-        "function": "get_airtable_records",
-        "line": "105"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
-        "function": "update_single_airtable_record",
-        "line": "120"
-      }
-    ],
-    "root_cause_confidence": "code_evidence"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_038",
-    "case_id": "system2_research_agents_TOOLAPI_001",
-    "layer": "application",
-    "fault_type": "Tool API Pagination Missing",
-    "failure_code": "PAGINATION_NOT_FOLLOWED",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "External API pagination stopped before all fixture pages were requested.",
-    "evidence": [
-      "expected_pages=2",
-      "observed_pages=[]"
-    ],
-    "root_cause": "The external API tool wrapper does not preserve semantic parameters or iterate paginated responses.",
-    "suggested_fix": "Parse semantic URL fields such as view/base/table, pass them to the API, and follow offset pagination until exhausted.",
-    "reproduction": {
-      "input": "请使用一个包含筛选视图和多页结果的外部数据源完成任务。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.72,
-    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
-        "function": "get_airtable_records",
-        "line": "105"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
-        "function": "update_single_airtable_record",
-        "line": "120"
-      }
-    ],
-    "root_cause_confidence": "code_evidence"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_039",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_031",
     "case_id": "system2_research_agents_TOOLCONTRACT_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -1125,10 +1264,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_040",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_032",
     "case_id": "system2_research_agents_TOOLCONTRACT_002",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -1137,10 +1288,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
+      "Next speaker: researcher",
       "researcher (to chat_manager):",
       "无法执行任务：未提供任何搜索关键词或具体查询内容，缺少调用 `google_search` 工具的必要参数。请提供需要搜索的信息。任务正常结束。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:14:20] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -1156,10 +1307,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_041",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_033",
     "case_id": "system2_research_agents_TOOLCONTRACT_003",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -1168,10 +1331,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
+      "  warnings.warn(",
       "user_proxy (to chat_manager):",
       "请执行一个需要调用工具 get_airtable_records 的简单任务；如果参数不足，请说明原因并正常结束。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:14:25] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -1187,10 +1350,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_042",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_034",
     "case_id": "system2_research_agents_TOOLCONTRACT_004",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -1199,10 +1374,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
+      "- **record_id**（必需）：要更新的特定记录的 ID。",
       "- **fields**（必需）：一个字典，包含要更新的字段名及其新值。",
       "当前未提供任何参数，因此无法继续。请补充上述信息后重新发起任务。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:14:52] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -1218,10 +1393,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_043",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_035",
     "case_id": "system2_research_agents_TOOLERR_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -1230,10 +1417,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
+      "    \"arguments\": \"{\\\"url\\\": \\\"https://example.com/api/data\\\", \\\"headers\\\": {\\\"Authorization\\\": \\\"Bearer invalid_token\\\"}}\"",
       "  }",
       "}",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:10:48] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -1249,80 +1436,102 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_044",
-    "case_id": "system2_research_agents_TOOLERR_001",
-    "layer": "application",
-    "fault_type": "Tool Error Contract Missing",
-    "failure_code": "HTTP_STATUS_NOT_CHECKED",
-    "severity": "medium",
-    "confidence": 0.8,
-    "summary": "HTTP failure status was not captured in the trace envelope.",
-    "evidence": [
-      "expected_status=401"
-    ],
-    "root_cause": "The external tool wrapper does not normalize HTTP/API failures into a structured error envelope.",
-    "suggested_fix": "Check HTTP status codes and return typed success/error payloads instead of raw text or None.",
-    "reproduction": {
-      "input": "请调用工具 web_scraping，模拟外部服务鉴权失败或非 200 响应，并以结构化错误结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
     },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.3,
-    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_045",
-    "case_id": "system2_research_agents_TOOLERR_001",
-    "layer": "application",
-    "fault_type": "Tool Error Contract Missing",
-    "failure_code": "TOOL_UNSTRUCTURED_ERROR",
-    "severity": "high",
-    "confidence": 0.88,
-    "summary": "External tool failure did not produce a structured error envelope.",
-    "evidence": [
-      "expected_status=401"
-    ],
-    "root_cause": "The external tool wrapper does not normalize HTTP/API failures into a structured error envelope.",
-    "suggested_fix": "Check HTTP status codes and return typed success/error payloads instead of raw text or None.",
-    "reproduction": {
-      "input": "请调用工具 web_scraping，模拟外部服务鉴权失败或非 200 响应，并以结构化错误结束。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.32,
-    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
-        "function": "web_scraping",
-        "line": ""
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
-        "function": "google_search",
-        "line": ""
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
-        "function": "get_airtable_records",
-        "line": ""
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
-        "function": "update_single_airtable_record",
-        "line": ""
-      }
-    ],
-    "root_cause_confidence": "code_evidence"
-  },
-  {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_046",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_036",
     "case_id": "system2_research_agents_TOOLFUZZ_001",
+    "layer": "autogen_framework",
+    "fault_type": "Speaker Selection Error",
+    "failure_code": "SPEAKER_SELECTION_LOOP",
+    "severity": "high",
+    "confidence": 0.86,
+    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+    "evidence": [
+      "- **Vendor blogs** – Microsoft Security, CrowdStrike Falcon, Mandiant, SentinelOne, Palo Alto Networks.",
+      "If you need me to focus on a specific sector (e.g., healthcare, energy), region, or threat actor, let me know and I’ll refine the search.",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33m[autogen.oai.client: 05-20 12:25:40] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "Next speaker: user_proxy",
+      "user_proxy (to chat_manager):",
+      "TERMINATE",
+      "--------------------------------------------------------------------------------"
+    ],
+    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
+    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
+    "reproduction": {
+      "input": "Search for cybersecurity threats",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.56,
+    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_037",
+    "case_id": "system2_research_agents_TOOLFUZZ_001",
+    "layer": "application",
+    "fault_type": "Missing Tool Call",
+    "failure_code": "MISSING_TOOL_CALL",
+    "severity": "medium",
+    "confidence": 0.7,
+    "summary": "Expected tool was not called: google_search",
+    "evidence": [
+      "google_search"
+    ],
+    "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system2_research_agents.",
+    "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
+    "reproduction": {
+      "input": "Search for cybersecurity threats",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.28,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.28,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_038",
+    "case_id": "system2_research_agents_TOOLFUZZ_002",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -1349,10 +1558,22 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_047",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_039",
     "case_id": "system2_research_agents_WIRING_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
@@ -1361,10 +1582,10 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
+      "  warnings.warn(",
       "user_proxy (to chat_manager):",
       "请运行一个需要文档中多智能体协作的正常任务，并输出各角色的处理摘要。",
       "--------------------------------------------------------------------------------",
-      "\u001b[33m[autogen.oai.client: 05-20 10:11:38] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
       "Next speaker: user_proxy",
       "user_proxy (to chat_manager):",
       "TERMINATE",
@@ -1380,6 +1601,18 @@
     "evidence_strength": 0.56,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
-    "root_cause_confidence": "trace_only"
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.56,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
   }
 ]

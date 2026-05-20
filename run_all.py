@@ -15,9 +15,16 @@ from masentinel.reporter.project_report import write_project_report
 from masentinel.runner.batch_runner import BatchRunner
 from masentinel.runner.system_adapter import load_system_config
 from masentinel.utils import ensure_dir, load_yaml, resolve_path, write_json, write_text
+from scripts.build_output_site import build_output_site
 
 
-def run_all(config_path: str | Path, agentic: bool = False, test_model: str | None = None, no_human: bool = True) -> list[dict]:
+def run_all(
+    config_path: str | Path,
+    agentic: bool = False,
+    test_model: str | None = None,
+    no_human: bool = True,
+    build_site: bool = True,
+) -> list[dict]:
     config_path = Path(config_path)
     all_config = load_yaml(config_path)
     base_dir = config_path.parent
@@ -103,7 +110,13 @@ def run_all(config_path: str | Path, agentic: bool = False, test_model: str | No
             test_model=test_model,
         )
         _log(f"project report generated: {project_report_path}")
-    _log(f"all systems complete: summary={output_dir / 'summary.md'} index={output_dir / 'index.html'}")
+    site_index = None
+    if build_site:
+        _log("output site build start")
+        site_index = build_output_site(output_dir)
+        _log(f"output site generated: {site_index}")
+    site_suffix = f" site={site_index}" if site_index else ""
+    _log(f"all systems complete: summary={output_dir / 'summary.md'} index={output_dir / 'index.html'}{site_suffix}")
     return results
 
 
@@ -152,9 +165,11 @@ def main() -> None:
     parser.add_argument("--no-human", dest="no_human", action="store_true", help="Forbid human intervention during automated evaluation")
     parser.add_argument("--allow-human", dest="no_human", action="store_false", help="Allow target systems to request human input")
     parser.add_argument("--test-model", default=None, help="Override the testing-agent model name")
+    parser.add_argument("--no-site", dest="build_site", action="store_false", help="Skip building outputs/site static dashboard")
     parser.set_defaults(no_human=True)
+    parser.set_defaults(build_site=True)
     args = parser.parse_args()
-    run_all(args.config, agentic=args.agentic, test_model=args.test_model, no_human=args.no_human)
+    run_all(args.config, agentic=args.agentic, test_model=args.test_model, no_human=args.no_human, build_site=args.build_site)
 
 
 if __name__ == "__main__":
