@@ -15,8 +15,8 @@ from masentinel.reporter.markdown_report import write_markdown_reports
 from masentinel.reporter.project_report import write_project_report
 from masentinel.runner.batch_runner import BatchRunner
 from masentinel.runner.system_adapter import load_system_config
-from masentinel.utils import ensure_dir, load_yaml, resolve_path, write_json, write_text
-from scripts.build_output_site import build_output_site
+from masentinel.utils import ensure_dir, load_yaml, read_json, resolve_path, write_json, write_text
+from scripts.build_output_site import build_output_site, build_system_payload, discover_system_dirs
 
 
 def run_all(
@@ -102,12 +102,17 @@ def run_all(
             f"faults={result['faults']} primary_root_causes={result['confirmed_primary_root_causes']} "
             f"mascov={_fmt_metric(result['coverage'].get('mascov'))}"
         )
-    _write_summary_md(results, output_dir)
-    write_global_index(results, output_dir)
+    # Recompute final public summary from the same persisted artifacts used by
+    # outputs/site/index.html.  This keeps summary.md, index.html, project
+    # report, and the dashboard on one counting policy even when oracle
+    # post-processing excludes non-target or harness issues.
+    public_results = _collect_public_results(output_dir) or results
+    _write_summary_md(public_results, output_dir)
+    write_global_index(public_results, output_dir)
     if agentic:
         project_report_path = write_project_report(
             output_dir,
-            results,
+            public_results,
             model_config=(loaded_system_configs[0].get("model", {}) if loaded_system_configs else {}),
             test_model=test_model,
         )
@@ -133,9 +138,43 @@ def _prepare_system_output(output_dir: Path, system_id: str, clean_output: bool)
     return ensure_dir(system_out)
 
 
+def _collect_public_results(output_dir: Path) -> list[dict]:
+    site_dir = output_dir / "site"
+    public_results: list[dict] = []
+    for system_dir in discover_system_dirs(output_dir):
+        payload = build_system_payload(system_dir, output_dir, site_dir)
+        metrics = payload.get("metrics", {}) or {}
+        coverage = read_json(system_dir / "coverage.json", {}) or {}
+        public_results.append(
+            {
+                "system_id": payload.get("system_id") or system_dir.name,
+                "cases": metrics.get("cases_generated", 0),
+                "passed": metrics.get("process_passed", 0),
+                "failed": metrics.get("process_failed", 0),
+                "process_passed": metrics.get("process_passed", 0),
+                "process_failed": metrics.get("process_failed", 0),
+                "oracle_passed": metrics.get("oracle_passed", 0),
+                "oracle_failed": metrics.get("oracle_failed", 0),
+                "coverage": coverage,
+                "faults": len(payload.get("faults", []) or []),
+                "fault_groups": len(payload.get("fault_groups", []) or []),
+                "suspected_fp": metrics.get("suspected_false_positives", 0),
+                "confirmed_primary_root_causes": metrics.get("confirmed_primary_root_causes", 0),
+                "derived_symptoms": metrics.get("derived_symptoms", 0),
+                "agentic": {
+                    "non_target_issues": payload.get("non_target_issues", []) or [],
+                    "test_harness_issues": payload.get("test_harness_issues", []) or [],
+                },
+            }
+        )
+    return public_results
+
+
 def _write_summary_md(results: list[dict], output_dir: Path) -> None:
     lines = [
         "# MASentinel Summary",
+        "",
+        "> Cases 表示生成测例数；Proc Passed/Failed 表示最终实际执行测例的进程结果；Oracle Passed/Failed 采用目标故障口径，已排除 model provider、外部依赖、test harness、non-target 和 soft budget 等非目标问题。",
         "",
         "| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqIntent | ReqVerified | ContractCov | EffWorkflow | TraceComplete | EvidenceRate | MASCov | Confirmed Primary Root Causes | Derived Symptoms | Root Groups | Suspected FP | Non-target Excluded | Harness Excluded |",
         "|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|-----------|-------------|-------------|-------------|---------------|--------------|--------|-------------------------------|------------------|-------------|--------------|---------------------|------------------|",

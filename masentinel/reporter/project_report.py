@@ -352,7 +352,7 @@ def _result_summary(result: dict[str, Any], run_summary: list[Any], rule_results
         process_failed = len(run_summary) - process_passed
     oracle_passed = int(result.get("oracle_passed", 0) or 0)
     oracle_failed = int(result.get("oracle_failed", 0) or 0)
-    if rule_results:
+    if not result and rule_results:
         oracle_passed = len([item for item in rule_results if isinstance(item, dict) and item.get("passed")])
         oracle_failed = len(rule_results) - oracle_passed
     return {
