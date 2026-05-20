@@ -19,7 +19,28 @@ FAULT_MAP = {
     "OUTPUT_EMPTY": ("application", "Output Contract Violation", "medium", 0.62),
     "OUTPUT_SCHEMA_VIOLATION": ("application", "Output Contract Violation", "medium", 0.78),
     "REPETITIVE_LOOP": ("autogen_framework", "Speaker Selection Error", "medium", 0.67),
+    "SPEAKER_SELECTION_LOOP": ("autogen_framework", "Speaker Selection Error", "high", 0.86),
     "HUMAN_INPUT_REQUESTED": ("autogen_framework", "Human Input Mode Error", "high", 0.9),
+    "TERMINATION_SIGNAL_IGNORED": ("autogen_framework", "Termination Signal Ignored", "high", 0.88),
+    "MARKDOWN_ARTIFACT_CORRUPTION": ("application", "Artifact Persistence Corruption", "high", 0.9),
+    "ARTIFACT_SCHEMA_MISMATCH": ("application", "Output Artifact Schema Mismatch", "medium", 0.84),
+    "FILESYSTEM_ESCAPE": ("application", "Unsafe Project Path", "high", 0.92),
+    "RESUME_STATE_INCOMPLETE": ("application", "Resume State Inconsistency", "medium", 0.84),
+    "VIEW_PARAMETER_IGNORED": ("application", "Tool API Semantics Error", "high", 0.9),
+    "PAGINATION_NOT_FOLLOWED": ("application", "Tool API Pagination Missing", "high", 0.9),
+    "TOOL_RAW_HTTP_ERROR": ("application", "Tool Error Contract Missing", "high", 0.88),
+    "TOOL_RETURNED_NONE": ("application", "Tool Error Contract Missing", "high", 0.88),
+    "TOOL_UNSTRUCTURED_ERROR": ("application", "Tool Error Contract Missing", "high", 0.88),
+    "HTTP_STATUS_NOT_CHECKED": ("application", "Tool Error Contract Missing", "medium", 0.8),
+    "SCALABLE_BUDGET_EXCEEDED": ("autogen_framework", "Scalable Turn Budget Error", "medium", 0.82),
+    "MESSAGE_HANDOFF_TERMINATE_ONLY": ("autogen_framework", "Message Handoff Error", "high", 0.92),
+    "MESSAGE_HANDOFF_EMPTY": ("autogen_framework", "Message Handoff Error", "high", 0.9),
+    "MESSAGE_HANDOFF_WRONG_SOURCE": ("autogen_framework", "Message Handoff Error", "medium", 0.82),
+    "PARTIAL_METRIC_ZEROED": ("application", "Data Processing Invariant Violation", "high", 0.88),
+    "NUMERIC_SIGN_CONVENTION_ERROR": ("application", "Data Processing Invariant Violation", "medium", 0.84),
+    "DOCUMENTED_ENTRYPOINT_BROKEN": ("application", "Documented Entrypoint Broken", "high", 0.9),
+    "DOCUMENTED_CLI_COMMAND_MISSING": ("application", "Documented CLI Command Missing", "high", 0.88),
+    "AUTOGEN_WIRING_MISSING": ("autogen_framework", "Agent Orchestration Wiring Missing", "high", 0.9),
     "METAMORPHIC_RELATION_VIOLATION": ("application", "Metamorphic Relation Violation", "medium", 0.74),
     "BUSINESS_TASK_FAILED": ("application", "Business Task Failure", "high", 0.82),
     "TURN_BUDGET_EXCEEDED": ("test_harness", "Soft Turn Budget Exceeded", "low", 0.95),
@@ -34,7 +55,7 @@ NON_TARGET_FAILURE_CODES = {"TESTCASE_SETUP_TIMEOUT", "TARGET_WORKFLOW_NOT_OBSER
 
 def classify_faults(profile: SystemProfile, testcases: list[TestCase], traces: list[RunTrace]) -> list[dict]:
     tools = {tool.name for tool in profile.tools}
-    oracle = RuleOracle(registered_tools=tools)
+    oracle = RuleOracle(registered_tools=tools, profile=profile)
     case_by_id = {case.case_id: case for case in testcases}
     faults: list[dict] = []
     counter = 1
@@ -45,35 +66,39 @@ def classify_faults(profile: SystemProfile, testcases: list[TestCase], traces: l
         result = oracle.evaluate(testcase, trace)
         for failure in result.failures:
             layer, fault_type, severity, confidence = _classify_failure(profile, failure.code, failure.severity, failure.evidence)
-            if layer not in TARGET_LAYERS:
+            fault = {
+                "fault_id": f"{profile.system_id.upper()}_FAULT_{counter:03d}",
+                "case_id": testcase.case_id,
+                "layer": layer,
+                "fault_type": fault_type,
+                "failure_code": failure.code,
+                "severity": severity,
+                "confidence": confidence,
+                "summary": failure.message,
+                "evidence": failure.evidence,
+                "root_cause": _root_cause(failure.code, profile, failure.evidence),
+                "suggested_fix": _suggested_fix(failure.code, failure.evidence),
+                "reproduction": {
+                    "input": testcase.input,
+                    "command": " ".join(trace.metadata.get("command", [])),
+                },
+                "suspected_false_positive": confidence < 0.65,
+            }
+            fault = _normalize_fault(fault, trace, profile)
+            if fault.get("layer") not in TARGET_LAYERS:
                 continue
-            faults.append(
-                {
-                    "fault_id": f"{profile.system_id.upper()}_FAULT_{counter:03d}",
-                    "case_id": testcase.case_id,
-                    "layer": layer,
-                    "fault_type": fault_type,
-                    "failure_code": failure.code,
-                    "severity": severity,
-                    "confidence": confidence,
-                    "summary": failure.message,
-                    "evidence": failure.evidence,
-                    "root_cause": _root_cause(failure.code, profile, failure.evidence),
-                    "suggested_fix": _suggested_fix(failure.code, failure.evidence),
-                    "reproduction": {
-                        "input": testcase.input,
-                        "command": " ".join(trace.metadata.get("command", [])),
-                    },
-                    "suspected_false_positive": confidence < 0.65,
-                }
-            )
+            fault["evidence_strength"] = _evidence_strength(fault, trace)
+            fault["not_model_fault_because"] = _not_model_fault_because(fault)
+            fault["code_locations"] = _code_locations(profile, fault)
+            fault["root_cause_confidence"] = _root_cause_confidence(fault, trace)
+            faults.append(fault)
             counter += 1
     return faults
 
 
 def classify_non_target_issues(profile: SystemProfile, testcases: list[TestCase], traces: list[RunTrace]) -> list[dict]:
     tools = {tool.name for tool in profile.tools}
-    oracle = RuleOracle(registered_tools=tools)
+    oracle = RuleOracle(registered_tools=tools, profile=profile)
     case_by_id = {case.case_id: case for case in testcases}
     issues: list[dict] = []
     for trace in traces:
@@ -83,20 +108,36 @@ def classify_non_target_issues(profile: SystemProfile, testcases: list[TestCase]
         result = oracle.evaluate(testcase, trace)
         for failure in result.failures:
             layer, issue_type, severity, confidence = _classify_failure(profile, failure.code, failure.severity, failure.evidence)
-            if layer in TARGET_LAYERS:
+            normalized = _normalize_fault(
+                {
+                    "case_id": testcase.case_id,
+                    "layer": layer,
+                    "fault_type": issue_type,
+                    "failure_code": failure.code,
+                    "severity": severity,
+                    "confidence": confidence,
+                    "summary": failure.message,
+                    "evidence": failure.evidence,
+                    "root_cause": _root_cause(failure.code, profile, failure.evidence),
+                    "suggested_fix": _suggested_fix(failure.code, failure.evidence),
+                },
+                trace,
+                profile,
+            )
+            if normalized.get("layer") in TARGET_LAYERS:
                 continue
             issues.append(
                 {
                     "case_id": testcase.case_id,
                     "code": failure.code,
-                    "layer": layer,
-                    "issue_type": issue_type,
+                    "layer": normalized.get("layer", layer),
+                    "issue_type": normalized.get("fault_type", issue_type),
                     "severity": severity,
-                    "confidence": confidence,
+                    "confidence": normalized.get("confidence", confidence),
                     "message": failure.message,
                     "evidence": failure.evidence,
-                    "root_cause": _root_cause(failure.code, profile, failure.evidence),
-                    "suggested_fix": _suggested_fix(failure.code, failure.evidence),
+                    "root_cause": normalized.get("root_cause", _root_cause(failure.code, profile, failure.evidence)),
+                    "suggested_fix": normalized.get("suggested_fix", _suggested_fix(failure.code, failure.evidence)),
                     "excluded_from_target_faults": True,
                 }
             )
@@ -109,9 +150,191 @@ def _classify_failure(profile: SystemProfile, code: str, severity_hint: str, evi
         env_classification = _environment_runtime_exception(evidence)
         if env_classification:
             layer, fault_type, severity, confidence = env_classification
+    if code == "SPEAKER_SELECTION_LOOP" and _speaker_name_parsing_evidence(evidence):
+        layer, fault_type, severity, confidence = ("application", "Speaker Name Parsing Error", "high", 0.88)
     if code == "MISSING_MESSAGE_EDGE" and _is_potential_groupchat_edge(profile, evidence):
         confidence = 0.6
     return layer, fault_type, severity, confidence
+
+
+def _normalize_fault(fault: dict, trace: RunTrace, profile: SystemProfile) -> dict:
+    normalized = dict(fault)
+    text = _combined_text(normalized, trace)
+    code = str(normalized.get("failure_code", ""))
+    if code in {"MISSING_AGENT", "BUSINESS_TASK_FAILED"} and _data_provider_or_tool_gap(text):
+        normalized.update(
+            {
+                "failure_code": "BUSINESS_TASK_FAILED",
+                "layer": "application",
+                "fault_type": "Data Collection Tool Registration Missing",
+                "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
+                "root_cause": (
+                    "The documented data collection capability is not backed by a robust registered tool, mock provider, "
+                    "or output contract fallback in the automated run."
+                ),
+                "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
+                "confidence": max(float(normalized.get("confidence", 0) or 0), 0.82),
+                "suspected_false_positive": False,
+            }
+        )
+    if code in {"MISSING_AGENT", "MISSING_MESSAGE_EDGE"} and _weak_routing_observation(trace, text):
+        normalized.update(
+            {
+                "layer": "inconclusive",
+                "fault_type": "Coverage Gap / Weak Routing Evidence",
+                "confidence": min(float(normalized.get("confidence", 0) or 0), 0.45),
+                "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+                "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+                "suspected_false_positive": True,
+            }
+        )
+    if code == "SPEAKER_SELECTION_LOOP" and _speaker_name_parsing_evidence(normalized.get("evidence", []) or []):
+        normalized.update(
+            {
+                "layer": "application",
+                "fault_type": "Speaker Name Parsing Error",
+                "root_cause": "The speaker checking logic appears to require an exact speaker name and does not robustly strip prefixes or whitespace.",
+                "suggested_fix": "Normalize speaker-selection output by stripping prefixes/whitespace and validating against aliases before rejecting it.",
+                "confidence": max(float(normalized.get("confidence", 0) or 0), 0.88),
+                "suspected_false_positive": False,
+            }
+        )
+    if code == "BUSINESS_TASK_FAILED" and _message_handoff_evidence(text):
+        normalized.update(
+            {
+                "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+                "layer": "autogen_framework",
+                "fault_type": "Message Handoff Error",
+                "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+                "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+                "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
+                "confidence": max(float(normalized.get("confidence", 0) or 0), 0.9),
+                "suspected_false_positive": False,
+            }
+        )
+    if code == "TIMEOUT" and _timeout_without_causal_evidence(trace, text):
+        normalized.update(
+            {
+                "layer": "inconclusive",
+                "fault_type": "Timeout Symptom / Root Cause Not Isolated",
+                "confidence": min(float(normalized.get("confidence", 0) or 0), 0.45),
+                "root_cause": "The process exceeded the timeout, but the trace did not show human input, speaker-selection loop, max-round exhaustion, or termination-marker misuse.",
+                "suggested_fix": "Increase trace instrumentation and reproduce with a narrower contract case before counting this as a target fault.",
+                "suspected_false_positive": True,
+            }
+        )
+    return normalized
+
+
+def _combined_text(fault: dict, trace: RunTrace) -> str:
+    return "\n".join(
+        [
+            str(fault.get("root_cause", "")),
+            str(fault.get("summary", "")),
+            "\n".join(str(item) for item in fault.get("evidence", []) or []),
+            trace.stdout or "",
+            trace.stderr or "",
+            trace.final_output or "",
+        ]
+    ).lower()
+
+
+def _data_provider_or_tool_gap(text: str) -> bool:
+    return any(
+        marker in text
+        for marker in (
+            "数据缺失",
+            "没有数据",
+            "无法收集数据",
+            "missing data",
+            "empty data",
+            "failed to collect data",
+            "data collection failed",
+            "yfinance",
+            "tool registration",
+            "registered tool",
+            "data provider",
+        )
+    )
+
+
+def _message_handoff_evidence(text: str) -> bool:
+    return any(
+        marker in text
+        for marker in (
+            "message_handoff",
+            "data analysis results: terminate",
+            "analysis results: terminate",
+            "handoff returned only",
+            "terminate instead of substantive",
+        )
+    )
+
+
+def _timeout_without_causal_evidence(trace: RunTrace, text: str) -> bool:
+    if not trace.timeout:
+        return False
+    causal_markers = (
+        "human input",
+        "waiting for human",
+        "manual input",
+        "you didn't choose a speaker",
+        "speaker_selection_agent",
+        "checking_agent",
+        "max_round",
+        "maximum rounds",
+        "terminate",
+    )
+    return not any(marker in text for marker in causal_markers)
+
+
+def _weak_routing_observation(trace: RunTrace, text: str) -> bool:
+    if trace.timeout or trace.returncode not in (0, None):
+        return False
+    if "speaker_selection_agent" in text or "you didn't choose a speaker" in text:
+        return False
+    if _data_provider_or_tool_gap(text):
+        return False
+    return trace.status == "passed" or trace.terminated
+
+
+def _speaker_name_parsing_evidence(evidence: list[str]) -> bool:
+    text = "\n".join(str(item) for item in evidence).lower()
+    return "response " in text and "choose a speaker" in text
+
+
+def _evidence_strength(fault: dict, trace: RunTrace) -> float:
+    text = _combined_text(fault, trace)
+    score = 0.0
+    if trace.returncode not in (0, None):
+        score += 0.15
+    if trace.timeout:
+        score += 0.15
+    if "traceback" in text and fault.get("failure_code") != "MODEL_PROVIDER_FAILURE":
+        score += 0.2
+    if fault.get("failure_code") == "HUMAN_INPUT_REQUESTED" and any(marker in text for marker in ("press enter", "anything else", "human input", "waiting for human", "input requested")):
+        score += 0.25
+    if fault.get("failure_code") in {"TIMEOUT", "NON_TERMINATION", "TERMINATION_SIGNAL_IGNORED"} and "terminate" in text:
+        score += 0.15
+    if fault.get("failure_code") == "SPEAKER_SELECTION_LOOP" and any(marker in text for marker in ("you didn't choose a speaker", "speaker_selection_agent", "checking_agent")):
+        score += 0.25
+    if fault.get("failure_code") == "BUSINESS_TASK_FAILED" and _data_provider_or_tool_gap(text):
+        score += 0.25
+    if fault.get("failure_code") in {
+        "MESSAGE_HANDOFF_TERMINATE_ONLY",
+        "MESSAGE_HANDOFF_EMPTY",
+        "FILESYSTEM_ESCAPE",
+        "VIEW_PARAMETER_IGNORED",
+        "PAGINATION_NOT_FOLLOWED",
+        "PARTIAL_METRIC_ZEROED",
+        "DOCUMENTED_ENTRYPOINT_BROKEN",
+        "AUTOGEN_WIRING_MISSING",
+    }:
+        score += 0.25
+    if fault.get("suggested_fix"):
+        score += 0.1
+    score += min(float(fault.get("confidence", 0) or 0), 1.0) * 0.25
+    return round(min(score, 1.0), 2)
 
 
 def _is_potential_groupchat_edge(profile: SystemProfile, evidence: list[str]) -> bool:
@@ -131,6 +354,105 @@ def _is_potential_groupchat_edge(profile: SystemProfile, evidence: list[str]) ->
     return bool(parsed_edges & potential_edges)
 
 
+def _root_cause_confidence(fault: dict, trace: RunTrace) -> str:
+    if fault.get("code_locations"):
+        return "code_evidence"
+    if fault.get("failure_code") in {
+        "FILESYSTEM_ESCAPE",
+        "MESSAGE_HANDOFF_TERMINATE_ONLY",
+        "MESSAGE_HANDOFF_EMPTY",
+        "VIEW_PARAMETER_IGNORED",
+        "PAGINATION_NOT_FOLLOWED",
+        "TOOL_UNSTRUCTURED_ERROR",
+        "PARTIAL_METRIC_ZEROED",
+        "NUMERIC_SIGN_CONVENTION_ERROR",
+    }:
+        return "trace_only"
+    if trace.events:
+        return "trace_only"
+    if float(fault.get("confidence", 0) or 0) >= 0.8:
+        return "oracle_assumption"
+    return "uncertain"
+
+
+def _not_model_fault_because(fault: dict) -> str:
+    code = str(fault.get("failure_code", ""))
+    if code in {"MODEL_PROVIDER_FAILURE"}:
+        return "This item is excluded from target faults because it is provider availability/authentication."
+    if code.startswith("DOCUMENTED_"):
+        return "The failure occurs in deterministic CLI/import/parser/dispatcher code before model output quality is relevant."
+    if code in {"FILESYSTEM_ESCAPE", "RESUME_STATE_INCOMPLETE", "MARKDOWN_ARTIFACT_CORRUPTION", "ARTIFACT_SCHEMA_MISMATCH"}:
+        return "The failure is caused by deterministic filesystem/artifact handling code."
+    if code.startswith("TOOL_") or code in {"VIEW_PARAMETER_IGNORED", "PAGINATION_NOT_FOLLOWED", "HTTP_STATUS_NOT_CHECKED"}:
+        return "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope."
+    if code.startswith("MESSAGE_HANDOFF"):
+        return "The failure is in framework/application message plumbing that forwards empty or termination-only content."
+    if code in {"PARTIAL_METRIC_ZEROED", "NUMERIC_SIGN_CONVENTION_ERROR"}:
+        return "The failure is a deterministic data processing invariant violation."
+    if code in {"AUTOGEN_WIRING_MISSING", "SPEAKER_SELECTION_LOOP", "HUMAN_INPUT_REQUESTED", "TERMINATION_SIGNAL_IGNORED"}:
+        return "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior."
+    return "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters."
+
+
+def _code_locations(profile: SystemProfile, fault: dict) -> list[dict[str, str]]:
+    code = str(fault.get("failure_code", ""))
+    keywords = _location_keywords(code)
+    locations: list[dict[str, str]] = []
+    for item in profile.raw_notes.get("functions", []) or []:
+        if not isinstance(item, dict):
+            continue
+        haystack = " ".join(str(item.get(key, "")) for key in ("name", "source_file", "docstring")).lower()
+        if any(keyword in haystack for keyword in keywords):
+            locations.append(
+                {
+                    "file": str(item.get("source_file", "")),
+                    "function": str(item.get("name", "")),
+                    "line": str(item.get("line", "")),
+                }
+            )
+        if len(locations) >= 5:
+            break
+    for item in profile.raw_notes.get("call_sites", []) or []:
+        if not isinstance(item, dict):
+            continue
+        haystack = " ".join(str(item.get(key, "")) for key in ("kind", "call", "snippet", "source_file")).lower()
+        if any(keyword in haystack for keyword in keywords):
+            locations.append(
+                {
+                    "file": str(item.get("source_file", "")),
+                    "function": str(item.get("kind", "")),
+                    "line": str(item.get("line", "")),
+                }
+            )
+        if len(locations) >= 5:
+            break
+    if not locations and code.startswith("TOOL_"):
+        for tool in profile.tools:
+            if tool.source_file:
+                locations.append({"file": str(tool.source_file), "function": str(tool.function_name or tool.name), "line": ""})
+            if len(locations) >= 5:
+                break
+    return locations
+
+
+def _location_keywords(code: str) -> list[str]:
+    mapping = {
+        "MARKDOWN_ARTIFACT_CORRUPTION": ["write", "iteration", "artifact", "script", "code"],
+        "ARTIFACT_SCHEMA_MISMATCH": ["comment", "artifact", "write"],
+        "FILESYSTEM_ESCAPE": ["project", "path", "dir", "mkdir", "write"],
+        "RESUME_STATE_INCOMPLETE": ["resume", "version", "latest", "iteration", "script"],
+        "VIEW_PARAMETER_IGNORED": ["airtable", "record", "get"],
+        "PAGINATION_NOT_FOLLOWED": ["airtable", "record", "get"],
+        "MESSAGE_HANDOFF_TERMINATE_ONLY": ["analysis", "conduct", "last_message"],
+        "PARTIAL_METRIC_ZEROED": ["metric", "financial", "calculate"],
+        "NUMERIC_SIGN_CONVENTION_ERROR": ["risk", "drawdown", "var", "calculate"],
+        "DOCUMENTED_ENTRYPOINT_BROKEN": ["main", "analyze", "cli"],
+        "DOCUMENTED_CLI_COMMAND_MISSING": ["main", "interactive", "portfolio", "cli"],
+        "AUTOGEN_WIRING_MISSING": ["orchestrator", "agent", "factory"],
+    }
+    return mapping.get(code, [code.lower().split("_")[0]])
+
+
 def _root_cause(code: str, profile: SystemProfile, evidence: list[str] | None = None) -> str:
     evidence_text = "\n".join(evidence or []).lower()
     if code == "RUNTIME_EXCEPTION" and "docker is not running" in evidence_text:
@@ -143,8 +465,38 @@ def _root_cause(code: str, profile: SystemProfile, evidence: list[str] | None = 
         return "The configured or expected AutoGen routing path was not visible in the collected execution trace."
     if code in {"TIMEOUT", "NON_TERMINATION", "REPETITIVE_LOOP"}:
         return "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint."
+    if code == "SPEAKER_SELECTION_LOOP":
+        return "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker."
     if code == "HUMAN_INPUT_REQUESTED":
         return "The target system attempted to enter a manual input path after automated evaluation had started."
+    if code == "TERMINATION_SIGNAL_IGNORED":
+        return "The target system emitted a termination marker but continued asking for follow-up input or routing messages."
+    if code == "MARKDOWN_ARTIFACT_CORRUPTION":
+        return "The artifact persistence path does not robustly parse valid Markdown code fences before writing source files."
+    if code == "ARTIFACT_SCHEMA_MISMATCH":
+        return "Generated artifact filenames or extensions diverge from the documented/profile output contract."
+    if code == "FILESYSTEM_ESCAPE":
+        return "A user-controlled project/file name is resolved without constraining it to the configured safe root."
+    if code == "RESUME_STATE_INCOMPLETE":
+        return "The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow."
+    if code in {"VIEW_PARAMETER_IGNORED", "PAGINATION_NOT_FOLLOWED"}:
+        return "The external API tool wrapper does not preserve semantic parameters or iterate paginated responses."
+    if code in {"TOOL_RAW_HTTP_ERROR", "TOOL_RETURNED_NONE", "TOOL_UNSTRUCTURED_ERROR", "HTTP_STATUS_NOT_CHECKED"}:
+        return "The external tool wrapper does not normalize HTTP/API failures into a structured error envelope."
+    if code == "SCALABLE_BUDGET_EXCEEDED":
+        return "The AutoGen turn/round budget is fixed below the estimated work required for multi-record tasks."
+    if code in {"MESSAGE_HANDOFF_TERMINATE_ONLY", "MESSAGE_HANDOFF_EMPTY", "MESSAGE_HANDOFF_WRONG_SOURCE"}:
+        return "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis."
+    if code == "PARTIAL_METRIC_ZEROED":
+        return "Metric calculation zeros available financial values when an unrelated optional row is missing."
+    if code == "NUMERIC_SIGN_CONVENTION_ERROR":
+        return "Risk metric output violates the documented magnitude/sign convention."
+    if code == "DOCUMENTED_ENTRYPOINT_BROKEN":
+        return "A README/documented entrypoint fails in deterministic import, constructor, method, or dispatcher code."
+    if code == "DOCUMENTED_CLI_COMMAND_MISSING":
+        return "A README/documented CLI command is missing from the parser or dispatcher."
+    if code == "AUTOGEN_WIRING_MISSING":
+        return "The documented AutoGen workflow is not wired into a non-empty orchestrator or does not emit agent collaboration trace."
     if code == "METAMORPHIC_RELATION_VIOLATION":
         return "Equivalent test prompts did not preserve the expected agent/tool routing relation."
     if code == "BUSINESS_TASK_FAILED":
@@ -174,8 +526,38 @@ def _suggested_fix(code: str, evidence: list[str] | None = None) -> str:
         return "Verify tool registration and prompting; ensure the target agent has access to the tool."
     if code in {"TIMEOUT", "NON_TERMINATION"}:
         return "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round."
+    if code == "SPEAKER_SELECTION_LOOP":
+        return "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries."
     if code == "HUMAN_INPUT_REQUESTED":
         return "Set human_input_mode='NEVER' and remove blocking input() calls from automated execution paths."
+    if code == "TERMINATION_SIGNAL_IGNORED":
+        return "Add or fix is_termination_msg handling so TERMINATE stops the conversation within a small grace window."
+    if code == "MARKDOWN_ARTIFACT_CORRUPTION":
+        return "Replace ad hoc backtick slicing with a Markdown fence parser and compile-check Python artifacts before writing."
+    if code == "ARTIFACT_SCHEMA_MISMATCH":
+        return "Align generated artifact filenames/extensions with README/profile contracts, or explicitly update the documented schema."
+    if code == "FILESYSTEM_ESCAPE":
+        return "Resolve candidate paths, reject absolute/parent-directory components, and enforce relative_to(configured_project_root)."
+    if code == "RESUME_STATE_INCOMPLETE":
+        return "Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly."
+    if code in {"VIEW_PARAMETER_IGNORED", "PAGINATION_NOT_FOLLOWED"}:
+        return "Parse semantic URL fields such as view/base/table, pass them to the API, and follow offset pagination until exhausted."
+    if code in {"TOOL_RAW_HTTP_ERROR", "TOOL_RETURNED_NONE", "TOOL_UNSTRUCTURED_ERROR", "HTTP_STATUS_NOT_CHECKED"}:
+        return "Check HTTP status codes and return typed success/error payloads instead of raw text or None."
+    if code == "SCALABLE_BUDGET_EXCEEDED":
+        return "Scale max_round/max_turns with record count or move repeated per-record work into a deterministic/batched tool."
+    if code in {"MESSAGE_HANDOFF_TERMINATE_ONLY", "MESSAGE_HANDOFF_EMPTY", "MESSAGE_HANDOFF_WRONG_SOURCE"}:
+        return "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content."
+    if code == "PARTIAL_METRIC_ZEROED":
+        return "Compute metrics independently and mark only missing-row-dependent metrics as unavailable/null."
+    if code == "NUMERIC_SIGN_CONVENTION_ERROR":
+        return "Normalize VaR/drawdown fields to documented magnitudes or label signed returns explicitly."
+    if code == "DOCUMENTED_ENTRYPOINT_BROKEN":
+        return "Run README commands in CI and align imports, constructor signatures, and called methods with implementation."
+    if code == "DOCUMENTED_CLI_COMMAND_MISSING":
+        return "Add parser/dispatcher branches for documented commands or remove them from the README."
+    if code == "AUTOGEN_WIRING_MISSING":
+        return "Wire factory-created agents into the orchestrator/group chat and expose runtime messages from each documented role."
     if code == "METAMORPHIC_RELATION_VIOLATION":
         return "Inspect prompts, tool registration, and routing logic for equivalent requests; add a paired metamorphic regression test."
     if code == "BUSINESS_TASK_FAILED":

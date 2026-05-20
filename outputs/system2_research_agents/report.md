@@ -5,7 +5,7 @@
 - Entrypoint: `/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py`
 - Agents: 5
 - Tools: 4
-- Requirements: 5
+- Requirements: 2
 - Message edges: 13
 
 ## Detected Agents
@@ -22,31 +22,33 @@
 - `update_single_airtable_record` 
 
 ## Requirements
-- `R1` The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate within the configured max_turns or upon receiving a TERMINATE signal.
-- `R2` Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return usable results or handled errors.
-- `R3` The researcher agent must be able to invoke web_scraping and google_search tools to gather16 information, and16 the director agent must be able to invoke get_airtable_records and update_single_airtable_record to manage Airtable data.
-- `R4` The group chat manager must coordinate the conversation among agents, allowing any agent to send messages to any other agent as per the group chat configuration.
-- `R5` The system must handle termination conditions correctly, including explicit TERMINATE messages and max_turns limit, without hanging or crashing.
+- `R1` The multi-agent workflow must route user tasks through declared agents (user_proxy, researcher, research_manager, director) and terminate reliably when a TERMINATE message is issued or max_round=15 is reached.
+- `R2` Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return results or handle errors gracefully without crashing the agent workflow.
 
 ## Test Summary
-- Cases: 16
-- Passed process runs: 9
-- Failed/timeout process runs: 7
-- Fault findings: 4
-- Root-cause groups: 4
-- Primary fault findings: 4
-- Suspected false positives: 2
+- Cases: 32
+- Passed process runs: 21
+- Failed/timeout process runs: 11
+- Fault findings: 6
+- Root-cause groups: 5
+- Primary fault findings: 5
+- Suspected false positives: 1
 
 ## Coverage
 | Metric | Value |
 |--------|-------|
-| AgentCov | 1.0000 |
-| ToolCov | 1.0000 |
-| EdgeCov | 1.0000 |
-| ReqCov | 1.0000 |
-| StateCov | 0.6250 |
-| FaultCov | 0.3333 |
-| MASCov | 0.8333 |
+| AgentCov | None |
+| ToolCov | None |
+| EdgeCov | None |
+| ReqIntentCov | None |
+| ReqVerifiedCov | None |
+| StateCov | None |
+| FaultCov | None |
+| ContractCov | None |
+| EffectiveWorkflowRate | None |
+| TraceCompleteness | None |
+| RootCauseEvidenceRate | None |
+| MASCov | None |
 
 ## Agentic Testing Workflow
 - `RequirementAnalystAgent`
@@ -61,25 +63,25 @@
 
 ## Three-Stage Automation Evidence
 - Human intervention allowed: False
-- Testcase frozen SHA256: `41184ba93b9c2a8e34ea7365d0efc06d6a930a1adf59b1e11df5d6ef168e18c6`
+- Testcase frozen SHA256: `a31073deb2eb8cc3107c12c823dc75f75a5a1c2942aab66721f3c8dc0d1a8ddb`
 - Second-round extra cases: 0
-- Non-target issues excluded from target faults: 4
-- Test harness issues excluded from target faults: 4
+- Non-target issues excluded from target faults: 7
+- Test harness issues excluded from target faults: 7
 - Artifacts: `run_manifest.json`, `testcases.generated.json`, `testcases.validated.json`, `oracle_results.json`, `non_target_issues.json`, `test_harness_issues.json`, `faults.json`, `false_positive_audit.json`
 
 ## Testing-Agent Model Usage
-- Total agent calls: 16
-- Successful model calls: 16
+- Total agent calls: 20
+- Successful model calls: 20
 - Fallback calls: 0
-- Estimated input tokens: 46969
-- Estimated output tokens: 7088
+- Estimated input tokens: 68299
+- Estimated output tokens: 27665
 
 | Agent | Calls |
 |-------|-------|
 | CoverageStrategistAgent | 1 |
 | ExecutionMonitorAgent | 1 |
-| FalsePositiveAuditorAgent | 4 |
-| FaultDiagnoserAgent | 4 |
+| FalsePositiveAuditorAgent | 6 |
+| FaultDiagnoserAgent | 6 |
 | InteractionAdapterAgent | 1 |
 | ReportWriterAgent | 1 |
 | RequirementAnalystAgent | 1 |
@@ -88,43 +90,45 @@
 
 ## Target-System Model Usage
 - Scope: `target_system_subprocess`
-- Traced cases: 16
-- AutoGen model-warning mentions: 91
-- API key envs: `INF_API_KEY_FLASH`
+- Traced cases: 32
+- AutoGen model-warning mentions: 129
+- API key envs: `BOYUE_API_KEY`
 
 | Target Model | Cases |
 |--------------|-------|
-| ds-v4-flash | 16 |
+| deepseek-v4-flash | 32 |
 
 | Target Base URL | Cases |
 |-----------------|-------|
-| `https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1` | 16 |
+| `https://apicz.boyuerichdata.com/v1` | 32 |
 
 ## Agentic Analysis
-本次自动化测试运行基于 deterministic AST + 文档启发式分析构建的 profile，对 research-agents-3.0 系统进行了覆盖测试。测试覆盖了全部 5 个 agent、4 个工具、13 条消息边和 5 项需求，状态覆盖率为 62.5%，故障模式覆盖率为 33.3%。共发现 4 个故障，其中 一枝 2 个被确认为真实故障（SYSTEM2_RESEARCH_AGENTS_FAULT_002 和 SYSTEM2_RESEARCH_AGENTS_FAULT_004），2 个被判定为疑似误报（SYSTEM2_RESEARCH_AGENTS_FAULT_001 和 SYSTEM2_RESEARCH_AGENTS_FAULT_003）。模型使用方面，共调用 15 次 ds-v4-pro 模型，全部成功，无 fallback 或失败，估计消耗输入 token 39834、输出 token 6182。
+The system2_research_agents multi-agent workflow uses a GroupChat with four agents (user_proxy, researcher, research_manager, director) and four registered tools. The test run covered all agents, tools, and message edges, with 24 distinct fault cases triggered. The primary fault identified is a speaker selection loop in the GroupChat manager after task completion, causing timeout. Additionally, tool-level faults were found in get_airtable_records/update_single_airtable_record (missing pagination and parameter forwarding) and in web_scraping (missing HTTP error envelope). Model usage was successful: 19 total calls with 100% success rate, dominated by FaultDiagnoserAgent and FalsePositiveAuditorAgent.
 
-本次测试在 agent/tool/消息边/需求覆盖率上均达到 100%，但状态覆盖率仅 62.5%，故障模式覆盖率仅 33.3%，说明测试用例在覆盖正常路径和部分异常路径方面有效，但在覆盖更多运行时状态（如 conflicting_instruction、metamorphic_relation、property_boundary）和故障模式（如 tool_schema_error、agent_configuration_error）方面存在不足。已确认的两个真实故障（FAULT_002 和 FAULT_004）均与 speaker_selection_agent 的响应解析和循环控制缺陷相关，属于框架层和应用层逻辑错误，诊断准确且修复建议具体。两个疑似误报（FAULT_001 和 FAULT_003）经审计后认为更可能是模型服务行为或测试覆盖缺口导致，而非软件缺陷，降低了误报对后续修复的干扰。整体上，测试流程有效识别了关键的非终止和解析错误，但需扩展测试用例以提升状态和故障模式覆盖率。
+The testing achieved full agent, tool, message edge, and requirement coverage (1.0 each). State coverage (0.5833) and fault mode coverage (0.5238) are moderate, indicating some behavioral states and failure modes were not exercised. The effective workflow rate is high (0.9688), confirming that most test cases proceeded to completion or near-completion. However, the dominant single root cause (speaker selection loop) masks many downstream faults, inflating the number of reported faults and reducing diagnostic diversity. Tool-level coverage was strong, identifying concrete code defects in pagination and parameter handling.
 
-False positive analysis: 共 2 个故障被标记为疑似误报。FAULT_001（Human Input Mode Error）的 trace 中未发现实际 human input 提示或阻塞调用，超时更可能由模型服务返回空内容导致，属于基础设施/模型服务问题，非应用或框架配置故障，误报风险高。FAULT_003（Message Routing Error）的测试已正常通过，缺失的 director->research_manager 边是模型决策行为导致的覆盖缺口，无证据表明框架路由失败，误报风险高。两个误报均经 FalsePositiveAuditorAgent 审计并给出详细理由，置信度分别为 0.85 和 0.9，有效避免了将非软件缺陷误判为目标故障。
+False positive analysis: Two faults flagged as suspected false positives were reviewed. SYSTEM2_RESEARCH_AGENTS_FAULT_006 (missing error contract in web_scraping) originated from a passing test case and lacked trace evidence of an actual tool failure; the audit considered it a likely false positive due to test expectation mismatch. SYSTEM2_RESEARCH_AGENTS_FAULT_003 (missing get_airtable_records call) had weak evidence (strength 0.28) and was reclassified as suspected fault because insufficient logging could not confirm whether the tool was actually uncalled. Both cases highlight the need for richer tool-call tracing and more precise oracle contracts.
 
 Agent-proposed next steps:
-- 修复 FAULT_002：在 speaker_selection_agent 的调用逻辑中增加最大重试次数和 fallback 机制，例如连续 3 次空响应后默认选择 'user_proxy' 或 'director'，并在 GroupChat 配置中设置合理的 max_turns 作为兜底。
-- 修复 FAULT_004：在 checking_agent 的 speaker 验证逻辑中增加字符串归一化处理（去除空白字符和已知前缀如 'response'），或修改 speaker_selection_agent 的 prompt 强制输出纯 speaker 名称。
-- 扩展测试用例以覆盖更多状态和故障模式：针对 tool_schema_risk 和 agent_configuration_risk 设计异常参数测试（如无效 JSON、缺失必填字段），覆盖 conflicting_instruction、metamorphic_relation、property_boundary 等状态。
-- 优化测试 oracle 和覆盖率目标：对 FAULT_003 类缺失边问题，调整 oracle 为接受间接通信或增加强制路由的 prompt；对 FAULT_001 类超时问题，增加模型服务健康检查或重试机制，避免误判。
-- 在 CI/CD 中集成自动化测试，并设置 max_turns 和 timeout 阈值，确保回归测试能及时发现 speaker selection 循环和解析错误。
+- Fix the GroupChat speaker selection loop by adding termination detection (e.g., 'Task complete' check) and capping speaker retries.
+- Implement pagination and parameter forwarding in get_airtable_records and update_single_airtable_record functions in app.py.
+- Extend test infrastructure to capture detailed tool-call invocations and responses to reduce false positives in missing-tool-call diagnostics.
+- Run additional tests specifically targeting uncovered states and fault modes (e.g., data_invariant, non_termination, tool_failure) to improve coverage.
 
 ## Fault Summary
 
 ### Root-Cause Groups
-- `generic:autogen_framework-message-routing-error-the-collected-trace-does-not-contain-a-direct-director--research_manager-message` Message Routing Error primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_003` cases=1 symptoms=0
-- `interaction:human-input-or-approval` Unattended run blocked by human input or approval primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_001` cases=1 symptoms=0
-- `interaction:timeout-or-non-termination` Conversation timeout or missing termination guard primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_002` cases=7 symptoms=0
-- `runtime:the-speaker_selection_agent-s-response-is-not-properly-parsed.-the-agent-returns-response-director-instead-of-director-.` Unhandled startup/runtime exception primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_004` cases=1 symptoms=0
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_001` `system2_research_agents_COV_001` autogen_framework / Human Input Mode Error / high / primary: The target system requested human input during an automated no-human run.
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_002` `system2_research_agents_COV_001` autogen_framework /  böjnings Termination / high / primary: The process exceeded the configured timeout.
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_003` `system2_research_agents_COV_002` autogen_framework / Message Routing Error / medium / primary: Expected message edge was not observed: director->research_manager
-- `SYSTEM2_RESEARCH_AGENTS_FAULT_004` `system2_research_agents_TOOLFUZZ_001` application / Encoding/Decoding Error / high / primary: The process ended with an unhandled runtime error.
+- `generic:application-tool-api-pagination-missing-the-external-api-tool-wrapper-get_airtable_records-and-update_single_airtable_re` Tool API Pagination Missing primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_005` cases=1 symptoms=0
+- `generic:application-tool-error-contract-missing-the-web_scraping-tool-wrapper-does-not-inspect-http-status-codes-and-does-not-wr` Tool Error Contract Missing primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_006` cases=1 symptoms=0
+- `generic:application-tool-schema-mismatch-the-external-api-tool-wrapper-get_airtable_records-update_single_airtable_record-does-n` Tool Schema Mismatch primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_004` cases=1 symptoms=0
+- `interaction:speaker-selection-loop` GroupChat speaker selection loop primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_001` cases=30 symptoms=1
+- `interaction:timeout-or-non-termination` Conversation timeout or missing termination guard primary=`SYSTEM2_RESEARCH_AGENTS_FAULT_002` cases=11 symptoms=0
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_001` `system2_research_agents_ARTIFACT_001` autogen_framework / Speaker Selection Error / high / primary: The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_002` `system2_research_agents_ARTIFACT_001` autogen_framework / Non-Termination / high / primary: The process exceeded the configured timeout.
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_003` `system2_research_agents_REQ_002` application / Missing Tool Call / medium / derived from `SYSTEM2_RESEARCH_AGENTS_FAULT_001`: Expected tool was not called: get_airtable_records
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_004` `system2_research_agents_TOOLAPI_001` application / Tool Schema Mismatch / high / primary: External API request did not preserve documented semantic query parameters.
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_005` `system2_research_agents_TOOLAPI_001` application / Tool API Pagination Missing / high / primary: External API pagination stopped before all fixture pages were requested.
+- `SYSTEM2_RESEARCH_AGENTS_FAULT_006` `system2_research_agents_TOOLERR_001` application / Tool Error Contract Missing / medium / primary: HTTP failure status was not captured in the trace envelope.
 
 ## Suspected False Positives
 Findings with confidence below 0.65 are marked as suspected false positives. Missing-agent and missing-edge findings can be caused by limited instrumentation when a target system does not emit MASentinel trace events.

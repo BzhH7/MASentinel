@@ -102,6 +102,21 @@ export MAS_AGENT_API_WORKERS=4
 
 建议从 3 或 4 开始调，太高可能触发网关限流或让失败重试变多。
 
+测试用例生成采用通用 test pattern，而不是为三套被测系统手写专属 prompt。生成器会根据 `SystemProfile` 自动判断适用性并实例化：
+
+- `positive_smoke`：最小正常任务，证明 oracle 不会“全杀”。
+- `automation_no_human`：无人值守自动评测中不得请求人工输入。
+- `termination_signal`：对话型 / AutoGen 系统应识别 `TERMINATE` 并停止。
+- `speaker_selection_robustness`：GroupChat 或多 agent routing 系统应能处理空 speaker、非法 speaker、带前缀 speaker。
+- `tool_contract_positive` 与 `fuzz_tool_failure`：对 profile 中发现的多个工具逐一做契约与异常鲁棒性测试。
+- `output_contract` 与 `tool_registration_contract`：从需求文本抽取输出/数据能力意图，检查业务输出契约或工具/数据源是否接入。
+- `artifact_contract`、`filesystem_safety`、`state_resume_contract`：检查持久化产物、路径穿越和 partial resume 状态一致性。
+- `tool_api_contract`、`tool_error_contract`、`scalable_budget`：检查外部工具参数语义、分页、HTTP 错误 envelope 和多记录任务 round budget。
+- `message_handoff_integrity`、`data_invariant`：检查 `last_message()`/下游 handoff 是否传递了实质内容，以及财务/风险等数据处理不变量。
+- `cli_doc_conformance`、`autogen_wiring`：检查 README/CLI 命令与实际入口一致，且文档声明的 AutoGen 多智能体工作流真正接入 orchestrator/agents。
+
+覆盖率除 MASCov 之外，还输出故障可信度相关指标：`ReqVerifiedCov`、`ContractCov`、`EffectiveWorkflowRate`、`TraceCompleteness`、`RootCauseEvidenceRate` 和每条 fault 的 `EvidenceStrength`、`RootCauseConfidence`、`NotModelFaultBecause`、`CodeLocations`。
+
 如果 DeepSeek 网关支持“思考模式”或 reasoning 参数，MASentinel 测试 agent 可以通过额外请求体显式开启。不同 OpenAI-compatible 网关字段名不完全一致，因此默认不开启，可按接口文档选择一种方式：
 
 ```bash
@@ -332,8 +347,10 @@ outputs/
 - Tool Coverage：已调用 tool / 识别出的 tool
 - Message Edge Coverage：已观测消息边 / profile 中的消息边
 - Requirement Coverage：有至少一条 case 覆盖的 requirement / requirements
+- Contract Coverage：已实例化的通用契约测试模式 / 契约模式全集
 - State Coverage：覆盖预定义状态，如 empty input、tool failure、termination、runtime exception
 - Fault Mode Coverage：覆盖预定义故障模式，如 tool schema mismatch、missing tool call、message routing error
+- Root Cause Evidence Rate：确认故障中具备代码证据或强 trace 证据的比例
 - MASCov：加权综合覆盖率
 
 ```text
@@ -344,6 +361,15 @@ MASCov =
 + 0.16 * RequirementCoverage
 + 0.16 * StateCoverage
 + 0.16 * FaultModeCoverage
+```
+
+如需用上传的 ground truth 文件评估召回，可运行：
+
+```bash
+python scripts/evaluate_against_ground_truth.py \
+  --ground-truth ../analysis/ground_truth_defects.json \
+  --outputs outputs \
+  --out outputs/ground_truth_alignment.md
 ```
 
 ## 故障类型

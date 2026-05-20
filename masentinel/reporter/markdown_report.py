@@ -160,6 +160,10 @@ def build_fault_report(faults: list[dict]) -> str:
                 f"- Fault Type: {fault['fault_type']}",
                 f"- Severity: {fault['severity']}",
                 f"- Confidence: {fault['confidence']}",
+                f"- EvidenceStrength: {fault.get('evidence_strength', 'n/a')}",
+                f"- RootCauseConfidence: {fault.get('root_cause_confidence', 'n/a')}",
+                f"- NotModelFaultBecause: {_clean_report_text(fault.get('not_model_fault_because', ''), limit=800)}",
+                f"- Code Locations: {_clean_report_text(_format_code_locations(fault.get('code_locations', [])), limit=800)}",
                 f"- Input: {_clean_report_text(fault['reproduction'].get('input', ''), limit=800)}",
                 f"- Evidence: {_clean_report_text(' | '.join(fault.get('evidence', [])), limit=1200)}",
                 f"- Root Cause: {_clean_report_text(fault['root_cause'])}",
@@ -176,9 +180,14 @@ def _coverage_table(coverage: dict) -> str:
         ("AgentCov", coverage.get("agent_coverage", 0)),
         ("ToolCov", coverage.get("tool_coverage", 0)),
         ("EdgeCov", coverage.get("message_edge_coverage", 0)),
-        ("ReqCov", coverage.get("requirement_coverage", 0)),
+        ("ReqIntentCov", coverage.get("req_intent_coverage", coverage.get("requirement_coverage", 0))),
+        ("ReqVerifiedCov", coverage.get("req_verified_coverage", 0)),
         ("StateCov", coverage.get("state_coverage", 0)),
         ("FaultCov", coverage.get("fault_mode_coverage", 0)),
+        ("ContractCov", coverage.get("contract_coverage", None)),
+        ("EffectiveWorkflowRate", coverage.get("effective_workflow_rate", 0)),
+        ("TraceCompleteness", coverage.get("trace_completeness", 0)),
+        ("RootCauseEvidenceRate", coverage.get("root_cause_evidence_rate", None)),
         ("MASCov", coverage.get("mascov", 0)),
     ]
     lines = ["| Metric | Value |", "|--------|-------|"]
@@ -189,6 +198,17 @@ def _coverage_table(coverage: dict) -> str:
 def _format_metric(value: object) -> str:
     if value is None:
         return "N/A"
+
+
+def _format_code_locations(locations: object) -> str:
+    if not isinstance(locations, list) or not locations:
+        return "n/a"
+    parts = []
+    for item in locations[:5]:
+        if not isinstance(item, dict):
+            continue
+        parts.append(f"{item.get('file', '')}:{item.get('line', '')} {item.get('function', '')}".strip())
+    return "; ".join(parts) or "n/a"
     try:
         return f"{float(value):.4f}"
     except (TypeError, ValueError):

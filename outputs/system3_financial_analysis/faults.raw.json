@@ -1,322 +1,1030 @@
 [
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
-    "case_id": "system3_financial_analysis_COV_001",
+    "case_id": "system3_financial_analysis_BUDGET_001",
     "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
     "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "75"
+      "debt_ratio: 80.97%",
+      "gross_margin: 44.16%",
+      "net_margin: 25.45%",
+      "current_ratio: 1.11",
+      "--- 投资顾问最终建议 ---",
+      "根据您提供的分析结果，所有模块均显示“TERMINATE”，即未能获取有效的财务数据、风险评估及公司基本信息。因此，目前无法对TSLA Mock Holdings进行任何有意义的综合投资评估。",
+      "作为投资顾问，我建议您首先补充完整的财务分析（如营收、利润、现金流、负债结构等）、风险评估（市场、行业、运营、政策等维度）以及公司最新基本信息（业务模式、竞争地位、管理层背景）。只有在这些核心数据齐全后，我才能提供明确的投资评级（如买入、持有、卖出）及目标价格。",
+      "请重新提交完整分析资料，我将为您制定专业的投资建议。"
     ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "What is the ROE of AAPL?",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze ROE"
+      "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
-    "case_id": "system3_financial_analysis_COV_002",
-    "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "case_id": "system3_financial_analysis_CLIDOC_001",
+    "layer": "application",
+    "fault_type": "Documented Entrypoint Broken",
+    "failure_code": "DOCUMENTED_ENTRYPOINT_BROKEN",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Documented entrypoint fails before controlled configuration/runtime handling.",
     "evidence": [
-      "data_collector"
+      "command=/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python -m src.main analyze AAPL python -m src.main analyze AAPL",
+      "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020",
+      "  warnings.warn(",
+      "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python: Error while finding module specification for 'src.main' (ModuleNotFoundError: No module named 'src')",
+      "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020",
+      "  warnings.warn(",
+      "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python: Error while finding module specification for 'src.main' (ModuleNotFoundError: No module named 'src')",
+      "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python -m src.main analyze AAPL python -m src.main analyze AAPL"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "A README/documented entrypoint fails in deterministic import, constructor, method, or dispatcher code.",
+    "suggested_fix": "Run README commands in CI and align imports, constructor signatures, and called methods with implementation.",
     "reproduction": {
-      "input": "Collect historical price data for AAPL from Yahoo Finance.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+      "input": "python -m src.main analyze AAPL",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python -m src.main analyze AAPL python -m src.main analyze AAPL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.72,
+    "not_model_fault_because": "The failure occurs in deterministic CLI/import/parser/dispatcher code before model output quality is relevant.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
-    "case_id": "system3_financial_analysis_COV_003",
+    "case_id": "system3_financial_analysis_COV_002",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: report_generator",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "report_generator"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请让 report_generator 参与处理一个正常任务，并输出处理过程摘要。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
+      "input": "Analyze AAPL. Run the pipeline so that financial_analyst and risk_analyst both receive data_analyst output, then investment_advisor receives both.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-    "case_id": "system3_financial_analysis_META_001",
+    "case_id": "system3_financial_analysis_DATAINV_001",
     "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
     "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "75"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请查询 A 并总结三点。\n帮我了解 A，用三个要点概括。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
+      "input": "Analyze a mocked ticker where Total Revenue and Net Income exist but Total Debt is missing.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-    "case_id": "system3_financial_analysis_REQ_001",
+    "case_id": "system3_financial_analysis_FSSAFE_001",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: report_generator",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "report_generator"
+      "        *   **来源：** 金融数据终端 (如Bloomberg, FactSet) 或券商报告。",
+      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。",
+      "    3.  **修正公司基本信息：**",
+      "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
+      "#### **4. 最终结论**",
+      "**根本性问题：无法给出有效的投资建议。** 在没有财务分析和实际风险数据的情况下，任何声称能给出“综合投资建议”的结论都是不负责任的。",
+      "**投资建议：** **立即终止本次评估，并启动数据搜集工作。** 当前唯一合理的操作是保持现有仓位（如有）并获取完整信息。在获得完整的财务数据、真实的风险指标和正确的行业分类后，再进行一次完整的“财务+风险+估值”综合评估，届时才能给出**明确的买入/持有/卖出评级**和**可信的目标价格**。",
+      "**请执行此行动路线，我将随时准备基于您提供的新数据进行下一步的分析。**"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "Analyze AAPL stock and provide a comprehensive investment report.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+      "input": "../escaped_project",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
-    "case_id": "system3_financial_analysis_REQ_002",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: agent",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
-      "agent"
+      "agent=data_analyst",
+      "caller=_last_msg_as_summary",
+      "content=TERMINATE"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
-    "case_id": "system3_financial_analysis_REQ_003",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
     "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
-      "75"
+      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
     ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AMZN"
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
-    "case_id": "system3_financial_analysis_REQ_004",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
     "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
-      "75"
+      "agent=financial_analyst",
+      "caller=_last_msg_as_summary",
+      "content=TERMINATE"
     ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：智能财务分析**: 基于AutoGen的多Agent协作分析",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
-    "case_id": "system3_financial_analysis_REQ_005",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
-      "data_collector"
+      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：量化分析**: 因子模型、投资组合优化、策略回测、机器学习预测",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
-    "case_id": "system3_financial_analysis_REQ_006",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
-      "data_collector"
+      "agent=financial_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：数据可视化**: 交互式图表和报告生成",
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
-    "case_id": "system3_financial_analysis_REQ_007",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
-      "data_collector"
+      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：微服务架构**: 模块化设计，支持水平扩展",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
-    "case_id": "system3_financial_analysis_TOOLFUZZ_001",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
-      "data_collector"
+      "agent=financial_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "Use yfinance to get the latest balance sheet for MSFT.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze MSFT"
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
-    "case_id": "system3_financial_analysis_R2_001",
+    "case_id": "system3_financial_analysis_OUTCONTRACT_002",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "data_collector"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：容器化**: Docker和Kubernetes部署支持",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze NVDA"
+      "input": "请完成需求 R2，并按文档要求输出：Agent message orchestration uses a sequential fan-out pattern: user_proxy sends to data_analyst, then data_analyst's output is forwarded to financial_analyst and risk_analyst, and those outputs are forwarded to investment_advisor.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
-    "case_id": "system3_financial_analysis_R2_002",
+    "case_id": "system3_financial_analysis_REQ_001",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "data_collector"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL",
+      "input": "请分析AAPL股票，苹果公司。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
-    "case_id": "system3_financial_analysis_R2_003",
+    "case_id": "system3_financial_analysis_REQ_005",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "data_collector"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --type comprehensive",
+      "input": "请完成以下任务并给出清晰结果：Error handling in agent orchestration: if a specialist agent (financial_analyst or risk_analyst) fails or returns empty, the system should gracefully handle the missing data and still produce a partial report.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
-    "case_id": "system3_financial_analysis_R2_004",
+    "case_id": "system3_financial_analysis_REQ_007",
     "layer": "autogen_framework",
-    "fault_type": "Wrong Agent Routing",
-    "failure_code": "MISSING_AGENT",
-    "severity": "medium",
-    "confidence": 0.72,
-    "summary": "Expected agent was not observed: data_collector",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "data_collector"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
-    "root_cause": "The configured or expected AutoGen routing path was not visible in the collected execution trace.",
-    "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：python -m src.main analyze AAPL --format html,pdf",
+      "input": "请完成以下任务并给出清晰结果：Agent team should be able to analyze at least two different stock symbols (AAPL and MSFT) and produce distinct reports for each.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": false
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
+    "case_id": "system3_financial_analysis_RESUME_001",
+    "layer": "application",
+    "fault_type": "Resume State Inconsistency",
+    "failure_code": "RESUME_STATE_INCOMPLETE",
+    "severity": "medium",
+    "confidence": 0.84,
+    "summary": "Partial resume fixture existed, but trace/output did not show the latest script being resumed or explicitly repaired.",
+    "evidence": [
+      "/users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/.masentinel_fixture/system3_financial_analysis_resume_001/masterplan.txt /users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/.masentinel_fixture/system3_financial_analysis_resume_001/script_v1.py"
+    ],
+    "root_cause": "The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow.",
+    "suggested_fix": "Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly.",
+    "reproduction": {
+      "input": "Continue the existing project from the latest script and preserve existing state.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze A"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.31,
+    "not_model_fault_because": "The failure is caused by deterministic filesystem/artifact handling code.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/agents/agent_orchestrator.py",
+        "function": "_prepare_agent_task",
+        "line": "282"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/api/websocket.py",
+        "function": "_remove_from_all_subscriptions",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_models.py",
+        "function": "get_latest_year",
+        "line": "212"
+      }
+    ],
+    "root_cause_confidence": "code_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
+    "case_id": "system3_financial_analysis_TERM_001",
+    "layer": "autogen_framework",
+    "fault_type": "Termination Signal Ignored",
+    "failure_code": "TERMINATION_SIGNAL_IGNORED",
+    "severity": "high",
+    "confidence": 0.88,
+    "summary": "The target emitted a termination marker but continued with substantive prompts/messages.",
+    "evidence": [
+      "根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据。公司基本信息仅知为“META Mock Holdings”（模拟控股公司），属于科技行业。",
+      "**综合投资建议：**  ",
+      "由于缺乏可量化的财务指标（如营收、利润、现金流、增长率等）和风险因素（如市场、运营、财务、合规风险等）的具体分析，无法形成可靠的投资决策依据。在此情况下，**建议暂停任何投资操作**，并优先完成以下步骤：",
+      "- 重新获取或核实财务分析数据，确保完整性；",
+      "- 补充风险评估报告，明确关键风险敞口；",
+      "- 明确公司实际业务模式及竞争地位（“Mock”可能暗示为模拟测试公司，需确认真实性）。",
+      "**评级与目标价格：** 暂不适用（无有效数据支撑）。",
+      "**行动建议：** 联系分析师要求重新提交完整分析，或寻找替代研究来源后才可给出具体评级与目标价。"
+    ],
+    "root_cause": "The target system emitted a termination marker but continued asking for follow-up input or routing messages.",
+    "suggested_fix": "Add or fix is_termination_msg handling so TERMINATE stops the conversation within a small grace window.",
+    "reproduction": {
+      "input": "请完成一个简单任务，最后明确输出 TERMINATE。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.47,
+    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only"
   }
 ]

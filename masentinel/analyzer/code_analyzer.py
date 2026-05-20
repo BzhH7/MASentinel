@@ -173,6 +173,7 @@ class CodeAnalyzer(ast.NodeVisitor):
 
     def visit_Call(self, node: ast.Call) -> Any:
         func_name = _last_name(node.func)
+        full_name = _call_name(node.func)
         if func_name in AGENT_CLASS_NAMES and _keyword(node, "name") is not None:
             self._record_agent(node, None, func_name)
         if func_name in {"register_function", "register_for_llm", "register_for_execution"}:
@@ -181,6 +182,21 @@ class CodeAnalyzer(ast.NodeVisitor):
             self._record_groupchat_edges(node)
         if func_name == "initiate_chat":
             self._record_initiate_chat_edge(node)
+        if func_name == "last_message":
+            self._record_callsite(node, "last_message", full_name)
+        if func_name in {"UserProxyAgent", "GroupChat", "GroupChatManager", "AssistantAgent", "AgentOrchestrator"}:
+            self._record_callsite(node, func_name, full_name)
+        if func_name == "AgentOrchestrator" and self._call_has_empty_mapping(node):
+            self.raw_notes.setdefault("autogen_wiring_risks", []).append(
+                {
+                    "file": self.current_file,
+                    "line": str(getattr(node, "lineno", "")),
+                    "risk": "AgentOrchestrator initialized with an empty mapping or no agents.",
+                    "call": _safe_unparse(node),
+                }
+            )
+        if full_name.endswith(("register_for_llm", "register_for_execution")):
+            self._record_callsite(node, func_name, full_name)
         self.generic_visit(node)
 
     def _record_agent(self, call: ast.Call, var: str | None, class_name: str) -> None:
@@ -223,10 +239,34 @@ class CodeAnalyzer(ast.NodeVisitor):
             {
                 "name": node.name,
                 "source_file": self.current_file,
+                "line": str(getattr(node, "lineno", "")),
                 "in_class": self.class_depth > 0,
                 "docstring": ast.get_docstring(node),
             }
         )
+
+    def _record_callsite(self, node: ast.Call, kind: str, full_name: str) -> None:
+        self.raw_notes.setdefault("call_sites", []).append(
+            {
+                "kind": kind,
+                "call": full_name,
+                "source_file": self.current_file,
+                "line": str(getattr(node, "lineno", "")),
+                "snippet": shorten(_safe_unparse(node), 240),
+            }
+        )
+
+    def _call_has_empty_mapping(self, call: ast.Call) -> bool:
+        candidates = list(call.args)
+        candidates.extend(kw.value for kw in call.keywords if kw.arg in {"agents", "agent_map", "agent_configs"} or kw.arg is None)
+        if not candidates:
+            return True
+        for item in candidates:
+            if isinstance(item, ast.Dict) and not item.keys:
+                return True
+            if isinstance(item, (ast.List, ast.Tuple)) and not item.elts:
+                return True
+        return False
 
     def _looks_like_tool_function(self, name: str) -> bool:
         lowered = name.lower()

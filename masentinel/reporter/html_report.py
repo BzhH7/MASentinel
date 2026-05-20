@@ -72,9 +72,14 @@ def build_html_report(
         ("Agent", coverage.get("agent_coverage", 0)),
         ("Tool", coverage.get("tool_coverage", 0)),
         ("Edge", coverage.get("message_edge_coverage", 0)),
-        ("Requirement", coverage.get("requirement_coverage", 0)),
+        ("Req Intent", coverage.get("req_intent_coverage", coverage.get("requirement_coverage", 0))),
+        ("Req Verified", coverage.get("req_verified_coverage", 0)),
+        ("Contract", coverage.get("contract_coverage", None)),
         ("State", coverage.get("state_coverage", 0)),
         ("Fault Mode", coverage.get("fault_mode_coverage", 0)),
+        ("Effective Workflow", coverage.get("effective_workflow_rate", 0)),
+        ("Trace Completeness", coverage.get("trace_completeness", 0)),
+        ("Evidence Rate", coverage.get("root_cause_evidence_rate", None)),
         ("MASCov", coverage.get("mascov", 0)),
     ]
     metric_cards = "".join([f"<div class='card'><div class='muted'>{name}</div><div class='num'>{_format_metric(value)}</div></div>" for name, value in metrics])
@@ -146,6 +151,10 @@ def write_global_index(results: list[dict], output_dir: str | Path) -> None:
             f"<td>{result.get('oracle_passed', '')}</td>"
             f"<td>{result.get('oracle_failed', '')}</td>"
             f"<td>{_format_metric(cov.get('mascov'))}</td>"
+            f"<td>{_format_metric(cov.get('contract_coverage'))}</td>"
+            f"<td>{_format_metric(cov.get('effective_workflow_rate'))}</td>"
+            f"<td>{_format_metric(cov.get('trace_completeness'))}</td>"
+            f"<td>{_format_metric(cov.get('root_cause_evidence_rate'))}</td>"
             f"<td>{result.get('confirmed_primary_root_causes', result.get('faults', 0))}</td>"
             f"<td>{result.get('derived_symptoms', '')}</td>"
             f"<td>{result.get('fault_groups', '')}</td>"
@@ -154,7 +163,7 @@ def write_global_index(results: list[dict], output_dir: str | Path) -> None:
             "</tr>"
         )
     content = f"""<!doctype html><html><head><meta charset="utf-8"><title>MASentinel Summary</title><style>{STYLE}</style></head>
-<body><main><h1>MASentinel Summary</h1><section><table><tr><th>System</th><th>Cases</th><th>Proc Passed</th><th>Proc Failed</th><th>Oracle Passed</th><th>Oracle Failed</th><th>MASCov</th><th>Primary Root Causes</th><th>Derived Symptoms</th><th>Root Groups</th><th>Non-target Excluded</th><th>Harness Excluded</th></tr>{''.join(rows)}</table></section></main></body></html>"""
+<body><main><h1>MASentinel Summary</h1><section><table><tr><th>System</th><th>Cases</th><th>Proc Passed</th><th>Proc Failed</th><th>Oracle Passed</th><th>Oracle Failed</th><th>MASCov</th><th>ContractCov</th><th>Eff Workflow</th><th>Trace Complete</th><th>EvidenceRate</th><th>Primary Root Causes</th><th>Derived Symptoms</th><th>Root Groups</th><th>Non-target Excluded</th><th>Harness Excluded</th></tr>{''.join(rows)}</table></section></main></body></html>"""
     write_text(output_dir / "index.html", content)
 
 

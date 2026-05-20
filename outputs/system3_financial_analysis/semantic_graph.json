@@ -87,113 +87,238 @@
     {
       "id": "R1",
       "type": "requirement",
-      "description": "一个基于微软AutoGen框架的企业级金融分析系统，使用多Agent架构提供全面的财务分析、风险评估和量化投资分析功能。"
+      "description": "Simple Autogen financial analysis pipeline: user_proxy initiates chats with data_analyst, financial_analyst, risk_analyst, and investment_advisor in a predetermined order; each agent responds based on its system prompt; the last messages from each agent are collected to form a final analysis."
     },
     {
       "id": "R2",
       "type": "requirement",
-      "description": "多源数据收集**: 整合Yahoo Finance、Alpha Vantage等多个金融数据源"
+      "description": "Agent message orchestration uses a sequential fan-out pattern: user_proxy sends to data_analyst, then data_analyst's output is forwarded to financial_analyst and risk_analyst, and those outputs are forwarded to investment_advisor."
     },
     {
       "id": "R3",
       "type": "requirement",
-      "description": "智能财务分析**: 基于AutoGen的多Agent协作分析"
+      "description": "Error handling in agent orchestration: if a specialist agent (financial_analyst or risk_analyst) fails or returns empty, the system should gracefully handle the missing data and still produce a partial report."
     },
     {
       "id": "R4",
       "type": "requirement",
-      "description": "量化分析**: 因子模型、投资组合优化、策略回测、机器学习预测"
+      "description": "UserProxyAgent is configured with human_input_mode='NEVER' to ensure fully automated execution without blocking for user input."
     },
     {
       "id": "R5",
       "type": "requirement",
-      "description": "数据可视化**: 交互式图表和报告生成"
+      "description": "Agent team should be able to analyze at least two different stock symbols (AAPL and MSFT) and produce distinct reports for each."
     },
     {
       "id": "R6",
       "type": "requirement",
-      "description": "微服务架构**: 模块化设计，支持水平扩展"
+      "description": "If the LLM returns a non-sensical or irrelevant response for one agent, the system should still produce a partial report rather than crashing."
     },
     {
       "id": "R7",
       "type": "requirement",
-      "description": "容器化**: Docker和Kubernetes部署支持"
+      "description": "The system should enforce a maximum number of reply turns for each AssistantAgent to prevent infinite loops."
     },
     {
       "id": "R8",
       "type": "requirement",
-      "description": "python -m src.main analyze AAPL"
+      "description": "The system should handle a situation where yfinance or data collection fails (e.g., invalid symbol) gracefully, reporting the error in the Data Analysis section."
     },
     {
       "id": "R9",
       "type": "requirement",
-      "description": "python -m src.main analyze AAPL --type comprehensive"
+      "description": "Each specialist agent must adhere to its system message and not perform analysis outside its designated role."
     },
     {
       "id": "R10",
       "type": "requirement",
-      "description": "python -m src.main analyze AAPL --format html,pdf"
-    },
-    {
-      "id": "R11",
-      "type": "requirement",
-      "description": "python -m src.main analyze AAPL --config custom_config.yaml"
-    },
-    {
-      "id": "R12",
-      "type": "requirement",
-      "description": "盈利能力分析**: ROE、ROA、毛利率、净利率"
-    },
-    {
-      "id": "R13",
-      "type": "requirement",
-      "description": "偿债能力分析**: 资产负债率、流动比率、速动比率"
-    },
-    {
-      "id": "R14",
-      "type": "requirement",
-      "description": "运营效率分析**: 总资产周转率、存货周转率"
-    },
-    {
-      "id": "R15",
-      "type": "requirement",
-      "description": "成长性分析**: 收入增长率、利润增长率"
-    },
-    {
-      "id": "R16",
-      "type": "requirement",
-      "description": "杜邦分析**: ROE分解为净利润率、资产周转率和权益乘数"
-    },
-    {
-      "id": "R17",
-      "type": "requirement",
-      "description": "压力测试**: 极端市场情景分析"
-    },
-    {
-      "id": "R18",
-      "type": "requirement",
-      "description": "因子分析**: 多因子暴露、因子收益率、信息系数"
-    },
-    {
-      "id": "R19",
-      "type": "requirement",
-      "description": "风险贡献分析**: 各资产对组合风险的贡献度"
-    },
-    {
-      "id": "R20",
-      "type": "requirement",
-      "description": "相关系数**: 资产间相关性分析"
+      "description": "The system should terminate cleanly when the analysis is complete, without leaving orphaned processes or open LLM connections."
     }
   ],
   "edges": [
     {
       "source": "R1",
-      "target": "agent",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "financial_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "risk_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R1",
+      "target": "investment_advisor",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "financial_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "risk_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "investment_advisor",
       "type": "requires_agent"
     },
     {
       "source": "R3",
-      "target": "agent",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "financial_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "risk_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
+      "target": "investment_advisor",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "financial_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "risk_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "investment_advisor",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R6",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R6",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R6",
+      "target": "financial_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R6",
+      "target": "risk_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R6",
+      "target": "investment_advisor",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R7",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R7",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R7",
+      "target": "financial_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R7",
+      "target": "risk_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R7",
+      "target": "investment_advisor",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R8",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R9",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R9",
+      "target": "financial_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R9",
+      "target": "risk_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R9",
+      "target": "investment_advisor",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R10",
+      "target": "user_proxy",
       "type": "requires_agent"
     },
     {

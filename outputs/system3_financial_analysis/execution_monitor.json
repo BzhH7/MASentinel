@@ -1,323 +1,79 @@
 {
   "suspicious_cases": [
     {
+      "case_id": "system3_financial_analysis_CLIDOC_001",
+      "reason": "Entrypoint command 'python -m src.main analyze AAPL' fails with 'ModuleNotFoundError: No module named src' before any agent logic runs. This is a code-level misconfiguration in entrypoint/module structure that can be fixed.",
+      "rule_failures": [
+        "RUNTIME_EXCEPTION",
+        "DOCUMENTED_ENTRYPOINT_BROKEN"
+      ],
+      "trace_summary": "status=failed, timeout=false, returncode=1, stderr shows OpenSSL warning and ModuleNotFoundError for 'src'; no agent turns executed."
+    },
+    {
+      "case_id": "system3_financial_analysis_HANDOFF_001",
+      "reason": "Multiple downstream handoffs (data_analyst, financial_analyst) return only 'TERMINATE' instead of substantive analysis content, causing high-severity business-level failure. This suggests a bug in handoff message construction or agent prompt logic that can be addressed in code/prompts.",
+      "rule_failures": [
+        "MESSAGE_HANDOFF_TERMINATE_ONLY"
+      ],
+      "trace_summary": "Not provided in trace_summaries list but failures indicate agents returning TERMINATE as summary content across multiple calls."
+    },
+    {
       "case_id": "system3_financial_analysis_REQ_001",
-      "reason": "TURN_BUDGET_EXCEEDED, MISSING_AGENT",
+      "reason": "Business task fails with high severity: analysis ends with investment recommendation of 'cannot determine', target price undetermined, due to missing data from analysts. Evidence points to agents terminating early without providing required financial data. Likely a prompt or orchestration logic issue that can be fixed.",
       "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=15"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: report_generator",
-          "severity": "medium",
-          "evidence": [
-            "report_generator"
-          ]
-        }
+        "BUSINESS_TASK_FAILED",
+        "TURN_BUDGET_EXCEEDED"
       ],
-      "trace_summary": "Fallback summary from rule oracle failures."
+      "trace_summary": "Not explicitly provided in trace_summaries array, but rule failures show turn_count=19 exceeding max_turns=15, and output indicates no effective analysis completed."
     },
     {
-      "case_id": "system3_financial_analysis_COV_001",
-      "reason": "TIMEOUT",
+      "case_id": "system3_financial_analysis_FSSAFE_001",
+      "reason": "Business task fails with high severity; analysis output contains a critical industry classification error (Technology instead of Financials) and ends with 'unable to give effective investment advice'. Suggests a data or prompt issue that led to incorrect company info and subsequent failure, fixable by correcting the data source or prompt guardrails.",
       "rule_failures": [
-        {
-          "code": "TIMEOUT",
-          "message": "The process exceeded the configured timeout.",
-          "severity": "high",
-          "evidence": [
-            "75"
-          ]
-        }
+        "BUSINESS_TASK_FAILED"
       ],
-      "trace_summary": "Fallback summary from rule oracle failures."
+      "trace_summary": "Not explicitly in trace_summaries but evidence shows agent calling out wrong industry classification and refusing to provide advice."
     },
     {
-      "case_id": "system3_financial_analysis_PROP_001",
-      "reason": "TURN_BUDGET_EXCEEDED",
+      "case_id": "system3_financial_analysis_RESUME_001",
+      "reason": "Resume fixture exists but trace/output does not show proper resumption or repair of the latest script. Indicates the resume/recovery mechanism may not be triggered correctly. This is a framework-level configuration or code issue that can be fixed.",
       "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=15"
-          ]
-        }
+        "RESUME_STATE_INCOMPLETE"
       ],
-      "trace_summary": "Fallback summary from rule oracle failures."
+      "trace_summary": "Not provided in trace_summaries list; evidence lists fixture paths masterplan.txt and script_v1.py."
     },
     {
-      "case_id": "system3_financial_analysis_FUZZ_001",
-      "reason": "TURN_BUDGET_EXCEEDED",
+      "case_id": "system3_financial_analysis_WIRING_001",
+      "reason": "Expected agents 'data_collector' and 'report_generator' are missing from the run, indicating a wiring/configuration problem in agent registration or team setup that can be fixed in code.",
       "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=15"
-          ]
-        }
+        "MISSING_AGENT"
       ],
-      "trace_summary": "Fallback summary from rule oracle failures."
+      "trace_summary": "Not explicitly in trace_summaries; evidence names the missing agents."
     },
     {
-      "case_id": "system3_financial_analysis_TOOLFUZZ_001",
-      "reason": "TURN_BUDGET_EXCEEDED, MISSING_AGENT",
+      "case_id": "system3_financial_analysis_BUDGET_001",
+      "reason": "Business task fails: analysis modules return TERMINATE, resulting in no valid investment advice. Possibly caused by premature termination due to budget constraints or early TERMINATE signals. This suggests a logic bug in budget/turn handling that can be fixed.",
       "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=10"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: data_collector",
-          "severity": "medium",
-          "evidence": [
-            "data_collector"
-          ]
-        }
+        "BUSINESS_TASK_FAILED"
       ],
-      "trace_summary": "Fallback summary from rule oracle failures."
+      "trace_summary": "Not explicitly in trace_summaries; output shows debt_ratio, margins, but final advisor message states all modules terminated and no analysis data available."
     },
     {
-      "case_id": "system3_financial_analysis_META_001",
-      "reason": "TIMEOUT",
+      "case_id": "system3_financial_analysis_TERM_001",
+      "reason": "Termination signal was emitted but agents continued generating substantive prompts/messages, violating expected behavior. This suggests a bug in termination detection or message routing that can be fixed.",
       "rule_failures": [
-        {
-          "code": "TIMEOUT",
-          "message": "The process exceeded the configured timeout.",
-          "severity": "high",
-          "evidence": [
-            "75"
-          ]
-        }
+        "TERMINATION_SIGNAL_IGNORED"
       ],
-      "trace_summary": "Fallback summary from rule oracle failures."
+      "trace_summary": "Not provided; evidence shows the system generated investment advice after receiving TERMINATE from analysts."
     },
     {
-      "case_id": "system3_financial_analysis_REG_001",
-      "reason": "TURN_BUDGET_EXCEEDED",
+      "case_id": "system3_financial_analysis_DATAINV_001",
+      "reason": "Business task fails with same symptoms as REQ_001: no actionable investment advice due to missing data, suggesting similar root cause. Can be fixed via prompt/orchestration improvements.",
       "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=18",
-            "max_turns=15"
-          ]
-        }
+        "BUSINESS_TASK_FAILED"
       ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_COV_002",
-      "reason": "TURN_BUDGET_EXCEEDED, MISSING_AGENT",
-      "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=10"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: data_collector",
-          "severity": "medium",
-          "evidence": [
-            "data_collector"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_002",
-      "reason": "TURN_BUDGET_EXCEEDED, MISSING_AGENT",
-      "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=18",
-            "max_turns=15"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: agent",
-          "severity": "medium",
-          "evidence": [
-            "agent"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_COV_003",
-      "reason": "TURN_BUDGET_EXCEEDED, MISSING_AGENT",
-      "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=15"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: report_generator",
-          "severity": "medium",
-          "evidence": [
-            "report_generator"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_TOOLFUZZ_002",
-      "reason": "TURN_BUDGET_EXCEEDED",
-      "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=15"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_003",
-      "reason": "TIMEOUT",
-      "rule_failures": [
-        {
-          "code": "TIMEOUT",
-          "message": "The process exceeded the configured timeout.",
-          "severity": "high",
-          "evidence": [
-            "75"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_004",
-      "reason": "TIMEOUT",
-      "rule_failures": [
-        {
-          "code": "TIMEOUT",
-          "message": "The process exceeded the configured timeout.",
-          "severity": "high",
-          "evidence": [
-            "75"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_005",
-      "reason": "TURN_BUDGET_EXCEEDED, MISSING_AGENT",
-      "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=15"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: data_collector",
-          "severity": "medium",
-          "evidence": [
-            "data_collector"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_006",
-      "reason": "TURN_BUDGET_EXCEEDED, MISSING_AGENT",
-      "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=19",
-            "max_turns=15"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: data_collector",
-          "severity": "medium",
-          "evidence": [
-            "data_collector"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_007",
-      "reason": "TURN_BUDGET_EXCEEDED, MISSING_AGENT",
-      "rule_failures": [
-        {
-          "code": "TURN_BUDGET_EXCEEDED",
-          "message": "The run terminated, but exceeded the expected soft turn budget.",
-          "severity": "low",
-          "evidence": [
-            "turn_count=18",
-            "max_turns=15"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: data_collector",
-          "severity": "medium",
-          "evidence": [
-            "data_collector"
-          ]
-        }
-      ],
-      "trace_summary": "Fallback summary from rule oracle failures."
+      "trace_summary": "Not provided; evidence output identical to REQ_001."
     }
   ],
-  "confidence": 0.35,
-  "fallback": true,
-  "error": "Model call failed after 2 attempt(s): The read operation timed out"
+  "confidence": 0.95
 }

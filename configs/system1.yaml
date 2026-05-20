@@ -27,7 +27,7 @@ run:
         response: "Build a small Python command-line app for this request: {input}"
         max_count: 1
       - trigger: "What name would you like to give this project?"
-        response: "mas_{safe_case_id}"
+        response: "{project_name}"
         max_count: 1
   env:
     AUTOGEN_USE_DOCKER: "0"
@@ -51,8 +51,8 @@ model:
   target_model: "ds-v4-flash"
 
 testing:
-  num_cases: 8
-  workers: 2
+  num_cases: 24
+  workers: 1
   random_seed: 42
   max_case_input_chars: 1200
   agent_design_batch_size: 1

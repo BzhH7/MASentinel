@@ -1,16 +1,23 @@
 [
   {
-    "case_id": "system2_research_agents_COV_001",
-    "fault_type": " böjnings Termination",
-    "objective": "Reproduce confirmed fault: The process exceeded the configured timeout.",
-    "input": "Search for 'AutoGen multi-agent framework' and scrape the first result page.",
+    "case_id": "system2_research_agents_ARTIFACT_001",
+    "fault_type": "Speaker Selection Error",
+    "objective": "Reproduce confirmed fault: The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+    "input": "Create a one-line Python script that prints hello. A valid answer may use an unlabeled, py, or python Markdown fence.",
     "max_turns": 15
   },
   {
-    "case_id": "system2_research_agents_TOOLFUZZ_001",
-    "fault_type": "Encoding/Decoding Error",
-    "objective": "Reproduce confirmed fault: The process ended with an unhandled runtime error.",
-    "input": "Please call get_airtable_records with an empty base_id and table_name",
+    "case_id": "system2_research_agents_REQ_002",
+    "fault_type": "Missing Tool Call",
+    "objective": "Reproduce confirmed fault: Expected tool was not called: get_airtable_records",
+    "input": "Fetch and update Airtable records.",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system2_research_agents_TOOLAPI_001",
+    "fault_type": "Tool Schema Mismatch",
+    "objective": "Reproduce confirmed fault: External API request did not preserve documented semantic query parameters.",
+    "input": "请使用一个包含筛选视图和多页结果的外部数据源完成任务。",
     "max_turns": 15
   }
 ]

@@ -27,6 +27,7 @@ def test_coverage_calculates_semantic_metrics() -> None:
             events=[
                 TraceEvent(type="message", timestamp=1.0, sender="planner", receiver="executor", content="go"),
                 TraceEvent(type="tool_call", timestamp=1.0, tool="search_tool"),
+                TraceEvent(type="tool_result", timestamp=1.1, tool="search_tool", result_preview="ok"),
             ],
             final_output="ok",
             stdout="ok",
@@ -37,6 +38,9 @@ def test_coverage_calculates_semantic_metrics() -> None:
     assert coverage["agent_coverage"] == 1.0
     assert coverage["tool_coverage"] == 1.0
     assert coverage["message_edge_coverage"] == 1.0
+    assert coverage["effective_workflow_rate"] == 1.0
+    assert coverage["trace_completeness"] == 1.0
+    assert coverage["req_verified_coverage"] == 1.0
     assert coverage["mascov"] > 0.5
 
 

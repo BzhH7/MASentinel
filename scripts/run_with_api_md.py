@@ -95,9 +95,30 @@ def load_api_settings(api_doc: Path, target_model: str | None = None) -> tuple[d
     return env_values, overrides
 
 
+def _reexec_runtime_venv(repo_root: Path) -> None:
+    if os.getenv("MAS_SKIP_RUNTIME_VENV_REEXEC"):
+        return
+    try:
+        already_inside_repo = Path(sys.executable).resolve().is_relative_to(repo_root.resolve())
+    except AttributeError:
+        already_inside_repo = str(Path(sys.executable).resolve()).startswith(str(repo_root.resolve()))
+    if already_inside_repo:
+        return
+    candidates = [
+        repo_root / ".venv-runtime" / "bin" / "python",
+        repo_root / ".venv" / "bin" / "python",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            os.environ["MAS_SKIP_RUNTIME_VENV_REEXEC"] = "1"
+            print(f"[MASentinel][api] re-exec with runtime python: {candidate}", flush=True)
+            os.execv(str(candidate), [str(candidate), *sys.argv])
+
+
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
     workspace_root = repo_root.parent
+    _reexec_runtime_venv(repo_root)
     parser = argparse.ArgumentParser(description="Run MASentinel with API keys loaded from api.md without printing secrets.")
     parser.add_argument("--api-doc", default=str(workspace_root / "api.md"))
     parser.add_argument("--config", default=str(repo_root / "configs" / "all_systems.yaml"))

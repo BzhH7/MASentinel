@@ -4,7 +4,8 @@ import json
 import re
 from difflib import SequenceMatcher
 
-from masentinel.schema import OracleFailure, OracleResult, RunTrace, TestCase
+from masentinel.oracle.contract_oracle import evaluate_contracts
+from masentinel.schema import OracleFailure, OracleResult, RunTrace, SystemProfile, TestCase
 
 ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
 AUTOGEN_MESSAGE_RE = re.compile(r"^([A-Za-z_][\w.-]*)\s+\(to\s+([A-Za-z_][\w.-]*)\):\s*$")
@@ -17,8 +18,9 @@ ORACLE_WARNING_CODES = {"TURN_BUDGET_EXCEEDED"}
 
 
 class RuleOracle:
-    def __init__(self, registered_tools: set[str] | None = None) -> None:
+    def __init__(self, registered_tools: set[str] | None = None, profile: SystemProfile | None = None) -> None:
         self.registered_tools = registered_tools or set()
+        self.profile = profile
 
     def evaluate(self, testcase: TestCase, trace: RunTrace) -> OracleResult:
         failures: list[OracleFailure] = []
@@ -56,6 +58,16 @@ class RuleOracle:
                     "The process completed but the target task reported a business-level failure.",
                     "high",
                     business_failure,
+                )
+            )
+        speaker_loop = [] if provider_failure else self._speaker_selection_loop(text)
+        if speaker_loop:
+            failures.append(
+                OracleFailure(
+                    "SPEAKER_SELECTION_LOOP",
+                    "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
+                    "high",
+                    speaker_loop,
                 )
             )
         workflow_observed = self._workflow_observed(trace, text)
@@ -104,6 +116,16 @@ class RuleOracle:
             else:
                 failures.append(OracleFailure("TIMEOUT", "The process exceeded the configured timeout.", "high", [str(trace.metadata.get("timeout_seconds", ""))]))
         if testcase.oracle.must_terminate and not provider_failure:
+            termination_ignored = self._termination_signal_ignored(testcase, trace, text)
+            if termination_ignored:
+                failures.append(
+                    OracleFailure(
+                        "TERMINATION_SIGNAL_IGNORED",
+                        "The target emitted a termination marker but continued with substantive prompts/messages.",
+                        "high",
+                        termination_ignored,
+                    )
+                )
             if not trace.timeout and workflow_observed and not trace.terminated:
                 failures.append(OracleFailure("NON_TERMINATION", "The run did not terminate.", "high", [f"turn_count={trace.turn_count}"]))
             elif (
@@ -156,11 +178,25 @@ class RuleOracle:
                 json.loads(trace.final_output or "")
             except json.JSONDecodeError:
                 failures.append(OracleFailure("OUTPUT_SCHEMA_VIOLATION", "Output contract requires JSON but final output is not valid JSON.", "medium", [trace.final_output or ""]))
+        if testcase.oracle.expected_keywords and not provider_failure and workflow_observed and not trace.timeout:
+            lowered_output = f"{trace.final_output or ''}\n{text}".lower()
+            missing = [keyword for keyword in testcase.oracle.expected_keywords if str(keyword).lower() not in lowered_output]
+            if missing:
+                failures.append(
+                    OracleFailure(
+                        "OUTPUT_SCHEMA_VIOLATION",
+                        "Output contract expected keywords or sections were missing.",
+                        "medium",
+                        [f"missing_keywords={missing}", (trace.final_output or text)[-500:]],
+                    )
+                )
         if can_judge_workflow_expectations and not trace.terminated and self._has_repetitive_loop(trace):
             failures.append(OracleFailure("REPETITIVE_LOOP", "Trace contains highly repetitive consecutive messages.", "medium", []))
         metamorphic_failure = self._metamorphic_failure(testcase, trace, visited_agents, called_tools) if can_judge_workflow_expectations else None
         if metamorphic_failure:
             failures.append(metamorphic_failure)
+        if not provider_failure and not self._startup_dependency_failure(trace, text):
+            failures.extend(evaluate_contracts(testcase, trace, self.profile))
         hard_failures = [failure for failure in failures if failure.code not in ORACLE_WARNING_CODES]
         return OracleResult(case_id=testcase.case_id, passed=not hard_failures, failures=failures)
 
@@ -254,12 +290,58 @@ class RuleOracle:
         markers = (
             "分析失败",
             "无法收集数据",
+            "数据缺失",
+            "没有数据",
+            "未能获取数据",
             "failed to collect data",
             "data collection failed",
+            "missing data",
+            "empty data",
+            "no data available",
+            "data provider not available",
         )
         if not any(marker in lowered for marker in markers):
             return []
         return self._evidence(text)
+
+    def _speaker_selection_loop(self, text: str) -> list[str]:
+        lowered = text.lower()
+        repeated_prompt = lowered.count("you didn't choose a speaker") >= 2
+        selector_loop = lowered.count("speaker_selection_agent") >= 2 and lowered.count("checking_agent") >= 2
+        prefixed_speaker = bool(re.search(r"\bresponse\s+[A-Za-z_][\w.-]*", text)) and "choose a speaker" in lowered
+        if not (repeated_prompt or selector_loop or prefixed_speaker):
+            return []
+        return self._evidence(text)
+
+    def _termination_signal_ignored(self, testcase: TestCase, trace: RunTrace, text: str) -> list[str]:
+        metadata = testcase.metadata or {}
+        if testcase.case_type != "termination_signal" and "termination_marker" not in metadata:
+            return []
+        marker = str(metadata.get("termination_marker") or "TERMINATE")
+        lowered = text.lower()
+        if marker.lower() not in lowered:
+            return []
+        marker_index = lowered.find(marker.lower())
+        after_marker = lowered[marker_index + len(marker) :]
+        grace_messages = int((testcase.metadata or {}).get("termination_grace_messages", 2) or 2)
+        if trace.terminated and trace.turn_count <= grace_messages + 2:
+            return []
+        continuation_markers = (
+            "anything else",
+            "how can i assist",
+            "would you like",
+            "what would you like",
+            "selection:",
+            "waiting for human",
+            "manual input",
+            "input requested",
+            "请继续",
+            "还需要",
+            "是否",
+        )
+        if any(item in after_marker for item in continuation_markers):
+            return self._evidence(text)
+        return []
 
     def _model_provider_failure(self, text: str) -> list[str]:
         lowered = text.lower()
@@ -291,6 +373,28 @@ class RuleOracle:
             return []
         return self._evidence(text)
 
+    def _startup_dependency_failure(self, trace: RunTrace, text: str) -> bool:
+        if trace.turn_count not in (0, None):
+            return False
+        lowered = text.lower()
+        if "modulenotfounderror" not in lowered and "importerror" not in lowered:
+            return False
+        dependency_markers = (
+            "no module named 'autogen'",
+            'no module named "autogen"',
+            "no module named 'langchain'",
+            'no module named "langchain"',
+            "no module named 'langchain_text_splitters'",
+            'no module named "langchain_text_splitters"',
+            "no module named 'openai'",
+            'no module named "openai"',
+            "no module named 'pandas'",
+            'no module named "pandas"',
+            "no module named 'yfinance'",
+            'no module named "yfinance"',
+        )
+        return any(marker in lowered for marker in dependency_markers)
+
     def _overlong_generated_input_timeout(self, testcase: TestCase, trace: RunTrace) -> bool:
         if not trace.timeout:
             return False
@@ -311,6 +415,8 @@ class RuleOracle:
             return None
         relation = testcase.metadata.get("expected_relation") if isinstance(testcase.metadata, dict) else None
         if not isinstance(relation, dict):
+            return None
+        if relation.get("allow_different_agent_path"):
             return None
         missing_agents = [agent for agent in relation.get("same_agents", []) if agent and agent not in visited_agents]
         missing_tools = [tool for tool in relation.get("same_tools", []) if tool and tool not in called_tools]

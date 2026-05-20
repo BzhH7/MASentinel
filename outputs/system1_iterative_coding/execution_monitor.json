@@ -1,49 +1,51 @@
 {
   "suspicious_cases": [
     {
-      "case_id": "system1_iterative_coding_COV_001",
-      "reason": "Failed case with a medium-severity MISSING_TOOL_CALL for write_settled_plan, suggesting the agent did not invoke the expected tool. This is a functional gap in tool usage that may be fixable through AutoGen configuration or tool registration/logic.",
+      "case_id": "system1_iterative_coding_RESUME_001",
+      "reason": "在自动化无人类模式下请求了人类输入，运行未终止且存在重复循环，同时忽略现有脚本状态，这些均指向 AutoGen 框架的对话策略、终止条件或 resume 逻辑可能存在缺陷。",
       "rule_failures": [
-        {
-          "code": "MISSING_TOOL_CALL",
-          "message": "Expected tool was not called: write_settled_plan",
-          "severity": "medium",
-          "evidence": [
-            "write_settled_plan"
-          ]
-        }
+        "HUMAN_INPUT_REQUESTED",
+        "NON_TERMINATION",
+        "REPETITIVE_LOOP",
+        "RESUME_STATE_INCOMPLETE"
       ],
-      "trace_summary": "The run exceeded the soft turn budget (24 vs max 10) and a required tool call write_settled_plan was missing."
+      "trace_summary": "status=failed, terminated=false, turn_count=24, stdout_tail 显示多次重复的 'Alright – I'll take that as confirmation...' 消息，提示人类输入请求。"
     },
     {
-      "case_id": "system1_iterative_coding_PROP_001",
-      "reason": "Failed case with a medium-severity MISSING_TOOL_CALL for write_settled_plan, indicating a missing tool invocation that could be resolved by adjusting tool registration, prompt, or AutoGen logic.",
+      "case_id": "system1_iterative_coding_FSSAFE_001",
+      "reason": "存在高严重性的 FILESYSTEM_ESCAPE 违规，表明文件写入路径未受正确约束，可能由工具实现或 AutoGen 沙箱配置不当引起。",
       "rule_failures": [
-        {
-          "code": "MISSING_TOOL_CALL",
-          "message": "Expected tool was not called: write_settled_plan",
-          "severity": "medium",
-          "evidence": [
-            "write_settled_plan"
-          ]
-        }
+        "FILESYSTEM_ESCAPE",
+        "TURN_BUDGET_EXCEEDED"
       ],
-      "trace_summary": "Run terminated with turn count 24 (max 10) and did not call write_settled_plan."
+      "trace_summary": "status=failed, evidence 中包含多个路径超出项目根目录，如 .cache 及 .masentinel_fixture 目录。"
     },
     {
-      "case_id": "system1_iterative_coding_REQ_002",
-      "reason": "Failed case with a medium-severity MISSING_TOOL_CALL for write_settled_plan, indicating a systemic issue in tool invocation that may be fixed by modifying code, tool registration, or prompt templates.",
+      "case_id": "system1_iterative_coding_TOOLERR_001",
+      "reason": "工具在错误路径下返回 None 而非结构化错误信封，且未检测 HTTP 状态码，这违反了工具契约，属于 AutoGen 工具注册/调用逻辑的故障。",
       "rule_failures": [
-        {
-          "code": "MISSING_TOOL_CALL",
-          "message": "Expected tool was not called: write_settled_plan",
-          "severity": "medium",
-          "evidence": [
-            "write_settled_plan"
-          ]
-        }
+        "TOOL_RETURNED_NONE",
+        "TOOL_UNSTRUCTURED_ERROR",
+        "HTTP_STATUS_NOT_CHECKED"
       ],
-      "trace_summary": "The run ended with turn count 20 (max 15) and did not call the expected tool write_settled_plan."
+      "trace_summary": "status=failed, 涉及 write_settled_plan, write_latest_iteration, write_latest_iteration_comments 工具。"
+    },
+    {
+      "case_id": "system1_iterative_coding_TERM_001",
+      "reason": "系统发出终止标记后仍继续发送实质性消息，表明 AutoGen 的终止信号未正确处理，可能是框架适配或提示模板问题。",
+      "rule_failures": [
+        "TERMINATION_SIGNAL_IGNORED"
+      ],
+      "trace_summary": "status=failed, evidence 显示 manager 和 reviewer 在类似 '...happy coding!' 消息后仍继续对话。"
+    },
+    {
+      "case_id": "system1_iterative_coding_TOOLAPI_001",
+      "reason": "外部 API 请求丢失语义查询参数且未执行分页，可能是工具注册时参数映射错误或调用逻辑未遵循文档。",
+      "rule_failures": [
+        "VIEW_PARAMETER_IGNORED",
+        "PAGINATION_NOT_FOLLOWED"
+      ],
+      "trace_summary": "status=failed, missing_or_mismatched_query_params={'view': 'viwMASentinel'}, observed_query_params={}，expected_pages=2, observed_pages=[]。"
     }
   ],
   "confidence": 0.9

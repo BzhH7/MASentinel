@@ -1,0 +1,417 @@
+[
+  {
+    "system": "system_1",
+    "defect_id": "GT-S1-001",
+    "layer": "application",
+    "defect_type": "wrong_output_schema",
+    "severity": "medium",
+    "file_locations": [
+      {
+        "file": "AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line_or_function": "write_latest_iteration_manual, lines 134-147",
+        "evidence": "The function strips every backtick and then blindly removes the first 6 characters when the message starts with a backtick. This assumes the code block starts exactly with ```python. Valid Markdown fences such as ``` or ```py corrupt the saved script."
+      },
+      {
+        "file": "AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line_or_function": "coder system message, lines 89-98",
+        "evidence": "The prompt asks the coder to return code blocks, but it does not require an exact ```python fence. The parser is stricter than the prompt contract."
+      }
+    ],
+    "expected_behavior": "Any valid single Python Markdown code block returned by the coder should be persisted as executable Python source.",
+    "actual_behavior_or_static_risk": "If the coder returns a valid fenced block without the exact language tag, the first six characters of code are dropped after backtick removal. The saved script can be syntactically invalid or semantically changed.",
+    "minimal_trigger_case": {
+      "user_input": "Create a one-line Python script that prints hello.",
+      "expected_trace": "coder returns a valid Python code block, write_latest_iteration_manual saves print('hello') to script_v1.py.",
+      "failure_observation": "If the coder response is ```\\nprint('hello')\\n```, the saved file starts with \"('hello')\" or otherwise loses leading code."
+    },
+    "why_not_model_fault": "A Markdown code block without a language tag is valid output under the current prompt. The corruption is deterministic string slicing in application code.",
+    "fix_suggestion": "Replace the manual backtick stripping with a small Markdown fence parser or regex that extracts the body from optional-language code fences, and validate the parsed source before writing."
+  },
+  {
+    "system": "system_1",
+    "defect_id": "GT-S1-002",
+    "layer": "application",
+    "defect_type": "missing_state",
+    "severity": "medium",
+    "file_locations": [
+      {
+        "file": "AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line_or_function": "does_version_one_exist, lines 211-217",
+        "evidence": "Resume detection returns true only when comments_v1.log exists. It ignores MasterPlan.txt and script_v1.py."
+      },
+      {
+        "file": "AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line_or_function": "run, lines 252-347",
+        "evidence": "When does_version_one_exist returns false, the iteration prompt does not pass the latest script or comments to the coder, even if script_v1.py already exists."
+      }
+    ],
+    "expected_behavior": "A project with an existing plan and script should resume from the latest script and available comments, or report which state artifact is missing.",
+    "actual_behavior_or_static_risk": "If comments_v1.log is missing or renamed, the system treats an existing project as a fresh first iteration and can overwrite or ignore the existing implementation state.",
+    "minimal_trigger_case": {
+      "user_input": "Use project name resume_demo where MasterPlan.txt and script_v1.py exist but comments_v1.log is absent; ask for another iteration.",
+      "expected_trace": "manager detects latest script_v1.py, passes it to coder with an explicit missing-comments warning or recovery path.",
+      "failure_observation": "iterationNumber remains 1 and coder receives only the master plan, not the latest script."
+    },
+    "why_not_model_fault": "The branch is controlled by a deterministic filesystem predicate that checks the wrong artifact.",
+    "fix_suggestion": "Discover project state independently: plan existence, latest script_vN.py, latest comments_vN.log or .txt. Resume from the latest complete version and surface incomplete state explicitly."
+  },
+  {
+    "system": "system_1",
+    "defect_id": "GT-S1-003",
+    "layer": "application",
+    "defect_type": "wrong_output_schema",
+    "severity": "low",
+    "file_locations": [
+      {
+        "file": "AutoGen_IterativeCoding-main/README.md",
+        "line_or_function": "Expected output description",
+        "evidence": "The README describes review files as comments_vn.txt."
+      },
+      {
+        "file": "AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line_or_function": "write_latest_iteration_comments, lines 148-158",
+        "evidence": "The implementation writes comments_vN.log, not comments_vN.txt."
+      }
+    ],
+    "expected_behavior": "The review artifact extension should match the documented output schema.",
+    "actual_behavior_or_static_risk": "Consumers or tests that follow the README and look for comments_vN.txt will miss the generated review artifact.",
+    "minimal_trigger_case": {
+      "user_input": "Run one iteration for any valid project.",
+      "expected_trace": "reviewer feedback is persisted at comments_v1.txt per README.",
+      "failure_observation": "comments_v1.log is created and comments_v1.txt is absent."
+    },
+    "why_not_model_fault": "The filename is hardcoded in application code.",
+    "fix_suggestion": "Either write comments_vN.txt or update every documented and downstream reference to the .log extension."
+  },
+  {
+    "system": "system_1",
+    "defect_id": "GT-S1-004",
+    "layer": "application",
+    "defect_type": "input_validation_error",
+    "severity": "high",
+    "file_locations": [
+      {
+        "file": "AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line_or_function": "run, lines 232-247",
+        "evidence": "The project path is built by string concatenation from raw input: self.project_dir + self.project_name + '/'. No normalization or rejection of path separators is performed."
+      }
+    ],
+    "expected_behavior": "Project names should be constrained to safe directory names under IterCode_Projects.",
+    "actual_behavior_or_static_risk": "A project name such as ../escaped_project can create or read files outside the intended project root.",
+    "minimal_trigger_case": {
+      "user_input": "At the project-name prompt, enter ../escaped_project.",
+      "expected_trace": "system rejects the project name before creating directories.",
+      "failure_observation": "the working directory resolves outside IterCode_Projects and the system may write MasterPlan.txt and script_vN.py there."
+    },
+    "why_not_model_fault": "The unsafe path is derived from direct user input before any LLM reasoning is involved.",
+    "fix_suggestion": "Resolve the final path, ensure it is inside the configured project root, and reject names containing path separators, parent-directory components, or absolute paths."
+  },
+  {
+    "system": "system_2",
+    "defect_id": "GT-S2-001",
+    "layer": "framework",
+    "defect_type": "human_input_blocking",
+    "severity": "high",
+    "file_locations": [
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "user_proxy definition, lines 143-147",
+        "evidence": "UserProxyAgent is configured with human_input_mode='ALWAYS' and max_consecutive_auto_reply=1 in a fixed-script workflow."
+      },
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "chat launch, lines 198-200",
+        "evidence": "The script immediately starts a group chat from user_proxy, so unattended runs will reach a human input request instead of completing automatically."
+      }
+    ],
+    "expected_behavior": "The research workflow should run without interactive input when launched as a script or under an automated evaluator.",
+    "actual_behavior_or_static_risk": "The run can block waiting for human input after one auto reply, causing timeouts and incomplete traces.",
+    "minimal_trigger_case": {
+      "user_input": "Run python app.py without a terminal operator answering prompts.",
+      "expected_trace": "researcher searches and scrapes, director reads Airtable, director updates Airtable, chat terminates.",
+      "failure_observation": "a human_input_requested event appears and the process stalls or exits without completing the workflow."
+    },
+    "why_not_model_fault": "The blocking behavior is fixed by the UserProxyAgent configuration, independent of LLM response quality.",
+    "fix_suggestion": "Use human_input_mode='NEVER' for automated mode, or add a CLI flag that switches between interactive and unattended user proxy settings."
+  },
+  {
+    "system": "system_2",
+    "defect_id": "GT-S2-002",
+    "layer": "application",
+    "defect_type": "tool_semantics_error",
+    "severity": "high",
+    "file_locations": [
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "message, lines 198-200",
+        "evidence": "The task includes a full Airtable URL containing base, table, and view identifiers."
+      },
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "get_airtable_records, lines 105-115",
+        "evidence": "The function accepts only base_id and table_id, ignores the view id, and returns only the first API page. Airtable list records is paginated."
+      }
+    ],
+    "expected_behavior": "When the user supplies an Airtable view URL, the director should read exactly that view and retrieve all records, including records beyond the first page.",
+    "actual_behavior_or_static_risk": "The director may process the wrong record set and silently skip records after the first page.",
+    "minimal_trigger_case": {
+      "user_input": "Use an Airtable view containing 101 companies or a filtered view that excludes some table records.",
+      "expected_trace": "get_airtable_records includes the view parameter and follows offset pagination until all view records are retrieved.",
+      "failure_observation": "only the first page or unfiltered table records are returned and updated."
+    },
+    "why_not_model_fault": "The tool API surface lacks view and pagination support. Even a perfect director cannot retrieve data the function does not expose.",
+    "fix_suggestion": "Parse base, table, and view from Airtable URLs, pass view to the API, and loop on offset until exhausted."
+  },
+  {
+    "system": "system_2",
+    "defect_id": "GT-S2-003",
+    "layer": "application",
+    "defect_type": "tool_error_handling_missing",
+    "severity": "medium",
+    "file_locations": [
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "google_search, lines 26-40",
+        "evidence": "The function returns response.text without checking status code or normalizing API errors."
+      },
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "web_scraping, lines 68-102",
+        "evidence": "On non-200 Browserless responses, the function prints an error and returns None, which is not a structured tool result."
+      },
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "get_airtable_records and update_single_airtable_record, lines 105-137",
+        "evidence": "Airtable reads and writes return raw JSON without checking HTTP status or surfacing actionable failure state."
+      }
+    ],
+    "expected_behavior": "Tool failures should return structured errors that agents can handle or should raise controlled exceptions that the runner records.",
+    "actual_behavior_or_static_risk": "HTTP failures can be mistaken for valid data, return None into an LLM context, or fail later with ambiguous runtime errors.",
+    "minimal_trigger_case": {
+      "user_input": "Run the workflow with an invalid SERPER_API_KEY or Browserless token.",
+      "expected_trace": "tool result records a structured authentication error and the agent follows an error path.",
+      "failure_observation": "raw API error text or None is passed downstream, often followed by vague runtime failure or hallucinated continuation."
+    },
+    "why_not_model_fault": "The tool wrappers do not define or enforce an error contract before LLM consumption.",
+    "fix_suggestion": "Check status codes, catch request exceptions, return typed success/error payloads, and require agents to stop or retry on error payloads."
+  },
+  {
+    "system": "system_2",
+    "defect_id": "GT-S2-004",
+    "layer": "framework",
+    "defect_type": "wrong_routing",
+    "severity": "high",
+    "file_locations": [
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "GroupChat configuration, lines 193-194",
+        "evidence": "The group chat uses the default automatic speaker selection over user_proxy, researcher, research_manager, and director. No allowed speaker transitions or deterministic workflow are configured."
+      },
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "agent role definitions, lines 150-189",
+        "evidence": "Research tools are attached to researcher, Airtable tools to director, and research_manager has a coordination role, but the manager has no routing constraints that force the intended order."
+      }
+    ],
+    "expected_behavior": "The workflow should route user task to director for Airtable records, researcher for searches and scraping, then director for updates, with research_manager coordinating only when useful.",
+    "actual_behavior_or_static_risk": "Default speaker selection can loop, choose empty or invalid next speakers, or skip the agent that owns the required tool.",
+    "minimal_trigger_case": {
+      "user_input": "Find websites for all companies in the configured Airtable view and update their Website field.",
+      "expected_trace": "director get_airtable_records -> researcher google_search/web_scraping per company -> director update_single_airtable_record -> terminate.",
+      "failure_observation": "speaker-selection assistant emits repeated or invalid choices, no required tool chain completes, and the run times out or asks for human input."
+    },
+    "why_not_model_fault": "The framework is asked to infer a multi-step routing policy from broad role prompts without transition constraints. The failure is induced by group chat configuration.",
+    "fix_suggestion": "Use an explicit speaker_selection_method or allowed transitions that encode director -> researcher -> director, and terminate after all records are updated or an unrecoverable tool error occurs."
+  },
+  {
+    "system": "system_2",
+    "defect_id": "GT-S2-005",
+    "layer": "framework",
+    "defect_type": "termination_error",
+    "severity": "medium",
+    "file_locations": [
+      {
+        "file": "research-agents-3.0-main/app.py",
+        "line_or_function": "GroupChat configuration, line 193",
+        "evidence": "max_round is fixed at 15 for a task whose required number of tool calls scales with the number of Airtable records."
+      }
+    ],
+    "expected_behavior": "The round budget or termination condition should scale with the number of records, or the workflow should batch work in tool code.",
+    "actual_behavior_or_static_risk": "A valid Airtable view with several companies can exceed 15 rounds before all search, scrape, and update actions complete.",
+    "minimal_trigger_case": {
+      "user_input": "Use an Airtable view with five companies requiring separate website searches.",
+      "expected_trace": "all five records are searched and updated before termination.",
+      "failure_observation": "chat terminates or stalls before all records are processed because the conversation budget is exhausted."
+    },
+    "why_not_model_fault": "The maximum round count is a static framework limit unrelated to answer intelligence.",
+    "fix_suggestion": "Compute a budget from record count, batch the record loop in one executable tool, or use a stateful termination condition tied to update completion."
+  },
+  {
+    "system": "system_3",
+    "defect_id": "GT-S3-001",
+    "layer": "framework",
+    "defect_type": "message_passing_error",
+    "severity": "high",
+    "file_locations": [
+      {
+        "file": "autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line_or_function": "conduct_analysis, lines 292-313",
+        "evidence": "The orchestrator passes data_analyst.last_message()['content'], financial_analyst.last_message()['content'], and risk_analyst.last_message()['content'] to downstream agents after user_proxy-initiated chats. In AutoGen, the agent's last_message can be the user_proxy's TERMINATE message rather than the assistant's analysis."
+      }
+    ],
+    "expected_behavior": "Financial analyst and risk analyst should receive the actual data analyst analysis and structured metrics. Investment advisor should receive the actual financial and risk analysis outputs.",
+    "actual_behavior_or_static_risk": "Downstream agents can receive only 'TERMINATE' as prior analysis, causing investment advice to claim that data is missing even though collection and earlier analysis succeeded.",
+    "minimal_trigger_case": {
+      "user_input": "python simple_autogen/main.py analyze AAPL --output report.json",
+      "expected_trace": "data_analyst substantive message -> financial_analyst receives that content -> risk_analyst receives that content -> investment_advisor receives substantive financial and risk reports.",
+      "failure_observation": "financial_analyst or risk_analyst prompt contains 'Data analysis results: TERMINATE', and investment_advisor prompt contains 'Financial analysis: TERMINATE' or 'Risk assessment: TERMINATE'."
+    },
+    "why_not_model_fault": "The wrong content is selected by deterministic orchestration code after the chat, before downstream LLM reasoning.",
+    "fix_suggestion": "Read the last assistant message from user_proxy.chat_messages[target_agent] by role/name, or store each agent's substantive response before the termination exchange."
+  },
+  {
+    "system": "system_3",
+    "defect_id": "GT-S3-002",
+    "layer": "application",
+    "defect_type": "data_processing_error",
+    "severity": "medium",
+    "file_locations": [
+      {
+        "file": "autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line_or_function": "calculate_financial_metrics, lines 111-142",
+        "evidence": "The function reads multiple financial statement rows with direct .loc lookups inside one try block. If any row is missing, the catch block logs an error and returns all zero metrics."
+      }
+    ],
+    "expected_behavior": "Missing individual financial rows should affect only the metrics that depend on those rows, while available metrics should still be computed.",
+    "actual_behavior_or_static_risk": "One missing row can zero revenue, profit margin, debt ratio, and other metrics even when most required data is present.",
+    "minimal_trigger_case": {
+      "user_input": "Analyze a ticker whose Yahoo financials omit Total Debt but include Total Revenue and Net Income.",
+      "expected_trace": "revenue and profit_margin are computed; debt_ratio is marked unavailable.",
+      "failure_observation": "all financial metrics are returned as 0.0 after a single KeyError."
+    },
+    "why_not_model_fault": "The zeroing behavior happens in Python data processing before any agent receives the metrics.",
+    "fix_suggestion": "Use safe per-field extraction helpers and compute each metric independently with unavailable/null markers instead of an all-or-nothing catch."
+  },
+  {
+    "system": "system_3",
+    "defect_id": "GT-S3-003",
+    "layer": "application",
+    "defect_type": "data_processing_error",
+    "severity": "medium",
+    "file_locations": [
+      {
+        "file": "autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line_or_function": "calculate_risk_metrics, lines 166-173",
+        "evidence": "var_95 and max_drawdown are returned as negative values. The repository's student_autogen_system.py computes the same risk measures as positive magnitudes, which better matches report semantics."
+      }
+    ],
+    "expected_behavior": "VaR and maximum drawdown should be reported consistently as risk magnitudes or clearly labeled signed returns.",
+    "actual_behavior_or_static_risk": "Reports can display negative VaR and negative max drawdown, which is ambiguous and can invert downstream risk comparisons.",
+    "minimal_trigger_case": {
+      "user_input": "Analyze any ticker with a non-empty price history.",
+      "expected_trace": "risk metrics include positive magnitude values for VaR 95 and maximum drawdown.",
+      "failure_observation": "risk metrics contain negative var_95 and negative max_drawdown."
+    },
+    "why_not_model_fault": "The sign convention is determined by numeric code, not by agent reasoning.",
+    "fix_suggestion": "Return abs(np.percentile(returns, 5)) and abs(drawdown.min()), or rename fields and report text to make signed semantics explicit."
+  },
+  {
+    "system": "system_3",
+    "defect_id": "GT-S3-004",
+    "layer": "application",
+    "defect_type": "documented_entrypoint_broken",
+    "severity": "high",
+    "file_locations": [
+      {
+        "file": "autogen-financial-analysis-main/README.md",
+        "line_or_function": "usage examples, lines 73-84",
+        "evidence": "The README documents python -m src.main analyze AAPL as the primary entrypoint."
+      },
+      {
+        "file": "autogen-financial-analysis-main/src/main.py",
+        "line_or_function": "imports and initialization, lines 18-23 and 99-115",
+        "evidence": "src.main imports AdvancedRiskAnalyzer, but src/risk/risk_analyzer.py defines RiskAnalyzer. It also constructs EnterpriseDataCollector with api_keys and redis_url although its constructor expects config_manager and cache_manager."
+      },
+      {
+        "file": "autogen-financial-analysis-main/src/main.py",
+        "line_or_function": "analyze_company, lines 156-165",
+        "evidence": "The main workflow calls collect_comprehensive_data, calculate_comprehensive_metrics, and calculate_comprehensive_risk_metrics, but the inspected modules expose collect_data, analyze_financial_data, and RiskAnalyzer methods instead."
+      }
+    ],
+    "expected_behavior": "The documented enterprise entrypoint should import successfully and execute the documented analyze workflow.",
+    "actual_behavior_or_static_risk": "The documented command fails at import or initialization because class and method names do not match the implemented modules.",
+    "minimal_trigger_case": {
+      "user_input": "python -m src.main analyze AAPL from autogen-financial-analysis-main",
+      "expected_trace": "system initializes data collector, financial analyzer, risk analyzer, agents, and produces an analysis report.",
+      "failure_observation": "ImportError for AdvancedRiskAnalyzer, constructor mismatch, or AttributeError for nonexistent comprehensive methods."
+    },
+    "why_not_model_fault": "The command fails before any LLM reasoning can produce output.",
+    "fix_suggestion": "Align README, imports, constructors, and method calls with the implemented classes, or make simple_autogen the documented entrypoint and remove broken enterprise commands."
+  },
+  {
+    "system": "system_3",
+    "defect_id": "GT-S3-005",
+    "layer": "application",
+    "defect_type": "missing_feature",
+    "severity": "medium",
+    "file_locations": [
+      {
+        "file": "autogen-financial-analysis-main/README.md",
+        "line_or_function": "CLI usage, lines 73-84 and 99-144",
+        "evidence": "The README documents portfolio and interactive commands."
+      },
+      {
+        "file": "autogen-financial-analysis-main/src/main.py",
+        "line_or_function": "argument parser, lines 797-936",
+        "evidence": "The parser defines analyze, backtest, optimize, report, config, and monitor, but not portfolio or interactive."
+      },
+      {
+        "file": "autogen-financial-analysis-main/src/main.py",
+        "line_or_function": "main command dispatch, lines 981-998",
+        "evidence": "The dispatcher contains portfolio and interactive branches that are unreachable because the parser never creates those subcommands."
+      }
+    ],
+    "expected_behavior": "Documented CLI commands should be accepted by the parser and routed to their dispatch branches.",
+    "actual_behavior_or_static_risk": "python -m src.main portfolio ... and python -m src.main interactive are rejected as invalid commands.",
+    "minimal_trigger_case": {
+      "user_input": "python -m src.main interactive",
+      "expected_trace": "interactive mode starts or reports a controlled configuration error.",
+      "failure_observation": "argparse rejects interactive as an invalid choice."
+    },
+    "why_not_model_fault": "The missing commands are parser configuration defects.",
+    "fix_suggestion": "Add portfolio and interactive subparsers or remove the documented and dispatcher branches."
+  },
+  {
+    "system": "system_3",
+    "defect_id": "GT-S3-006",
+    "layer": "framework",
+    "defect_type": "agent_orchestration_missing",
+    "severity": "high",
+    "file_locations": [
+      {
+        "file": "autogen-financial-analysis-main/README.md",
+        "line_or_function": "AutoGen multi-agent description",
+        "evidence": "The project is presented as an AutoGen multi-agent financial analysis system."
+      },
+      {
+        "file": "autogen-financial-analysis-main/src/main.py",
+        "line_or_function": "initialize, lines 112-115",
+        "evidence": "FinancialAgentFactory is instantiated but no agents are created from it. AgentOrchestrator is constructed with an empty dictionary."
+      },
+      {
+        "file": "autogen-financial-analysis-main/src/main.py",
+        "line_or_function": "analyze_company, lines 156-177",
+        "evidence": "The enterprise analyze path directly calls data, financial, and risk modules, then generates a report. It does not execute the documented AutoGen agent collaboration."
+      }
+    ],
+    "expected_behavior": "The enterprise workflow should create and run the financial analysis agents or clearly document itself as a non-agent pipeline.",
+    "actual_behavior_or_static_risk": "The claimed multi-agent workflow is absent from the documented enterprise entrypoint, and the orchestrator has no agents to route messages to.",
+    "minimal_trigger_case": {
+      "user_input": "python -m src.main analyze AAPL after fixing import mismatches.",
+      "expected_trace": "AutoGen agents are created and exchange messages for data, financial, risk, and recommendation stages.",
+      "failure_observation": "no AutoGen agent messages occur in the enterprise path; AgentOrchestrator contains no agents."
+    },
+    "why_not_model_fault": "The agent factory and orchestrator are not wired into the workflow in Python code.",
+    "fix_suggestion": "Create the required agents from FinancialAgentFactory, pass them into AgentOrchestrator, and route analyze_company through the orchestrator, or change project documentation and tests to match a non-agent pipeline."
+  }
+]

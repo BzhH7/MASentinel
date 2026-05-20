@@ -53,27 +53,12 @@
     {
       "id": "R1",
       "type": "requirement",
-      "description": "The multi-agent workflow must route a user task through the declared agents (user_proxy, researcher, research_manager, director) and terminate within the configured max_turns or upon receiving a TERMINATE signal."
+      "description": "The multi-agent workflow must route user tasks through declared agents (user_proxy, researcher, research_manager, director) and terminate reliably when a TERMINATE message is issued or max_round=15 is reached."
     },
     {
       "id": "R2",
       "type": "requirement",
-      "description": "Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return usable results or handled errors."
-    },
-    {
-      "id": "R3",
-      "type": "requirement",
-      "description": "The researcher agent must be able to invoke web_scraping and google_search tools to gather16 information, and16 the director agent must be able to invoke get_airtable_records and update_single_airtable_record to manage Airtable data."
-    },
-    {
-      "id": "R4",
-      "type": "requirement",
-      "description": "The group chat manager must coordinate the conversation among agents, allowing any agent to send messages to any other agent as per the group chat configuration."
-    },
-    {
-      "id": "R5",
-      "type": "requirement",
-      "description": "The system must handle termination conditions correctly, including explicit TERMINATE messages and max_turns limit, without hanging or crashing."
+      "description": "Registered tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) must be callable with valid arguments and return results or handle errors gracefully without crashing the agent workflow."
     }
   ],
   "edges": [
@@ -119,6 +104,16 @@
     },
     {
       "source": "R2",
+      "target": "researcher",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "director",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
       "target": "web_scraping",
       "type": "requires_tool"
     },
@@ -136,86 +131,6 @@
       "source": "R2",
       "target": "update_single_airtable_record",
       "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "researcher",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "director",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "web_scraping",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "google_search",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "get_airtable_records",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "update_single_airtable_record",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R4",
-      "target": "group_chat_manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R4",
-      "target": "user_proxy",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R4",
-      "target": "researcher",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R4",
-      "target": "research_manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R4",
-      "target": "director",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R5",
-      "target": "user_proxy",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R5",
-      "target": "researcher",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R5",
-      "target": "research_manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R5",
-      "target": "director",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R5",
-      "target": "group_chat_manager",
-      "type": "requires_agent"
     },
     {
       "source": "director",

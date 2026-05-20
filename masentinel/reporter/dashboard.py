@@ -41,6 +41,10 @@ def write_dashboard(out_dir: str | Path, summary: dict[str, Any]) -> None:
             "Faults": summary.get("faults", 0),
             "Root Groups": summary.get("fault_groups", 0),
             "MASCov": _format_metric(coverage.get("mascov")),
+            "ContractCov": _format_metric(coverage.get("contract_coverage")),
+            "Eff Workflow": _format_metric(coverage.get("effective_workflow_rate")),
+            "Trace Complete": _format_metric(coverage.get("trace_completeness")),
+            "Evidence Rate": _format_metric(coverage.get("root_cause_evidence_rate")),
             "Fallback Calls": (summary.get("agentic", {}) or {}).get("fallback_calls", 0),
         }.items()
     )

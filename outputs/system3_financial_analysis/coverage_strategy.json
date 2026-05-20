@@ -2,124 +2,15 @@
   "coverage_gaps": [
     {
       "gap_type": "missing_tool_coverage",
-      "target": "data_collector",
-      "suggested_test_intent": "Register a yfinance tool for data_collector and verify it is called when collecting stock data."
+      "target": "Tool registration or call for external data collection (yfinance)",
+      "suggested_test_intent": "Register a tool (e.g., 'fetch_stock_data') to wire external data access, then execute a minimal task requiring that tool, verifying that the tool is registered, called, and returns data without crash or silent fallback."
     },
     {
       "gap_type": "missing_tool_coverage",
-      "target": "enterprise_data_collector",
-      "suggested_test_intent": "Register a multi-source data integration tool (e.g., yfinance, alpha_vantage) for enterprise_data_collector and verify it is called for data collection."
-    },
-    {
-      "gap_type": "missing_tool_coverage",
-      "target": "enterprise_quantitative_analyst",
-      "suggested_test_intent": "Register a quantitative analysis tool (e.g., factor model, portfolio optimizer) for enterprise_quantitative_analyst and verify it is called for quantitative analysis tasks."
-    },
-    {
-      "gap_type": "missing_tool_coverage",
-      "target": "enterprise_risk_analyst",
-      "suggested_test_intent": "Register a risk analysis tool (e.g., VaR calculator, stress tester) for enterprise_risk_analyst and verify it is called for risk assessment tasks."
-    },
-    {
-      "gap_type": "missing_tool_coverage",
-      "target": "enterprise_portfolio_manager",
-      "suggested_test_intent": "Register a portfolio optimization tool for enterprise_portfolio_manager and verify it is called for portfolio management tasks."
-    },
-    {
-      "gap_type": "missing_tool_coverage",
-      "target": "enterprise_financial_analyst",
-      "suggested_test_intent": "Register a financial analysis tool (e.g., ratio calculator, DCF model) for enterprise_financial_analyst and verify it is called for financial analysis tasks."
-    },
-    {
-      "gap_type": "missing_tool_coverage",
-      "target": "enterprise_compliance_officer",
-      "suggested_test_intent": "Register a compliance checking tool for enterprise_compliance_officer and verify it is called for compliance tasks."
-    },
-    {
-      "gap_type": "missing_tool_coverage",
-      "target": "report_generator",
-      "suggested_test_intent": "Register a report generation tool (e.g., PDF/HTML formatter) for report_generator and verify it is called for report generation tasks."
+      "target": "Investment advisor synthesis tool or validation logic",
+      "suggested_test_intent": "Add a tool to validate or format investment_advisor inputs, then run a task with conflicting inputs and assert that the tool is invoked and produces a diagnostic fallback instead of hallucinating advice."
     }
   ],
-  "new_test_requests": [
-    {
-      "case_id": "system3_financial_analysis_TOOLREG_001",
-      "system_id": "system3_financial_analysis",
-      "case_type": "coverage_guided",
-      "objective": "Verify that data_collector can use a registered yfinance tool to collect stock data.",
-      "input": "Collect historical price data for AAPL from Yahoo Finance.",
-      "input_sequence": [],
-      "target_requirements": [
-        "R2"
-      ],
-      "target_agents": [
-        "data_collector"
-      ],
-      "target_tools": [
-        "yfinance_tool"
-      ],
-      "target_edges": [],
-      "oracle": {
-        "must_terminate": true,
-        "max_turns": 10,
-        "must_not_crash": true,
-        "must_visit_agents": [
-          "data_collector"
-        ],
-        "must_call_tools": [
-          "yfinance_tool"
-        ],
-        "must_cover_edges": [],
-        "must_not_call_tools": [],
-        "must_not_fabricate_tool_result": false,
-        "output_contract": null,
-        "expected_keywords": []
-      },
-      "fault_injection": null,
-      "metadata": {
-        "gap_aware": true,
-        "note": "Requires registering a yfinance tool for data_collector before execution."
-      }
-    },
-    {
-      "case_id": "system3_financial_analysis_TOOLREG_002",
-      "system_id": "system3_financial_analysis",
-      "case_type": "coverage_guided",
-      "objective": "Verify that enterprise_quantitative_analyst can use a registered factor model tool for quantitative analysis.",
-      "input": "Perform a factor analysis on AAPL using the Fama-French three-factor model.",
-      "input_sequence": [],
-      "target_requirements": [
-        "R4"
-      ],
-      "target_agents": [
-        "enterprise_quantitative_analyst"
-      ],
-      "target_tools": [
-        "factor_model_tool"
-      ],
-      "target_edges": [],
-      "oracle": {
-        "must_terminate": true,
-        "max_turns": 10,
-        "must_not_crash": true,
-        "must_visit_agents": [
-          "enterprise_quantitative_analyst"
-        ],
-        "must_call_tools": [
-          "factor_model_tool"
-        ],
-        "must_cover_edges": [],
-        "must_not_call_tools": [],
-        "must_not_fabricate_tool_result": false,
-        "output_contract": null,
-        "expected_keywords": []
-      },
-      "fault_injection": null,
-      "metadata": {
-        "gap_aware": true,
-        "note": "Requires registering a factor model tool for enterprise_quantitative_analyst before execution."
-      }
-    }
-  ],
-  "confidence": 0.9
+  "new_test_requests": [],
+  "confidence": 0.85
 }

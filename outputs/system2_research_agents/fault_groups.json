@@ -1,43 +1,116 @@
 [
   {
-    "group_id": "generic:autogen_framework-message-routing-error-the-collected-trace-does-not-contain-a-direct-director--research_manager-message",
-    "title": "Message Routing Error",
-    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "group_id": "generic:application-tool-api-pagination-missing-the-external-api-tool-wrapper-get_airtable_records-and-update_single_airtable_re",
+    "title": "Tool API Pagination Missing",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
     "fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_005"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system2_research_agents_COV_002"
+      "system2_research_agents_TOOLAPI_001"
     ],
     "failure_codes": [
-      "MISSING_MESSAGE_EDGE"
-    ],
-    "severity": "medium",
-    "confidence": 0.2,
-    "root_cause": "The collected trace does not contain a direct director->research_manager message. The test passed (no crash, terminated), but the required edge was not observed. This is likely because the director agent chose not to send a  message to research_manager in this run, or the  model's response did not trigger that pathospan. There is no indication of a framework routing failure.",
-    "suggested_fix": "This is a likely false positive for a software fault. To improve coverage, consider adding a more specific prompt that forces director to delegate to research_manager, or adjust the test oracle to accept indirect communication via chat_manager. If a direct edge is required, review the agent configuration and  model instructions to ensure the director is prompted to send a message to research_manager.",
-    "summary": "Expected message edge was not observed: director->research_manager"
-  },
-  {
-    "group_id": "interaction:human-input-or-approval",
-    "title": "Unattended run blocked by human input or approval",
-    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
-    "fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_001"
-    ],
-    "symptom_fault_ids": [],
-    "affected_cases": [
-      "system2_research_agents_COV_001"
-    ],
-    "failure_codes": [
-      "HUMAN_INPUT_REQUESTED"
+      "PAGINATION_NOT_FOLLOWED"
     ],
     "severity": "high",
     "confidence": 0.9,
-    "root_cause": "The AutoGen framework's human_input_mode was not set to 'NEVER' for the automated test run, causing the system to block and wait for human input, which led to a timeout.",
-    "suggested_fix": "In the test harness or agent configuration, explicitly set human_input_mode='NEVER' for all agents involved in automated execution. Ensure no blocking input() calls are present in the execution path. For example, in the GroupChat or agent initialization, set the parameter human_input_mode='NEVER'.",
-    "summary": "The target system requested human input during an automated no-human run."
+    "root_cause": "The external API tool wrapper (get_airtable_records and update_single_airtable_record in app.py) does not properly follow offset pagination or preserve semantic parameters (e.g., view, base, table) when making requests. The tool makes a single API call and does not iterate through all pages to retrieve the complete dataset, failing to satisfy the pagination_followed contract requirement.",
+    "suggested_fix": "Modify the get_airtable_records function in app.py to: (1) Parse and preserve semantic URL parameters such as view/base/table from the request. (2) Implement a loop that follows offset-based pagination, checking for continuation tokens or next page URLs until all pages are retrieved. (3) Aggregate all records from all pages into a single response. (4) Handle rate limits and error responses gracefully.",
+    "summary": "External API pagination stopped before all fixture pages were requested."
+  },
+  {
+    "group_id": "generic:application-tool-error-contract-missing-the-web_scraping-tool-wrapper-does-not-inspect-http-status-codes-and-does-not-wr",
+    "title": "Tool Error Contract Missing",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_006"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_TOOLERR_001"
+    ],
+    "failure_codes": [
+      "HTTP_STATUS_NOT_CHECKED"
+    ],
+    "severity": "medium",
+    "confidence": 0.88,
+    "root_cause": "The web_scraping tool wrapper does not inspect HTTP status codes and does not wrap API errors into a structured typed error envelope (e.g., containing status code, error message, and tool call ID). Instead, it likely returns raw text or None on failure, violating the contract expected by the system's error handling and trace diagnostics.",
+    "suggested_fix": "Modify the web_scraping tool wrapper to check HTTP response status codes. On non-2xx responses, construct and return a structured error dictionary (e.g., {\"error\": True, \"status_code\": 401, \"detail\": \"invalid key\"}) and ensure this error is propagated through the tool result and logged in the MAS_TRACE envelope. This should be implemented in the application-layer tool definition code (e.g., in the function registered for web_scraping).",
+    "summary": "HTTP failure status was not captured in the trace envelope."
+  },
+  {
+    "group_id": "generic:application-tool-schema-mismatch-the-external-api-tool-wrapper-get_airtable_records-update_single_airtable_record-does-n",
+    "title": "Tool Schema Mismatch",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_004"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_TOOLAPI_001"
+    ],
+    "failure_codes": [
+      "VIEW_PARAMETER_IGNORED"
+    ],
+    "severity": "high",
+    "confidence": 0.9,
+    "root_cause": "The external API tool wrapper (get_airtable_records / update_single_airtable_record) does not extract and forward semantic query parameters (like 'view') and does not implement pagination handling. Consequently, the API call omits required filters, returns incomplete/invalid responses, and fails to iterate through paginated results, causing execution errors and timeout.",
+    "suggested_fix": "Modify get_airtable_records and update_single_airtable_record in app.py to: 1) parse and pass semantic fields such as view/base/table into the API request; 2) follow offset-based pagination by iterating until all records are fetched (e.g., checking for 'offset' in responses and issuing subsequent requests); 3) ensure structured error handling for non-200 responses or missing parameters.",
+    "summary": "External API request did not preserve documented semantic query parameters."
+  },
+  {
+    "group_id": "interaction:speaker-selection-loop",
+    "title": "GroupChat speaker selection loop",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
+    ],
+    "symptom_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
+    ],
+    "affected_cases": [
+      "system2_research_agents_ARTIFACT_001",
+      "system2_research_agents_BUDGET_001",
+      "system2_research_agents_COV_001",
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_003",
+      "system2_research_agents_COV_004",
+      "system2_research_agents_COV_005",
+      "system2_research_agents_COV_006",
+      "system2_research_agents_COV_007",
+      "system2_research_agents_DATAINV_001",
+      "system2_research_agents_FUZZ_001",
+      "system2_research_agents_HANDOFF_001",
+      "system2_research_agents_META_001",
+      "system2_research_agents_NOHUMAN_001",
+      "system2_research_agents_OUTCONTRACT_001",
+      "system2_research_agents_PROP_001",
+      "system2_research_agents_REG_001",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_002",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_SMOKE_001",
+      "system2_research_agents_SPEAKER_001",
+      "system2_research_agents_TOOLAPI_001",
+      "system2_research_agents_TOOLCONTRACT_001",
+      "system2_research_agents_TOOLCONTRACT_002",
+      "system2_research_agents_TOOLCONTRACT_003",
+      "system2_research_agents_TOOLCONTRACT_004",
+      "system2_research_agents_TOOLERR_001",
+      "system2_research_agents_TOOLFUZZ_001",
+      "system2_research_agents_WIRING_001"
+    ],
+    "failure_codes": [
+      "MISSING_TOOL_CALL",
+      "SPEAKER_SELECTION_LOOP"
+    ],
+    "severity": "high",
+    "confidence": 0.86,
+    "root_cause": "The AutoGen GroupChat manager's speaker selection mechanism failed to terminate the conversation after task completion. Instead, it continued to invoke the speaker selection agent repeatedly, eventually causing a timeout. The speaker selection prompt or response handling did not properly detect the termination condition, or the 'TERMINATE' keyword was not recognized, leading to a loop.",
+    "suggested_fix": "Harden GroupChat speaker selection logic: 1) Implement explicit termination detection when the conversation indicates task completion (e.g., check for 'Task complete' or final answer). 2) Normalize speaker names and filter invalid selections. 3) Cap the number of consecutive speaker selection retries without progress. 4) Ensure that the GroupChat manager correctly handles a 'TERMINATE' response from the speaker selection agent. 5) Review and update the speaker selection agent's prompt to recognize end-of-task signals.",
+    "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses."
   },
   {
     "group_id": "interaction:timeout-or-non-termination",
@@ -48,41 +121,25 @@
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system2_research_agents_COV_001",
-      "system2_research_agents_COV_003",
-      "system2_research_agents_META_001",
-      "system2_research_agents_REG_001",
-      "system2_research_agents_REQ_004",
-      "system2_research_agents_TOOLFUZZ_001",
-      "system2_research_agents_TOOLFUZZ_002"
+      "system2_research_agents_ARTIFACT_001",
+      "system2_research_agents_BUDGET_001",
+      "system2_research_agents_COV_002",
+      "system2_research_agents_COV_004",
+      "system2_research_agents_COV_007",
+      "system2_research_agents_FUZZ_001",
+      "system2_research_agents_HANDOFF_001",
+      "system2_research_agents_OUTCONTRACT_001",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_SPEAKER_001",
+      "system2_research_agents_TOOLAPI_001"
     ],
     "failure_codes": [
       "TIMEOUT"
     ],
     "severity": "high",
-    "confidence": 0.9,
-    "root_cause": "The speaker selection agent (speaker_selection_agent) is repeatedly returning empty responses without selecting a valid speaker from the allowed list. The checking_agent then re-prompts with the same instructions, creating an infinite loop. This is a framework-level issue because the speaker selection mechanism (likely a custom AutoGen speaker selection function or agent) does not handle the case where the model returns an empty or invalid response, and there is no fallback or max retry limit to break the cycle.",
-    "suggested_fix": "1. Add a max retry limit in the speaker selection logic (e.g., after 3 empty responses, default to 'user_proxy' or 'director'). 2. Implement a fallback speaker selection rule when the model response is empty or invalid. 3. Ensure the speaker selection agent's prompt or configuration forces a valid output (e.g., using function calling or structured output). 4. Add a global max_turns/max_round parameter in the GroupChat configuration to force termination even if speaker selection loops.",
+    "confidence": 0.82,
+    "root_cause": "The conversation lacks a reliable termination condition: the speaker selection agent keeps selecting next roles even after the task is complete, and there is no termination message or max-turn guard that stops the loop.",
+    "suggested_fix": "Add a termination message check (e.g., if 'Task complete' appears, set is_termination_msg=true), enforce a strict max_turns limit, and/or configure human_input_mode='NEVER' with a terminating condition to prevent infinite loops.",
     "summary": "The process exceeded the configured timeout."
-  },
-  {
-    "group_id": "runtime:the-speaker_selection_agent-s-response-is-not-properly-parsed.-the-agent-returns-response-director-instead-of-director-.",
-    "title": "Unhandled startup/runtime exception",
-    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
-    "fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_004"
-    ],
-    "symptom_fault_ids": [],
-    "affected_cases": [
-      "system2_research_agents_TOOLFUZZ_001"
-    ],
-    "failure_codes": [
-      "RUNTIME_EXCEPTION"
-    ],
-    "severity": "high",
-    "confidence": 0.9,
-    "root_cause": "The speaker_selection_agent's response is not properly parsed. The agent returns ' response director' instead of 'director'. The checking_agent's validation logic (exact string match against a list) fails to strip whitespace or handle the 'response' prefix, causing it to reject the valid speaker name and request a new selection indefinitely.",
-    "suggested_fix": "In the checking_agent's speaker validation logic (or the speaker_selection_agent's response processing), add string normalization: strip whitespaceantu and remove known prefixes like 'response' before performing the exact match. Alternatively, update the speaker_selection_agent's system prompt to strictly output only the speaker name with no extra characters.",
-    "summary": "The process ended with an unhandled runtime error."
   }
 ]

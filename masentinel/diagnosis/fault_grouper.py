@@ -10,9 +10,29 @@ CASCADE_FAILURE_CODES = {
     "MISSING_MESSAGE_EDGE",
     "METAMORPHIC_RELATION_VIOLATION",
     "OUTPUT_EMPTY",
+    "BUSINESS_TASK_FAILED",
+    "TIMEOUT",
+    "RUNTIME_EXCEPTION",
 }
 
-INTERACTION_FAILURE_CODES = {"TIMEOUT", "NON_TERMINATION", "HUMAN_INPUT_REQUESTED", "REPETITIVE_LOOP"}
+INTERACTION_FAILURE_CODES = {
+    "TIMEOUT",
+    "NON_TERMINATION",
+    "HUMAN_INPUT_REQUESTED",
+    "REPETITIVE_LOOP",
+    "TERMINATION_SIGNAL_IGNORED",
+}
+
+ROOT_PRIORITY_CODES = {
+    "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "MESSAGE_HANDOFF_EMPTY",
+    "SPEAKER_SELECTION_LOOP",
+    "HUMAN_INPUT_REQUESTED",
+    "TOOL_UNSTRUCTURED_ERROR",
+    "TOOL_RAW_HTTP_ERROR",
+    "TOOL_RETURNED_NONE",
+    "FILESYSTEM_ESCAPE",
+}
 
 SEVERITY_RANK = {"low": 1, "medium": 2, "high": 3, "critical": 4}
 
@@ -26,24 +46,31 @@ def annotate_fault_groups(faults: list[dict[str, Any]]) -> list[dict[str, Any]]:
             primary_group_by_case[case_id] = (group_id, str(primary_fault.get("fault_id", "")))
 
     first_seen: set[str] = set()
+    unattended_cases = _unattended_termination_cases(annotated)
     for fault in annotated:
         code = str(fault.get("failure_code", ""))
         cases = _affected_cases(fault)
         cascade_group = _matching_primary_group(cases, primary_group_by_case)
-        if code in CASCADE_FAILURE_CODES and cascade_group:
+        if code in CASCADE_FAILURE_CODES and cascade_group and code not in ROOT_PRIORITY_CODES:
             group_id, primary_id = cascade_group
-            fault.update(
-                {
-                    "root_cause_group_id": group_id,
-                    "root_cause_group_title": _group_title_for_id(group_id),
-                    "is_primary_fault": False,
-                    "cascades_from": primary_id,
-                    "classification_note": "Derived symptom: the target crashed before MASentinel could observe the expected agent/tool/message behavior.",
-                }
-            )
-            continue
-
-        if code in INTERACTION_FAILURE_CODES:
+            if primary_id == str(fault.get("fault_id", "")):
+                cascade_group = None
+            else:
+                fault.update(
+                    {
+                        "root_cause_group_id": group_id,
+                        "root_cause_group_title": _group_title_for_id(group_id),
+                        "is_primary_fault": False,
+                        "cascades_from": primary_id,
+                        "classification_note": "Derived symptom: the target failed before MASentinel could judge downstream agent/tool/message behavior.",
+                    }
+                )
+                continue
+        if code in INTERACTION_FAILURE_CODES and cases & unattended_cases:
+            group_id = "interaction:unattended-termination-guard-missing"
+        elif code in ROOT_PRIORITY_CODES:
+            group_id = _priority_group_id(fault)
+        elif code in INTERACTION_FAILURE_CODES:
             group_id = _interaction_group_id(fault)
         elif code == "RUNTIME_EXCEPTION":
             group_id = _runtime_group_id(fault)
@@ -105,7 +132,9 @@ def _blocking_failure_groups(faults: list[dict[str, Any]]) -> dict[str, dict[str
     groups: dict[str, dict[str, Any]] = {}
     for fault in faults:
         code = str(fault.get("failure_code", ""))
-        if code == "RUNTIME_EXCEPTION":
+        if code in ROOT_PRIORITY_CODES:
+            group_id = _priority_group_id(fault)
+        elif code == "RUNTIME_EXCEPTION":
             group_id = _runtime_group_id(fault)
         elif code in INTERACTION_FAILURE_CODES:
             group_id = _interaction_group_id(fault)
@@ -167,13 +196,38 @@ def _generic_group_id(fault: dict[str, Any]) -> str:
     )
 
 
+def _priority_group_id(fault: dict[str, Any]) -> str:
+    code = str(fault.get("failure_code", ""))
+    if code.startswith("MESSAGE_HANDOFF"):
+        return "handoff:terminate-empty-or-wrong-source"
+    if code == "SPEAKER_SELECTION_LOOP":
+        return "interaction:speaker-selection-loop"
+    if code == "HUMAN_INPUT_REQUESTED":
+        return "interaction:human-input-or-approval"
+    if code.startswith("TOOL_"):
+        return "tool:error-envelope-missing"
+    if code == "FILESYSTEM_ESCAPE":
+        return "filesystem:path-escape"
+    return _generic_group_id(fault)
+
+
 def _group_title_for_id(group_id: str, fault: dict[str, Any] | None = None) -> str:
     if group_id.startswith("runtime:"):
         return "Unhandled startup/runtime exception"
     if group_id == "interaction:human-input-or-approval":
         return "Unattended run blocked by human input or approval"
+    if group_id == "interaction:unattended-termination-guard-missing":
+        return "Unattended termination / approval guard missing"
     if group_id == "interaction:timeout-or-non-termination":
         return "Conversation timeout or missing termination guard"
+    if group_id == "interaction:speaker-selection-loop":
+        return "GroupChat speaker selection loop"
+    if group_id == "handoff:terminate-empty-or-wrong-source":
+        return "Message handoff forwarded empty or TERMINATE content"
+    if group_id == "tool:error-envelope-missing":
+        return "External tool error envelope missing"
+    if group_id == "filesystem:path-escape":
+        return "User-controlled path escaped configured root"
     if fault:
         return str(fault.get("fault_type") or fault.get("failure_code") or "Fault group")
     return "Fault group"
@@ -197,3 +251,31 @@ def _slug(value: str) -> str:
     normalized = re.sub(r"[^A-Za-z0-9_.:-]+", "-", value.strip())
     normalized = normalized.strip("-").lower()
     return normalized[:120] or "unknown"
+
+
+def _unattended_termination_cases(faults: list[dict[str, Any]]) -> set[str]:
+    cases: set[str] = set()
+    for fault in faults:
+        code = str(fault.get("failure_code", ""))
+        text = " ".join(
+            [
+                str(fault.get("summary", "")),
+                str(fault.get("root_cause", "")),
+                str(fault.get("fault_type", "")),
+                "\n".join(str(item) for item in fault.get("evidence", []) or []),
+            ]
+        ).lower()
+        if code == "HUMAN_INPUT_REQUESTED" or any(
+            marker in text
+            for marker in (
+                "anything else",
+                "waiting for human",
+                "manual input",
+                "human input",
+                "input requested",
+                "approval",
+                "selection:",
+            )
+        ):
+            cases.update(_affected_cases(fault))
+    return cases

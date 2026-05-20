@@ -1,46 +1,112 @@
 [
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
-    "case_id": "system1_iterative_coding_COV_001",
-    "suspected_false_positive": true,
+    "case_id": "system1_iterative_coding_DATAINV_001",
+    "suspected_false_positive": false,
     "audit": {
-      "audit_result": "likely_false_positive",
-      "reason": "Trace summary shows test case 'system1_iterative_coding_COV_001' terminated successfully with return code 0 and status 'passed'. The test completed all interactions naturally without crash or timeout. The oracle flagged a missing expected tool call 'write_settled_plan', but the trace only shows runtime method tool calls (write_latest_iteration_comments) and no evidence that this tool should have been invoked under these input conditions. The original fault report itself has low confidence (0.3) and is not marked as suspected false positive. The failure appears to be an oracle rule mismatch rather than an application or framework fault — the agent workflow may not require calling 'write_settled_plan' for this task sequence. The task involves writing a sort script with manager approval, and the planner-manager-reviewer workflow might legitimately conclude without invoking 'write_settled_plan' if the plan was never formally settled. This is a tool expectation error, not a software bug.",
-      "false_positive_risk": "high",
+      "audit_result": "confirmed_fault",
+      "reason": "Manager delivers only 'sounds good' to reviewer, omitting the required financial data. Reviewer never sees the missing Total Debt and cannot validate the invariant. This is a handoff plumbing defect: the last_message() or caller forwards a termination acknowledgment instead of the upstream analysis payload. The evidence includes concrete code locations, trace content showing the handoff lacks any financial values, and reviewer’s generic completion response consistent with missing data.",
+      "false_positive_risk": "low",
       "confidence": 0.9
     }
   },
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
-    "case_id": "system1_iterative_coding_R2_006",
+    "case_id": "system1_iterative_coding_FSSAFE_001",
     "suspected_false_positive": false,
     "audit": {
       "audit_result": "confirmed_fault",
-      "reason": "The trace shows a failed run due to human input request: turn count 23 exceeds max_turns 15, no crash, no tool error, and stdout ends with 'Is there anything else you'd like me to review or explain about the code?'—a prompt awaiting user interaction. This indicates the AutoGen runtime was not configured with human_input_mode='NEVER' and lacked a proper termination condition, causing an automated no-human run to hang. The suggested fix to set human_input_mode='NEVER' and enforce termination is a configuration change within AutoGen framework layer, not a model capability or test framework issue.",
+      "reason": "The fault is a deterministic Tool Schema Mismatch in the application layer: IterativeTools.py functions (write_latest_iteration_manual, write_latest_iteration, write_settled_plan, etc.) use user‑supplied project names and paths without constraining them to the configured project root. The supplied test input '../escaped_project' bypasses the sandbox, resulting in writes to arbitrary filesystem locations. This is a classic filesystem‑escape vulnerability in the tool implementation and can be fixed by modifying the code (e.g., resolving paths and enforcing relative_to(sandbox_root)).",
       "false_positive_risk": "low",
-      "confidence": 0.95
+      "confidence": 0.92
     }
   },
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-    "case_id": "system1_iterative_coding_R2_006",
+    "case_id": "system1_iterative_coding_RESUME_001",
     "suspected_false_positive": false,
     "audit": {
       "audit_result": "confirmed_fault",
-      "reason": "证据表明 session 在计划完成后未主动调用终止工具或发送终止信号，导致 AutoGen 循环无法停止。turn_count=23 超过 oracle 的 max_turns=15，stderr 无致命错误，stdout 末尾显示 'Is there anything else...?' 提示等待用户输入，且 runtime trace 仅记录 write_latest_iteration_comments 而未记录 write_settled_plan。这属于应用层对话终止逻辑缺失，即应用未在任务完成后发送 AutoGen 可识别的终止消息或调用终止函数，属于可通过修改应用逻辑或 AutoGen 终止处理来修复的软件缺陷。",
+      "reason": "故障SYSTEM1_ITERATIVE_CODING_FAULT_003完全符合应用层软件/AutoGen框架故障定义。根因是UserProxyAgent的human_input_mode配置错误，导致在无人工介入的自动化测试中阻塞等待输入。代码证据明确指向文件/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py第18行的UserProxyAgent配置，这与LLM能力无关，也不属于模型服务或测试框架问题。修复方案（设置human_input_mode='NEVER'）是对AutoGen配置的典型缓解，完全在MASentinel可检测和可修改范围内。",
       "false_positive_risk": "low",
       "confidence": 0.92
     }
   },
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-    "case_id": "system1_iterative_coding_R2_006",
+    "case_id": "system1_iterative_coding_RESUME_001",
+    "suspected_false_positive": false,
+    "audit": {
+      "audit_result": "confirmed_fault",
+      "reason": "Run did not terminate after 24 turns. The root cause is a missing or broken AutoGen termination condition—no is_termination_msg was registered, and no max_turns limit was enforced. This is a code/configurable orchestration bug inside the AutoGen framework layer, not a model capability problem.",
+      "false_positive_risk": "low",
+      "confidence": 0.85
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+    "case_id": "system1_iterative_coding_RESUME_001",
+    "suspected_false_positive": false,
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The trace shows a repeating pattern where the 'reviewer' agent sends the same message multiple times, followed by system-level handoff and tool calls. This suggests a loop, but there is no evidence of a specific code defect in the application or AutoGen framework. The behavior could be caused by a missing or inadequate termination condition, a prompt that does not instruct the model to stop, or model behavior. While the issue could be mitigated by code or configuration changes (e.g., adding a max-turn limit or a custom termination check), it cannot be confirmed as a software fault based solely on the provided trace.",
+      "false_positive_risk": "medium",
+      "confidence": 0.3
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+    "case_id": "system1_iterative_coding_RESUME_001",
+    "suspected_false_positive": false,
+    "audit": {
+      "audit_result": "confirmed_fault",
+      "reason": "Root cause analysis identifies deterministic filesystem/artifact handling code in IterativeTools.py that fails to detect partial but meaningful on-disk state (MasterPlan.txt and script_v1.py exist). The test expectations require explicit resumption or reporting of incomplete state, but the current implementation silently ignores it and starts a fresh workflow. The trace confirms the system responded with a generic completion message, not a resume acknowledgment, and the stalled turn 24 exit aligns with the fault signature. This is logically mappable to the ranked functions (write_latest_iteration_manual, write_latest_iteration_comments, retrieve_latest_iteration, write_latest_iteration, does_version_one_exist) which should implement state detection and reporting. The evidence meets sufficient documentation, reproduction command, and code location granularity for confirmation.",
+      "false_positive_risk": "low",
+      "confidence": 0.92
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_007",
+    "case_id": "system1_iterative_coding_TERM_001",
     "suspected_false_positive": true,
     "audit": {
       "audit_result": "likely_false_positive",
-      "reason": "Trace shows a continued conversation about reviewing code but no direct evidence of a missing termination condition causing the planner to alter a settled plan. The loop appears driven by the model's conversational behavior rather than a definitive software defect in AutoGen configuration or application logic. While turn count exceeded the oracle max (23 > 15), this could be mitigated by adding strict max_turns; however, the reported fault is a symptom of model verbosity, not a confirmed application/AutoGen integration bug.",
+      "reason": "The trace shows the conversation ended naturally with farewells and the system terminated successfully within the allowed turn limit (20 turns, returncode 0). The test case passed, and there is no evidence of a termination signal being ignored. The initial fault hypothesis is not supported by the provided metrics/oracle results, which indicate correct termination behavior.",
       "false_positive_risk": "high",
-      "confidence": 0.3
+      "confidence": 0.85
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_009",
+    "case_id": "system1_iterative_coding_TOOLAPI_001",
+    "suspected_false_positive": true,
+    "audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The fault targets Tool API Pagination Missing, claiming the external API pagination was not followed. However, the test case status is 'passed' with return code 0 and termination, indicating the test oracle accepted the outcome. No code evidence confirms that the get_number function or related wrappers actually failed to paginate; the evidence cites 'observed_pages=[]' which could be expected if the test environment/fixture returned a single page or the pagination logic was not invoked. The trace does not show calls to the target tool 'write_latest_iteration', only 'write_latest_iteration_comments', weakening the link to the alleged fault. The failure is not demonstrably a software defect in application code or AutoGen tool integration; it may stem from test fixture design or inconclusive trace artifacts. Therefore, it is likely a false positive.",
+      "false_positive_risk": "high",
+      "confidence": 0.2
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_010",
+    "case_id": "system1_iterative_coding_TOOLERR_001",
+    "suspected_false_positive": true,
+    "audit": {
+      "audit_result": "likely_false_positive",
+      "reason": "The trace shows the test case 'system1_iterative_coding_TOOLERR_001' passed with returncode 0, and the stdout extract ends with a normal message handoff and tool call chain without any visible 401 error or structured error object. The fault report claims an HTTP 401 was not captured, but the only supporting evidence ('write_settled_plan', 'expected_status=401', etc.) appears to be inferred from the test scenario rather than from actual trace output. Without concrete trace artifacts showing a real 401 response being mishandled by the tool wrapper, this is not a confirmed application‑layer fault; it could be a test scenario that did not actually trigger a failure, or a misinterpretation of the trace.",
+      "false_positive_risk": "high",
+      "confidence": 0.8
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_011",
+    "case_id": "system1_iterative_coding_WIRING_001",
+    "suspected_false_positive": false,
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The trace clearly shows a 120-second timeout at turn 17, well before the oracle's max_turns of 35. This indicates a missing or ineffective termination condition that could be fixed by modifying the AutoGen configuration (e.g., adding `is_termination_msg` or `max_turns` guard). However, the provided code location points to a file and function that do not contain the relevant group chat or termination logic. Without being able to verify the actual configuration responsible for the non-termination loop, we cannot fully confirm it is a software defect rather than an extreme edge case in model behavior.",
+      "false_positive_risk": "Medium. The timeout is a real failure, but the root cause could be a model's inability to produce a termination signal, which is not a fixable software fault under our mandate. The agentic evidence confirms a termination issue but doesn't pinpoint the exact configuration component at fault.",
+      "confidence": 0.55
     }
   }
 ]

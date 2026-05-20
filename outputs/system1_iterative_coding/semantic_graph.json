@@ -37,47 +37,32 @@
     {
       "id": "R1",
       "type": "requirement",
-      "description": "The system must implement a two-phase workflow: a planning phase that produces a written project plan, and an iterative coding phase that cycles through Coder and Reviewer until the user terminates the program."
+      "description": "User can define a project request and a project name; Planner generates an initial plan based on the request."
     },
     {
       "id": "R2",
       "type": "requirement",
-      "description": "Manager agent must be decorated with the write_latest_iteration and write_settled_plan tools so it can execute tool calls on behalf of other agents."
+      "description": "Iteration phase: Coder generates code meeting the plan, output saved to script_vN.py via user-triggered function call."
     },
     {
       "id": "R3",
       "type": "requirement",
-      "description": "Planner must call write_settled_plan after manager approval and must not alter the plan afterward."
+      "description": "Iteration phase: Reviewer produces comments on latest script, saved to comments_vN.txt via user-triggered function call."
     },
     {
       "id": "R4",
       "type": "requirement",
-      "description": "Coder must output only well-formed Python code blocks, without extra conversational text."
+      "description": "Iterative loop continues until the user is satisfied; system presents only latest script and comments to avoid context pollution."
     },
     {
       "id": "R5",
       "type": "requirement",
-      "description": "Reviewer must produce a textual evaluation and list of criticisms, without generating code."
+      "description": "Project resumption: system detects existing projects and allows the user to continue from the latest state."
     },
     {
       "id": "R6",
       "type": "requirement",
-      "description": "The system must support resuming an existing project by loading the latest plan, script, and comments from the project folder."
-    },
-    {
-      "id": "R7",
-      "type": "requirement",
-      "description": "During the iteration phase, the manager must be able to provide ad-hoc feedback to the Coder/Reviewer before typing 'exit' to finalize the current turn and move to the next agent."
-    },
-    {
-      "id": "R8",
-      "type": "requirement",
-      "description": "The system must persist script files as script_v<n>.py and comment files as comments_v<n>.txt, incrementing the version number with each iteration."
-    },
-    {
-      "id": "R9",
-      "type": "requirement",
-      "description": "Only the latest script and comment files are presented to agents at the start of each chat, preventing distraction from outdated versions."
+      "description": "Execution environment: required files (main.py, IterativeTools.py, AndyTools.py) must be present; working directory and project folder created automatically."
     }
   ],
   "edges": [
@@ -103,53 +88,43 @@
     },
     {
       "source": "R1",
+      "target": "write_settled_plan",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R2",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
       "target": "programmer",
       "type": "requires_agent"
     },
     {
-      "source": "R1",
+      "source": "R2",
+      "target": "write_latest_iteration",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R3",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R3",
       "target": "reviewer",
       "type": "requires_agent"
     },
     {
-      "source": "R1",
-      "target": "write_settled_plan",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R1",
+      "source": "R3",
       "target": "write_latest_iteration",
       "type": "requires_tool"
     },
     {
-      "source": "R2",
+      "source": "R4",
       "target": "manager",
       "type": "requires_agent"
-    },
-    {
-      "source": "R2",
-      "target": "write_latest_iteration",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R2",
-      "target": "write_settled_plan",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "planner",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "write_settled_plan",
-      "type": "requires_tool"
     },
     {
       "source": "R4",
@@ -157,53 +132,18 @@
       "type": "requires_agent"
     },
     {
+      "source": "R4",
+      "target": "reviewer",
+      "type": "requires_agent"
+    },
+    {
       "source": "R5",
-      "target": "reviewer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R6",
       "target": "manager",
       "type": "requires_agent"
     },
     {
       "source": "R6",
-      "target": "programmer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R7",
       "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R7",
-      "target": "programmer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R7",
-      "target": "reviewer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R8",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R8",
-      "target": "write_latest_iteration",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R9",
-      "target": "programmer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R9",
-      "target": "reviewer",
       "type": "requires_agent"
     },
     {
@@ -215,6 +155,12 @@
     {
       "source": "manager",
       "target": "programmer",
+      "type": "message",
+      "evidence": "initiate_chat"
+    },
+    {
+      "source": "manager",
+      "target": "r1_task_name",
       "type": "message",
       "evidence": "initiate_chat"
     },

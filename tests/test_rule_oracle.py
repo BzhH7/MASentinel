@@ -28,6 +28,41 @@ def test_oracle_detects_timeout() -> None:
     assert "TIMEOUT" in {failure.code for failure in result.failures}
 
 
+def test_oracle_detects_speaker_selection_loop_from_stdout() -> None:
+    case = TestCase(case_id="C1", system_id="toy", case_type="speaker_selection_robustness", objective="", input="", oracle=TestOracleSpec())
+    stdout = "speaker_selection_agent\nchecking_agent\nYou didn't choose a speaker\nspeaker_selection_agent\nchecking_agent\nYou didn't choose a speaker"
+    result = RuleOracle().evaluate(case, trace(stdout=stdout, terminated=False, timeout=True, turn_count=8))
+    assert "SPEAKER_SELECTION_LOOP" in {failure.code for failure in result.failures}
+
+
+def test_oracle_detects_termination_signal_ignored() -> None:
+    case = TestCase(
+        case_id="C1",
+        system_id="toy",
+        case_type="termination_signal",
+        objective="",
+        input="",
+        oracle=TestOracleSpec(),
+        metadata={"termination_marker": "TERMINATE", "termination_grace_messages": 1},
+    )
+    stdout = "assistant: done TERMINATE\nassistant: Is there anything else you would like me to do?"
+    result = RuleOracle().evaluate(case, trace(stdout=stdout, terminated=False, timeout=False, turn_count=5))
+    assert "TERMINATION_SIGNAL_IGNORED" in {failure.code for failure in result.failures}
+
+
+def test_oracle_checks_expected_keywords_for_output_contract() -> None:
+    case = TestCase(
+        case_id="C1",
+        system_id="toy",
+        case_type="output_contract",
+        objective="",
+        input="",
+        oracle=TestOracleSpec(expected_keywords=["risk", "summary"]),
+    )
+    result = RuleOracle().evaluate(case, trace(stdout="summary only", final_output="summary only"))
+    assert "OUTPUT_SCHEMA_VIOLATION" in {failure.code for failure in result.failures}
+
+
 def test_oracle_marks_overlong_generated_input_as_harness_timeout() -> None:
     case = TestCase(
         case_id="C1",
@@ -98,6 +133,23 @@ def test_oracle_separates_model_provider_failure() -> None:
     codes = {failure.code for failure in result.failures}
     assert "MODEL_PROVIDER_FAILURE" in codes
     assert "RUNTIME_EXCEPTION" not in codes
+
+
+def test_oracle_suppresses_contract_failures_on_startup_dependency_error() -> None:
+    case = TestCase(
+        case_id="C1",
+        system_id="toy",
+        case_type="tool_api_contract",
+        objective="",
+        input="",
+        metadata={"mock_http": True, "http_fixture": {"expected_query_params": {"view": "viw1"}, "pagination_pages": 2}},
+    )
+    stderr = "ModuleNotFoundError: No module named 'autogen'"
+    result = RuleOracle().evaluate(case, trace(status="failed", terminated=False, stderr=stderr, returncode=1, turn_count=0))
+    codes = {failure.code for failure in result.failures}
+    assert "RUNTIME_EXCEPTION" in codes
+    assert "VIEW_PARAMETER_IGNORED" not in codes
+    assert "PAGINATION_NOT_FOLLOWED" not in codes
 
 
 def test_oracle_treats_openai_timeout_as_provider_failure_and_suppresses_derived_expectations() -> None:

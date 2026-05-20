@@ -11,20 +11,20 @@
     "ReportWriterAgent"
   ],
   "model_usage": {
-    "run_id": "agentic_1779194615_8aea9356",
-    "total_calls": 17,
-    "successful_calls": 15,
-    "fallback_calls": 2,
-    "failed_calls": 2,
+    "run_id": "agentic_1779243672_2c608667",
+    "total_calls": 18,
+    "successful_calls": 18,
+    "fallback_calls": 0,
+    "failed_calls": 0,
     "by_agent": {
       "RequirementAnalystAgent": 1,
       "SystemModelingAgent": 1,
       "InteractionAdapterAgent": 1,
       "TestDesignerAgent": 2,
       "ExecutionMonitorAgent": 1,
-      "FaultDiagnoserAgent": 4,
-      "FalsePositiveAuditorAgent": 4,
-      "CoverageStrategistAgent": 2,
+      "FaultDiagnoserAgent": 5,
+      "FalsePositiveAuditorAgent": 5,
+      "CoverageStrategistAgent": 1,
       "ReportWriterAgent": 1
     },
     "by_purpose": {
@@ -33,52 +33,82 @@
       "plan_interaction_adapter": 1,
       "generate_testcases": 2,
       "summarize_execution": 1,
-      "diagnose_fault": 4,
-      "audit_false_positive": 4,
-      "analyze_coverage_gaps": 2,
+      "diagnose_fault": 5,
+      "audit_false_positive": 5,
+      "analyze_coverage_gaps": 1,
       "write_report_narrative": 1
     },
     "by_model": {
-      "ds-v4-pro": 17
+      "deepseek-v4-pro": 18
     },
     "estimated_tokens": {
-      "input_tokens": 66862,
-      "output_tokens": 6388
+      "input_tokens": 90073,
+      "output_tokens": 28943
     }
   },
   "target_model_usage": {
     "scope": "target_system_subprocess",
     "note": "Target-system LLM calls run inside the evaluated subprocess and are not routed through MASentinel ModelClient, so this is evidence from injected environment metadata and captured stdout/stderr.",
-    "cases": 20,
+    "cases": 32,
     "by_model": {
-      "ds-v4-flash": 20
+      "deepseek-v4-flash": 32
     },
     "by_base_url": {
-      "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1": 20
+      "https://apicz.boyuerichdata.com/v1": 32
     },
     "target_api_key_envs": [
-      "INF_API_KEY_FLASH"
+      "BOYUE_API_KEY"
     ],
-    "stdout_model_mentions": 13,
-    "stderr_model_mentions": 26,
-    "autogen_model_warning_count": 26,
+    "stdout_model_mentions": 41,
+    "stderr_model_mentions": 41,
+    "autogen_model_warning_count": 82,
     "case_summaries": [
       {
+        "case_id": "system3_financial_analysis_ARTIFACT_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
+        "stderr_model_mentions": 4,
+        "autogen_model_warning_count": 8
+      },
+      {
+        "case_id": "system3_financial_analysis_BUDGET_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
+        "stderr_model_mentions": 4,
+        "autogen_model_warning_count": 8
+      },
+      {
+        "case_id": "system3_financial_analysis_CLIDOC_001",
+        "status": "failed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
         "case_id": "system3_financial_analysis_COV_001",
-        "status": "timeout",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 1,
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 2,
         "stderr_model_mentions": 2,
-        "autogen_model_warning_count": 2
+        "autogen_model_warning_count": 4
       },
       {
         "case_id": "system3_financial_analysis_COV_002",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
@@ -86,99 +116,169 @@
       {
         "case_id": "system3_financial_analysis_COV_003",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 2,
+        "stderr_model_mentions": 2,
+        "autogen_model_warning_count": 4
+      },
+      {
+        "case_id": "system3_financial_analysis_DATAINV_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 1,
+        "stderr_model_mentions": 1,
+        "autogen_model_warning_count": 2
+      },
+      {
+        "case_id": "system3_financial_analysis_FSSAFE_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
+        "stderr_model_mentions": 4,
+        "autogen_model_warning_count": 8
       },
       {
         "case_id": "system3_financial_analysis_FUZZ_001",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 2,
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
         "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 4
+        "autogen_model_warning_count": 8
+      },
+      {
+        "case_id": "system3_financial_analysis_HANDOFF_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
+        "stderr_model_mentions": 4,
+        "autogen_model_warning_count": 8
       },
       {
         "case_id": "system3_financial_analysis_META_001",
-        "status": "timeout",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 1,
-        "stderr_model_mentions": 2,
-        "autogen_model_warning_count": 2
-      },
-      {
-        "case_id": "system3_financial_analysis_PROP_001",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 2,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 4
-      },
-      {
-        "case_id": "system3_financial_analysis_REG_001",
-        "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 1,
-        "stderr_model_mentions": 2,
-        "autogen_model_warning_count": 2
-      },
-      {
-        "case_id": "system3_financial_analysis_REQ_001",
-        "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
       },
       {
+        "case_id": "system3_financial_analysis_NOHUMAN_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
+        "stderr_model_mentions": 4,
+        "autogen_model_warning_count": 8
+      },
+      {
+        "case_id": "system3_financial_analysis_OUTCONTRACT_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_OUTCONTRACT_002",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_OUTCONTRACT_003",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_PROP_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_REG_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
+        "stderr_model_mentions": 4,
+        "autogen_model_warning_count": 8
+      },
+      {
         "case_id": "system3_financial_analysis_REQ_002",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_REQ_003",
-        "status": "timeout",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 1,
-        "stderr_model_mentions": 2,
-        "autogen_model_warning_count": 2
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_REQ_004",
-        "status": "timeout",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 1,
-        "stderr_model_mentions": 2,
-        "autogen_model_warning_count": 2
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system3_financial_analysis_REQ_005",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
@@ -186,79 +286,99 @@
       {
         "case_id": "system3_financial_analysis_REQ_006",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
+        "stderr_model_mentions": 4,
+        "autogen_model_warning_count": 8
       },
       {
         "case_id": "system3_financial_analysis_REQ_007",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 2,
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_008",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_REQ_009",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_RESUME_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system3_financial_analysis_SMOKE_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
         "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 4
+        "autogen_model_warning_count": 8
       },
       {
-        "case_id": "system3_financial_analysis_TOOLFUZZ_001",
+        "case_id": "system3_financial_analysis_SPEAKER_001",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 2,
-        "stderr_model_mentions": 4,
-        "autogen_model_warning_count": 4
-      },
-      {
-        "case_id": "system3_financial_analysis_TOOLFUZZ_002",
-        "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
       },
       {
-        "case_id": "system3_financial_analysis_R2_001",
+        "case_id": "system3_financial_analysis_TERM_001",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
       },
       {
-        "case_id": "system3_financial_analysis_R2_002",
+        "case_id": "system3_financial_analysis_TOOLREG_001",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
       },
       {
-        "case_id": "system3_financial_analysis_R2_003",
+        "case_id": "system3_financial_analysis_WIRING_001",
         "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
-      },
-      {
-        "case_id": "system3_financial_analysis_R2_004",
-        "status": "passed",
-        "target_model": "ds-v4-flash",
-        "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-        "target_api_key_env": "INF_API_KEY_FLASH",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
@@ -267,7 +387,27 @@
   },
   "non_target_issues": [
     {
-      "case_id": "system3_financial_analysis_COV_002",
+      "case_id": "system3_financial_analysis_CLIDOC_001",
+      "code": "RUNTIME_EXCEPTION",
+      "layer": "environment",
+      "issue_type": "Missing Target Runtime Dependency",
+      "severity": "high",
+      "confidence": 0.96,
+      "message": "The process ended with an unhandled runtime error.",
+      "evidence": [
+        "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020",
+        "  warnings.warn(",
+        "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python: Error while finding module specification for 'src.main' (ModuleNotFoundError: No module named 'src')",
+        "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020",
+        "  warnings.warn(",
+        "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python: Error while finding module specification for 'src.main' (ModuleNotFoundError: No module named 'src')"
+      ],
+      "root_cause": "The target system failed before the agent workflow started because a required Python dependency was not installed in the active environment.",
+      "suggested_fix": "Install the target system dependencies in the active virtual environment, then rerun the same frozen testcases.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_COV_001",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -276,7 +416,7 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=19",
-        "max_turns=10"
+        "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -296,6 +436,21 @@
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_COV_003",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: agent",
+      "evidence": [
+        "agent"
+      ],
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
       "excluded_from_target_faults": true
     },
     {
@@ -323,7 +478,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=19",
+        "turn_count=18",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -339,7 +494,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=18",
+        "turn_count=19",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -363,7 +518,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_REQ_002",
+      "case_id": "system3_financial_analysis_REQ_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -371,7 +526,23 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=18",
+        "turn_count=19",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_004",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -403,7 +574,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=19",
+        "turn_count=18",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -419,7 +590,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=18",
+        "turn_count=19",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -427,23 +598,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_TOOLFUZZ_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=10"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_TOOLFUZZ_002",
+      "case_id": "system3_financial_analysis_REQ_008",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -459,23 +614,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_R2_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=18",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_R2_002",
+      "case_id": "system3_financial_analysis_REQ_009",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -491,41 +630,39 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_R2_003",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "case_id": "system3_financial_analysis_WIRING_001",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: data_collector",
       "evidence": [
-        "turn_count=19",
-        "max_turns=15"
+        "data_collector"
       ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_R2_004",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "case_id": "system3_financial_analysis_WIRING_001",
+      "code": "MISSING_AGENT",
+      "layer": "inconclusive",
+      "issue_type": "Coverage Gap / Weak Routing Evidence",
+      "severity": "medium",
+      "confidence": 0.45,
+      "message": "Expected agent was not observed: report_generator",
       "evidence": [
-        "turn_count=19",
-        "max_turns=15"
+        "report_generator"
       ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+      "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
       "excluded_from_target_faults": true
     }
   ],
   "test_harness_issues": [
     {
-      "case_id": "system3_financial_analysis_COV_002",
+      "case_id": "system3_financial_analysis_COV_001",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -534,7 +671,7 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=19",
-        "max_turns=10"
+        "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -581,7 +718,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=19",
+        "turn_count=18",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -597,7 +734,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=18",
+        "turn_count=19",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -621,7 +758,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_REQ_002",
+      "case_id": "system3_financial_analysis_REQ_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -629,7 +766,23 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=18",
+        "turn_count=19",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_004",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=19",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -661,7 +814,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=19",
+        "turn_count=18",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -677,7 +830,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=18",
+        "turn_count=19",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -685,23 +838,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_TOOLFUZZ_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=10"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_TOOLFUZZ_002",
+      "case_id": "system3_financial_analysis_REQ_008",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -717,55 +854,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system3_financial_analysis_R2_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=18",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_R2_002",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_R2_003",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=19",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system3_financial_analysis_R2_004",
+      "case_id": "system3_financial_analysis_REQ_009",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -782,50 +871,41 @@
     }
   ],
   "run_manifest": {
-    "run_id": "system3_financial_analysis_2026-05-19T12:43:35.206419+00:00",
-    "start_time": "2026-05-19T12:43:35.206433+00:00",
+    "run_id": "system3_financial_analysis_2026-05-20T02:21:12.599284+00:00",
+    "start_time": "2026-05-20T02:21:12.599299+00:00",
     "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system3.yaml",
-    "config_hash": "1a5961755924b28dc97168241f1b75cda952bcb37f34a10c336489b158bd4c5f",
+    "config_hash": "788eebe2f1ffbf38056aa651404bf6696f9998d4afd7c172731a462ecbdb67cf",
     "code_snapshot_hash": "855d4d45762117eb7c93a65b85f71ac2815fb116f7ecf93810c67828d2c69276",
     "doc_hash": "25dffda68e4f05d766bc1c07a8bd7b6ab509986870de16a4f363f48da7b618ee",
     "human_intervention_allowed": false,
-    "entry_command": "scripts/run_with_api_md.py --config configs/all_systems.yaml",
+    "entry_command": "scripts/run_with_boyue_api.py --config configs/all_systems.yaml --testing-model deepseek-v4-pro --target-model deepseek-v4-flash",
     "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
-    "pid": 70592
+    "pid": 82922
   },
-  "testcases_frozen_sha256": "029fb90a0ba2c3637cf8d687c87e6decd6d107c86bbd77545cb79baefa811165",
+  "testcases_frozen_sha256": "c505ebc4bf29a2086a08d98741f17d07b2a0e28fa25f0523d1e4b5e0efcc8a4a",
   "human_intervention_allowed": false,
+  "agent_api_workers": 3,
   "semantic_graph_review": {
-    "semantic_graph_review": "The system profile describes a financial analysis system with multiple agents. The message edges show that user_proxy initiates chats with data_analyst, financial_analyst, investment_advisor, report_generator, and risk_analyst. However,16 enterprise-level agents (e.g., enterprise_data_collector, enterprise_financial_analyst, etc.) are defined but have no message edges or16 tool registrations. The data_collector agent, which is expected to use yfinance, has no tools registered. The system requirements mention multi-source data collection (R2) and16 quantitative analysis (R4), but no16 tools are16 provided to16 fulfill these16 functions. The16 absence of16 tool16 registrations for16 data16 collection and16 analysis16 agents16 is16 a16 significant16 gap16 in16 the16 agent16 graph.",
+    "semantic_graph_review": "The profile documents five simple_autogen specialist agents (data_analyst, financial_analyst, risk_analyst, investment_advisor, user_proxy) with clear roles and a sequential fan‑out orchestration. Message edges are correctly derived from initiate_chat calls in the source code, matching the requirements. However, the profile also lists additional agents (data_collector, report_generator, enterprise_* agents, 'agent') that are defined but never wired into the active message graph—these unused definitions do not break the functional graph but create unnecessary complexity.",
     "suspected_risk_points": [
       {
         "type": "tool_schema_risk",
-        "evidence": "Agent 'data_collector' has system_message stating '使用yfinance收集股票数据' but its 'tools' list is empty. No tool registration for yfinance or any data collection function is present in the system profile.",
-        "related_tool": "yfinance (missing)"
+        "evidence": "No tools are registered for any simple_autogen agent, yet agents are expected to collect stock data and calculate financial ratios. R1 requires data_analyst to extract key information from yfinance data, but yfinance integration is implemented as direct Python calls in the orchestration logic, not as a registered tool, meaning AssistantAgent cannot autonomously invoke data collection.",
+        "related_tool": "yfinance stock data collection"
       },
       {
         "type": "tool_schema_risk",
-        "evidence": "16 enterprise agents (enterprise_data_collector, enterprise_financial_analyst, etc.) are defined with detailed16 responsibilities but have no16 tools registered and no16 message edges. They are16 isolated from the16 agent16 graph.",
-        "related_tool": "N/A (missing tool registrations for enterprise agents)"
-      },
-      {
-        "type": "tool_schema_risk",
-        "evidence": "Requirements R2 (multi-source data collection), R4 (quantitative analysis), R5 (data visualization) imply need for16 tools (e.g., yfinance, alpha_vantage, matplotlib), but no16 tools are16 registered in the16 system.",
-        "related_tool": "yfinance, alpha_vantage, matplotlib (missing)"
+        "evidence": "Requirements R2 and R5 assume investment_advisor uses outputs from financial_analyst and risk_analyst, but the investment_advisor system message only mentions synthesizing results, not invoking any external tool or performing calculations. No validation tool is provided to the agent to enforce the output format or check completeness.",
+        "related_tool": "investment_advisor synthesis"
       }
     ],
     "additional_edges": [],
-    "confidence": 0.9
+    "confidence": 0.85
   },
   "interaction_adapter": {
     "prompt_responses": [],
     "isolated_paths": [],
-    "risk_notes": [
-      "Entrypoint uses argv for stock_symbol; no interactive input() or stdin prompts detected in run_config or input_call_excerpts.",
-      "No prompt-response rules needed because the program does not issue interactive prompts that require automated responses.",
-      "No isolated paths suggested because the run_config already has empty isolated_paths and no file output or state leakage is indicated.",
-      "Timeout of 75 seconds is configured; if the financial analysis agent chain or model calls exceed this, the test harness will terminate the process, which is  a non-target infrastructure risk."
-    ],
+    "risk_notes": [],
     "confidence": 0.95,
     "applied": {
       "added_prompt_responses": [],
@@ -836,135 +916,24 @@
     "coverage_gaps": [
       {
         "gap_type": "missing_tool_coverage",
-        "target": "data_collector",
-        "suggested_test_intent": "Register a yfinance tool for data_collector and verify it is called when collecting stock data."
+        "target": "Tool registration or call for external data collection (yfinance)",
+        "suggested_test_intent": "Register a tool (e.g., 'fetch_stock_data') to wire external data access, then execute a minimal task requiring that tool, verifying that the tool is registered, called, and returns data without crash or silent fallback."
       },
       {
         "gap_type": "missing_tool_coverage",
-        "target": "enterprise_data_collector",
-        "suggested_test_intent": "Register a multi-source data integration tool (e.g., yfinance, alpha_vantage) for enterprise_data_collector and verify it is called for data collection."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
-        "target": "enterprise_quantitative_analyst",
-        "suggested_test_intent": "Register a quantitative analysis tool (e.g., factor model, portfolio optimizer) for enterprise_quantitative_analyst and verify it is called for quantitative analysis tasks."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
-        "target": "enterprise_risk_analyst",
-        "suggested_test_intent": "Register a risk analysis tool (e.g., VaR calculator, stress tester) for enterprise_risk_analyst and verify it is called for risk assessment tasks."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
-        "target": "enterprise_portfolio_manager",
-        "suggested_test_intent": "Register a portfolio optimization tool for enterprise_portfolio_manager and verify it is called for portfolio management tasks."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
-        "target": "enterprise_financial_analyst",
-        "suggested_test_intent": "Register a financial analysis tool (e.g., ratio calculator, DCF model) for enterprise_financial_analyst and verify it is called for financial analysis tasks."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
-        "target": "enterprise_compliance_officer",
-        "suggested_test_intent": "Register a compliance checking tool for enterprise_compliance_officer and verify it is called for compliance tasks."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
-        "target": "report_generator",
-        "suggested_test_intent": "Register a report generation tool (e.g., PDF/HTML formatter) for report_generator and verify it is called for report generation tasks."
+        "target": "Investment advisor synthesis tool or validation logic",
+        "suggested_test_intent": "Add a tool to validate or format investment_advisor inputs, then run a task with conflicting inputs and assert that the tool is invoked and produces a diagnostic fallback instead of hallucinating advice."
       }
     ],
-    "new_test_requests": [
-      {
-        "case_id": "system3_financial_analysis_TOOLREG_001",
-        "system_id": "system3_financial_analysis",
-        "case_type": "coverage_guided",
-        "objective": "Verify that data_collector can use a registered yfinance tool to collect stock data.",
-        "input": "Collect historical price data for AAPL from Yahoo Finance.",
-        "input_sequence": [],
-        "target_requirements": [
-          "R2"
-        ],
-        "target_agents": [
-          "data_collector"
-        ],
-        "target_tools": [
-          "yfinance_tool"
-        ],
-        "target_edges": [],
-        "oracle": {
-          "must_terminate": true,
-          "max_turns": 10,
-          "must_not_crash": true,
-          "must_visit_agents": [
-            "data_collector"
-          ],
-          "must_call_tools": [
-            "yfinance_tool"
-          ],
-          "must_cover_edges": [],
-          "must_not_call_tools": [],
-          "must_not_fabricate_tool_result": false,
-          "output_contract": null,
-          "expected_keywords": []
-        },
-        "fault_injection": null,
-        "metadata": {
-          "gap_aware": true,
-          "note": "Requires registering a yfinance tool for data_collector before execution."
-        }
-      },
-      {
-        "case_id": "system3_financial_analysis_TOOLREG_002",
-        "system_id": "system3_financial_analysis",
-        "case_type": "coverage_guided",
-        "objective": "Verify that enterprise_quantitative_analyst can use a registered factor model tool for quantitative analysis.",
-        "input": "Perform a factor analysis on AAPL using the Fama-French three-factor model.",
-        "input_sequence": [],
-        "target_requirements": [
-          "R4"
-        ],
-        "target_agents": [
-          "enterprise_quantitative_analyst"
-        ],
-        "target_tools": [
-          "factor_model_tool"
-        ],
-        "target_edges": [],
-        "oracle": {
-          "must_terminate": true,
-          "max_turns": 10,
-          "must_not_crash": true,
-          "must_visit_agents": [
-            "enterprise_quantitative_analyst"
-          ],
-          "must_call_tools": [
-            "factor_model_tool"
-          ],
-          "must_cover_edges": [],
-          "must_not_call_tools": [],
-          "must_not_fabricate_tool_result": false,
-          "output_contract": null,
-          "expected_keywords": []
-        },
-        "fault_injection": null,
-        "metadata": {
-          "gap_aware": true,
-          "note": "Requires registering a factor model tool for enterprise_quantitative_analyst before execution."
-        }
-      }
-    ],
-    "confidence": 0.9
+    "new_test_requests": [],
+    "confidence": 0.85
   },
   "second_round": {
     "enabled": true,
     "target_mascov": 0.8,
-    "initial_mascov": 0.4207,
-    "extra_cases": 4,
-    "reason": "coverage_below_target",
-    "extra_traces": 4,
-    "initial_failed": 4
+    "initial_mascov": 0.5952,
+    "extra_cases": 0,
+    "reason": "no_new_valid_cases"
   },
   "trace_graph": {
     "nodes": 5,
@@ -972,8 +941,17 @@
   },
   "flaky_report": {
     "history": {
+      "system3_financial_analysis_ARTIFACT_001": [
+        "passed"
+      ],
+      "system3_financial_analysis_BUDGET_001": [
+        "passed"
+      ],
+      "system3_financial_analysis_CLIDOC_001": [
+        "failed"
+      ],
       "system3_financial_analysis_COV_001": [
-        "timeout"
+        "passed"
       ],
       "system3_financial_analysis_COV_002": [
         "passed"
@@ -981,11 +959,32 @@
       "system3_financial_analysis_COV_003": [
         "passed"
       ],
+      "system3_financial_analysis_DATAINV_001": [
+        "passed"
+      ],
+      "system3_financial_analysis_FSSAFE_001": [
+        "passed"
+      ],
       "system3_financial_analysis_FUZZ_001": [
         "passed"
       ],
+      "system3_financial_analysis_HANDOFF_001": [
+        "passed"
+      ],
       "system3_financial_analysis_META_001": [
-        "timeout"
+        "passed"
+      ],
+      "system3_financial_analysis_NOHUMAN_001": [
+        "passed"
+      ],
+      "system3_financial_analysis_OUTCONTRACT_001": [
+        "passed"
+      ],
+      "system3_financial_analysis_OUTCONTRACT_002": [
+        "passed"
+      ],
+      "system3_financial_analysis_OUTCONTRACT_003": [
+        "passed"
       ],
       "system3_financial_analysis_PROP_001": [
         "passed"
@@ -1000,10 +999,10 @@
         "passed"
       ],
       "system3_financial_analysis_REQ_003": [
-        "timeout"
+        "passed"
       ],
       "system3_financial_analysis_REQ_004": [
-        "timeout"
+        "passed"
       ],
       "system3_financial_analysis_REQ_005": [
         "passed"
@@ -1014,22 +1013,28 @@
       "system3_financial_analysis_REQ_007": [
         "passed"
       ],
-      "system3_financial_analysis_TOOLFUZZ_001": [
+      "system3_financial_analysis_REQ_008": [
         "passed"
       ],
-      "system3_financial_analysis_TOOLFUZZ_002": [
+      "system3_financial_analysis_REQ_009": [
         "passed"
       ],
-      "system3_financial_analysis_R2_001": [
+      "system3_financial_analysis_RESUME_001": [
         "passed"
       ],
-      "system3_financial_analysis_R2_002": [
+      "system3_financial_analysis_SMOKE_001": [
         "passed"
       ],
-      "system3_financial_analysis_R2_003": [
+      "system3_financial_analysis_SPEAKER_001": [
         "passed"
       ],
-      "system3_financial_analysis_R2_004": [
+      "system3_financial_analysis_TERM_001": [
+        "passed"
+      ],
+      "system3_financial_analysis_TOOLREG_001": [
+        "passed"
+      ],
+      "system3_financial_analysis_WIRING_001": [
         "passed"
       ]
     },
@@ -1037,18 +1042,17 @@
     "flaky_count": 0
   },
   "report_narrative": {
-    "agentic_workflow_summary": "系统基于AutoGen框架构建了金融分析多智能体系统，包含14个智能体（如data_collector、financial_analyst、risk_analyst等）和20项需求。测试过程中，user_proxy与data_analyst、financial_analyst、investment_advisor、risk_analyst、report_generator等5个智能体建立了消息边，但data_collector及16个企业级智能体未参与消息交互。共检测到2个主要故障：1个非终止故障（SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001）和1个错误路由故障（SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002），后者实际根因为data_collector缺少yfinance工具注册导致数据缺失。模型调用共16次，成功14次，失败2次，总输入token约56979，输出token约5606。",
-    "effectiveness_analysis": "测试覆盖了35.71%的智能体（5/14）、80%的消息边（4/5条已定义边）、55%的需求（11/20）和43.75%的状态（7/16）。故障模式覆盖率为16.67%（2/12），仅检测到非终止和错误路由两类故障。主要故障SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001（非终止）置信度0.82，证据充分，影响多个测试用例；SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002（错误路由）置信度0.25，经审计确认为工具缺失导致的真实故障，置信度提升至0.85。整体MASCov覆盖率为0.4597，表明测试在智能体交互和需求覆盖方面表现中等，但在工具注册、企业级智能体集成和故障模式多样性方面存在明显不足。",
-    "false_positive_analysis": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002初始检测为'Expected agent was not observed: data_collector'，置信度0.72，但经FalsePositiveAuditorAgent审计后确认为真实故障，误报风险低（置信度0.85）。根因是data_collector智能体缺少yfinance工具注册，导致返回空数据，而非智能体未被路由。日志显示'开始收集 AAPL 的数据...'和'成功收集 AAPL 的数据'，证明智能体存在且被调用，但输出'数据缺失'表明工具缺失。该故障可通过注册工具修复，不属于模型能力或测试框架问题。其他故障未发现误报风险。",
+    "agentic_workflow_summary": "本次任务对金融分析AutoGen系统进行了全面测试，覆盖了5个活跃智能体（data_analyst、financial_analyst、risk_analyst、investment_advisor、user_proxy），执行了32个测试用例。测试发现系统存在两类主要软件故障：1) AutoGen框架层面的消息传递错误（MESSAGE_HANDOFF_TERMINATE_ONLY），导致上游分析结果在转发时被替换为TERMINATE标记；2) 应用层文档化的入口点不可用（DOCUMENTED_ENTRYPOINT_BROKEN），`python -m src.main`命令因包结构缺失而失败。此外，部分故障报告经审计后被判定为误报，涉及模型行为而非框架缺陷。",
+    "effectiveness_analysis": "测试覆盖率达到59.52%（mascov 0.5952），代理覆盖率35.71%，需求覆盖率70%（7/10）。所有执行需求（R1-R7）均被验证。成功识别出两个确认的软件故障：SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001（高严重度消息传递错误）和SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002（高严重度入口点损坏），两者均有明确的代码定位和修复建议。同时，其他三个报告故障（FAULT_003/004/005）经审计被判定为误报。整体测试有效性较好，但代理和工具覆盖率偏低。",
+    "false_positive_analysis": "在5个报告的故障中，3个被审计系统判定为误报：FAULT_003（消息传递误报）实为模型行为而非框架错误，测试通过且系统正常终止；FAULT_004（恢复状态误报）缺乏证据表明状态处理器缺陷，系统成功完成任务；FAULT_005（终止信号误报）的行为符合AutoGen的grace消息窗口机制，属于正常行为。这些误报的共同特征是错误地将模型决策行为归因于框架或应用层缺陷。审计置信度均在0.85以上。",
     "next_steps": [
-      "为data_collector智能体注册yfinance工具，修复数据收集功能缺失问题（影响12个测试用例）",
-      "配置is_termination_msg检查函数，确保识别TERMINATE关键字，并设置max_turns强制限制，解决非终止故障",
-      "将16个企业级智能体（enterprise_data_collector等）集成到消息图中，建立与user_proxy或其他智能体的交互边",
-      "扩展测试用例以覆盖更多故障模式（如工具调用失败、状态异常、数据格式错误等），当前仅覆盖2/12种故障模式",
-      "增加对工具注册、智能体间消息传递和需求R12-R20的测试覆盖，提升整体MASCov覆盖率",
-      "修复3个语法错误文件（src/api/routes.py、src/monitoring/logging_system.py、tests/test_data.py），确保系统可正常运行"
+      "修复SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001：修改student_autogen_system.py中的消息传递逻辑，确保分析结果在转发前剥离TERMINATE标记",
+      "修复SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002：创建src/__init__.py和src/main.py文件，或更新README文档以反映实际入口点",
+      "提高代理覆盖率：添加对未使用代理（如data_collector、report_generator）的集成测试",
+      "扩展工具覆盖率：为需要数据收集和计算的代理注册适当的工具函数",
+      "优化消息传递架构：实施更健壮的消息提取机制，防止TERMINATE标记误传"
     ],
     "confidence": 0.85
   },
-  "fallback_calls": 2
+  "fallback_calls": 0
 }

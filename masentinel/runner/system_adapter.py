@@ -29,7 +29,7 @@ def load_system_config(config_path: str | Path) -> dict[str, Any]:
 
 def build_command(config: dict[str, Any], testcase: TestCase) -> list[str]:
     run = config.get("run", {}) or {}
-    command = run.get("command")
+    command = testcase.metadata.get("command_override") if isinstance(testcase.metadata, dict) and testcase.metadata.get("command_override") else run.get("command")
     if not command:
         entrypoint = config.get("entrypoint")
         command = f"python {Path(entrypoint).name}" if entrypoint else "python main.py"
@@ -101,6 +101,19 @@ def build_env(config: dict[str, Any], testcase: TestCase, trace_path: str) -> di
         from masentinel.utils import dataclass_to_dict
 
         env["MAS_FAULT_INJECTION"] = json.dumps(dataclass_to_dict(testcase.fault_injection), ensure_ascii=False)
+    metadata = testcase.metadata if isinstance(testcase.metadata, dict) else {}
+    if metadata.get("mock_http") or metadata.get("http_fixture"):
+        env["MAS_MOCK_EXTERNAL_HTTP"] = "1"
+        import json
+
+        env["MAS_HTTP_FIXTURE_JSON"] = json.dumps(metadata.get("http_fixture") or {}, ensure_ascii=False)
+    fixture = metadata.get("fixture") if isinstance(metadata.get("fixture"), dict) else {}
+    if fixture.get("mock_data_fixture"):
+        env["MAS_USE_MOCK_DATA"] = "1"
+        env["MAS_MOCK_DATA_FIXTURE"] = str(fixture["mock_data_fixture"])
+    if fixture.get("mock_price_fixture"):
+        env["MAS_USE_MOCK_DATA"] = "1"
+        env["MAS_MOCK_PRICE_FIXTURE"] = str(fixture["mock_price_fixture"])
     return env
 
 
@@ -121,11 +134,13 @@ def _case_input(testcase: TestCase) -> str:
 
 def render_case_template(template: str, testcase: TestCase) -> str:
     safe_case_id = re.sub(r"[^A-Za-z0-9_.-]+", "_", testcase.case_id)
+    metadata = testcase.metadata if isinstance(testcase.metadata, dict) else {}
     replacements = {
         "input": _case_input(testcase),
         "case_id": testcase.case_id,
         "safe_case_id": safe_case_id,
         "system_id": testcase.system_id,
+        "project_name": metadata.get("project_name") or f"mas_{safe_case_id}",
         "stock_symbol": _stock_symbol(testcase),
     }
     rendered = template

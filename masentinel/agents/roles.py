@@ -217,7 +217,10 @@ class ProjectReportAgent(BaseTestingAgent):
                         f"MASCov={_format_metric(coverage.get('mascov'))}，"
                         f"AgentCov={_format_metric(coverage.get('agent_coverage'))}，"
                         f"ToolCov={_format_metric(coverage.get('tool_coverage'))}，"
-                        f"EdgeCov={_format_metric(coverage.get('message_edge_coverage'))}。"
+                        f"EdgeCov={_format_metric(coverage.get('message_edge_coverage'))}，"
+                        f"ReqVerifiedCov={_format_metric(coverage.get('req_verified_coverage'))}，"
+                        f"EffectiveWorkflowRate={_format_metric(coverage.get('effective_workflow_rate'))}，"
+                        f"TraceCompleteness={_format_metric(coverage.get('trace_completeness'))}。"
                         "该解读由确定性覆盖率产物汇总得到。"
                     ),
                     "fault_report_summary": (
@@ -232,7 +235,7 @@ class ProjectReportAgent(BaseTestingAgent):
             )
         return {
             "scheme_design": "MASentinel 将静态画像、agent 辅助测试设计、确定性用例生成、无人值守执行、规则 oracle、故障诊断、误报审计和报告生成串成闭环。测试系统不修改被测系统源码，而是通过环境变量、运行时 patch、交互适配和隔离目录尽量让被测系统跑起来，并把应用层与 AutoGen 框架层问题作为主要检测对象。",
-            "coverage_metric_design": "MASCov 从多智能体系统的语义结构出发，综合 AgentCov、ToolCov、EdgeCov、ReqCov、StateCov 和 FaultCov。该指标不只统计代码行或分支，而是统计 agent 是否被触达、工具是否被调用、消息边是否被观测、需求是否被绑定、状态空间和故障模式是否被覆盖。",
+            "coverage_metric_design": "MASCov 从多智能体系统的语义结构出发，综合 AgentCov、ToolCov、EdgeCov、ReqIntentCov、StateCov 和 FaultCov；同时补充 ReqVerifiedCov、EffectiveWorkflowRate、TraceCompleteness 和 EvidenceStrength，用于说明需求是否被有效验证、工作流是否真实进入、trace 是否足以支撑故障判断以及故障证据强度。",
             "system_analyses": system_analyses,
             "effectiveness_analysis": "从当前三套系统的产物看，MASentinel 已经能够自动完成画像、用例冻结、执行、oracle 判定、故障分类、误报审计和汇总报告生成。效果优势在于证据链完整、覆盖率指标贴合多智能体交互，且能把非目标问题和疑似误报从最终故障中区分出来；当前不足主要是长耗时系统和深层 AutoGen trace 仍会影响覆盖率与误报率。",
             "next_steps": [

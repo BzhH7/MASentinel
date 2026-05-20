@@ -1,16 +1,16 @@
 [
   {
-    "case_id": "system3_financial_analysis_COV_001",
-    "fault_type": "Non-Termination",
-    "objective": "Reproduce confirmed fault: The process exceeded the configured timeout.",
-    "input": "What is the ROE of AAPL?",
+    "case_id": "system3_financial_analysis_BUDGET_001",
+    "fault_type": "Message Handoff Error",
+    "objective": "Reproduce confirmed fault: Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+    "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
     "max_turns": 15
   },
   {
-    "case_id": "system3_financial_analysis_COV_002",
-    "fault_type": "Wrong Agent Routing",
-    "objective": "Reproduce confirmed fault: Expected agent was not observed: data_collector",
-    "input": "Collect historical price data for AAPL from Yahoo Finance.",
+    "case_id": "system3_financial_analysis_CLIDOC_001",
+    "fault_type": "Documented Entrypoint Broken",
+    "objective": "Reproduce confirmed fault: Documented entrypoint fails before controlled configuration/runtime handling.",
+    "input": "python -m src.main analyze AAPL",
     "max_turns": 15
   }
 ]

@@ -157,14 +157,19 @@ def render_project_report(evidence: dict[str, Any], agent_output: dict[str, Any]
             "| ToolCov | 触发或观测到的工具调用覆盖比例 |",
             "| EdgeCov | agent 间消息边覆盖比例 |",
             "| ReqCov | 需求点被测试用例绑定并执行的比例 |",
+            "| ReqVerifiedCov | 需求至少被一个无目标故障、无非目标阻塞的用例有效验证的比例 |",
+            "| ContractCov | 通用契约测试模式（artifact/filesystem/tool/handoff/CLI 等）的覆盖比例 |",
+            "| EffectiveWorkflowRate | 非阻塞用例中真正进入 agent/tool/message 工作流的比例 |",
+            "| TraceCompleteness | 当前 trace 是否包含支撑 missing 类故障判断的关键观测类型 |",
+            "| RootCauseEvidenceRate | 确认故障中具备代码证据或强 trace 证据的比例 |",
             "| StateCov | 正常、异常、超时、终止等执行状态覆盖 |",
             "| FaultCov | 已覆盖的故障模式类型比例 |",
             "| MASCov | 上述指标的综合语义覆盖分数 |",
             "",
             "## 三个多智能体系统测试覆盖率与结果汇总",
             "",
-            "| 系统 | Cases | 进程通过 | 进程失败 | Oracle 通过 | Oracle 失败 | AgentCov | ToolCov | EdgeCov | ReqCov | StateCov | FaultCov | MASCov | 确认主根因 | 派生症状 | 疑似误报 | 非目标排除 |",
-            "|------|-------|----------|----------|-------------|-------------|----------|---------|---------|--------|----------|----------|--------|------------|----------|----------|------------|",
+            "| 系统 | Cases | 进程通过 | 进程失败 | Oracle 通过 | Oracle 失败 | AgentCov | ToolCov | EdgeCov | ReqIntent | ReqVerified | ContractCov | EffWorkflow | TraceComplete | EvidenceRate | MASCov | 确认主根因 | 派生症状 | 疑似误报 | 非目标排除 |",
+            "|------|-------|----------|----------|-------------|-------------|----------|---------|---------|-----------|-------------|-------------|-------------|---------------|--------------|--------|------------|----------|----------|------------|",
         ]
     )
     for system in systems:
@@ -175,7 +180,9 @@ def render_project_report(evidence: dict[str, Any], agent_output: dict[str, Any]
             f"| {system['system_id']} | {summary.get('cases', 0)} | {summary.get('process_passed', 0)} | {summary.get('process_failed', 0)} | "
             f"{summary.get('oracle_passed', 0)} | {summary.get('oracle_failed', 0)} | "
             f"{_format_metric(coverage.get('agent_coverage'))} | {_format_metric(coverage.get('tool_coverage'))} | {_format_metric(coverage.get('message_edge_coverage'))} | "
-            f"{_format_metric(coverage.get('requirement_coverage'))} | {_format_metric(coverage.get('state_coverage'))} | {_format_metric(coverage.get('fault_mode_coverage'))} | "
+            f"{_format_metric(coverage.get('req_intent_coverage', coverage.get('requirement_coverage')))} | {_format_metric(coverage.get('req_verified_coverage'))} | "
+            f"{_format_metric(coverage.get('contract_coverage'))} | {_format_metric(coverage.get('effective_workflow_rate'))} | "
+            f"{_format_metric(coverage.get('trace_completeness'))} | {_format_metric(coverage.get('root_cause_evidence_rate'))} | "
             f"{_format_metric(coverage.get('mascov'))} | {counts.get('confirmed_primary_root_causes', counts.get('confirmed', 0))} | "
             f"{counts.get('derived_symptoms', 0)} | {counts.get('suspected_false_positive', 0)} | "
             f"{counts.get('non_target_excluded', 0)} |"
@@ -292,11 +299,13 @@ def render_system_fault_report(system: dict[str, Any], analysis: dict[str, Any] 
         "",
         "## 覆盖率",
         "",
-        "| AgentCov | ToolCov | EdgeCov | ReqCov | StateCov | FaultCov | MASCov |",
-        "|----------|---------|---------|--------|----------|----------|--------|",
+        "| AgentCov | ToolCov | EdgeCov | ReqIntent | ReqVerified | ContractCov | EffWorkflow | TraceComplete | EvidenceRate | StateCov | FaultCov | MASCov |",
+        "|----------|---------|---------|-----------|-------------|-------------|-------------|---------------|--------------|----------|----------|--------|",
         f"| {_format_metric(coverage.get('agent_coverage'))} | {_format_metric(coverage.get('tool_coverage'))} | "
-        f"{_format_metric(coverage.get('message_edge_coverage'))} | {_format_metric(coverage.get('requirement_coverage'))} | "
-        f"{_format_metric(coverage.get('state_coverage'))} | {_format_metric(coverage.get('fault_mode_coverage'))} | "
+        f"{_format_metric(coverage.get('message_edge_coverage'))} | {_format_metric(coverage.get('req_intent_coverage', coverage.get('requirement_coverage')))} | "
+        f"{_format_metric(coverage.get('req_verified_coverage'))} | {_format_metric(coverage.get('contract_coverage'))} | "
+        f"{_format_metric(coverage.get('effective_workflow_rate'))} | {_format_metric(coverage.get('trace_completeness'))} | "
+        f"{_format_metric(coverage.get('root_cause_evidence_rate'))} | {_format_metric(coverage.get('state_coverage'))} | {_format_metric(coverage.get('fault_mode_coverage'))} | "
         f"{_format_metric(coverage.get('mascov'))} |",
         "",
         f"- 覆盖率解读：{_clean(analysis.get('coverage_interpretation'))}",
@@ -357,8 +366,14 @@ def _coverage_summary(coverage: dict[str, Any]) -> dict[str, float | None]:
         "tool_coverage",
         "message_edge_coverage",
         "requirement_coverage",
+        "req_intent_coverage",
+        "req_verified_coverage",
         "state_coverage",
         "fault_mode_coverage",
+        "contract_coverage",
+        "effective_workflow_rate",
+        "trace_completeness",
+        "root_cause_evidence_rate",
         "mascov",
     ]
     summary: dict[str, float | None] = {}
@@ -376,6 +391,10 @@ def _fault_brief(fault: dict[str, Any]) -> dict[str, Any]:
         "fault_type": fault.get("fault_type", ""),
         "severity": fault.get("severity", ""),
         "confidence": fault.get("confidence", ""),
+        "evidence_strength": fault.get("evidence_strength", ""),
+        "root_cause_confidence": fault.get("root_cause_confidence", ""),
+        "not_model_fault_because": _clean(fault.get("not_model_fault_because", ""), limit=220),
+        "code_locations": fault.get("code_locations", [])[:5] if isinstance(fault.get("code_locations"), list) else [],
         "summary": _clean(fault.get("summary", ""), limit=220),
         "root_cause": _clean(fault.get("root_cause", ""), limit=260),
         "suggested_fix": _clean(fault.get("suggested_fix", ""), limit=260),
@@ -402,14 +421,15 @@ def _append_fault_table(lines: list[str], title: str, faults: list[dict[str, Any
         return
     lines.extend(
         [
-            "| Fault ID | Case | Layer | Type | Severity | Confidence | Summary | Suggested Fix |",
-            "|----------|------|-------|------|----------|------------|---------|---------------|",
+            "| Fault ID | Case | Layer | Type | Severity | Confidence | EvidenceStrength | RootCauseConfidence | Summary | Suggested Fix |",
+            "|----------|------|-------|------|----------|------------|------------------|---------------------|---------|---------------|",
         ]
     )
     for fault in faults:
         lines.append(
             f"| `{fault.get('fault_id', '')}` | `{fault.get('case_id', '')}` | {fault.get('layer', '')} | "
             f"{fault.get('fault_type', '')} | {fault.get('severity', '')} | {fault.get('confidence', '')} | "
+            f"{fault.get('evidence_strength', '')} | {fault.get('root_cause_confidence', '')} | "
             f"{_clean(fault.get('summary', ''), limit=160)} | {_clean(fault.get('suggested_fix', ''), limit=180)} |"
         )
 

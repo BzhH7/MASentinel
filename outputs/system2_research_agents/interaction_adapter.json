@@ -1,12 +1,8 @@
 {
   "prompt_responses": [],
   "isolated_paths": [],
-  "risk_notes": [
-    "Entrypoint app.py likely starts a Gradio web UI (common in research-agents-3.0), which requires a browser and human interaction; automated stdin-based evaluation is not feasible without modifying the app to expose a CLI or API.",
-    "No input() calls or stdin prompts found in the provided excerpts, suggesting the app may block waiting for HTTP requests or Gradio events, leading to timeout in a stdin-based run.",
-    "If the app writes output files or logs, they may be written to the current working directory; consider isolating per-case working directories if multiple cases are run sequentially."
-  ],
-  "confidence": 0.7,
+  "risk_notes": [],
+  "confidence": 0.0,
   "applied": {
     "added_prompt_responses": [],
     "added_isolated_paths": []

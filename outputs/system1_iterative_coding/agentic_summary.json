@@ -11,60 +11,90 @@
     "ReportWriterAgent"
   ],
   "model_usage": {
-    "run_id": "agentic_1779190790_a68f5bbf",
-    "total_calls": 19,
-    "successful_calls": 18,
-    "fallback_calls": 1,
-    "failed_calls": 1,
+    "run_id": "agentic_1779241251_bbec2e97",
+    "total_calls": 32,
+    "successful_calls": 32,
+    "fallback_calls": 0,
+    "failed_calls": 0,
     "by_agent": {
       "RequirementAnalystAgent": 1,
       "SystemModelingAgent": 1,
       "InteractionAdapterAgent": 1,
-      "TestDesignerAgent": 2,
+      "TestDesignerAgent": 4,
       "ExecutionMonitorAgent": 1,
-      "FaultDiagnoserAgent": 5,
-      "FalsePositiveAuditorAgent": 5,
-      "CoverageStrategistAgent": 2,
+      "FaultDiagnoserAgent": 11,
+      "FalsePositiveAuditorAgent": 11,
+      "CoverageStrategistAgent": 1,
       "ReportWriterAgent": 1
     },
     "by_purpose": {
       "extract_requirements": 1,
       "review_semantic_graph": 1,
       "plan_interaction_adapter": 1,
-      "generate_testcases": 2,
+      "generate_testcases": 4,
       "summarize_execution": 1,
-      "diagnose_fault": 5,
-      "audit_false_positive": 5,
-      "analyze_coverage_gaps": 2,
+      "diagnose_fault": 11,
+      "audit_false_positive": 11,
+      "analyze_coverage_gaps": 1,
       "write_report_narrative": 1
     },
     "by_model": {
-      "deepseek-v4-pro": 19
+      "deepseek-v4-pro": 32
     },
     "estimated_tokens": {
-      "input_tokens": 53358,
-      "output_tokens": 30395
+      "input_tokens": 97802,
+      "output_tokens": 46423
     }
   },
   "target_model_usage": {
     "scope": "target_system_subprocess",
     "note": "Target-system LLM calls run inside the evaluated subprocess and are not routed through MASentinel ModelClient, so this is evidence from injected environment metadata and captured stdout/stderr.",
-    "cases": 16,
+    "cases": 24,
     "by_model": {
-      "deepseek-v4-flash": 16
+      "deepseek-v4-flash": 24
     },
     "by_base_url": {
-      "https://apicz.boyuerichdata.com/v1": 16
+      "https://apicz.boyuerichdata.com/v1": 24
     },
     "target_api_key_envs": [
       "BOYUE_API_KEY"
     ],
-    "stdout_model_mentions": 105,
+    "stdout_model_mentions": 168,
     "stderr_model_mentions": 0,
-    "autogen_model_warning_count": 105,
+    "autogen_model_warning_count": 168,
     "case_summaries": [
       {
+        "case_id": "system1_iterative_coding_ARTIFACT_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
+      },
+      {
+        "case_id": "system1_iterative_coding_BUDGET_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
+      },
+      {
         "case_id": "system1_iterative_coding_COV_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
+      },
+      {
+        "case_id": "system1_iterative_coding_COV_002",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -72,6 +102,26 @@
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system1_iterative_coding_DATAINV_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
+      },
+      {
+        "case_id": "system1_iterative_coding_FSSAFE_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
       },
       {
         "case_id": "system1_iterative_coding_FUZZ_001",
@@ -79,12 +129,42 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
+      },
+      {
+        "case_id": "system1_iterative_coding_HANDOFF_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
+      },
+      {
+        "case_id": "system1_iterative_coding_META_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
       },
       {
-        "case_id": "system1_iterative_coding_META_001",
+        "case_id": "system1_iterative_coding_NOHUMAN_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system1_iterative_coding_OUTCONTRACT_001",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -99,9 +179,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 4,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 4
       },
       {
         "case_id": "system1_iterative_coding_REG_001",
@@ -109,9 +189,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 7,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 7
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system1_iterative_coding_REQ_001",
@@ -119,9 +199,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 11,
+        "stdout_model_mentions": 12,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 11
+        "autogen_model_warning_count": 12
       },
       {
         "case_id": "system1_iterative_coding_REQ_002",
@@ -129,9 +209,79 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 1,
+        "stdout_model_mentions": 12,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 1
+        "autogen_model_warning_count": 12
+      },
+      {
+        "case_id": "system1_iterative_coding_RESUME_001",
+        "status": "failed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
+      },
+      {
+        "case_id": "system1_iterative_coding_SMOKE_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system1_iterative_coding_SPEAKER_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system1_iterative_coding_TERM_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system1_iterative_coding_TOOLAPI_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
+      },
+      {
+        "case_id": "system1_iterative_coding_TOOLCONTRACT_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system1_iterative_coding_TOOLERR_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 12,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 12
       },
       {
         "case_id": "system1_iterative_coding_TOOLFUZZ_001",
@@ -144,84 +294,14 @@
         "autogen_model_warning_count": 0
       },
       {
-        "case_id": "system1_iterative_coding_R2_001",
-        "status": "passed",
+        "case_id": "system1_iterative_coding_WIRING_001",
+        "status": "timeout",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
+        "stdout_model_mentions": 8,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
-      },
-      {
-        "case_id": "system1_iterative_coding_R2_002",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 0,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
-      },
-      {
-        "case_id": "system1_iterative_coding_R2_003",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
-      },
-      {
-        "case_id": "system1_iterative_coding_R2_004",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 2,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 2
-      },
-      {
-        "case_id": "system1_iterative_coding_R2_005",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
-      },
-      {
-        "case_id": "system1_iterative_coding_R2_006",
-        "status": "failed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
-      },
-      {
-        "case_id": "system1_iterative_coding_R2_007",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
-      },
-      {
-        "case_id": "system1_iterative_coding_R2_008",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
+        "autogen_model_warning_count": 8
       }
     ]
   },
@@ -235,7 +315,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=24",
+        "turn_count=22",
         "max_turns=10"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -243,7 +323,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system1_iterative_coding_FUZZ_001",
+      "case_id": "system1_iterative_coding_COV_002",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -251,7 +331,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=24",
+        "turn_count=22",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -259,7 +339,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system1_iterative_coding_META_001",
+      "case_id": "system1_iterative_coding_FSSAFE_001",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -267,8 +347,8 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=25",
-        "max_turns=15"
+        "turn_count=23",
+        "max_turns=20"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -284,7 +364,7 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=24",
-        "max_turns=10"
+        "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -299,7 +379,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=23",
+        "turn_count=24",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -316,7 +396,7 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=23",
-        "max_turns=15"
+        "max_turns=10"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -331,8 +411,24 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=20",
+        "turn_count=24",
         "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system1_iterative_coding_TOOLCONTRACT_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=22",
+        "max_turns=20"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -347,119 +443,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=23",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=22",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_002",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
         "turn_count=24",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_003",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=24",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_004",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=24",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_005",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=23",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_007",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=22",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_008",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=23",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -477,7 +461,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=24",
+        "turn_count=22",
         "max_turns=10"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -485,7 +469,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system1_iterative_coding_FUZZ_001",
+      "case_id": "system1_iterative_coding_COV_002",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -493,7 +477,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=24",
+        "turn_count=22",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -501,7 +485,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system1_iterative_coding_META_001",
+      "case_id": "system1_iterative_coding_FSSAFE_001",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -509,8 +493,8 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=25",
-        "max_turns=15"
+        "turn_count=23",
+        "max_turns=20"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -526,7 +510,7 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=24",
-        "max_turns=10"
+        "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -541,7 +525,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=23",
+        "turn_count=24",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -558,7 +542,7 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=23",
-        "max_turns=15"
+        "max_turns=10"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -573,8 +557,24 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=20",
+        "turn_count=24",
         "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system1_iterative_coding_TOOLCONTRACT_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=22",
+        "max_turns=20"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
       "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
@@ -589,119 +589,7 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
-        "turn_count=23",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=22",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_002",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
         "turn_count=24",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_003",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=24",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_004",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=24",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_005",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=23",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_007",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=22",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_R2_008",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=23",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -710,35 +598,36 @@
     }
   ],
   "run_manifest": {
-    "run_id": "system1_iterative_coding_2026-05-19T11:39:50.931713+00:00",
-    "start_time": "2026-05-19T11:39:50.931813+00:00",
+    "run_id": "system1_iterative_coding_2026-05-20T01:40:51.235301+00:00",
+    "start_time": "2026-05-20T01:40:51.235411+00:00",
     "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system1.yaml",
-    "config_hash": "ac26ab50af6efbb6c4c7fcafe0521b00f783675dde2855aa4ee836466661d22b",
-    "code_snapshot_hash": "cc2f2214eb0fb36025124bfa093235325ec40e9c56de0e0d232fc5da9347fcbe",
+    "config_hash": "1c6f0bdab44fa198d3a6a041dd646297bfab2c1dfa35910cd0df4fe293579d86",
+    "code_snapshot_hash": "be352107b2f271b6c9b7f2d06e9d405069c46806ef50cee343e02542b1ad6966",
     "doc_hash": "1ee7beafb5f91e4249e44a16d09d1405328375e9e1dbbf48e2c974e357880c43",
     "human_intervention_allowed": false,
     "entry_command": "scripts/run_with_boyue_api.py --config configs/all_systems.yaml --testing-model deepseek-v4-pro --target-model deepseek-v4-flash",
     "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
-    "pid": 68613
+    "pid": 82922
   },
-  "testcases_frozen_sha256": "3c527900addc787016fea30a5717f4218cec2da819f1a0ca43b3ac3d547ac48e",
+  "testcases_frozen_sha256": "3dd19a3efc6d4c25c86bae65b54813452301d36caf3a5f78830918622c075902",
   "human_intervention_allowed": false,
+  "agent_api_workers": 3,
   "semantic_graph_review": {
-    "semantic_graph_review": "This system implements a two-phase iterative coding workflow with four agents and two primary tools. The message edges are plausible for a sequential, manually‑driven sequence where the manager initiates one-to-one chats with the planner, then the programmer, then the reviewer. However, the absence of return edges (e.g., reviewer → manager or programmer → manager) and the absence of any agent‑to‑agent edges that might represent an automatic loop are notable. In the analyzed code, however, the iteration is managed by an explicit while‑loop in main.py, so the edges are sufficient to represent the static structure.",
+    "semantic_graph_review": "The agent-tool graph shows manager as the only agent with registered tools (write_latest_iteration, write_settled_plan). Planner is expected to call write_settled_plan but has no tools in its configuration, which matches the design where the manager proxies tool execution via function_map. In IterativeTools.py, the planner AssistantAgent is instantiated with 'functions' containing write_settled_plan, but tool registration occurs only on the manager's UserProxyAgent. This split is intentional: the LLM suggests function calls, the proxy executes them. The edge from manager to r1_task_name is suspicious; it likely comes from a test artifact. The remaining edges manager→planner, manager→programmer, manager→reviewer correctly reflect the sequential initiate_chat loops in the run() method of IterativeTools. Termination conditions include 'TERMINATE' (standard autogen), max_turns, and process_exit, which are consistent with the code. No missing edges were identified for the described agent interactions.",
     "suspected_risk_points": [
       {
         "type": "tool_schema_risk",
-        "evidence": "In the agent‑tool‑links, only the manager has the write_latest_iteration and write_settled_plan tools. The requirements state that the manager must execute tool calls on behalf of other agents, which is consistent with the UserProxyAgent pattern. The tool schemas are modeled with empty parameters in the profile, which could indicate missing or inferred parameter definitions. However, in the actual code, these tools accept arguments (e.g., the plan text, the code script). If the model registry used at runtime does not accurately reflect the required parameters, the planner or coder could fail to correctly instruct the manager to invoke the tool. This is a tool‑schema risk.",
-        "related_tool": "write_settled_plan"
+        "evidence": "Planner must call write_settled_plan but the function schema is provided via 'functions' in the assistant config while execution is handled by the manager's function_map (line 26-46 in IterativeTools.py). If the LLM generates a call with arguments that do not match the tool signature in the manager's function_map, execution will fail. Additionally, the manager has write_latest_iteration in its function_map but no assistant agent is configured with its function schema, so the assistant cannot request it. Instead, write_latest_iteration is called imperatively in the run loop on 'exit' signal, which is fragile: if the manager's exit-detection logic in run() fails or is bypassed, the coder/reviewer output will never be saved, violating R2/R3.",
+        "related_tool": "write_settled_plan, write_latest_iteration"
       },
       {
-        "type": "tool_schema_risk",
-        "evidence": "Similar to write_settled_plan, the write_latest_iteration tool is modeled with no parameters, but the actual implementation expects the code or comment text to be persisted. An incomplete schema could cause the agent to omit required arguments, leading to silent failures or incorrect versioning.",
-        "related_tool": "write_latest_iteration"
+        "type": "agent_graph_risk",
+        "evidence": "The message edge from manager to r1_task_name (an entity not matching any defined agent) suggests an agent naming mismatch in test environments, which could cause runtime errors in group chat or messaging if an agent is referenced but not instantiated.",
+        "related_tool": ""
       }
     ],
     "additional_edges": [],
-    "confidence": 0.62
+    "confidence": 0.85
   },
   "interaction_adapter": {
     "prompt_responses": [
@@ -759,6 +648,12 @@
         "response": "mas_{safe_case_id}",
         "regex": false,
         "max_count": 1
+      },
+      {
+        "trigger": "Select project to continue:",
+        "response": "0",
+        "regex": false,
+        "max_count": 1
       }
     ],
     "isolated_paths": [
@@ -766,13 +661,19 @@
       ".masentinel_autoreply/{safe_case_id}"
     ],
     "risk_notes": [
-      "Stdout prompts may slightly differ across versions; if 'Welcome to Iterative Coding! Would you like to:' appears before 'Selection:', a secondary trigger may be needed.",
-      "The project directory is constructed by joining a base project_dir with the user-provided name; if the code writes outside isolated_paths, isolation may be incomplete.",
-      "The 'Select project to continue:' prompt requires numeric input; if the prompt-response rule for 'Selection:' does not match this, the process may hang under timeout."
+      "Timeout may occur if LLM generates code that loops or blocks; ensure timeout_seconds are enforced at framework level.",
+      "If previous projects persist (e.g., due to failure of clean_isolated_paths_before_case), the 'Select project to continue' prompt may appear and default selection '0' may pick wrong project; isolation per case_id mitigates this."
     ],
-    "confidence": 0.85,
+    "confidence": 0.9,
     "applied": {
-      "added_prompt_responses": [],
+      "added_prompt_responses": [
+        {
+          "trigger": "Select project to continue:",
+          "response": "0",
+          "regex": false,
+          "max_count": 1
+        }
+      ],
       "added_isolated_paths": []
     }
   },
@@ -780,26 +681,86 @@
     "coverage_gaps": [
       {
         "gap_type": "missing_tool_coverage",
-        "target": "write_settled_plan",
-        "suggested_test_intent": "Verify that write_settled_plan actually persists a plan file in the project directory and that the file content matches the approved plan, including handling of special characters and newlines."
-      },
-      {
-        "gap_type": "missing_tool_coverage",
         "target": "write_latest_iteration",
-        "suggested_test_intent": "Verify that write_latest_iteration correctly increments version numbers across consecutive calls and that only the latest script and comment files are created in the correct project subdirectory."
+        "suggested_test_intent": "Verify that when a programmer or reviewer agent emits a valid code block or review comments respectively, the manager agent correctly triggers write_latest_iteration in response to the 'exit' command, saving the output to the correct script_vN.py or comments_vN.txt file with proper version incrementing, and that system state updates correctly for subsequent iterations."
       }
     ],
-    "new_test_requests": [],
+    "new_test_requests": [
+      {
+        "priority": "high",
+        "case_type": "requirement_positive",
+        "target_requirement": "R2",
+        "objective": "Verify that write_latest_iteration is called and saves coder output correctly on 'exit'.",
+        "target_agents": [
+          "manager",
+          "programmer"
+        ],
+        "target_tools": [
+          "write_latest_iteration"
+        ],
+        "oracle_spec": {
+          "must_terminate": true,
+          "must_call_tools": [
+            "write_latest_iteration"
+          ],
+          "artifacts": [
+            "script_v1.py exists and contains coder's code block content, not markdown fences."
+          ]
+        }
+      },
+      {
+        "priority": "high",
+        "case_type": "requirement_positive",
+        "target_requirement": "R3",
+        "objective": "Verify that write_latest_iteration is called and saves reviewer comments correctly on 'exit'.",
+        "target_agents": [
+          "manager",
+          "reviewer"
+        ],
+        "target_tools": [
+          "write_latest_iteration"
+        ],
+        "oracle_spec": {
+          "must_terminate": true,
+          "must_call_tools": [
+            "write_latest_iteration"
+          ],
+          "artifacts": [
+            "comments_v1.txt exists and contains reviewer's explanation, no code blocks."
+          ]
+        }
+      },
+      {
+        "priority": "high",
+        "case_type": "requirement_negative",
+        "target_requirement": "R2",
+        "objective": "Verify that system does not crash or save corrupted output when 'exit' is typed before the coder produces any code.",
+        "target_agents": [
+          "manager",
+          "programmer"
+        ],
+        "target_tools": [
+          "write_latest_iteration"
+        ],
+        "oracle_spec": {
+          "must_not_crash": true,
+          "must_call_tools": [
+            "write_latest_iteration"
+          ],
+          "artifact_checks": [
+            "script_v1.py content is empty or a valid comment indicating no code generated."
+          ]
+        }
+      }
+    ],
     "confidence": 0.8
   },
   "second_round": {
     "enabled": true,
     "target_mascov": 0.8,
-    "initial_mascov": 0.6856,
-    "extra_cases": 8,
-    "reason": "coverage_below_target",
-    "extra_traces": 8,
-    "initial_failed": 0
+    "initial_mascov": 0.6914,
+    "extra_cases": 0,
+    "reason": "no_new_valid_cases"
   },
   "trace_graph": {
     "nodes": 8,
@@ -807,13 +768,37 @@
   },
   "flaky_report": {
     "history": {
+      "system1_iterative_coding_ARTIFACT_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_BUDGET_001": [
+        "passed"
+      ],
       "system1_iterative_coding_COV_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_COV_002": [
+        "passed"
+      ],
+      "system1_iterative_coding_DATAINV_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_FSSAFE_001": [
         "passed"
       ],
       "system1_iterative_coding_FUZZ_001": [
         "passed"
       ],
+      "system1_iterative_coding_HANDOFF_001": [
+        "passed"
+      ],
       "system1_iterative_coding_META_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_NOHUMAN_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_OUTCONTRACT_001": [
         "passed"
       ],
       "system1_iterative_coding_PROP_001": [
@@ -828,48 +813,50 @@
       "system1_iterative_coding_REQ_002": [
         "passed"
       ],
+      "system1_iterative_coding_RESUME_001": [
+        "failed"
+      ],
+      "system1_iterative_coding_SMOKE_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_SPEAKER_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_TERM_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_TOOLAPI_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_TOOLCONTRACT_001": [
+        "passed"
+      ],
+      "system1_iterative_coding_TOOLERR_001": [
+        "passed"
+      ],
       "system1_iterative_coding_TOOLFUZZ_001": [
         "passed"
       ],
-      "system1_iterative_coding_R2_001": [
-        "passed"
-      ],
-      "system1_iterative_coding_R2_002": [
-        "passed"
-      ],
-      "system1_iterative_coding_R2_003": [
-        "passed"
-      ],
-      "system1_iterative_coding_R2_004": [
-        "passed"
-      ],
-      "system1_iterative_coding_R2_005": [
-        "passed"
-      ],
-      "system1_iterative_coding_R2_006": [
-        "failed"
-      ],
-      "system1_iterative_coding_R2_007": [
-        "passed"
-      ],
-      "system1_iterative_coding_R2_008": [
-        "passed"
+      "system1_iterative_coding_WIRING_001": [
+        "timeout"
       ]
     },
     "flaky_cases": {},
     "flaky_count": 0
   },
   "report_narrative": {
-    "agentic_workflow_summary": "MASentinel used testing agents with deterministic tool fallbacks to complete requirement analysis, test design, execution monitoring, diagnosis, audit, and reporting.",
-    "effectiveness_analysis": "Coverage and fault counts are computed by deterministic metrics and oracle modules.",
-    "false_positive_analysis": "Potential GroupChat-only missing-edge findings are marked as suspected false positives when confidence is low.",
+    "agentic_workflow_summary": "The profile describes an AutoGen-based iterative coding system with four agents (manager, planner, programmer, reviewer) and two tools (write_latest_iteration, write_settled_plan). The workflow follows a sequential chat pattern: planner produces and writes a plan, then an iterative loop alternates between coder and reviewer, with outputs saved on 'exit'. Coverage data shows full agent and tool coverage, 75% message edge coverage, 16.7% requirement coverage, 58.3% state coverage, and 57.1% fault mode coverage. Effective workflow rate is 100%, trace completeness 100%, contract coverage 81.8%, and root cause evidence rate 50%. The computed mascov is 0.6914.",
+    "effectiveness_analysis": "The diagnostic run identified 10 fault candidates. After auditing, 5 are confirmed as true application/framework faults (FAULT_001, FAULT_002, FAULT_003, FAULT_004, FAULT_006), 2 are suspected faults (FAULT_005, FAULT_011), and 3 are likely false positives (FAULT_007, FAULT_009, FAULT_010). Confirmed faults include a message handoff error where only 'sounds good' is forwarded instead of analysis payload, a filesystem escape due to unsanitized user input, a human input mode error blocking automated runs, a missing termination condition, and a resume state inconsistency that ignores partial on-disk state. These faults map to concrete code locations in AndyTools.py and IterativeTools.py. Root cause evidence rate is 50%, indicating that half the faults have direct code evidence while others rely primarily on trace analysis. The workflow achieved full agent and tool coverage but low requirement coverage (16.7%), suggesting that many requirements were not explicitly targeted in testing; however, fault detection focused on core interaction and state-management requirements. The model usage report shows 31 successful LLM calls with no failures, all using deepseek-v4-pro.",
+    "false_positive_analysis": "Of the 10 fault candidates, FAULT_007 (Termination Signal Ignored) is a likely false positive because the test passed and the system terminated normally after farewell messages, contradicting the fault hypothesis. FAULT_009 (Tool API Pagination Missing) is likely false positive because the test status was 'passed' and no evidence confirms actual pagination failure; observed_pages=[] may reflect test fixture design rather than a code defect. FAULT_010 (Tool Error Contract Missing) is likely false positive because the test passed, the trace shows normal message handoff and tool calls without any 401 status, and the evidence is inferred from the test scenario rather than observed trace artifacts.",
     "next_steps": [
-      "Enable DeepSeek V4 pro credentials for full semantic agent reasoning.",
-      "Add target-system instrumentation for richer AutoGen traces."
+      "Fix confirmed faults: message handoff (FAULT_001) by ensuring full analysis payload is forwarded; filesystem escape (FAULT_002) by resolving and constraining paths; human input mode (FAULT_003) by setting human_input_mode='NEVER'; termination condition (FAULT_004) by adding is_termination_msg and max_turns; resume state (FAULT_006) by implementing explicit state discovery and reporting.",
+      "Re-run fault reproduction for suspected faults (FAULT_005, FAULT_011) with enhanced logging to confirm root causes and determine if they are duplicates of FAULT_004 or separate issues.",
+      "Close likely false positives (FAULT_007, FAULT_009, FAULT_010) unless new evidence emerges, and improve test oracle design for these scenarios to avoid confusion.",
+      "Expand requirement coverage from current 16.7% to cover R2-R6, aiming for >80% requirement verification through targeted test cases.",
+      "Strengthen root cause evidence rate by instrumenting code with additional logging for handoff, termination, and state-resume paths.",
+      "Consider adding structured error contracts to tool wrappers (write_latest_iteration, write_settled_plan) to improve fault diagnosis in future runs."
     ],
-    "confidence": 0.35,
-    "fallback": true,
-    "error": "Model call failed after 3 attempt(s): HTTP 503 Service Unavailable: {\"error\":{\"message\":\"No available channel for model deepseek-v4-pro under group ***.Bailian (distributor) (request id: 202605191207517677538658268d9d67oJJRa1C)\",\"type\":\"new_api_error\",\"param\":\"\",\"code\":\"model_not_found\"}}"
+    "confidence": 0.82
   },
-  "fallback_calls": 1
+  "fallback_calls": 0
 }

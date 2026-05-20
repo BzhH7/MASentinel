@@ -1,36 +1,66 @@
 {
   "scope": "target_system_subprocess",
   "note": "Target-system LLM calls run inside the evaluated subprocess and are not routed through MASentinel ModelClient, so this is evidence from injected environment metadata and captured stdout/stderr.",
-  "cases": 20,
+  "cases": 32,
   "by_model": {
-    "ds-v4-flash": 20
+    "deepseek-v4-flash": 32
   },
   "by_base_url": {
-    "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1": 20
+    "https://apicz.boyuerichdata.com/v1": 32
   },
   "target_api_key_envs": [
-    "INF_API_KEY_FLASH"
+    "BOYUE_API_KEY"
   ],
-  "stdout_model_mentions": 13,
-  "stderr_model_mentions": 26,
-  "autogen_model_warning_count": 26,
+  "stdout_model_mentions": 41,
+  "stderr_model_mentions": 41,
+  "autogen_model_warning_count": 82,
   "case_summaries": [
     {
+      "case_id": "system3_financial_analysis_ARTIFACT_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
+      "stderr_model_mentions": 4,
+      "autogen_model_warning_count": 8
+    },
+    {
+      "case_id": "system3_financial_analysis_BUDGET_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
+      "stderr_model_mentions": 4,
+      "autogen_model_warning_count": 8
+    },
+    {
+      "case_id": "system3_financial_analysis_CLIDOC_001",
+      "status": "failed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
       "case_id": "system3_financial_analysis_COV_001",
-      "status": "timeout",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 1,
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 2,
       "stderr_model_mentions": 2,
-      "autogen_model_warning_count": 2
+      "autogen_model_warning_count": 4
     },
     {
       "case_id": "system3_financial_analysis_COV_002",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
       "stdout_model_mentions": 0,
       "stderr_model_mentions": 0,
       "autogen_model_warning_count": 0
@@ -38,99 +68,169 @@
     {
       "case_id": "system3_financial_analysis_COV_003",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
-      "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 2,
+      "stderr_model_mentions": 2,
+      "autogen_model_warning_count": 4
+    },
+    {
+      "case_id": "system3_financial_analysis_DATAINV_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 1,
+      "stderr_model_mentions": 1,
+      "autogen_model_warning_count": 2
+    },
+    {
+      "case_id": "system3_financial_analysis_FSSAFE_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
+      "stderr_model_mentions": 4,
+      "autogen_model_warning_count": 8
     },
     {
       "case_id": "system3_financial_analysis_FUZZ_001",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 2,
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
       "stderr_model_mentions": 4,
-      "autogen_model_warning_count": 4
+      "autogen_model_warning_count": 8
+    },
+    {
+      "case_id": "system3_financial_analysis_HANDOFF_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
+      "stderr_model_mentions": 4,
+      "autogen_model_warning_count": 8
     },
     {
       "case_id": "system3_financial_analysis_META_001",
-      "status": "timeout",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 1,
-      "stderr_model_mentions": 2,
-      "autogen_model_warning_count": 2
-    },
-    {
-      "case_id": "system3_financial_analysis_PROP_001",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 2,
-      "stderr_model_mentions": 4,
-      "autogen_model_warning_count": 4
-    },
-    {
-      "case_id": "system3_financial_analysis_REG_001",
-      "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 1,
-      "stderr_model_mentions": 2,
-      "autogen_model_warning_count": 2
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_001",
-      "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
       "stdout_model_mentions": 0,
       "stderr_model_mentions": 0,
       "autogen_model_warning_count": 0
     },
     {
+      "case_id": "system3_financial_analysis_NOHUMAN_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
+      "stderr_model_mentions": 4,
+      "autogen_model_warning_count": 8
+    },
+    {
+      "case_id": "system3_financial_analysis_OUTCONTRACT_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_OUTCONTRACT_002",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_OUTCONTRACT_003",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_PROP_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_REG_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
+      "stderr_model_mentions": 4,
+      "autogen_model_warning_count": 8
+    },
+    {
       "case_id": "system3_financial_analysis_REQ_002",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
       "stdout_model_mentions": 0,
       "stderr_model_mentions": 0,
       "autogen_model_warning_count": 0
     },
     {
       "case_id": "system3_financial_analysis_REQ_003",
-      "status": "timeout",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 1,
-      "stderr_model_mentions": 2,
-      "autogen_model_warning_count": 2
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
     },
     {
       "case_id": "system3_financial_analysis_REQ_004",
-      "status": "timeout",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 1,
-      "stderr_model_mentions": 2,
-      "autogen_model_warning_count": 2
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
     },
     {
       "case_id": "system3_financial_analysis_REQ_005",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
       "stdout_model_mentions": 0,
       "stderr_model_mentions": 0,
       "autogen_model_warning_count": 0
@@ -138,79 +238,99 @@
     {
       "case_id": "system3_financial_analysis_REQ_006",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
-      "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
+      "stderr_model_mentions": 4,
+      "autogen_model_warning_count": 8
     },
     {
       "case_id": "system3_financial_analysis_REQ_007",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 2,
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_008",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_REQ_009",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_RESUME_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 0,
+      "stderr_model_mentions": 0,
+      "autogen_model_warning_count": 0
+    },
+    {
+      "case_id": "system3_financial_analysis_SMOKE_001",
+      "status": "passed",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
+      "stdout_model_mentions": 4,
       "stderr_model_mentions": 4,
-      "autogen_model_warning_count": 4
+      "autogen_model_warning_count": 8
     },
     {
-      "case_id": "system3_financial_analysis_TOOLFUZZ_001",
+      "case_id": "system3_financial_analysis_SPEAKER_001",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 2,
-      "stderr_model_mentions": 4,
-      "autogen_model_warning_count": 4
-    },
-    {
-      "case_id": "system3_financial_analysis_TOOLFUZZ_002",
-      "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
       "stdout_model_mentions": 0,
       "stderr_model_mentions": 0,
       "autogen_model_warning_count": 0
     },
     {
-      "case_id": "system3_financial_analysis_R2_001",
+      "case_id": "system3_financial_analysis_TERM_001",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
       "stdout_model_mentions": 0,
       "stderr_model_mentions": 0,
       "autogen_model_warning_count": 0
     },
     {
-      "case_id": "system3_financial_analysis_R2_002",
+      "case_id": "system3_financial_analysis_TOOLREG_001",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
       "stdout_model_mentions": 0,
       "stderr_model_mentions": 0,
       "autogen_model_warning_count": 0
     },
     {
-      "case_id": "system3_financial_analysis_R2_003",
+      "case_id": "system3_financial_analysis_WIRING_001",
       "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
-      "stdout_model_mentions": 0,
-      "stderr_model_mentions": 0,
-      "autogen_model_warning_count": 0
-    },
-    {
-      "case_id": "system3_financial_analysis_R2_004",
-      "status": "passed",
-      "target_model": "ds-v4-flash",
-      "target_base_url": "https://ds-v4-flash-w8a8-vllm-ascend.openapi-sj.sii.edu.cn/v1",
-      "target_api_key_env": "INF_API_KEY_FLASH",
+      "target_model": "deepseek-v4-flash",
+      "target_base_url": "https://apicz.boyuerichdata.com/v1",
+      "target_api_key_env": "BOYUE_API_KEY",
       "stdout_model_mentions": 0,
       "stderr_model_mentions": 0,
       "autogen_model_warning_count": 0

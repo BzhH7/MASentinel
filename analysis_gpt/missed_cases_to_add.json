@@ -1,0 +1,203 @@
+[
+  {
+    "system": "system_1",
+    "target_agent": "coder",
+    "target_tool": "write_latest_iteration_manual",
+    "target_workflow": "iteration_code_persistence",
+    "user_input": "Create a one-line Python script that prints hello. Force the mocked coder response to use a valid unlabeled Markdown fence: ```\\nprint('hello')\\n```.",
+    "expected_behavior": "The persisted script_v1.py contains exactly executable Python source print('hello') without losing leading characters.",
+    "assertions": [
+      "script_v1.py exists",
+      "script_v1.py starts with print",
+      "script_v1.py does not contain Markdown fence markers",
+      "python -m py_compile script_v1.py succeeds"
+    ],
+    "expected_fault_if_bug_exists": "script_v1.py loses the first six characters of code or fails Python compilation."
+  },
+  {
+    "system": "system_1",
+    "target_agent": "manager/coder",
+    "target_tool": "retrieve_latest_iteration",
+    "target_workflow": "resume_existing_project",
+    "user_input": "Prepare a project directory with MasterPlan.txt and script_v1.py but no comments_v1.log, then ask the system to continue that project.",
+    "expected_behavior": "The system recognizes the existing script version and either resumes from script_v1.py with a missing-comments warning or asks for repair, without treating the project as a fresh first iteration.",
+    "assertions": [
+      "iteration prompt includes contents of script_v1.py",
+      "iteration number is greater than 1 or recovery path is explicit",
+      "existing script_v1.py is not overwritten as a first iteration"
+    ],
+    "expected_fault_if_bug_exists": "The run treats the project as new because comments_v1.log is absent and omits script_v1.py from the coder prompt."
+  },
+  {
+    "system": "system_1",
+    "target_agent": "reviewer",
+    "target_tool": "write_latest_iteration_comments",
+    "target_workflow": "artifact_schema",
+    "user_input": "Run one normal iteration for a valid small Python task.",
+    "expected_behavior": "Review comments are written using the documented comments_v1.txt artifact name, or the profile explicitly declares .log as the expected extension.",
+    "assertions": [
+      "documented artifact extension matches generated file extension",
+      "review artifact exists after iteration",
+      "artifact content matches reviewer response"
+    ],
+    "expected_fault_if_bug_exists": "Only comments_v1.log exists while the documentation/profile expects comments_v1.txt."
+  },
+  {
+    "system": "system_1",
+    "target_agent": "manager",
+    "target_tool": null,
+    "target_workflow": "project_name_validation",
+    "user_input": "At the project-name prompt enter ../escaped_project.",
+    "expected_behavior": "The project name is rejected before filesystem writes occur.",
+    "assertions": [
+      "resolved working directory remains under IterCode_Projects",
+      "no file is written outside the project root",
+      "the user receives a controlled validation error"
+    ],
+    "expected_fault_if_bug_exists": "MasterPlan.txt or script_vN.py is created outside IterCode_Projects."
+  },
+  {
+    "system": "system_2",
+    "target_agent": "director",
+    "target_tool": "get_airtable_records",
+    "target_workflow": "airtable_view_read",
+    "user_input": "Find websites for companies in an Airtable URL that includes a filtered view with more than 100 records.",
+    "expected_behavior": "The director reads exactly the supplied view and follows Airtable pagination until all view records are retrieved.",
+    "assertions": [
+      "get_airtable_records receives base_id, table_id, and view id",
+      "Airtable API requests include the view parameter",
+      "offset pagination continues until no offset remains",
+      "number of records processed equals expected view record count"
+    ],
+    "expected_fault_if_bug_exists": "The tool reads the unfiltered table or only the first page of records."
+  },
+  {
+    "system": "system_2",
+    "target_agent": "researcher",
+    "target_tool": "google_search",
+    "target_workflow": "tool_error_contract",
+    "user_input": "Run company website discovery with an invalid SERPER_API_KEY.",
+    "expected_behavior": "The search tool returns a structured authentication error and the workflow stops or follows a retry/error path without treating the error body as search results.",
+    "assertions": [
+      "tool result contains success=false or a typed error field",
+      "HTTP status code is captured in trace",
+      "no downstream agent treats raw error text as company website evidence"
+    ],
+    "expected_fault_if_bug_exists": "Raw API error text is passed as a normal tool result."
+  },
+  {
+    "system": "system_2",
+    "target_agent": "researcher",
+    "target_tool": "web_scraping",
+    "target_workflow": "tool_error_contract",
+    "user_input": "Run website scraping with an invalid Browserless token or a URL that returns a Browserless non-200 response.",
+    "expected_behavior": "The scraping tool returns a structured error payload, and the agent does not continue as if page content was obtained.",
+    "assertions": [
+      "tool result is not None",
+      "tool result records status code and error message",
+      "diagnosis points to web_scraping error handling if non-200 is unstructured"
+    ],
+    "expected_fault_if_bug_exists": "web_scraping returns None and later failures are ambiguous."
+  },
+  {
+    "system": "system_2",
+    "target_agent": "group_chat_manager",
+    "target_tool": "google_search/update_single_airtable_record",
+    "target_workflow": "multi_record_round_budget",
+    "user_input": "Use an Airtable view with five companies that each require a separate search and update.",
+    "expected_behavior": "The system either batches the record loop in tools or sets a round budget high enough to complete all five records.",
+    "assertions": [
+      "all five records are updated",
+      "termination occurs because work is complete, not because max_round is exhausted",
+      "trace shows required search and update sequence for each record"
+    ],
+    "expected_fault_if_bug_exists": "The run reaches max_round before all records are updated."
+  },
+  {
+    "system": "system_3",
+    "target_agent": "financial_analyst/risk_analyst/investment_advisor",
+    "target_tool": null,
+    "target_workflow": "analysis_message_handoff",
+    "user_input": "python simple_autogen/main.py analyze AAPL --output /tmp/aapl_report.json",
+    "expected_behavior": "Downstream prompts contain the substantive prior agent analysis, not only TERMINATE.",
+    "assertions": [
+      "financial_analyst initial message does not end with Data analysis results: TERMINATE",
+      "risk_analyst initial message does not end with Data analysis results: TERMINATE",
+      "investment_advisor initial message includes non-empty financial and risk analysis text",
+      "trace records source agent for each forwarded message"
+    ],
+    "expected_fault_if_bug_exists": "Downstream prompts contain TERMINATE as the forwarded analysis and the final report claims data is missing."
+  },
+  {
+    "system": "system_3",
+    "target_agent": "data_analyst",
+    "target_tool": "calculate_financial_metrics",
+    "target_workflow": "partial_financial_statement_metrics",
+    "user_input": "Analyze a mocked ticker where financials include Total Revenue and Net Income but omit Total Debt.",
+    "expected_behavior": "Revenue and profit margin are computed, while debt ratio is null or explicitly unavailable.",
+    "assertions": [
+      "revenue is nonzero",
+      "profit_margin is nonzero when inputs support it",
+      "debt_ratio is unavailable rather than forcing every metric to zero",
+      "trace records the missing row name"
+    ],
+    "expected_fault_if_bug_exists": "All financial metrics become 0.0 after one missing financial statement row."
+  },
+  {
+    "system": "system_3",
+    "target_agent": "risk_analyst",
+    "target_tool": "calculate_risk_metrics",
+    "target_workflow": "risk_metric_semantics",
+    "user_input": "Analyze a mocked price series with known drawdown and negative 5th percentile daily return.",
+    "expected_behavior": "VaR 95 and maximum drawdown are positive magnitudes, or the report explicitly labels them as signed returns.",
+    "assertions": [
+      "var_95 >= 0 when field is documented as risk magnitude",
+      "max_drawdown >= 0 when field is documented as drawdown magnitude",
+      "student_autogen and simple_autogen sign conventions do not conflict"
+    ],
+    "expected_fault_if_bug_exists": "var_95 and max_drawdown are negative in the simple_autogen report."
+  },
+  {
+    "system": "system_3",
+    "target_agent": "enterprise_entrypoint",
+    "target_tool": null,
+    "target_workflow": "documented_src_main_analyze",
+    "user_input": "python -m src.main analyze AAPL",
+    "expected_behavior": "The documented entrypoint imports and initializes successfully, then performs a company analysis workflow or emits a controlled configuration error.",
+    "assertions": [
+      "no ImportError for AdvancedRiskAnalyzer",
+      "constructor signatures match",
+      "called data/financial/risk methods exist",
+      "failure, if any, is a controlled dependency/config error"
+    ],
+    "expected_fault_if_bug_exists": "The command fails before analysis due to import, constructor, or AttributeError mismatches."
+  },
+  {
+    "system": "system_3",
+    "target_agent": "enterprise_cli",
+    "target_tool": null,
+    "target_workflow": "documented_cli_commands",
+    "user_input": "python -m src.main interactive",
+    "expected_behavior": "The documented interactive command is accepted by argparse and dispatched, or the documentation is updated to remove it.",
+    "assertions": [
+      "interactive appears in parser subcommands",
+      "interactive dispatch branch is reachable",
+      "CLI help lists the documented command"
+    ],
+    "expected_fault_if_bug_exists": "argparse rejects interactive as an invalid choice."
+  },
+  {
+    "system": "system_3",
+    "target_agent": "enterprise_orchestrator",
+    "target_tool": null,
+    "target_workflow": "enterprise_autogen_agent_collaboration",
+    "user_input": "Run the enterprise analyze workflow with mocked data dependencies and no external network.",
+    "expected_behavior": "FinancialAgentFactory creates agents, AgentOrchestrator receives them, and analysis emits AutoGen message events for data, financial, risk, and recommendation roles.",
+    "assertions": [
+      "AgentOrchestrator is initialized with a non-empty agent map",
+      "trace contains at least one message from each documented enterprise agent",
+      "analyze_company routes through the orchestrator rather than only direct module calls"
+    ],
+    "expected_fault_if_bug_exists": "AgentOrchestrator is empty and no enterprise AutoGen collaboration occurs."
+  }
+]

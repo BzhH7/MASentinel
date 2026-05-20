@@ -812,7 +812,22 @@ class AgenticTestOrchestrator:
         self._stage(profile.system_id, f"second round candidate generation start target_mascov={target:.4f} extra_limit={extra_limit}")
         candidates = generate_testcases(profile, num_cases=max(extra_limit * 2, 12), seed=seed)
         existing_keys = {(case.case_type, case.input) for case in existing_cases}
-        priority_types = {"coverage_guided", "property_boundary", "fuzz_tool_failure", "metamorphic"}
+        priority_types = {
+            "artifact_contract",
+            "filesystem_safety",
+            "state_resume_contract",
+            "tool_api_contract",
+            "tool_error_contract",
+            "message_handoff_integrity",
+            "data_invariant",
+            "cli_doc_conformance",
+            "autogen_wiring",
+            "scalable_budget",
+            "coverage_guided",
+            "property_boundary",
+            "fuzz_tool_failure",
+            "metamorphic",
+        }
         ordered = [case for case in candidates if case.case_type in priority_types] + [case for case in candidates if case.case_type not in priority_types]
         extra_cases: list[TestCase] = []
         for case in ordered:

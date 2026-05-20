@@ -2,10 +2,15 @@
 
 | Metric | Value |
 |--------|-------|
-| AgentCov | 0.3571 |
+| AgentCov | None |
 | ToolCov | N/A |
-| EdgeCov | 0.8000 |
-| ReqCov | 0.5500 |
-| StateCov | 0.4375 |
-| FaultCov | 0.1667 |
-| MASCov | 0.4597 |
+| EdgeCov | None |
+| ReqIntentCov | None |
+| ReqVerifiedCov | None |
+| StateCov | None |
+| FaultCov | None |
+| ContractCov | None |
+| EffectiveWorkflowRate | None |
+| TraceCompleteness | None |
+| RootCauseEvidenceRate | None |
+| MASCov | None |

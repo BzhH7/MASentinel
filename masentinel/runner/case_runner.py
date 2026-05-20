@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from masentinel.instrumentation.trace_recorder import TraceRecorder
+from masentinel.runner.filesystem_monitor import FilesystemMonitor
 from masentinel.runner.system_adapter import build_command, build_env, render_case_template, target_model_context
 from masentinel.schema import RunTrace, TestCase, TraceEvent
 from masentinel.utils import ensure_dir, shorten, write_json
@@ -33,10 +34,13 @@ class CaseRunner:
         command = build_command(self.config, testcase)
         run_cfg = self.config.get("run", {}) or {}
         cwd = run_cfg.get("working_dir") or self.config.get("root_path") or "."
-        timeout_seconds = int(run_cfg.get("timeout_seconds", 120))
+        timeout_seconds = int((testcase.metadata or {}).get("timeout_seconds") or run_cfg.get("timeout_seconds", 120))
         input_mode = run_cfg.get("input_mode", "stdin")
         env = build_env(self.config, testcase, trace_path)
         isolated_cleanup = self._prepare_isolated_paths(run_cfg, cwd, testcase)
+        fixture_setup = self._prepare_case_fixture(cwd, testcase)
+        fs_monitor = self._filesystem_monitor(cwd, testcase)
+        fs_monitor.snapshot_before()
         stdout = ""
         stderr = ""
         returncode = None
@@ -88,6 +92,7 @@ class CaseRunner:
             stderr = str(exc)
             returncode = -1
             recorder.record_exception(exc.__class__.__name__, str(exc))
+        filesystem_effects = fs_monitor.snapshot_after()
         for event in self._events_from_stdout(stdout):
             recorder.events.append(event)
         for response in interaction_responses:
@@ -132,6 +137,8 @@ class CaseRunner:
                 "input_mode": input_mode,
                 "stdin_template_used": bool(run_cfg.get("stdin_template")),
                 "isolated_cleanup": isolated_cleanup,
+                "case_fixture": fixture_setup,
+                "filesystem_effects": filesystem_effects,
                 "interaction_responses": interaction_responses,
                 "no_human": (self.config.get("run", {}) or {}).get("no_human", True),
                 "human_input_requested": human_input_requested,
@@ -140,6 +147,65 @@ class CaseRunner:
         )
         write_json(trace_path, trace)
         return trace
+
+    def _prepare_case_fixture(self, cwd: str | Path, testcase: TestCase) -> dict[str, Any]:
+        metadata = testcase.metadata if isinstance(testcase.metadata, dict) else {}
+        fixture = metadata.get("fixture") if isinstance(metadata.get("fixture"), dict) else {}
+        created: list[str] = []
+        omitted: list[str] = []
+        skipped: list[dict[str, str]] = []
+        if not fixture:
+            return {"created_files": created, "omitted_files": omitted, "skipped": skipped}
+        cwd_path = Path(cwd).resolve()
+        root_template = str(fixture.get("root") or ".")
+        root = Path(render_case_template(root_template, testcase))
+        if not root.is_absolute():
+            root = cwd_path / root
+        root = root.resolve()
+        if not self._path_inside(root, cwd_path):
+            return {"created_files": created, "omitted_files": omitted, "skipped": [{"path": str(root), "reason": "fixture_root_outside_cwd"}]}
+        for rel_path, content in (fixture.get("create_files") or {}).items():
+            target = (root / str(rel_path)).resolve()
+            if not self._path_inside(target, root):
+                skipped.append({"path": str(target), "reason": "fixture_file_outside_root"})
+                continue
+            ensure_dir(target.parent)
+            target.write_text(str(content), encoding="utf-8")
+            created.append(str(target))
+        for rel_path in fixture.get("omit_files") or []:
+            target = (root / str(rel_path)).resolve()
+            omitted.append(str(target))
+            if self._path_inside(target, root) and target.exists():
+                target.unlink()
+        return {"root": str(root), "created_files": created, "omitted_files": omitted, "skipped": skipped}
+
+    def _filesystem_monitor(self, cwd: str | Path, testcase: TestCase) -> FilesystemMonitor:
+        cwd_path = Path(cwd).resolve()
+        run_cfg = self.config.get("run", {}) or {}
+        allowed_templates = run_cfg.get("filesystem_allowed_roots") or []
+        if isinstance(allowed_templates, str):
+            allowed_templates = [allowed_templates]
+        metadata = testcase.metadata if isinstance(testcase.metadata, dict) else {}
+        if not allowed_templates and metadata.get("generic_pattern") == "safe_project_root":
+            for key, value in (run_cfg.get("env", {}) or {}).items():
+                if "PROJECT_DIR" in str(key).upper():
+                    allowed_templates.append(str(value))
+        allowed_roots: list[Path] = []
+        for item in allowed_templates:
+            rendered = render_case_template(str(item), testcase)
+            path = Path(rendered)
+            allowed_roots.append((cwd_path / path).resolve() if not path.is_absolute() else path.resolve())
+        if not allowed_roots:
+            allowed_roots = [cwd_path]
+        watch_roots = [cwd_path]
+        return FilesystemMonitor(allowed_roots=allowed_roots, watch_roots=watch_roots)
+
+    def _path_inside(self, path: Path, root: Path) -> bool:
+        try:
+            path.resolve().relative_to(root.resolve())
+            return True
+        except ValueError:
+            return False
 
     def _run_interactive(
         self,

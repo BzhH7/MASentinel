@@ -115,8 +115,8 @@ def _write_summary_md(results: list[dict], output_dir: Path) -> None:
     lines = [
         "# MASentinel Summary",
         "",
-        "| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqCov | StateCov | FaultCov | MASCov | Confirmed Primary Root Causes | Derived Symptoms | Root Groups | Suspected FP | Non-target Excluded | Harness Excluded |",
-        "|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|--------|----------|----------|--------|-------------------------------|------------------|-------------|--------------|---------------------|------------------|",
+        "| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqIntent | ReqVerified | ContractCov | EffWorkflow | TraceComplete | EvidenceRate | MASCov | Confirmed Primary Root Causes | Derived Symptoms | Root Groups | Suspected FP | Non-target Excluded | Harness Excluded |",
+        "|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|-----------|-------------|-------------|-------------|---------------|--------------|--------|-------------------------------|------------------|-------------|--------------|---------------------|------------------|",
     ]
     for result in results:
         cov = result["coverage"]
@@ -127,7 +127,9 @@ def _write_summary_md(results: list[dict], output_dir: Path) -> None:
             f"| {result['system_id']} | {result['cases']} | {result.get('process_passed', result['passed'])} | {result.get('process_failed', result['failed'])} | "
             f"{result.get('oracle_passed', '')} | {result.get('oracle_failed', '')} | "
             f"{_fmt_metric(cov.get('agent_coverage'), 2)} | {_fmt_metric(cov.get('tool_coverage'), 2)} | {_fmt_metric(cov.get('message_edge_coverage'), 2)} | "
-            f"{_fmt_metric(cov.get('requirement_coverage'), 2)} | {_fmt_metric(cov.get('state_coverage'), 2)} | {_fmt_metric(cov.get('fault_mode_coverage'), 2)} | "
+            f"{_fmt_metric(cov.get('req_intent_coverage', cov.get('requirement_coverage')), 2)} | {_fmt_metric(cov.get('req_verified_coverage'), 2)} | "
+            f"{_fmt_metric(cov.get('contract_coverage'), 2)} | {_fmt_metric(cov.get('effective_workflow_rate'), 2)} | "
+            f"{_fmt_metric(cov.get('trace_completeness'), 2)} | {_fmt_metric(cov.get('root_cause_evidence_rate'), 2)} | "
             f"{_fmt_metric(cov.get('mascov'), 2)} | {result.get('confirmed_primary_root_causes', result['faults'] - result['suspected_fp'])} | "
             f"{result.get('derived_symptoms', '')} | {result.get('fault_groups', '')} | {result['suspected_fp']} | {non_target} | {harness} |"
         )

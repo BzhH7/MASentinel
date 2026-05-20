@@ -3,10 +3,12 @@ from __future__ import annotations
 import builtins
 import copy
 import functools
+import hashlib
 import importlib
 import inspect
 import json
 import os
+from urllib.parse import parse_qs, urlparse
 import sys
 import time
 import types
@@ -138,6 +140,7 @@ def _patch_agent_class(cls) -> None:
     original_initiate_chat = getattr(cls, "initiate_chat", None)
     original_send = getattr(cls, "send", None)
     original_receive = getattr(cls, "receive", None)
+    original_last_message = getattr(cls, "last_message", None)
 
     @functools.wraps(original_init)
     def patched_init(self, *args, **kwargs):
@@ -240,6 +243,31 @@ def _patch_agent_class(cls) -> None:
             return original_receive(self, message, sender, *args, **kwargs)
 
         cls.receive = patched_receive
+    if callable(original_last_message):
+
+        @functools.wraps(original_last_message)
+        def patched_last_message(self, *args, **kwargs):
+            result = original_last_message(self, *args, **kwargs)
+            content = _message_content(result)
+            normalized = content.strip().upper()
+            caller = _caller_name()
+            _emit_trace_event(
+                {
+                    "type": "message_handoff",
+                    "sender": getattr(self, "name", self.__class__.__name__),
+                    "content": content[:1000],
+                    "metadata": {
+                        "source": "last_message",
+                        "caller": caller,
+                        "content_hash": hashlib.sha256(content.encode("utf-8", errors="ignore")).hexdigest()[:16],
+                        "is_terminate_only": normalized == "TERMINATE",
+                        "is_empty": not bool(content.strip()),
+                    },
+                }
+            )
+            return result
+
+        cls.last_message = patched_last_message
     cls._masentinel_patched = True
 
 
@@ -447,9 +475,8 @@ def _install_langchain_shims() -> None:
 
 
 class _MockResponse:
-    status_code = 200
-
-    def __init__(self, payload=None):
+    def __init__(self, payload=None, status_code: int = 200):
+        self.status_code = status_code
         self._payload = payload or {"masentinel_mock": True, "message": "External HTTP disabled by MASentinel."}
         self.text = json.dumps(self._payload, ensure_ascii=False)
         self.content = self.text.encode("utf-8")
@@ -463,7 +490,23 @@ def _patch_requests_module(module) -> None:
         return
 
     def mocked_request(method, url, *args, **kwargs):
-        return _MockResponse({"masentinel_mock": True, "method": method, "url": url})
+        payload, status_code, query_params, page_index = _http_fixture_response(method, url, kwargs)
+        _emit_trace_event(
+            {
+                "type": "http_request",
+                "tool": _caller_name(),
+                "content": str(url)[:500],
+                "metadata": {
+                    "method": method,
+                    "url": str(url),
+                    "query_params": query_params,
+                    "status_code": status_code,
+                    "page_index": page_index,
+                    "fixture_id": _http_fixture().get("fixture_id", "default"),
+                },
+            }
+        )
+        return _MockResponse(payload, status_code=status_code)
 
     module.request = mocked_request
     module.get = lambda url, *args, **kwargs: mocked_request("GET", url, *args, **kwargs)
@@ -481,30 +524,61 @@ def _mock_ticker_class():
         def __init__(self, symbol):
             self.symbol = str(symbol)
             report_date = pd.Timestamp("2025-12-31")
+            data_fixture = os.getenv("MAS_MOCK_DATA_FIXTURE", "")
+            price_fixture = os.getenv("MAS_MOCK_PRICE_FIXTURE", "")
+            if data_fixture == "partial_financial_rows":
+                financial_rows = {
+                    "Net Income": 100,
+                    "Total Revenue": 1000,
+                }
+                balance_rows = {
+                    "Total Assets": 2000,
+                    "Total Liabilities": 800,
+                    "Total Stockholder Equity": 1200,
+                    "Current Assets": 600,
+                    "Current Liabilities": 300,
+                }
+            else:
+                financial_rows = {
+                    "Net Income": 98_000_000_000,
+                    "Total Revenue": 385_000_000_000,
+                    "Gross Profit": 170_000_000_000,
+                }
+                balance_rows = {
+                    "Total Assets": 352_000_000_000,
+                    "Total Liabilities": 285_000_000_000,
+                    "Total Stockholder Equity": 67_000_000_000,
+                    "Current Assets": 143_000_000_000,
+                    "Current Liabilities": 129_000_000_000,
+                }
+            self._price_fixture = price_fixture
             self.financials = pd.DataFrame(
                 {
-                    report_date: {
-                        "Net Income": 98_000_000_000,
-                        "Total Revenue": 385_000_000_000,
-                        "Gross Profit": 170_000_000_000,
-                    }
+                    report_date: financial_rows
                 }
             )
             self.balance_sheet = pd.DataFrame(
                 {
-                    report_date: {
-                        "Total Assets": 352_000_000_000,
-                        "Total Liabilities": 285_000_000_000,
-                        "Total Stockholder Equity": 67_000_000_000,
-                        "Current Assets": 143_000_000_000,
-                        "Current Liabilities": 129_000_000_000,
-                    }
+                    report_date: balance_rows
                 }
             )
             self.info = {"longName": f"{self.symbol.upper()} Mock Holdings", "sector": "Technology"}
 
         def history(self, period="1y"):
             dates = pd.date_range(end=pd.Timestamp.today().normalize(), periods=120, freq="B")
+            if self._price_fixture == "known_drawdown":
+                close = np.array([100.0] * 40 + [120.0] * 20 + [90.0] * 20 + [110.0] * 40)
+                close = close[: len(dates)]
+                return pd.DataFrame(
+                    {
+                        "Open": close,
+                        "High": close * 1.01,
+                        "Low": close * 0.99,
+                        "Close": close,
+                        "Volume": np.full(len(dates), 10_000_000),
+                    },
+                    index=dates,
+                )
             base_price = 120 + (sum(ord(ch) for ch in self.symbol.upper()) % 40)
             trend = np.linspace(base_price, base_price * 1.18, len(dates))
             wave = np.sin(np.linspace(0, 8, len(dates))) * 2.5
@@ -521,6 +595,55 @@ def _mock_ticker_class():
             )
 
     return MockTicker
+
+
+def _caller_name() -> str:
+    try:
+        for frame in inspect.stack()[2:8]:
+            name = frame.function
+            if name and not name.startswith(("patched_", "mocked_", "_emit", "_patch")):
+                return name
+    except Exception:
+        pass
+    return "unknown"
+
+
+def _http_fixture() -> dict:
+    return _safe_json_loads(os.getenv("MAS_HTTP_FIXTURE_JSON", "{}"), {})
+
+
+def _http_fixture_response(method, url, kwargs) -> tuple[dict, int, dict, int]:
+    fixture = _http_fixture()
+    params = kwargs.get("params") if isinstance(kwargs, dict) else None
+    query_params: dict[str, str] = {}
+    if isinstance(params, dict):
+        query_params.update({str(key): str(value) for key, value in params.items()})
+    parsed = urlparse(str(url))
+    query_params.update({key: values[-1] for key, values in parse_qs(parsed.query).items() if values})
+    status_code = int(fixture.get("status_code") or 200)
+    if status_code >= 400:
+        return dict(fixture.get("json_body") or {"error": "mocked error", "status": status_code}), status_code, query_params, 0
+    pages = int(fixture.get("pagination_pages") or 1)
+    current_offset = query_params.get("offset")
+    try:
+        page_index = int(current_offset or 0)
+    except (TypeError, ValueError):
+        page_index = 0
+    record_count = int(fixture.get("record_count") or 3)
+    per_page = max(1, min(100, record_count // pages if pages > 1 else record_count))
+    start = page_index * per_page
+    end = min(record_count, start + per_page)
+    payload = {
+        "masentinel_mock": True,
+        "method": method,
+        "url": str(url),
+        "records": [{"id": f"rec{i}", "fields": {"Company": f"Company {i}", "Website": ""}} for i in range(start, end)],
+    }
+    if page_index + 1 < pages:
+        payload["offset"] = str(page_index + 1)
+    if fixture.get("expected_query_params"):
+        payload["expected_query_params"] = fixture["expected_query_params"]
+    return payload, status_code, query_params, page_index
 
 
 def _install_yfinance_mock_module() -> None:

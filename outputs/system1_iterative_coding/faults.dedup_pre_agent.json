@@ -1,36 +1,129 @@
 [
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
-    "case_id": "system1_iterative_coding_COV_001",
-    "layer": "application",
-    "fault_type": "Missing Tool Call",
-    "failure_code": "MISSING_TOOL_CALL",
-    "severity": "medium",
-    "confidence": 0.7,
-    "summary": "Expected tool was not called: write_settled_plan",
+    "case_id": "system1_iterative_coding_DATAINV_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "write_settled_plan"
+      "\u001b[33mmanager\u001b[0m (to reviewer):",
+      "sounds good",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33m[autogen.oai.client: 05-20 09:55:01] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "\u001b[33mreviewer\u001b[0m (to manager):",
+      "Awesome, I'm glad everything checks out! You've got a clean, functional, and well-documented app that meets all the requirements.",
+      "If you ever need to modify it or build something new, feel free to come back anytime. Good luck with the project! 🚀",
+      "--------------------------------------------------------------------------------"
     ],
-    "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system1_iterative_coding.",
-    "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "Task: Write a script to sort a list. Manager responds 'sounds good' when planner asks for approval.",
+      "input": "Analyze a mocked ticker where Total Revenue and Net Income exist but Total Debt is missing.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
-    "affected_cases": [
-      "system1_iterative_coding_COV_001",
-      "system1_iterative_coding_PROP_001",
-      "system1_iterative_coding_REQ_002"
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/AndyTools.py",
+        "function": "last_message",
+        "line": "54"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "last_message",
+        "line": "299"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "last_message",
+        "line": "308"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "last_message",
+        "line": "331"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "last_message",
+        "line": "335"
+      }
     ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_002",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_003"
-    ]
+    "root_cause_confidence": "code_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_DATAINV_001"
+    ],
+    "duplicate_fault_ids": []
   },
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
-    "case_id": "system1_iterative_coding_R2_006",
+    "case_id": "system1_iterative_coding_FSSAFE_001",
+    "layer": "application",
+    "fault_type": "Unsafe Project Path",
+    "failure_code": "FILESYSTEM_ESCAPE",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "User-controlled path/name caused writes outside the configured project root.",
+    "evidence": [
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db-shm",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.cache/41/cache.db-wal",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_fixture/system1_iterative_coding_RESUME_001/MasterPlan.txt",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_fixture/system1_iterative_coding_RESUME_001/script_v1.py",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_001/mas_system1_iterative_coding_REQ_001/comments_v1.log",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_RESUME_001/mas_system1_iterative_coding_RESUME_001/MasterPlan.txt",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_RESUME_001/mas_system1_iterative_coding_RESUME_001/comments_v1.log"
+    ],
+    "root_cause": "A user-controlled project/file name is resolved without constraining it to the configured safe root.",
+    "suggested_fix": "Resolve candidate paths, reject absolute/parent-directory components, and enforce relative_to(configured_project_root).",
+    "reproduction": {
+      "input": "../escaped_project",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is caused by deterministic filesystem/artifact handling code.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_latest_iteration_manual",
+        "line": "134"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_latest_iteration_comments",
+        "line": "148"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_latest_iteration",
+        "line": "175"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_settled_plan",
+        "line": "187"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "list_subdirectories",
+        "line": "194"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_FSSAFE_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
+    "case_id": "system1_iterative_coding_RESUME_001",
     "layer": "autogen_framework",
     "fault_type": "Human Input Mode Error",
     "failure_code": "HUMAN_INPUT_REQUESTED",
@@ -38,30 +131,40 @@
     "confidence": 0.9,
     "summary": "The target system requested human input during an automated no-human run.",
     "evidence": [
-      "|------|--------|",
-      "| Plan Creation | ✅ Done |",
-      "| Manager Approval | ✅ Granted |",
-      "| `write_settled_plan()` | ✅ Executed |",
-      "| Immutability Enforced | ✅ Active |",
-      "The app is ready to run as-is. Simply execute `python3 planner_app.py` to see the full workflow in action.",
-      "Is there anything else you'd like me to review or explain about the code?",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33mmanager\u001b[0m (to reviewer):",
+      "sounds good",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33m[autogen.oai.client: 05-20 09:52:09] {329} WARNING - Model deepseek-v4-flash is not found. The cost will be 0. In your config_list, add field {\"price\" : [prompt_price_per_1k, completion_token_price_per_1k]} for customized pricing.\u001b[0m",
+      "\u001b[33mreviewer\u001b[0m (to manager):",
+      "Alright – I'll take that as confirmation. If you need anything else in the future, just say the word. Best of luck with the project!",
       "--------------------------------------------------------------------------------"
     ],
     "root_cause": "The target system attempted to enter a manual input path after automated evaluation had started.",
     "suggested_fix": "Set human_input_mode='NEVER' and remove blocking input() calls from automated execution paths.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
+      "input": "Continue the existing project from the latest script and preserve existing state.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "UserProxyAgent",
+        "line": "18"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
     "affected_cases": [
-      "system1_iterative_coding_R2_006"
+      "system1_iterative_coding_RESUME_001"
     ],
     "duplicate_fault_ids": []
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-    "case_id": "system1_iterative_coding_R2_006",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+    "case_id": "system1_iterative_coding_RESUME_001",
     "layer": "autogen_framework",
     "fault_type": "Termination Condition Error",
     "failure_code": "NON_TERMINATION",
@@ -69,23 +172,53 @@
     "confidence": 0.8,
     "summary": "The run did not terminate.",
     "evidence": [
-      "turn_count=23"
+      "turn_count=24"
     ],
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
+      "input": "Continue the existing project from the latest script and preserve existing state.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
+    "evidence_strength": 0.45,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "__init__",
+        "line": "5"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "read_text_file",
+        "line": "123"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_latest_iteration_manual",
+        "line": "134"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_latest_iteration_comments",
+        "line": "148"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "retrieve_latest_iteration",
+        "line": "160"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
     "affected_cases": [
-      "system1_iterative_coding_R2_006"
+      "system1_iterative_coding_RESUME_001"
     ],
     "duplicate_fault_ids": []
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-    "case_id": "system1_iterative_coding_R2_006",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+    "case_id": "system1_iterative_coding_RESUME_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "REPETITIVE_LOOP",
@@ -96,12 +229,286 @@
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：Planner must call write_settled_plan after manager approval and must not alter the plan afterward.",
+      "input": "Continue the existing project from the latest script and preserve existing state.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
+    "evidence_strength": 0.27,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
     "affected_cases": [
-      "system1_iterative_coding_R2_006"
+      "system1_iterative_coding_RESUME_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+    "case_id": "system1_iterative_coding_RESUME_001",
+    "layer": "application",
+    "fault_type": "Resume State Inconsistency",
+    "failure_code": "RESUME_STATE_INCOMPLETE",
+    "severity": "medium",
+    "confidence": 0.84,
+    "summary": "Existing script state was ignored and the project was treated as a first iteration.",
+    "evidence": [
+      "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
+      "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
+      "autogen stdout message boundary",
+      "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
+      "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
+      "build a small python command-line app for this request: continue the existing project from the latest script and preserve existing state.",
+      "mas_system1_iterative_coding_resume_001",
+      "target system requested human input during a no-human masentinel run."
+    ],
+    "root_cause": "The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow.",
+    "suggested_fix": "Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly.",
+    "reproduction": {
+      "input": "Continue the existing project from the latest script and preserve existing state.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.31,
+    "not_model_fault_because": "The failure is caused by deterministic filesystem/artifact handling code.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_latest_iteration_manual",
+        "line": "134"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_latest_iteration_comments",
+        "line": "148"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "retrieve_latest_iteration",
+        "line": "160"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "write_latest_iteration",
+        "line": "175"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "does_version_one_exist",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_RESUME_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_007",
+    "case_id": "system1_iterative_coding_TERM_001",
+    "layer": "autogen_framework",
+    "fault_type": "Termination Signal Ignored",
+    "failure_code": "TERMINATION_SIGNAL_IGNORED",
+    "severity": "high",
+    "confidence": 0.88,
+    "summary": "The target emitted a termination marker but continued with substantive prompts/messages.",
+    "evidence": [
+      "You're all set then! If you ever need another review or want to expand the script, just let me know. Happy coding!",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33mmanager\u001b[0m (to reviewer):",
+      "sounds good",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33mreviewer\u001b[0m (to manager):",
+      "Great, glad everything is clear. If you need anything else in the future, don’t hesitate to ask. Have a great day!",
+      "--------------------------------------------------------------------------------"
+    ],
+    "root_cause": "The target system emitted a termination marker but continued asking for follow-up input or routing messages.",
+    "suggested_fix": "Add or fix is_termination_msg handling so TERMINATE stops the conversation within a small grace window.",
+    "reproduction": {
+      "input": "请完成一个简单任务，最后明确输出 TERMINATE。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.47,
+    "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "affected_cases": [
+      "system1_iterative_coding_TERM_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_008",
+    "case_id": "system1_iterative_coding_TOOLAPI_001",
+    "layer": "application",
+    "fault_type": "Tool API Semantics Error",
+    "failure_code": "VIEW_PARAMETER_IGNORED",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "External API request did not preserve documented semantic query parameters.",
+    "evidence": [
+      "missing_or_mismatched_query_params={'view': 'viwMASentinel'}",
+      "observed_query_params={}"
+    ],
+    "root_cause": "The external API tool wrapper does not preserve semantic parameters or iterate paginated responses.",
+    "suggested_fix": "Parse semantic URL fields such as view/base/table, pass them to the API, and follow offset pagination until exhausted.",
+    "reproduction": {
+      "input": "请使用一个包含筛选视图和多页结果的外部数据源完成任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_autoreply/system1_smoke_api_001/tmp_code_18e1bdf22d98fbf80f254fbcf2369c40.py",
+        "function": "get_number",
+        "line": "1"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_META_001/换一种说法完成同一需求 R1，并用三个要点概括。/script_v1.py",
+        "function": "get_input",
+        "line": "15"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_001/mas_system1_iterative_coding_R2_001/script_v1.py",
+        "function": "get_tasks_from_manager",
+        "line": "22"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_001/mas_system1_iterative_coding_R2_001/script_v1.py",
+        "function": "manager_approval",
+        "line": "100"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_TOOLAPI_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_009",
+    "case_id": "system1_iterative_coding_TOOLAPI_001",
+    "layer": "application",
+    "fault_type": "Tool API Pagination Missing",
+    "failure_code": "PAGINATION_NOT_FOLLOWED",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "External API pagination stopped before all fixture pages were requested.",
+    "evidence": [
+      "expected_pages=2",
+      "observed_pages=[]"
+    ],
+    "root_cause": "The external API tool wrapper does not preserve semantic parameters or iterate paginated responses.",
+    "suggested_fix": "Parse semantic URL fields such as view/base/table, pass them to the API, and follow offset pagination until exhausted.",
+    "reproduction": {
+      "input": "请使用一个包含筛选视图和多页结果的外部数据源完成任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_autoreply/system1_smoke_api_001/tmp_code_18e1bdf22d98fbf80f254fbcf2369c40.py",
+        "function": "get_number",
+        "line": "1"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_META_001/换一种说法完成同一需求 R1，并用三个要点概括。/script_v1.py",
+        "function": "get_input",
+        "line": "15"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_001/mas_system1_iterative_coding_R2_001/script_v1.py",
+        "function": "get_tasks_from_manager",
+        "line": "22"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_001/mas_system1_iterative_coding_R2_001/script_v1.py",
+        "function": "manager_approval",
+        "line": "100"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_TOOLAPI_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_010",
+    "case_id": "system1_iterative_coding_TOOLERR_001",
+    "layer": "application",
+    "fault_type": "Tool Error Contract Missing",
+    "failure_code": "HTTP_STATUS_NOT_CHECKED",
+    "severity": "medium",
+    "confidence": 0.88,
+    "summary": "HTTP failure status was not captured in the trace envelope.",
+    "evidence": [
+      "write_settled_plan",
+      "expected_status=401",
+      "write_latest_iteration",
+      "write_latest_iteration_comments"
+    ],
+    "root_cause": "The external tool wrapper does not normalize HTTP/API failures into a structured error envelope.",
+    "suggested_fix": "Check HTTP status codes and return typed success/error payloads instead of raw text or None.",
+    "reproduction": {
+      "input": "请调用工具 write_latest_iteration，模拟外部服务鉴权失败或非 200 响应，并以结构化错误结束。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.3,
+    "not_model_fault_because": "The failure is in the tool wrapper contract: arguments, HTTP status, pagination, or error envelope.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "affected_cases": [
+      "system1_iterative_coding_TOOLERR_001",
+      "system1_iterative_coding_TOOLERR_001",
+      "system1_iterative_coding_TOOLERR_001",
+      "system1_iterative_coding_TOOLERR_001",
+      "system1_iterative_coding_TOOLERR_001"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_011",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_012",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_013",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_014"
+    ]
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_011",
+    "case_id": "system1_iterative_coding_WIRING_001",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
+    "evidence": [
+      "120"
+    ],
+    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "reproduction": {
+      "input": "请运行一个需要文档中多智能体协作的正常任务，并输出各角色的处理摘要。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.75,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "function": "AssistantAgent",
+        "line": "26"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_WIRING_001"
     ],
     "duplicate_fault_ids": []
   }

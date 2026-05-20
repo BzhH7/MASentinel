@@ -1,34 +1,82 @@
 # Patch Suggestions
 
-## SYSTEM1_ITERATIVE_CODING_FAULT_001: Potential False Positive (Missing Tool Call)
-- Layer: application
-- Affected cases: system1_iterative_coding_COV_001, system1_iterative_coding_PROP_001, system1_iterative_coding_REQ_002
-- Suggested fix: Re-evaluate the oracle's must_call_tools requirement for write_settled_plan. Check if the test case input sequence and agent interactions logically lead to a state where write_settled_plan should be called. If not, update the oracle to reflect the correct expected tool calls. Also verify tool registration and agent's tool access to ensure write_settled_plan is available when needed.
+## SYSTEM1_ITERATIVE_CODING_FAULT_001: Message Handoff Error
+- Layer: autogen_framework
+- Affected cases: system1_iterative_coding_DATAINV_001
+- Suggested fix: Modify the handoff logic in last_message() (or its caller) to explicitly include the full result or summary from the prior analysis step, rather than only the latest natural-language reply. Ensure that termination messages or short acknowledgments do not strip the payload needed by downstream agents. For example, when invoking reviewer, pass a structured summary containing the computed financial metrics, the missing-row flag, and any relevant analysis outputs, so that the reviewer can act on it instead of receiving only 'sounds good' or an empty/termination-only signal.
 
 Suggested patch direction:
-- Verify the target agent has the tool registered and that prompts/schema expose the tool name and required arguments.
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
 
-## SYSTEM1_ITERATIVE_CODING_FAULT_002: Human Input Mode Error
+## SYSTEM1_ITERATIVE_CODING_FAULT_002: Tool Schema Mismatch
+- Layer: application
+- Affected cases: system1_iterative_coding_FSSAFE_001
+- Suggested fix: Resolve candidate paths, reject absolute/parent-directory components, and enforce relative_to(configured_project_root).
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM1_ITERATIVE_CODING_FAULT_003: Human Input Mode Error
 - Layer: autogen_framework
-- Affected cases: system1_iterative_coding_R2_006
-- Suggested fix: Set `human_input_mode='NEVER'` in the AutoGen runtime configuration (e.g., `ConversableAgent` constructor or `GroupChatManager`/`aio_run` parameters) and ensure that the termination condition is strictly enforced: either by using a `max_round` limit on `GroupChat`, a termination message like '__TERMINATE__' sent by agents after completing the required workflow, or by implementing an `is_termination_msg` predicate that recognizes workflow completion phrases. Additionally, remove any blocking `input()` calls from the agents' tool or response handling paths.
+- Affected cases: system1_iterative_coding_RESUME_001
+- Suggested fix: Set human_input_mode='NEVER' in the UserProxyAgent configuration to ensure fully automated execution. Remove any blocking input() calls or manual interaction paths from the agent's execution flow.
 
 Suggested patch direction:
 - Remove blocking `input()` calls in automated paths or gate them behind a non-interactive configuration.
 
-## SYSTEM1_ITERATIVE_CODING_FAULT_003: Termination Condition Error
-- Layer: application
-- Affected cases: system1_iterative_coding_R2_006
-- Suggested fix: 1. In the application's agent logic (e.g., in the planner or manager), after calling write_settled_plan, ensure the agent returns a specific termination message (e.g., a structured message with a 'terminate' flag or a predefined delimiter) that is recognized by the is_termination_msg function in the AutoGen configuration. 2. Configure the GroupChatManager with an is_termination_msg handler that checks for this specific message. 3. Set human_input_mode to 'NEVER' for automated orchestration to prevent the system from waiting for non-existent human input. 4. As a safety net, enforce a max_round or max_turns in the GroupChat settings that triggers graceful termination before the test oracle's limit is reached.
+## SYSTEM1_ITERATIVE_CODING_FAULT_004: Termination Condition Error
+- Layer: autogen_framework
+- Affected cases: system1_iterative_coding_RESUME_001
+- Suggested fix: 1. Set human_input_mode='NEVER' for automated runs. 2. Add an is_termination_msg function that detects terminal keywords (e.g., 'TERMINATE', 'completed', 'goodbye') in the last message. 3. Enforce max_turns in the conversation loop (e.g., 15-20 turns). 4. Ensure the runtime stops immediately when termination message is detected.
 
 Suggested patch direction:
 - Add or tighten `is_termination_msg`, `max_turns`/`max_round`, and set automated `human_input_mode='NEVER'`.
 
-## SYSTEM1_ITERATIVE_CODING_FAULT_004: Termination/Guardrail Missing
+## SYSTEM1_ITERATIVE_CODING_FAULT_005: Speaker Selection Error
 - Layer: autogen_framework
-- Affected cases: system1_iterative_coding_R2_006
-- Suggested fix: In the AutoGen configuration (group chat or SelectorGroupChat), set a strict max_turns ≤ 15. Add a custom termination message/method that triggers when write_settled_plan is successfully executed after manager's confirmation, immediately ending the conversation. Optionally implement a state guard in planner's agent definition to prevent any planning actions once settled plan is written.
+- Affected cases: system1_iterative_coding_RESUME_001
+- Suggested fix: Inspect the termination condition and max-turn configuration. If the loop persists, consider adding explicit termination logic or a max-turn guard, but this may be a design improvement rather than a confirmed fault.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM1_ITERATIVE_CODING_FAULT_006: Resume State Inconsistency
+- Layer: application
+- Affected cases: system1_iterative_coding_RESUME_001
+- Suggested fix: Implement a discovery step in the resume logic that independently checks for MasterPlan.txt, the latest script, and latest comments. If partial state is detected, explicitly inform the user/agent of the incomplete state and either resume the available state with a warning or report the incomplete state instead of silently falling back to a first-iteration workflow. Update functions in IterativeTools.py (e.g., retrieve_latest_iteration, does_version_one_exist) to distinguish between 'no state' and 'incomplete state'.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM1_ITERATIVE_CODING_FAULT_007: Termination Signal Ignored
+- Layer: autogen_framework
+- Affected cases: system1_iterative_coding_TERM_001
+- Suggested fix: No fix required for this specific trace and test case. The system behaved as expected and terminated within the constraints. If the fault was reproduced in other runs, that trace would need to be analyzed, but based on this evidence, the system is working correctly.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM1_ITERATIVE_CODING_FAULT_009: Tool API Pagination Missing
+- Layer: application
+- Affected cases: system1_iterative_coding_TOOLAPI_001
+- Suggested fix: Parse semantic URL fields such as view/base/table, pass them to the API, and follow offset pagination until exhausted. In the get_number function (and other API wrappers), implement a loop that checks for a 'next' page indicator and accumulates results across all pages.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM1_ITERATIVE_CODING_FAULT_010: Tool Error Contract Missing
+- Layer: application
+- Affected cases: system1_iterative_coding_TOOLERR_001, system1_iterative_coding_TOOLERR_001, system1_iterative_coding_TOOLERR_001, system1_iterative_coding_TOOLERR_001, system1_iterative_coding_TOOLERR_001
+- Suggested fix: In the write_latest_iteration tool implementation, check the HTTP response status code. If status >= 400, return a structured error object like {'success': False, 'http_status': 401, 'error': 'invalid key', 'error_code': 'AUTH_FAILURE'} instead of None or empty string. The structured error should always include http_status and a machine-readable error_code.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM1_ITERATIVE_CODING_FAULT_011: Non-Termination
+- Layer: autogen_framework
+- Affected cases: system1_iterative_coding_WIRING_001
+- Suggested fix: Add a termination message check (e.g., is_termination_msg) and/or enforce max_consecutive_auto_reply or max_turns in the GroupChat configuration to ensure determined termination without relying solely on process timeout.
+
+Suggested patch direction:
+- Add or tighten `is_termination_msg`, `max_turns`/`max_round`, and set automated `human_input_mode='NEVER'`.
 
