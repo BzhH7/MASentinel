@@ -47,11 +47,29 @@ def test_tool_api_contract_detects_view_and_pagination() -> None:
     assert {"VIEW_PARAMETER_IGNORED", "PAGINATION_NOT_FOLLOWED"} <= {failure.code for failure in failures}
 
 
+def test_tool_api_contract_without_observed_http_is_harness_issue() -> None:
+    metadata = {
+        "mock_http": True,
+        "http_fixture": {"fixture_id": "airtable_101_records", "expected_query_params": {"view": "viw1"}, "pagination_pages": 2},
+    }
+    failures = evaluate_contracts(case("tool_api_contract", metadata), trace(events=[]))
+
+    assert {failure.code for failure in failures} == {"CONTRACT_TEST_NOT_EXERCISED"}
+
+
 def test_tool_error_contract_detects_unstructured_error() -> None:
     metadata = {"mock_http": True, "http_fixture": {"status_code": 401}}
     event = TraceEvent(type="http_request", timestamp=1.0, metadata={"status_code": 401, "query_params": {}})
     failures = evaluate_contracts(case("tool_error_contract", metadata), trace(events=[event]))
     assert "TOOL_UNSTRUCTURED_ERROR" in {failure.code for failure in failures}
+
+
+def test_tool_error_contract_without_error_status_is_harness_issue() -> None:
+    metadata = {"mock_http": True, "http_fixture": {"status_code": 401}}
+    event = TraceEvent(type="http_request", timestamp=1.0, metadata={"status_code": 200, "query_params": {}})
+    failures = evaluate_contracts(case("tool_error_contract", metadata), trace(events=[event]))
+
+    assert {failure.code for failure in failures} == {"CONTRACT_TEST_NOT_EXERCISED"}
 
 
 def test_message_handoff_contract_detects_terminate_only() -> None:

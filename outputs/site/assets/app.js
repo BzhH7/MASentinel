@@ -75,7 +75,17 @@ function renderFaultTable() {
   rows = rows.slice().sort((a, b) => compareValues(a[key], b[key]) * dir);
   tbody.innerHTML = rows.map((row, index) => faultRowHtml(row, index)).join('') || `<tr><td colspan="8">N/A</td></tr>`;
   tbody.querySelectorAll('tr.fault-row').forEach(row => {
-    row.addEventListener('click', () => toggleDetailRow(row.nextElementSibling));
+    row.addEventListener('click', () => {
+      const expanderRow = row.nextElementSibling;
+      toggleDetailRow(expanderRow?.nextElementSibling, row, expanderRow?.querySelector('.fault-expander'));
+    });
+  });
+  tbody.querySelectorAll('.fault-expander').forEach(button => {
+    button.addEventListener('click', event => {
+      event.stopPropagation();
+      const expanderRow = button.closest('tr');
+      toggleDetailRow(expanderRow?.nextElementSibling, expanderRow?.previousElementSibling, button);
+    });
   });
 }
 
@@ -91,6 +101,14 @@ function faultRowHtml(row, index) {
       <td>${statusBadge(row.severity || 'unknown')}</td>
       <td>${row.confidence || 'N/A'}</td>
       <td>${row.summary || 'N/A'}</td>
+    </tr>
+    <tr class="fault-expander-row">
+      <td colspan="8">
+        <button type="button" class="fault-expander" aria-expanded="false" aria-controls="${detailId}">
+          <span class="fault-expander-label">展开详情</span>
+          <span class="disclosure-arrow" aria-hidden="true">▾</span>
+        </button>
+      </td>
     </tr>
     <tr id="${detailId}" class="detail-row">
       <td colspan="8">
@@ -111,9 +129,18 @@ function detailBlock(title, value) {
   return `<div><strong>${title}</strong><pre>${value || 'N/A'}</pre></div>`;
 }
 
-function toggleDetailRow(row) {
+function toggleDetailRow(row, triggerRow, expanderButton) {
   if (!row) return;
   row.classList.toggle('open');
+  const isOpen = row.classList.contains('open');
+  if (triggerRow) triggerRow.classList.toggle('expanded', isOpen);
+  const button = expanderButton || triggerRow?.nextElementSibling?.querySelector('.fault-expander');
+  if (!button) return;
+  button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  const label = button.querySelector('.fault-expander-label');
+  const arrow = button.querySelector('.disclosure-arrow');
+  if (label) label.textContent = isOpen ? '收起详情' : '展开详情';
+  if (arrow) arrow.textContent = isOpen ? '▴' : '▾';
 }
 
 function compareValues(a, b) {
@@ -157,21 +184,26 @@ function renderTraceGraph(systemId) {
   const agents = nodes.filter(node => node.type === 'agent');
   const tools = nodes.filter(node => node.type === 'tool');
   const others = nodes.filter(node => node.type !== 'agent' && node.type !== 'tool');
-  const leftNodes = agents.length ? agents : nodes;
-  const rightNodes = tools.length ? tools.concat(others) : others;
+  const splitAgentOnlyGraph = tools.length === 0 && others.length === 0 && nodes.length > 1;
+  let leftNodes = agents.length ? agents : nodes;
+  let rightNodes = tools.length ? tools.concat(others) : others;
+  if (splitAgentOnlyGraph) {
+    leftNodes = nodes.filter((_, index) => index % 2 === 0);
+    rightNodes = nodes.filter((_, index) => index % 2 === 1);
+  }
   const width = 1000;
-  const height = Math.max(420, Math.max(leftNodes.length, rightNodes.length || 1) * 74 + 80);
+  const height = Math.max(440, Math.max(leftNodes.length, rightNodes.length || 1) * 78 + 90, edges.length * 24 + 96);
   const positions = {};
 
   leftNodes.forEach((node, i) => {
-    positions[node.id] = { x: 170, y: 70 + i * 74, type: node.type || 'agent' };
+    positions[node.id] = { x: 170, y: 82 + i * 78, type: node.type || 'agent' };
   });
   rightNodes.forEach((node, i) => {
-    positions[node.id] = { x: 720, y: 70 + i * 74, type: node.type || 'tool' };
+    positions[node.id] = { x: 720, y: 82 + i * 78, type: node.type || 'tool' };
   });
   nodes.forEach((node, i) => {
     if (!positions[node.id]) {
-      positions[node.id] = { x: 445, y: 70 + i * 58, type: node.type || 'unknown' };
+      positions[node.id] = { x: 445, y: 82 + i * 58, type: node.type || 'unknown' };
     }
   });
 
@@ -179,12 +211,16 @@ function renderTraceGraph(systemId) {
     const source = positions[edge.source];
     const target = positions[edge.target];
     if (!source || !target) return '';
-    const midX = (source.x + target.x) / 2;
-    const yOffset = source.y === target.y ? 0 : (i % 3 - 1) * 8;
-    const path = `M ${source.x + 85} ${source.y} L ${midX} ${source.y + yOffset} L ${midX} ${target.y + yOffset} L ${target.x - 85} ${target.y}`;
-    const labelX = midX + 8;
-    const labelY = (source.y + target.y) / 2 - 4 + yOffset;
-    return `<path class="trace-edge" d="${path}" marker-end="url(#arrow)"></path><text class="trace-label" x="${labelX}" y="${labelY}">${edge.source || ''} → ${edge.target || ''} (${edge.count || 1})</text>`;
+    const forward = source.x <= target.x;
+    const sourceX = forward ? source.x + 98 : source.x - 98;
+    const targetX = forward ? target.x - 98 : target.x + 98;
+    const midX = (sourceX + targetX) / 2;
+    const laneOffset = ((i % 9) - 4) * 5;
+    const path = `M ${sourceX} ${source.y} L ${midX} ${source.y + laneOffset} L ${midX} ${target.y + laneOffset} L ${targetX} ${target.y}`;
+    const labelX = 350;
+    const labelY = 58 + i * 24;
+    const label = `${truncateMiddle(edge.source || 'N/A', 18)} → ${truncateMiddle(edge.target || 'N/A', 18)} (${edge.count || 1})`;
+    return `<path class="trace-edge" d="${path}" marker-end="url(#arrow)"></path><rect class="trace-label-bg" x="${labelX - 8}" y="${labelY - 15}" width="320" height="20" rx="4"></rect><text class="trace-label" x="${labelX}" y="${labelY}">${label}</text>`;
   }).join('');
 
   const nodeSvg = nodes.map(node => {
@@ -204,7 +240,7 @@ function renderTraceGraph(systemId) {
         </marker>
       </defs>
       <text x="80" y="28" class="trace-label">Agents</text>
-      <text x="672" y="28" class="trace-label">Tools / Other Nodes</text>
+      <text x="672" y="28" class="trace-label">${splitAgentOnlyGraph ? 'Agents (continued)' : 'Tools / Other Nodes'}</text>
       ${edgeSvg}
       ${nodeSvg}
     </svg>

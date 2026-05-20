@@ -46,11 +46,12 @@ FAULT_MAP = {
     "TURN_BUDGET_EXCEEDED": ("test_harness", "Soft Turn Budget Exceeded", "low", 0.95),
     "TESTCASE_SETUP_TIMEOUT": ("test_harness", "Generated Test Input Exceeded Runtime Budget", "low", 0.95),
     "TARGET_WORKFLOW_NOT_OBSERVED": ("test_harness", "Target Workflow Not Observed", "low", 0.95),
+    "CONTRACT_TEST_NOT_EXERCISED": ("test_harness", "Contract Fixture Not Exercised", "low", 0.95),
     "MODEL_PROVIDER_FAILURE": ("model_provider", "Model/API Provider Failure", "low", 0.95),
 }
 
 TARGET_LAYERS = {"application", "autogen_framework"}
-NON_TARGET_FAILURE_CODES = {"TESTCASE_SETUP_TIMEOUT", "TARGET_WORKFLOW_NOT_OBSERVED", "MODEL_PROVIDER_FAILURE", "TURN_BUDGET_EXCEEDED"}
+NON_TARGET_FAILURE_CODES = {"TESTCASE_SETUP_TIMEOUT", "TARGET_WORKFLOW_NOT_OBSERVED", "CONTRACT_TEST_NOT_EXERCISED", "MODEL_PROVIDER_FAILURE", "TURN_BUDGET_EXCEEDED"}
 
 
 def classify_faults(profile: SystemProfile, testcases: list[TestCase], traces: list[RunTrace]) -> list[dict]:
@@ -379,6 +380,8 @@ def _not_model_fault_because(fault: dict) -> str:
     code = str(fault.get("failure_code", ""))
     if code in {"MODEL_PROVIDER_FAILURE"}:
         return "This item is excluded from target faults because it is provider availability/authentication."
+    if code == "CONTRACT_TEST_NOT_EXERCISED":
+        return "The expected contract fixture was not observed in target execution, so this is a test harness/applicability issue rather than target software evidence."
     if code.startswith("DOCUMENTED_"):
         return "The failure occurs in deterministic CLI/import/parser/dispatcher code before model output quality is relevant."
     if code in {"FILESYSTEM_ESCAPE", "RESUME_STATE_INCOMPLETE", "MARKDOWN_ARTIFACT_CORRUPTION", "ARTIFACT_SCHEMA_MISMATCH"}:
@@ -505,6 +508,8 @@ def _root_cause(code: str, profile: SystemProfile, evidence: list[str] | None = 
         return "The generated test input exceeded the configured automated execution budget before the target agent workflow could be meaningfully observed."
     if code == "TARGET_WORKFLOW_NOT_OBSERVED":
         return "The target process did not expose a meaningful agent workflow for this generated case, so routing/tool expectations would be unreliable as target faults."
+    if code == "CONTRACT_TEST_NOT_EXERCISED":
+        return "The contract fixture was not exercised by an observed target HTTP/tool event, so no target root cause can be asserted."
     if code == "MODEL_PROVIDER_FAILURE":
         return "The failure is caused by model/API service authentication, authorization, rate limiting, or timeout rather than a target application or AutoGen framework defect."
     if code == "TURN_BUDGET_EXCEEDED":
@@ -566,6 +571,8 @@ def _suggested_fix(code: str, evidence: list[str] | None = None) -> str:
         return "Reduce or truncate the generated prompt for interactive LLM systems and rerun; do not count this as a target-system defect."
     if code == "TARGET_WORKFLOW_NOT_OBSERVED":
         return "Improve the case-to-target adapter, command template, or runtime instrumentation, then rerun the frozen testcase before judging application/framework faults."
+    if code == "CONTRACT_TEST_NOT_EXERCISED":
+        return "Improve the case adapter or instrumentation so the target actually performs the expected HTTP/tool action before judging the contract."
     if code == "MODEL_PROVIDER_FAILURE":
         return "Fix API credentials/network limits or add application-level retry/fallback configuration, then rerun; do not treat model/provider availability as a model defect."
     if code == "TURN_BUDGET_EXCEEDED":

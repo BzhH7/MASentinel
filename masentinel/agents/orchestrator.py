@@ -14,18 +14,21 @@ from masentinel.agents.roles import (
     FalsePositiveAuditorAgent,
     FaultDiagnoserAgent,
     InteractionAdapterAgent,
+    PatternApplicabilityAgent,
     ReportWriterAgent,
     RequirementAnalystAgent,
     SystemModelingAgent,
     TestDesignerAgent,
 )
 from masentinel.agents.validators import merge_testcases, requirements_from_agent_output, testcases_from_agent_output
+from masentinel.analyzer.feature_extractor import extract_system_features
 from masentinel.analyzer.profile_builder import build_profile_from_config, save_profile_bundle
 from masentinel.diagnosis.fault_deduplicator import deduplicate_faults
 from masentinel.diagnosis.fault_grouper import annotate_fault_groups, build_fault_groups
 from masentinel.diagnosis.fault_classifier import TARGET_LAYERS, classify_faults, classify_non_target_issues
 from masentinel.diagnosis.patch_suggester import write_patch_suggestions
 from masentinel.generator.testcase_generator import generate_testcases
+from masentinel.generator.pattern_selector import build_test_plan, filter_cases_by_test_plan, pattern_budgets, selected_pattern_names
 from masentinel.metrics.coverage import compute_coverage
 from masentinel.metrics.flaky import update_flaky_report
 from masentinel.model.model_client import ModelClient
@@ -86,6 +89,16 @@ class AgenticTestOrchestrator:
         self._stage(system_id, "SystemModelingAgent done semantic graph saved")
         self._stage(system_id, f"profile ready: agents={len(profile.agents)} tools={len(profile.tools)} requirements={len(profile.requirements)}")
 
+        features = extract_system_features(profile)
+        write_json(system_out / "system_features.json", features)
+        test_plan = self._plan_test_patterns(
+            agents["pattern_planner"],
+            profile,
+            features,
+            system_out,
+            system_id,
+        )
+
         interaction_decision = self._plan_interaction_adapter(
             agents["interaction"],
             profile,
@@ -110,11 +123,19 @@ class AgenticTestOrchestrator:
             batch_size=agent_batch_size,
             workers=agent_api_workers,
             system_id=system_id,
+            test_plan=test_plan,
         )
+        agent_cases = filter_cases_by_test_plan(agent_cases, test_plan)
         self._stage(system_id, f"TestDesignerAgent done agent_cases={len(agent_cases)}, merging deterministic and regression cases")
-        deterministic_cases = generate_testcases(profile, num_cases=num_cases, seed=int(testing.get("random_seed", 42)))
+        deterministic_cases = generate_testcases(
+            profile,
+            num_cases=num_cases,
+            seed=int(testing.get("random_seed", 42)),
+            selected_patterns=selected_pattern_names(test_plan),
+            pattern_budgets=pattern_budgets(test_plan),
+        )
         regression_cases = load_regression_cases(profile.system_id, system_out)
-        generated_cases = merge_testcases(agent_cases, deterministic_cases + regression_cases, limit=None)
+        generated_cases = merge_testcases(agent_cases, filter_cases_by_test_plan(deterministic_cases + regression_cases, test_plan), limit=None)
         generated_valid, _generated_validation = validate_testcases(generated_cases, profile, system_out, max_input_chars=max_input_chars)
         cases = merge_testcases([], generated_valid, limit=num_cases)
         cases, validation_report = validate_testcases(cases, profile, system_out, max_input_chars=max_input_chars)
@@ -129,6 +150,7 @@ class AgenticTestOrchestrator:
                 "case_types": sorted({case.case_type for case in cases}),
                 "human_intervention_allowed": False if self.no_human else True,
                 "agent_api_workers": agent_api_workers,
+                "test_plan_metrics": test_plan.get("metrics", {}),
             },
         )
         self._stage(system_id, f"testcases frozen: generated={len(generated_cases)} validated={len(cases)} sha256={testcase_hash[:12]}")
@@ -198,6 +220,7 @@ class AgenticTestOrchestrator:
             cases,
             traces,
             coverage,
+            test_plan,
         )
         if second_round["extra_cases"]:
             self._stage(system_id, f"coverage-guided second round: extra_cases={len(second_round['extra_cases'])}")
@@ -280,6 +303,8 @@ class AgenticTestOrchestrator:
             "semantic_graph_review": modeling_decision.output,
             "interaction_adapter": interaction_decision.output,
             "coverage_strategy": coverage_decision.output,
+            "test_plan": test_plan,
+            "system_features": features,
             "second_round": second_round["summary"],
             "trace_graph": {"nodes": len(trace_graph.get("nodes", [])), "edges": len(trace_graph.get("edges", []))},
             "flaky_report": flaky_report,
@@ -361,6 +386,7 @@ class AgenticTestOrchestrator:
             "requirements": RequirementAnalystAgent(model_client, trace_logger, model_name),
             "modeling": SystemModelingAgent(model_client, trace_logger, model_name),
             "designer": TestDesignerAgent(model_client, trace_logger, model_name),
+            "pattern_planner": PatternApplicabilityAgent(model_client, trace_logger, model_name),
             "interaction": InteractionAdapterAgent(model_client, trace_logger, model_name),
             "coverage": CoverageStrategistAgent(model_client, trace_logger, model_name),
             "monitor": ExecutionMonitorAgent(model_client, trace_logger, model_name),
@@ -426,6 +452,54 @@ class AgenticTestOrchestrator:
         )
         decision.output = payload
         return decision
+
+    def _plan_test_patterns(
+        self,
+        planner: PatternApplicabilityAgent,
+        profile: SystemProfile,
+        features: dict[str, Any],
+        system_out: Path,
+        system_id: str,
+    ) -> dict[str, Any]:
+        available_patterns = sorted(
+            [
+                "artifact_contract",
+                "filesystem_safety",
+                "state_resume_contract",
+                "tool_api_contract",
+                "tool_error_contract",
+                "scalable_budget",
+                "message_handoff_integrity",
+                "data_invariant",
+                "cli_doc_conformance",
+                "autogen_wiring",
+            ]
+        )
+        self._stage(system_id, f"PatternApplicabilityAgent start available_patterns={len(available_patterns)}")
+        decision = planner.run(
+            {
+                "profile_summary": self._compact_profile(profile),
+                "system_features": features,
+                "available_patterns": available_patterns,
+                "instruction": (
+                    "Select only patterns supported by deterministic system_features. "
+                    "Rejected patterns should explain missing features. "
+                    "Do not use pattern rationale as fault evidence."
+                ),
+            }
+        )
+        test_plan = build_test_plan(features, decision.output)
+        test_plan["agent_decision"] = {
+            "fallback_used": decision.fallback_used,
+            "success": decision.success,
+            "error": decision.error,
+            "confidence": decision.confidence,
+        }
+        write_json(system_out / "test_plan.json", test_plan)
+        selected = ",".join(selected_pattern_names(test_plan)) or "none"
+        rejected_count = len(test_plan.get("rejected_patterns", []) or [])
+        self._stage(system_id, f"PatternApplicabilityAgent done selected=[{selected}] rejected={rejected_count}")
+        return test_plan
 
     def _collect_interaction_excerpts(self, profile: SystemProfile) -> list[dict[str, Any]]:
         root = Path(profile.root_path or ".")
@@ -625,6 +699,7 @@ class AgenticTestOrchestrator:
         batch_size: int,
         workers: int,
         system_id: str,
+        test_plan: dict[str, Any] | None = None,
     ) -> list[TestCase]:
         if total_cases <= 0:
             return []
@@ -643,6 +718,7 @@ class AgenticTestOrchestrator:
                 batches=batches,
                 workers=workers,
                 system_id=system_id,
+                test_plan=test_plan,
             )
         for batch_index in range(batches):
             remaining = total_cases - len(agent_cases)
@@ -665,12 +741,14 @@ class AgenticTestOrchestrator:
                 {
                     "profile": compact_profile,
                     "semantic_graph_review": compact_modeling,
+                    "test_plan": _compact_test_plan(test_plan),
                     "num_cases": current_size,
                     "existing_agent_cases": existing_intents,
                     "instruction": (
                         "Generate only this small batch. Return compact JSON only. "
                         "Keep objective/input strings short and directly executable by the target system. "
                         "Avoid dialogue transcripts, markdown, explanations, and duplicated existing_agent_cases. "
+                        "Do not generate contract case_types rejected by test_plan. "
                         "Deterministic generator will fill the remaining suite."
                     ),
                 }
@@ -696,6 +774,7 @@ class AgenticTestOrchestrator:
         batches: int,
         workers: int,
         system_id: str,
+        test_plan: dict[str, Any] | None = None,
     ) -> list[TestCase]:
         max_workers = min(workers, batches)
         self._stage(system_id, f"TestDesignerAgent parallel start batches={batches} workers={max_workers}")
@@ -724,6 +803,7 @@ class AgenticTestOrchestrator:
                 {
                     "profile": compact_profile,
                     "semantic_graph_review": compact_modeling,
+                    "test_plan": _compact_test_plan(test_plan),
                     "num_cases": current_size,
                     "batch_index": batch_index + 1,
                     "batch_count": batches,
@@ -734,6 +814,7 @@ class AgenticTestOrchestrator:
                         "Use coverage_focus to make this batch different from other parallel batches. "
                         "Keep objective/input strings short and directly executable by the target system. "
                         "Avoid dialogue transcripts, markdown, explanations, and duplicated case intents. "
+                        "Do not generate contract case_types rejected by test_plan. "
                         "Deterministic generator will fill the remaining suite."
                     ),
                 }
@@ -765,7 +846,7 @@ class AgenticTestOrchestrator:
         return agent_cases[:total_cases]
 
     def _rule_results(self, profile: SystemProfile, cases: list[TestCase], traces: list[RunTrace]) -> list[dict[str, Any]]:
-        oracle = RuleOracle(registered_tools={tool.name for tool in profile.tools})
+        oracle = RuleOracle(registered_tools={tool.name for tool in profile.tools}, profile=profile)
         trace_by_case = {trace.case_id: trace for trace in traces}
         results = []
         for case in cases:
@@ -787,6 +868,7 @@ class AgenticTestOrchestrator:
         existing_cases: list[TestCase],
         existing_traces: list[RunTrace],
         coverage: dict[str, Any],
+        test_plan: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         target = float(testing.get("target_mascov", 0.8) or 0.8)
         enabled = bool(testing.get("enable_second_round", True))
@@ -810,7 +892,14 @@ class AgenticTestOrchestrator:
         extra_limit = int(testing.get("second_round_cases", 8) or 8)
         seed = int(testing.get("random_seed", 42)) + 101
         self._stage(profile.system_id, f"second round candidate generation start target_mascov={target:.4f} extra_limit={extra_limit}")
-        candidates = generate_testcases(profile, num_cases=max(extra_limit * 2, 12), seed=seed)
+        candidates = generate_testcases(
+            profile,
+            num_cases=max(extra_limit * 2, 12),
+            seed=seed,
+            selected_patterns=selected_pattern_names(test_plan or {}),
+            pattern_budgets=pattern_budgets(test_plan or {}),
+        )
+        candidates = filter_cases_by_test_plan(candidates, test_plan or {})
         existing_keys = {(case.case_type, case.input) for case in existing_cases}
         priority_types = {
             "artifact_contract",
@@ -1091,3 +1180,28 @@ def _fmt_metric(value: Any) -> str:
         return f"{float(value):.4f}"
     except (TypeError, ValueError):
         return "N/A"
+
+
+def _compact_test_plan(test_plan: dict[str, Any] | None) -> dict[str, Any]:
+    if not test_plan:
+        return {}
+    return {
+        "selected_patterns": [
+            {
+                "pattern": item.get("pattern"),
+                "oracle_strength": item.get("oracle_strength"),
+                "reasons": item.get("reasons", [])[:2] if isinstance(item.get("reasons"), list) else [],
+            }
+            for item in (test_plan.get("selected_patterns", []) or [])[:12]
+            if isinstance(item, dict)
+        ],
+        "rejected_patterns": [
+            {
+                "pattern": item.get("pattern"),
+                "reason": item.get("reason") or item.get("verifier_reason"),
+            }
+            for item in (test_plan.get("rejected_patterns", []) or [])[:12]
+            if isinstance(item, dict)
+        ],
+        "metrics": test_plan.get("metrics", {}),
+    }

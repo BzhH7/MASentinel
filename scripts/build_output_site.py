@@ -940,12 +940,44 @@ def render_fault_section(systems: list[dict[str, Any]]) -> str:
           <th data-sort="summary">summary</th>
         </tr>
       </thead>
-      <tbody id="fault-table-body"></tbody>
+      <tbody id="fault-table-body">{render_static_fault_rows(faults)}</tbody>
     </table>
   </div>
   <div class="subsection-label">5c. Severity and Layer Filters</div>
   <p class="section-note">Use the select controls above to filter the table; click any header to sort and any row to expand diagnostic details.</p>
 </section>"""
+
+
+def render_static_fault_rows(faults: list[dict[str, Any]]) -> str:
+    if not faults:
+        return "<tr><td colspan=\"8\">N/A</td></tr>"
+    rows = []
+    for fault in faults:
+        severity = str(fault.get("severity", "unknown"))
+        rows.append(
+            f"""<tr>
+  <td><code>{html.escape(str(fault.get("fault_id", "N/A")))}</code></td>
+  <td><code>{html.escape(str(fault.get("case_id", "N/A")))}</code></td>
+  <td>{html.escape(str(fault.get("layer", "N/A")))}</td>
+  <td>{html.escape(str(fault.get("fault_type", "N/A")))}</td>
+  <td><code>{html.escape(str(fault.get("failure_code", "N/A")))}</code></td>
+  <td><span class="status-badge {html.escape(severity_class(severity))}">{html.escape(severity)}</span></td>
+  <td>{html.escape(str(fault.get("confidence", "N/A")))}</td>
+  <td>{html.escape(str(fault.get("summary", "N/A")))}</td>
+</tr><tr class="fault-expander-row static-expander"><td colspan="8"><span class="fault-expander"><span>展开详情</span><span class="disclosure-arrow" aria-hidden="true">▾</span></span></td></tr>"""
+        )
+    return "".join(rows)
+
+
+def severity_class(severity: str) -> str:
+    normalized = severity.lower()
+    if normalized in {"high", "critical", "failed", "error"}:
+        return "failed"
+    if normalized in {"medium", "warning", "suspected"}:
+        return "warning"
+    if normalized in {"low", "passed", "success"}:
+        return "passed"
+    return "neutral"
 
 
 def render_fault_charts(faults: list[dict[str, Any]]) -> str:
@@ -1318,11 +1350,12 @@ h1 {
 
 .method-node {
   flex: 1 0 140px;
-  min-width: 140px;
+  min-width: 156px;
   padding: 14px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-surface);
+  overflow: hidden;
 }
 
 .method-icon {
@@ -1350,7 +1383,8 @@ h1 {
 .method-node small {
   margin-top: 4px;
   color: var(--color-text-muted);
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .flow-arrow {
@@ -1450,7 +1484,7 @@ h1 {
 .coverage-row,
 .count-row {
   display: grid;
-  grid-template-columns: minmax(120px, 0.9fr) minmax(160px, 2fr) 58px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(150px, 1.8fr) 48px;
   gap: 10px;
   align-items: center;
   min-height: 30px;
@@ -1460,8 +1494,14 @@ h1 {
 .count-label,
 .coverage-value,
 .count-value {
+  min-width: 0;
   color: var(--color-text-muted);
   font-size: 13px;
+}
+
+.coverage-name,
+.count-label {
+  overflow-wrap: anywhere;
 }
 
 .coverage-value,
@@ -1571,6 +1611,74 @@ input[type="search"] {
 }
 
 .data-table tbody tr.clickable:hover {
+  background: #f8fafc;
+}
+
+#fault-table {
+  table-layout: fixed;
+  min-width: 100%;
+}
+
+#fault-table th,
+#fault-table td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+#fault-table th:nth-child(1) { width: 18%; }
+#fault-table th:nth-child(2) { width: 17%; }
+#fault-table th:nth-child(3) { width: 11%; }
+#fault-table th:nth-child(4) { width: 13%; }
+#fault-table th:nth-child(5) { width: 15%; }
+#fault-table th:nth-child(6) { width: 8%; }
+#fault-table th:nth-child(7) { width: 7%; }
+#fault-table th:nth-child(8) { width: 11%; }
+
+.disclosure-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  min-width: 24px;
+  color: var(--color-primary-light);
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.fault-row td {
+  border-bottom: 0;
+}
+
+.fault-expander-row td {
+  padding: 0 10px 10px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.fault-expander {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: min(240px, 100%);
+  margin: 0 auto;
+  min-height: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.fault-expander:hover {
+  background: #eaf0f7;
+}
+
+.fault-row.expanded {
   background: #f8fafc;
 }
 
@@ -1716,6 +1824,12 @@ code {
 .trace-label {
   fill: var(--color-text-muted);
   font-size: 12px;
+}
+
+.trace-label-bg {
+  fill: rgba(255, 255, 255, 0.86);
+  stroke: #edf1f7;
+  stroke-width: 1;
 }
 
 .trace-node-label {
@@ -1934,7 +2048,17 @@ function renderFaultTable() {
   rows = rows.slice().sort((a, b) => compareValues(a[key], b[key]) * dir);
   tbody.innerHTML = rows.map((row, index) => faultRowHtml(row, index)).join('') || `<tr><td colspan="8">N/A</td></tr>`;
   tbody.querySelectorAll('tr.fault-row').forEach(row => {
-    row.addEventListener('click', () => toggleDetailRow(row.nextElementSibling));
+    row.addEventListener('click', () => {
+      const expanderRow = row.nextElementSibling;
+      toggleDetailRow(expanderRow?.nextElementSibling, row, expanderRow?.querySelector('.fault-expander'));
+    });
+  });
+  tbody.querySelectorAll('.fault-expander').forEach(button => {
+    button.addEventListener('click', event => {
+      event.stopPropagation();
+      const expanderRow = button.closest('tr');
+      toggleDetailRow(expanderRow?.nextElementSibling, expanderRow?.previousElementSibling, button);
+    });
   });
 }
 
@@ -1950,6 +2074,14 @@ function faultRowHtml(row, index) {
       <td>${statusBadge(row.severity || 'unknown')}</td>
       <td>${row.confidence || 'N/A'}</td>
       <td>${row.summary || 'N/A'}</td>
+    </tr>
+    <tr class="fault-expander-row">
+      <td colspan="8">
+        <button type="button" class="fault-expander" aria-expanded="false" aria-controls="${detailId}">
+          <span class="fault-expander-label">展开详情</span>
+          <span class="disclosure-arrow" aria-hidden="true">▾</span>
+        </button>
+      </td>
     </tr>
     <tr id="${detailId}" class="detail-row">
       <td colspan="8">
@@ -1970,9 +2102,18 @@ function detailBlock(title, value) {
   return `<div><strong>${title}</strong><pre>${value || 'N/A'}</pre></div>`;
 }
 
-function toggleDetailRow(row) {
+function toggleDetailRow(row, triggerRow, expanderButton) {
   if (!row) return;
   row.classList.toggle('open');
+  const isOpen = row.classList.contains('open');
+  if (triggerRow) triggerRow.classList.toggle('expanded', isOpen);
+  const button = expanderButton || triggerRow?.nextElementSibling?.querySelector('.fault-expander');
+  if (!button) return;
+  button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  const label = button.querySelector('.fault-expander-label');
+  const arrow = button.querySelector('.disclosure-arrow');
+  if (label) label.textContent = isOpen ? '收起详情' : '展开详情';
+  if (arrow) arrow.textContent = isOpen ? '▴' : '▾';
 }
 
 function compareValues(a, b) {
@@ -2016,21 +2157,26 @@ function renderTraceGraph(systemId) {
   const agents = nodes.filter(node => node.type === 'agent');
   const tools = nodes.filter(node => node.type === 'tool');
   const others = nodes.filter(node => node.type !== 'agent' && node.type !== 'tool');
-  const leftNodes = agents.length ? agents : nodes;
-  const rightNodes = tools.length ? tools.concat(others) : others;
+  const splitAgentOnlyGraph = tools.length === 0 && others.length === 0 && nodes.length > 1;
+  let leftNodes = agents.length ? agents : nodes;
+  let rightNodes = tools.length ? tools.concat(others) : others;
+  if (splitAgentOnlyGraph) {
+    leftNodes = nodes.filter((_, index) => index % 2 === 0);
+    rightNodes = nodes.filter((_, index) => index % 2 === 1);
+  }
   const width = 1000;
-  const height = Math.max(420, Math.max(leftNodes.length, rightNodes.length || 1) * 74 + 80);
+  const height = Math.max(440, Math.max(leftNodes.length, rightNodes.length || 1) * 78 + 90, edges.length * 24 + 96);
   const positions = {};
 
   leftNodes.forEach((node, i) => {
-    positions[node.id] = { x: 170, y: 70 + i * 74, type: node.type || 'agent' };
+    positions[node.id] = { x: 170, y: 82 + i * 78, type: node.type || 'agent' };
   });
   rightNodes.forEach((node, i) => {
-    positions[node.id] = { x: 720, y: 70 + i * 74, type: node.type || 'tool' };
+    positions[node.id] = { x: 720, y: 82 + i * 78, type: node.type || 'tool' };
   });
   nodes.forEach((node, i) => {
     if (!positions[node.id]) {
-      positions[node.id] = { x: 445, y: 70 + i * 58, type: node.type || 'unknown' };
+      positions[node.id] = { x: 445, y: 82 + i * 58, type: node.type || 'unknown' };
     }
   });
 
@@ -2038,12 +2184,16 @@ function renderTraceGraph(systemId) {
     const source = positions[edge.source];
     const target = positions[edge.target];
     if (!source || !target) return '';
-    const midX = (source.x + target.x) / 2;
-    const yOffset = source.y === target.y ? 0 : (i % 3 - 1) * 8;
-    const path = `M ${source.x + 85} ${source.y} L ${midX} ${source.y + yOffset} L ${midX} ${target.y + yOffset} L ${target.x - 85} ${target.y}`;
-    const labelX = midX + 8;
-    const labelY = (source.y + target.y) / 2 - 4 + yOffset;
-    return `<path class="trace-edge" d="${path}" marker-end="url(#arrow)"></path><text class="trace-label" x="${labelX}" y="${labelY}">${edge.source || ''} → ${edge.target || ''} (${edge.count || 1})</text>`;
+    const forward = source.x <= target.x;
+    const sourceX = forward ? source.x + 98 : source.x - 98;
+    const targetX = forward ? target.x - 98 : target.x + 98;
+    const midX = (sourceX + targetX) / 2;
+    const laneOffset = ((i % 9) - 4) * 5;
+    const path = `M ${sourceX} ${source.y} L ${midX} ${source.y + laneOffset} L ${midX} ${target.y + laneOffset} L ${targetX} ${target.y}`;
+    const labelX = 350;
+    const labelY = 58 + i * 24;
+    const label = `${truncateMiddle(edge.source || 'N/A', 18)} → ${truncateMiddle(edge.target || 'N/A', 18)} (${edge.count || 1})`;
+    return `<path class="trace-edge" d="${path}" marker-end="url(#arrow)"></path><rect class="trace-label-bg" x="${labelX - 8}" y="${labelY - 15}" width="320" height="20" rx="4"></rect><text class="trace-label" x="${labelX}" y="${labelY}">${label}</text>`;
   }).join('');
 
   const nodeSvg = nodes.map(node => {
@@ -2063,7 +2213,7 @@ function renderTraceGraph(systemId) {
         </marker>
       </defs>
       <text x="80" y="28" class="trace-label">Agents</text>
-      <text x="672" y="28" class="trace-label">Tools / Other Nodes</text>
+      <text x="672" y="28" class="trace-label">${splitAgentOnlyGraph ? 'Agents (continued)' : 'Tools / Other Nodes'}</text>
       ${edgeSvg}
       ${nodeSvg}
     </svg>

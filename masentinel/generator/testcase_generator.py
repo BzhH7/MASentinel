@@ -27,10 +27,19 @@ FUZZ_TEMPLATES = PROPERTY_BOUNDARY_TEMPLATES + FUZZ_TOOL_TEMPLATES
 
 
 class TestCaseGenerator:
-    def __init__(self, seed: int = 42, max_tools_per_system: int = 5, pattern_context: PatternContext | None = None) -> None:
+    def __init__(
+        self,
+        seed: int = 42,
+        max_tools_per_system: int = 5,
+        pattern_context: PatternContext | None = None,
+        selected_patterns: list[str] | set[str] | None = None,
+        pattern_budgets: dict[str, int] | None = None,
+    ) -> None:
         self.random = random.Random(seed)
         self.max_tools_per_system = max_tools_per_system
         self.pattern_context = pattern_context or PatternContext(max_tools_per_system=max_tools_per_system)
+        self.selected_patterns = set(selected_patterns) if selected_patterns is not None else None
+        self.pattern_budgets = pattern_budgets or {}
 
     def generate(self, profile: SystemProfile, num_cases: int = 40) -> list[TestCase]:
         cases: list[TestCase] = []
@@ -95,7 +104,12 @@ class TestCaseGenerator:
         cases: list[TestCase] = []
         for pattern in PATTERN_REGISTRY:
             try:
-                if pattern.applicable(profile):
+                if self.selected_patterns is not None:
+                    if pattern.name not in self.selected_patterns:
+                        continue
+                    budget = self.pattern_budgets.get(pattern.name, self.pattern_context.max_cases_per_pattern)
+                    cases.extend(pattern.instantiate(profile, budget=budget))
+                elif pattern.applicable(profile):
                     cases.extend(pattern.instantiate(profile, budget=self.pattern_context.max_cases_per_pattern))
             except Exception:
                 continue
@@ -604,5 +618,11 @@ class TestCaseGenerator:
         return keywords[:4]
 
 
-def generate_testcases(profile: SystemProfile, num_cases: int = 40, seed: int = 42) -> list[TestCase]:
-    return TestCaseGenerator(seed=seed).generate(profile, num_cases=num_cases)
+def generate_testcases(
+    profile: SystemProfile,
+    num_cases: int = 40,
+    seed: int = 42,
+    selected_patterns: list[str] | set[str] | None = None,
+    pattern_budgets: dict[str, int] | None = None,
+) -> list[TestCase]:
+    return TestCaseGenerator(seed=seed, selected_patterns=selected_patterns, pattern_budgets=pattern_budgets).generate(profile, num_cases=num_cases)

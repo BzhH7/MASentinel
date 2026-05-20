@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from __future__ import annotations
 
 import argparse
@@ -6,159 +7,157 @@ from pathlib import Path
 from typing import Any
 
 
-STRICT_CODE_HINTS = {
-    "wrong_output_schema": {"MARKDOWN_ARTIFACT_CORRUPTION", "ARTIFACT_SCHEMA_MISMATCH", "OUTPUT_SCHEMA_VIOLATION"},
-    "missing_state": {"RESUME_STATE_INCOMPLETE"},
-    "input_validation_error": {"FILESYSTEM_ESCAPE"},
-    "human_input_blocking": {"HUMAN_INPUT_REQUESTED"},
-    "tool_semantics_error": {"VIEW_PARAMETER_IGNORED", "PAGINATION_NOT_FOLLOWED"},
-    "tool_error_handling_missing": {"TOOL_RAW_HTTP_ERROR", "TOOL_RETURNED_NONE", "TOOL_UNSTRUCTURED_ERROR", "HTTP_STATUS_NOT_CHECKED", "RUNTIME_EXCEPTION"},
-    "wrong_routing": {"SPEAKER_SELECTION_LOOP", "MISSING_MESSAGE_EDGE", "MISSING_AGENT"},
-    "termination_error": {"SCALABLE_BUDGET_EXCEEDED", "TERMINATION_SIGNAL_IGNORED", "NON_TERMINATION"},
-    "message_passing_error": {"MESSAGE_HANDOFF_TERMINATE_ONLY", "MESSAGE_HANDOFF_EMPTY"},
-    "data_processing_error": {"PARTIAL_METRIC_ZEROED", "NUMERIC_SIGN_CONVENTION_ERROR"},
-    "documented_entrypoint_broken": {"DOCUMENTED_ENTRYPOINT_BROKEN"},
-    "missing_feature": {"DOCUMENTED_CLI_COMMAND_MISSING"},
-    "agent_orchestration_missing": {"AUTOGEN_WIRING_MISSING"},
+SYSTEM_DIR_HINTS = {
+    "system_1": "system1_iterative_coding",
+    "system_2": "system2_research_agents",
+    "system_3": "system3_financial_analysis",
 }
 
-PARTIAL_CODE_HINTS = {
-    "tool_error_handling_missing": {"BUSINESS_TASK_FAILED", "RUNTIME_EXCEPTION"},
-    "message_passing_error": {"BUSINESS_TASK_FAILED", "MISSING_AGENT"},
-    "agent_orchestration_missing": {"MISSING_AGENT", "TARGET_WORKFLOW_NOT_OBSERVED"},
+GT_MATCHERS = {
+    "GT-S1-001": {"codes": {"MARKDOWN_ARTIFACT_CORRUPTION"}, "keywords": {"fence", "markdown", "script_v1", "artifact"}},
+    "GT-S1-002": {"codes": {"RESUME_STATE_INCOMPLETE"}, "keywords": {"resume", "script_v1", "masterplan", "comments_v1"}},
+    "GT-S1-003": {"codes": {"ARTIFACT_SCHEMA_MISMATCH"}, "keywords": {"artifact_schema_mismatch", "comments_v", ".txt", ".log"}},
+    "GT-S1-004": {"codes": {"FILESYSTEM_ESCAPE"}, "keywords": {"path", "escape", "project", "../"}},
+    "GT-S2-001": {"codes": {"HUMAN_INPUT_REQUESTED"}, "keywords": {"human_input_mode", "human input", "always"}},
+    "GT-S2-002": {"codes": {"VIEW_PARAMETER_IGNORED", "PAGINATION_NOT_FOLLOWED"}, "keywords": {"airtable", "view", "offset", "pagination"}},
+    "GT-S2-003": {"codes": {"TOOL_UNSTRUCTURED_ERROR", "TOOL_RETURNED_NONE", "HTTP_STATUS_NOT_CHECKED", "TOOL_RAW_HTTP_ERROR"}, "keywords": {"status", "401", "structured", "none"}},
+    "GT-S2-004": {"codes": {"SPEAKER_SELECTION_LOOP", "MISSING_TOOL_CALL"}, "keywords": {"speaker", "routing", "groupchat", "tool"}},
+    "GT-S2-005": {"codes": {"SCALABLE_BUDGET_EXCEEDED"}, "keywords": {"max_round", "budget", "record", "round"}},
+    "GT-S3-001": {"codes": {"MESSAGE_HANDOFF_TERMINATE_ONLY", "MESSAGE_HANDOFF_EMPTY"}, "keywords": {"terminate", "handoff", "last_message", "analysis"}},
+    "GT-S3-002": {"codes": {"PARTIAL_METRIC_ZEROED"}, "keywords": {"metric", "revenue", "net income", "zero"}},
+    "GT-S3-003": {"codes": {"NUMERIC_SIGN_CONVENTION_ERROR"}, "keywords": {"var_95", "drawdown", "negative", "sign"}},
+    "GT-S3-004": {"codes": {"DOCUMENTED_ENTRYPOINT_BROKEN"}, "keywords": {"entrypoint", "src.main", "import", "constructor"}},
+    "GT-S3-005": {"codes": {"DOCUMENTED_CLI_COMMAND_MISSING"}, "keywords": {"interactive", "portfolio", "invalid choice"}},
+    "GT-S3-006": {"codes": {"AUTOGEN_WIRING_MISSING"}, "keywords": {"orchestrator", "factory", "agent", "wiring"}},
 }
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Evaluate MASentinel outputs against seeded/independent ground-truth defects.")
-    parser.add_argument("--ground-truth", required=True)
+    parser = argparse.ArgumentParser(description="Evaluate MASentinel outputs against ground-truth defect metadata.")
+    parser.add_argument("--ground-truth", default="../analysis/ground_truth_defects.json")
     parser.add_argument("--outputs", default="outputs")
-    parser.add_argument("--out", default=None)
+    parser.add_argument("--out", default="outputs/ground_truth_alignment.md")
+    parser.add_argument("--json-out", default=None)
     args = parser.parse_args()
 
-    ground_truth = json.loads(Path(args.ground_truth).read_text(encoding="utf-8"))
-    outputs = Path(args.outputs)
-    faults_by_system = _load_faults(outputs)
+    ground_truth_path = Path(args.ground_truth)
+    outputs_dir = Path(args.outputs)
+    gt_items = _read_json(ground_truth_path, [])
     rows = []
-    strict_hits = 0
-    partial_hits = 0
-    for defect in ground_truth:
-        system = str(defect.get("system", "")).replace("system_", "system")
-        defect_type = str(defect.get("defect_type", ""))
-        candidates = faults_by_system.get(system, []) + faults_by_system.get(_system_alias(system), [])
-        strict_codes = STRICT_CODE_HINTS.get(defect_type, set())
-        partial_codes = PARTIAL_CODE_HINTS.get(defect_type, set())
-        strict_match = _find_match(candidates, strict_codes, defect)
-        partial_match = strict_match or _find_match(candidates, partial_codes, defect)
-        if strict_match:
-            judgment = "TP"
-            strict_hits += 1
-            partial_hits += 1
-            matched = strict_match
-        elif partial_match:
-            judgment = "Partial"
-            partial_hits += 1
-            matched = partial_match
-        else:
-            judgment = "FN"
-            matched = {}
-        rows.append((defect, judgment, matched))
-
-    total = len(ground_truth)
-    strict_recall = strict_hits / total if total else 0
-    partial_recall = partial_hits / total if total else 0
-    report = _render(rows, strict_hits, partial_hits, total, strict_recall, partial_recall)
-    out_path = Path(args.out) if args.out else outputs / "ground_truth_alignment.md"
+    for item in gt_items:
+        rows.append(_evaluate_item(item, outputs_dir))
+    markdown = _to_markdown(rows, ground_truth_path, outputs_dir)
+    out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(report, encoding="utf-8")
-    print(f"wrote {out_path} strict={strict_hits}/{total} partial_adjusted={partial_hits}/{total}")
+    out_path.write_text(markdown, encoding="utf-8")
+    if args.json_out:
+        json_path = Path(args.json_out)
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        json_path.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"[MASentinel][ground-truth] wrote {out_path} strict_tp={sum(1 for row in rows if row['status']=='strict_match')} partial={sum(1 for row in rows if row['status']=='partial_match')} missed={sum(1 for row in rows if row['status']=='missed')}")
 
 
-def _load_faults(outputs: Path) -> dict[str, list[dict[str, Any]]]:
-    result: dict[str, list[dict[str, Any]]] = {}
-    if not outputs.exists():
-        return result
-    for path in outputs.glob("*/faults.json"):
-        try:
-            faults = json.loads(path.read_text(encoding="utf-8"))
-        except Exception:
-            faults = []
-        result[path.parent.name] = [fault for fault in faults if isinstance(fault, dict)]
-    return result
-
-
-def _system_alias(system: str) -> str:
-    aliases = {
-        "system1": "system1_iterative_coding",
-        "system2": "system2_research_agents",
-        "system3": "system3_financial_analysis",
-    }
-    return aliases.get(system, system)
-
-
-def _find_match(faults: list[dict[str, Any]], codes: set[str], defect: dict[str, Any]) -> dict[str, Any] | None:
-    if not codes:
-        return None
-    haystack_terms = " ".join(
-        str(item.get("line_or_function", "")) + " " + str(item.get("evidence", ""))
-        for item in defect.get("file_locations", []) or []
-        if isinstance(item, dict)
-    ).lower()
+def _evaluate_item(item: dict[str, Any], outputs_dir: Path) -> dict[str, Any]:
+    defect_id = str(item.get("defect_id", ""))
+    system = str(item.get("system", ""))
+    faults = _load_faults(outputs_dir / SYSTEM_DIR_HINTS.get(system, system) / "faults.json")
+    matcher = GT_MATCHERS.get(defect_id, {"codes": set(), "keywords": set()})
+    strict = []
+    partial = []
     for fault in faults:
         if fault.get("suspected_false_positive"):
             continue
-        if str(fault.get("failure_code")) in codes:
-            return fault
-        fault_text = " ".join(str(fault.get(key, "")) for key in ("fault_type", "summary", "root_cause", "suggested_fix")).lower()
-        if haystack_terms and any(term in fault_text for term in _salient_terms(haystack_terms)):
-            return fault
-    return None
+        code = str(fault.get("failure_code", ""))
+        haystack = _fault_text(fault)
+        code_match = code in matcher["codes"]
+        keyword_score = sum(1 for keyword in matcher["keywords"] if keyword.lower() in haystack)
+        if code_match:
+            strict.append(fault)
+        elif keyword_score >= _partial_threshold(defect_id):
+            partial.append(fault)
+    if strict:
+        status = "strict_match"
+        matches = strict
+    elif partial:
+        status = "partial_match"
+        matches = partial
+    else:
+        status = "missed"
+        matches = []
+    return {
+        "defect_id": defect_id,
+        "system": system,
+        "defect_type": item.get("defect_type"),
+        "severity": item.get("severity"),
+        "status": status,
+        "matched_faults": [
+            {
+                "fault_id": fault.get("fault_id"),
+                "case_id": fault.get("case_id"),
+                "failure_code": fault.get("failure_code"),
+                "fault_type": fault.get("fault_type"),
+                "confidence": fault.get("confidence"),
+            }
+            for fault in matches[:3]
+        ],
+    }
 
 
-def _salient_terms(text: str) -> list[str]:
-    terms = []
-    for term in (
-        "last_message",
-        "comments_v",
-        "script_v1",
-        "project_name",
-        "airtable",
-        "pagination",
-        "browserless",
-        "max_round",
-        "agentorchestrator",
-        "interactive",
-        "drawdown",
-        "total revenue",
-    ):
-        if term in text:
-            terms.append(term)
-    return terms
+def _load_faults(path: Path) -> list[dict[str, Any]]:
+    value = _read_json(path, [])
+    return value if isinstance(value, list) else []
 
 
-def _render(rows: list[tuple[dict[str, Any], str, dict[str, Any]]], strict_hits: int, partial_hits: int, total: int, strict_recall: float, partial_recall: float) -> str:
-    lines = [
-        "# MASentinel Ground-Truth Alignment",
-        "",
-        f"- Strict recall: {strict_hits}/{total} = {strict_recall:.4f}",
-        f"- Partial-adjusted recall: {partial_hits}/{total} = {partial_recall:.4f}",
-        "",
-        "| Defect ID | System | Type | Judgment | Matched Fault | Failure Code | Evidence |",
-        "|-----------|--------|------|----------|---------------|--------------|----------|",
+def _read_json(path: Path, default: Any) -> Any:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return default
+
+
+def _fault_text(fault: dict[str, Any]) -> str:
+    parts = [
+        fault.get("failure_code"),
+        fault.get("fault_type"),
+        fault.get("summary"),
+        fault.get("root_cause"),
+        fault.get("suggested_fix"),
+        " ".join(str(item) for item in fault.get("evidence", []) or []),
     ]
-    for defect, judgment, fault in rows:
+    return "\n".join(str(part or "") for part in parts).lower()
+
+
+def _partial_threshold(defect_id: str) -> int:
+    if defect_id in {"GT-S1-003", "GT-S2-005"}:
+        return 4
+    return 2
+
+
+def _to_markdown(rows: list[dict[str, Any]], gt_path: Path, outputs_dir: Path) -> str:
+    strict = sum(1 for row in rows if row["status"] == "strict_match")
+    partial = sum(1 for row in rows if row["status"] == "partial_match")
+    missed = sum(1 for row in rows if row["status"] == "missed")
+    lines = [
+        "# Ground Truth Alignment",
+        "",
+        f"- Ground truth: `{gt_path}`",
+        f"- Outputs: `{outputs_dir}`",
+        f"- Strict matches: {strict}",
+        f"- Partial matches: {partial}",
+        f"- Missed: {missed}",
+        "",
+        "| Defect | System | Type | Severity | Status | Matched Faults |",
+        "|--------|--------|------|----------|--------|----------------|",
+    ]
+    for row in rows:
+        matches = ", ".join(
+            f"`{fault.get('fault_id')}`/{fault.get('failure_code')}" for fault in row.get("matched_faults", [])
+        )
         lines.append(
-            f"| {defect.get('defect_id', '')} | {defect.get('system', '')} | {defect.get('defect_type', '')} | "
-            f"{judgment} | {fault.get('fault_id', 'N/A')} | {fault.get('failure_code', 'N/A')} | "
-            f"{_clean(fault.get('summary', '')) if fault else 'No matching MASentinel fault'} |"
+            f"| `{row['defect_id']}` | {row['system']} | {row.get('defect_type', '')} | {row.get('severity', '')} | "
+            f"{row['status']} | {matches or '-'} |"
         )
     return "\n".join(lines) + "\n"
-
-
-def _clean(value: Any) -> str:
-    text = " ".join(str(value or "").split())
-    text = text.replace("|", "/")
-    return text[:220]
 
 
 if __name__ == "__main__":

@@ -237,6 +237,7 @@ def _agentic_section(agentic_info: dict | None) -> list[str]:
             f"- Non-target issues excluded from target faults: {len(non_target_issues)}",
             f"- Test harness issues excluded from target faults: {len(agentic_info.get('test_harness_issues', []) or [])}",
             "- Artifacts: `run_manifest.json`, `testcases.generated.json`, `testcases.validated.json`, `oracle_results.json`, `non_target_issues.json`, `test_harness_issues.json`, `faults.json`, `false_positive_audit.json`",
+            *_pattern_selection_lines(agentic_info),
             "",
             "## Testing-Agent Model Usage",
             f"- Total agent calls: {usage.get('total_calls', 0)}",
@@ -294,6 +295,22 @@ def _agentic_section(agentic_info: dict | None) -> list[str]:
             lines.append("Agent-proposed next steps:")
             lines.extend([f"- {_clean_report_text(str(item))}" for item in next_steps])
     return lines
+
+
+def _pattern_selection_lines(agentic_info: dict) -> list[str]:
+    test_plan = agentic_info.get("test_plan", {}) or {}
+    if not test_plan:
+        return []
+    selected = [str(item.get("pattern")) for item in test_plan.get("selected_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
+    rejected = [str(item.get("pattern")) for item in test_plan.get("rejected_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
+    metrics = test_plan.get("metrics", {}) or {}
+    return [
+        "",
+        "## Pattern Selection Evidence",
+        f"- PatternApplicabilityPrecision: {_format_metric(metrics.get('pattern_applicability_precision'))}",
+        f"- Selected patterns: {', '.join(f'`{item}`' for item in selected) or 'None'}",
+        f"- Rejected patterns: {', '.join(f'`{item}`' for item in rejected[:12]) or 'None'}",
+    ]
 
 
 def _clean_report_text(value: object, limit: int = 1600) -> str:

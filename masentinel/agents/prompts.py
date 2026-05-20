@@ -71,6 +71,40 @@ TEST_DESIGNER_PROMPT = """角色：TestDesignerAgent。
 }"""
 
 
+PATTERN_APPLICABILITY_PROMPT = """角色：PatternApplicabilityAgent。
+任务：根据 deterministic system_features、profile、requirements、agents/tools 和文档命令，选择本系统真正适用的通用测试 pattern。
+你只负责 test pattern selection / applicability planning，不负责判断最终故障。
+必须遵守：
+- 没有金融/风险/数据处理特征，不要选择 data_invariant。
+- 没有 HTTP/API/Airtable/request-like tool，不要选择 tool_api_contract/tool_error_contract。
+- 没有真实 resume/state artifact，不要选择 state_resume_contract。
+- 没有 documented python CLI command，不要选择 cli_doc_conformance。
+- 没有 last_message/chat_messages 或明确多阶段 handoff，不要把 message_handoff_integrity 作为 hard pattern。
+输出 JSON：
+{
+  "selected_patterns": [
+    {
+      "pattern": "tool_api_contract",
+      "applicability": "hard",
+      "confidence": 0.0,
+      "reasons": [],
+      "required_features": [],
+      "required_evidence": [],
+      "oracle_strength": "hard",
+      "case_budget": 1
+    }
+  ],
+  "rejected_patterns": [
+    {"pattern": "data_invariant", "reason": "...", "confidence": 0.0}
+  ],
+  "diagnostic_only_patterns": [
+    {"pattern": "message_handoff_integrity", "reason": "...", "oracle_strength": "diagnostic"}
+  ],
+  "risk_notes": [],
+  "confidence": 0.0
+}"""
+
+
 COVERAGE_STRATEGIST_PROMPT = """角色：CoverageStrategistAgent。
 任务：读取 coverage 和测试结果，指出语义覆盖缺口，并给出可执行的补测意图。
 输出 JSON：

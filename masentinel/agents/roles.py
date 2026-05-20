@@ -55,6 +55,23 @@ class TestDesignerAgent(BaseTestingAgent):
         return {"testcases": [], "confidence": 0.3, "fallback": True, "error": error}
 
 
+class PatternApplicabilityAgent(BaseTestingAgent):
+    name = "PatternApplicabilityAgent"
+    role = "test_planning"
+    purpose = "select_applicable_test_patterns"
+
+    def prompt(self) -> str:
+        return prompts.PATTERN_APPLICABILITY_PROMPT
+
+    def fallback(self, task: dict[str, Any], error: str) -> dict[str, Any]:
+        from masentinel.generator.pattern_selector import build_test_plan
+
+        features = task.get("system_features", {}) if isinstance(task, dict) else {}
+        plan = build_test_plan(features if isinstance(features, dict) else {})
+        plan.update({"fallback": True, "error": error})
+        return plan
+
+
 class CoverageStrategistAgent(BaseTestingAgent):
     name = "CoverageStrategistAgent"
     role = "coverage_strategy"

@@ -1,6 +1,8 @@
 from pathlib import Path
 
 from masentinel.generator.patterns import extract_documented_commands
+from masentinel.analyzer.feature_extractor import extract_system_features
+from masentinel.generator.pattern_selector import build_test_plan, pattern_budgets, selected_pattern_names
 from masentinel.generator.testcase_generator import generate_testcases
 from masentinel.agents.validators import merge_testcases
 from masentinel.runner.system_adapter import render_case_template
@@ -119,7 +121,14 @@ def test_merge_limit_keeps_contract_patterns(tmp_path: Path) -> None:
 
 
 def test_domain_specific_contracts_do_not_attach_to_iterative_coding_profile(tmp_path: Path) -> None:
-    cases = generate_testcases(iterative_coding_profile(tmp_path), num_cases=40)
+    profile = iterative_coding_profile(tmp_path)
+    plan = build_test_plan(extract_system_features(profile))
+    cases = generate_testcases(
+        profile,
+        num_cases=40,
+        selected_patterns=selected_pattern_names(plan),
+        pattern_budgets=pattern_budgets(plan),
+    )
     case_types = {case.case_type for case in cases}
 
     assert "data_invariant" not in case_types
@@ -138,6 +147,33 @@ def test_project_name_template_defaults_to_safe_case_id(tmp_path: Path) -> None:
     case = generate_testcases(iterative_coding_profile(tmp_path), num_cases=1)[0]
 
     assert render_case_template("{project_name}", case).startswith("mas_")
+
+
+def test_feature_backed_plan_selects_financial_and_http_patterns(tmp_path: Path) -> None:
+    profile = rich_profile(tmp_path)
+    plan = build_test_plan(extract_system_features(profile))
+    selected = set(selected_pattern_names(plan))
+
+    assert {"data_invariant", "tool_api_contract", "tool_error_contract", "autogen_wiring"} <= selected
+
+
+def test_feature_backed_plan_rejects_resume_without_state_artifacts(tmp_path: Path) -> None:
+    root = tmp_path / "simple"
+    root.mkdir()
+    (root / "app.py").write_text("from autogen import AssistantAgent\nagent = AssistantAgent('a')\n", encoding="utf-8")
+    profile = SystemProfile(
+        system_id="simple",
+        root_path=str(root),
+        doc_path=None,
+        entrypoint=str(root / "app.py"),
+        agents=[AgentInfo(name="a", class_name="AssistantAgent")],
+        tools=[],
+        requirements=[RequirementInfo(id="R1", description="Run a simple agent task.")],
+        message_edges=[],
+    )
+    plan = build_test_plan(extract_system_features(profile))
+
+    assert "state_resume_contract" not in set(selected_pattern_names(plan))
 
 
 def test_extract_documented_commands() -> None:

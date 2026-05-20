@@ -86,6 +86,16 @@ def evaluate_tool_contract(testcase: TestCase, trace: RunTrace) -> list[OracleFa
     http_events = [event for event in trace.events if event.type == "http_request"]
     tool_results = [event for event in trace.events if event.type in {"tool_result", "tool_error"}]
     expected_params = fixture.get("expected_query_params") if isinstance(fixture.get("expected_query_params"), dict) else {}
+    needs_http_observation = bool(expected_params or int(fixture.get("pagination_pages") or 0) > 1 or int(fixture.get("status_code") or 0) >= 400)
+    if needs_http_observation and not http_events:
+        return [
+            OracleFailure(
+                "CONTRACT_TEST_NOT_EXERCISED",
+                "HTTP/API contract was configured, but no target HTTP request was observed; expected fixture values are not target evidence.",
+                "low",
+                [f"fixture_id={fixture.get('fixture_id', '')}", f"case_type={testcase.case_type}"],
+            )
+        ]
     if expected_params:
         observed_params: dict[str, str] = {}
         for event in http_events:
@@ -120,12 +130,34 @@ def evaluate_tool_contract(testcase: TestCase, trace: RunTrace) -> list[OracleFa
             )
     status_code = int(fixture.get("status_code") or 0)
     if status_code >= 400:
+        observed_error_statuses = [
+            int(event.metadata.get("status_code") or 0)
+            for event in http_events
+            if isinstance(event.metadata, dict) and int(event.metadata.get("status_code") or 0) >= 400
+        ]
+        if not observed_error_statuses:
+            failures.append(
+                OracleFailure(
+                    "CONTRACT_TEST_NOT_EXERCISED",
+                    "Tool-error fixture expected an HTTP failure, but no failing HTTP response was observed.",
+                    "low",
+                    [f"expected_status={status_code}"],
+                )
+            )
+            return failures
         structured = any(event.metadata.get("structured") is True or event.type == "tool_error" for event in tool_results)
-        http_recorded = any(int(event.metadata.get("status_code") or 0) >= 400 for event in http_events)
+        http_recorded = bool(observed_error_statuses)
         if not http_recorded:
             failures.append(OracleFailure("HTTP_STATUS_NOT_CHECKED", "HTTP failure status was not captured in the trace envelope.", "medium", [f"expected_status={status_code}"]))
         if not structured:
-            failures.append(OracleFailure("TOOL_UNSTRUCTURED_ERROR", "External tool failure did not produce a structured error envelope.", "high", [f"expected_status={status_code}"]))
+            failures.append(
+                OracleFailure(
+                    "TOOL_UNSTRUCTURED_ERROR",
+                    "External tool failure did not produce a structured error envelope.",
+                    "high",
+                    [f"observed_statuses={observed_error_statuses}"],
+                )
+            )
     for event in tool_results:
         if event.type == "tool_result" and event.result_preview in (None, "", "None") and testcase.case_type == "tool_error_contract":
             failures.append(OracleFailure("TOOL_RETURNED_NONE", "Tool returned None/empty result for an error path instead of a structured envelope.", "high", [str(event.tool or "")]))
