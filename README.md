@@ -1,238 +1,134 @@
 # MASentinel
 
-MASentinel 是一个面向 AutoGen 多智能体系统的语义覆盖驱动自动化测试框架。它从代码和文档中抽取 agent、tool、requirement 和 message edge，按 “自动生成测例 -> 自动执行并判定 -> 自动诊断并报告” 三阶段运行，生成 requirement、coverage-guided、property-boundary、fuzz、tool-failure、metamorphic、regression 测试用例；运行阶段用 subprocess 隔离执行目标系统并采集 trace；诊断阶段使用规则 oracle 判断应用层和 AutoGen 集成层故障；最后输出覆盖率、故障报告和总览页面。
+MASentinel 是一个面向 AutoGen 类多智能体系统的语义覆盖驱动自动化测试框架。它能够从代码和 README 中抽取 agent、tool、requirement、message edge 和运行入口，自动生成测试用例，隔离执行目标系统，采集 trace，执行 oracle 判定、故障分类、误报审计，并生成 Markdown/HTML/网页化报告。
 
-## 赛题对应关系
+框架关注可通过修改被测系统代码、工具封装、消息编排、CLI 入口、文件处理逻辑或 AutoGen 配置缓解的软件缺陷。模型服务鉴权失败、外部 API 不可用、限流、网络超时、测试 harness 未触达目标 workflow 等问题会记录为 non-target/test-harness 证据，不计入目标故障数。
 
-- 自动解析代码和文档：`masentinel/analyzer/`
-- 自动生成测试用例：`masentinel/generator/`
-- 自动运行测试：`masentinel/runner/`
-- 自动诊断故障：`masentinel/oracle/`、`masentinel/diagnosis/`
-- 语义覆盖率：`masentinel/metrics/coverage.py`
-- Markdown/HTML 报告：`masentinel/reporter/`
-- 三个系统一键流程：`run_all.py`
+## 核心能力
 
-MASentinel 不把“大模型回答风格不好”“模型知识不准确”或模型服务鉴权/限流/超时直接判定为目标软件故障。`faults.json` 只保留可通过修改被测系统代码、工具注册/参数逻辑、提示模板、AutoGen 配置或框架适配缓解的应用层与 AutoGen 框架层问题；环境、测试框架和模型服务问题会写入 `non_target_issues.json` 作为解释依据，不计入目标故障数。
+- 代码与文档解析：构建 `SystemProfile`，识别 agent、tool、GroupChat、message edge、CLI、README 命令和文件/数据处理逻辑。
+- 通用测试模式生成：覆盖 smoke、无人值守、终止信号、speaker selection、artifact、filesystem、resume、tool API/error、handoff、data invariant、CLI 文档一致性和 AutoGen wiring。
+- Agentic planning + 确定性裁决：内部测试 agent 负责需求理解、测试规划、用例设计、诊断解释和报告草稿；ApplicabilityVerifier、oracle、代码证据和 trace 证据负责最终判断。
+- 无人值守执行：通过 subprocess 隔离运行目标系统，注入 API 配置、argv/stdin/interactive response、runtime patch 和测试目录。
+- 多智能体语义覆盖率：输出 AgentCov、ToolCov、EdgeCov、ReqVerifiedCov、ContractCov、TraceCompleteness、RootCauseEvidenceRate 和综合 MASCov。
+- 报告与网页展示：生成每个系统的覆盖率、故障、误报审计、trace graph、dashboard 和项目总报告。
+
+## 目录结构
+
+```text
+MASentinel/
+  configs/                    # 三套系统与模型配置
+  masentinel/
+    analyzer/                 # README/源码/profile 构建
+    agents/                   # 内部测试 agent
+    generator/                # 测试模式选择与测例生成
+    oracle/                   # 规则与契约 oracle
+    diagnosis/                # 故障分类、去重、归因
+    metrics/                  # 覆盖率计算
+    runner/                   # subprocess 执行与 trace 采集
+    reporter/                 # Markdown/HTML/项目报告
+  runtime_patches/            # AutoGen runtime patch
+  scripts/                    # API 入口、报告重建、网页生成
+  tests/                      # 单元测试
+  run_all.py                  # 三系统一键评测入口
+```
 
 ## 安装
 
-轻量开发/单测环境：
+轻量开发和单测环境：
 
 ```bash
 cd MASentinel
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+python -m pytest -q
 ```
 
-完整运行三个目标 AutoGen 系统建议使用运行环境依赖。若本机默认 Python 过新导致老版 AutoGen/LangChain 不兼容，可使用 Python 3.9/3.11/3.12 单独创建运行环境：
+完整运行三套目标 AutoGen 系统建议使用运行环境依赖。若本机默认 Python 过新导致老版 AutoGen/LangChain 不兼容，可使用 Python 3.9/3.11/3.12 创建单独环境：
 
 ```bash
 cd MASentinel
 python3 -m venv .venv-runtime
 source .venv-runtime/bin/activate
-python -m pip install \
-  -i http://nexus.sii.shaipower.online/repository/pypi/simple \
-  --trusted-host nexus.sii.shaipower.online \
-  -r requirements-runtime.txt
+python -m pip install -r requirements-runtime.txt
 ```
 
-验证：
+## 模型与 API 配置
+
+MASentinel 将模型分为两类：
+
+- `testing_*`：MASentinel 内部测试 agent 使用，例如需求分析、测例设计、故障解释，默认可使用 `ds-v4-pro` 或 `deepseek-v4-pro`。
+- `target_*`：注入给被测 AutoGen 系统运行，默认可使用 `ds-v4-flash`、`deepseek-v4-flash` 或本地 qwen2.5-coder。
+
+建议把密钥放到环境变量，不要写进配置文件：
 
 ```bash
-python -m pytest -q
+export INF_API_KEY_PRO="..."
+export INF_API_KEY_FLASH="..."
+export BOYUE_API_KEY="..."
+export DEEPSEEK_API_KEY="..."
 ```
 
-## 可选：启动 qwen/vLLM
+Boyue/OpenAI-compatible 网关：
 
-命题 PDF 的模型分工是：
-
-- 被测多智能体系统：`DeepSeek V4 flash (API)` 或 `qwen2.5-coder:7b (本地部署)`
-- 自动化测试方案：`DeepSeek V4 pro (API)`
-
-因此 `configs/*.yaml` 中分成两组配置：
-
-- `testing_*`：MASentinel 自己用于文档需求抽取、可选 LLM judge 等，默认 `ds-v4-pro`
-- `target_*`：传给被测 AutoGen 系统运行，默认 `ds-v4-flash`
-
-运行被测系统时，MASentinel 不要求修改被测源码，而是在子进程环境中注入：
-
-```text
-OPENAI_API_KEY
-OPENAI_BASE_URL
-OPENAI_API_BASE
-OAI_CONFIG_LIST
-MAS_MODEL_NAME
-MAS_TARGET_MESSAGE
+```bash
+python scripts/run_with_boyue_api.py \
+  --config configs/all_systems.yaml \
+  --testing-model deepseek-v4-pro \
+  --target-model deepseek-v4-flash
 ```
 
-同时通过 `runtime_patches/sitecustomize.py` 在启动时兼容常见 AutoGen/OpenAI 写法：写死的 OpenAI model 会被替换为 `target_model`，`GPTAssistantAgent` 可降级为普通 `AssistantAgent`，Docker、代码执行和人工输入也可由配置关闭。对于把任务硬编码到 `initiate_chat(message=...)` 的样例，可用 `run.message_template` 由 MASentinel 在运行时注入 `MAS_TARGET_MESSAGE` 并覆盖第一次启动消息，不需要修改被测源码，也不会污染后续 agent 间消息。`model_usage.json` 只统计 MASentinel 测试 agent 的调用；被测系统子进程侧的模型注入和 stdout/stderr 证据会单独写入 `target_model_usage.json`。
+官方 DeepSeek API：
 
-为避免“测试系统没适配好”被误算成被测系统缺陷，运行器会从 AutoGen stdout 中补充解析 `agent -> agent` 消息边，并通过 runtime patch 捕获 `initiate_chat/send/receive` 生成 `MAS_TRACE`。send/receive 同一条消息会在 turn 统计时去重。如果某个 case 没观测到有效 agent workflow，oracle 会把它归为 `TARGET_WORKFLOW_NOT_OBSERVED` 等 test-harness 问题并排除出应用层/AutoGen 框架故障。生成用例默认还会按 `testing.max_case_input_chars` 控制输入长度，防止超长 fuzz prompt 把 LLM 系统卡在启动阶段。
-
-为了减少慢网关上的重复等待，静态 profile 阶段默认不调用模型抽取文档需求，而是先用启发式解析 README；agentic 流程后续仍会调用 `RequirementAnalystAgent` 做语义需求分析。确实需要在静态分析阶段也调用 pro，可显式开启：
-
-```yaml
-analyzer:
-  doc_model_enabled: true
+```bash
+python scripts/run_with_deepseek_official.py \
+  --config configs/all_systems.yaml
 ```
 
-DeepSeek V4 pro 如果偶发超时，可以在 `configs/system*.yaml` 里调整：
+如果接口只开放 pro，可临时把被测系统模型也指定为 pro：
 
-```yaml
-model:
-  testing_timeout_seconds: 90
-  testing_retries: 3
+```bash
+python scripts/run_with_boyue_api.py \
+  --config configs/all_systems.yaml \
+  --target-model deepseek-v4-pro
 ```
 
-`testing_retries: 3` 表示失败后最多重试 3 次；如果仍失败，MASentinel 会记录 fallback，不中断整体评测。
+如果网关支持 reasoning 或思考模式，可通过额外请求体开启，该参数只作用于 MASentinel 内部 testing agent：
 
-MASentinel 内部 agent 的独立 API 调用可以并行执行，主要作用于 `TestDesignerAgent` 分批生成用例以及 `FaultDiagnoserAgent`/`FalsePositiveAuditorAgent` 逐条故障分析：
-
-```yaml
-testing:
-  agent_api_workers: 3
+```bash
+export MAS_MODEL_EXTRA_BODY_JSON='{"reasoning_effort":"high"}'
+# 或
+export MAS_MODEL_EXTRA_BODY_JSON='{"enable_thinking":true}'
 ```
 
-也可以临时用环境变量覆盖：
+内部 agent API 调用可并行执行，建议从 3 或 4 开始：
 
 ```bash
 export MAS_AGENT_API_WORKERS=4
 ```
 
-建议从 3 或 4 开始调，太高可能触发网关限流或让失败重试变多。
-
-测试用例生成采用通用 test pattern，而不是为三套被测系统手写专属 prompt。生成器会根据 `SystemProfile` 自动判断适用性并实例化：
-
-- `positive_smoke`：最小正常任务，证明 oracle 不会“全杀”。
-- `automation_no_human`：无人值守自动评测中不得请求人工输入。
-- `termination_signal`：对话型 / AutoGen 系统应识别 `TERMINATE` 并停止。
-- `speaker_selection_robustness`：GroupChat 或多 agent routing 系统应能处理空 speaker、非法 speaker、带前缀 speaker。
-- `tool_contract_positive` 与 `fuzz_tool_failure`：对 profile 中发现的多个工具逐一做契约与异常鲁棒性测试。
-- `output_contract` 与 `tool_registration_contract`：从需求文本抽取输出/数据能力意图，检查业务输出契约或工具/数据源是否接入。
-- `artifact_contract`、`filesystem_safety`、`state_resume_contract`：检查持久化产物、路径穿越和 partial resume 状态一致性。
-- `tool_api_contract`、`tool_error_contract`、`scalable_budget`：检查外部工具参数语义、分页、HTTP 错误 envelope 和多记录任务 round budget。
-- `message_handoff_integrity`、`data_invariant`：检查 `last_message()`/下游 handoff 是否传递了实质内容，以及财务/风险等数据处理不变量。
-- `cli_doc_conformance`、`autogen_wiring`：检查 README/CLI 命令与实际入口一致，且文档声明的 AutoGen 多智能体工作流真正接入 orchestrator/agents。
-
-覆盖率除 MASCov 之外，还输出故障可信度相关指标：`ReqVerifiedCov`、`ContractCov`、`EffectiveWorkflowRate`、`TraceCompleteness`、`RootCauseEvidenceRate` 和每条 fault 的 `EvidenceStrength`、`RootCauseConfidence`、`NotModelFaultBecause`、`CodeLocations`。
-
-如果 DeepSeek 网关支持“思考模式”或 reasoning 参数，MASentinel 测试 agent 可以通过额外请求体显式开启。不同 OpenAI-compatible 网关字段名不完全一致，因此默认不开启，可按接口文档选择一种方式：
-
-```bash
-export MAS_MODEL_EXTRA_BODY_JSON='{"enable_thinking":true}'
-# 或者
-export MAS_MODEL_EXTRA_BODY_JSON='{"reasoning_effort":"high"}'
-```
-
-也可以在 Boyue/DeepSeek 启动脚本上临时传入：
-
-```bash
-python scripts/run_with_boyue_api.py --config configs/all_systems.yaml --enable-thinking
-python scripts/run_with_boyue_api.py --config configs/all_systems.yaml --reasoning-effort high
-```
-
-该参数只作用于 MASentinel 内部的 `testing_*` agent 调用；被测系统仍按题目要求注入 `target_model`，默认使用 flash 或本地 qwen。
-
-建议设置两个环境变量，不要把密钥写进配置文件：
-
-```bash
-export INF_API_KEY_PRO="..."
-export INF_API_KEY_FLASH="..."
-```
-
-Agentic 模式会在三套系统跑完后自动调用 `ProjectReportAgent` 生成赛题提交报告：
-
-```text
-outputs/项目报告.md
-outputs/system1_iterative_coding/故障报告.md
-outputs/system2_research_agents/故障报告.md
-outputs/system3_financial_analysis/故障报告.md
-outputs/project_report.agent.json
-outputs/project_report_agent/agent_trace.jsonl
-```
-
-也可以在已有 `outputs/` 上单独重生成项目报告：
-
-```bash
-python scripts/generate_project_report.py --output-dir outputs --config configs/all_systems.yaml
-```
-
-如果修改了 oracle、coverage 或 fault classifier，希望不重跑被测系统、只用已保存 trace 重新计算结果：
-
-```bash
-python scripts/rebuild_reports_from_outputs.py --output-dir outputs --project-report
-```
-
-该脚本会按当前 `test_plan.json` 过滤 stale case/trace，并写出 `suite_consistency_report.json`；若报告中出现 `missing_selected_contract_patterns`，说明测试计划已被新 verifier 修正，但已有 trace 没覆盖新增模式，需要 clean rerun。
-
-`run_with_api_md.py` 同时支持题目原始 `curl` 写法和新的 OpenAI SDK 写法，例如：
-
-```python
-from openai import OpenAI
-client = OpenAI(
-    base_url="https://apicz.boyuerichdata.com/v1/",
-    api_key="sk-..."
-)
-```
-
-如果使用新的 Boyue OpenAI-compatible 接口，建议优先把密钥放到环境变量，避免写入文件：
-
-```bash
-export BOYUE_API_KEY="..."
-python scripts/run_with_boyue_api.py --config configs/all_systems.yaml
-```
-
-如果看到 `HTTP 401 Unauthorized: Invalid token`，说明接口已经收到请求但拒绝了 token。请确认 `BOYUE_API_KEY` 不是示例里的 `sk-...`/`sk-令牌` 占位符，并且当前 shell 里没有被旧值覆盖：
-
-```bash
-unset BOYUE_API_KEY
-export BOYUE_API_KEY="真实 sk token"
-python scripts/run_with_boyue_api.py --config configs/all_systems.yaml
-```
-
-默认会使用 `deepseek-v4-pro` 作为 MASentinel 测试 agent 模型，`deepseek-v4-flash` 注入给被测系统；如果该接口只开放 pro，可以临时指定：
-
-```bash
-python scripts/run_with_boyue_api.py --config configs/all_systems.yaml --target-model deepseek-v4-pro
-```
-
-如果题目提供的 API 网关较慢，也可以临时切到官方 DeepSeek API。注意官方 API 的模型名与题目网关不同，使用 `deepseek-v4-pro` / `deepseek-v4-flash`，不要混用 `ds-v4-pro`：
-
-```bash
-export DEEPSEEK_API_KEY="..."
-python scripts/run_with_deepseek_official.py --config configs/all_systems.yaml
-```
-
-如果需要改为本地 qwen/vLLM 运行被测系统，可启动 OpenAI-compatible 服务：
-
-```bash
-MODEL_PATH=Qwen/Qwen2.5-Coder-7B-Instruct PORT=8001 scripts/start_qwen_h200.sh
-```
-
-核心框架不依赖 vLLM；没有模型服务时会自动使用确定性启发式和模板生成。
-
-## 配置三个系统
+## 配置被测系统
 
 配置位于 `configs/`：
 
 - `system1.yaml`：`AutoGen_IterativeCoding-main`
 - `system2.yaml`：`research-agents-3.0-main`
 - `system3.yaml`：`autogen-financial-analysis-main`
-- `all_systems.yaml`：串联运行三个系统
+- `all_systems.yaml`：串联运行三套系统
 - `toy.yaml`：不依赖 AutoGen 的最小演示系统
 
-每个系统配置包含：
+每个系统配置通常包含：
 
-- `root_path`：系统源码目录
+- `root_path`：被测系统源码目录
 - `doc_path`：README 或需求文档
 - `entrypoint`：入口文件
 - `run.command`：subprocess 命令
 - `run.input_mode`：`stdin`、`argv` 或 `interactive`
 - `run.timeout_seconds`：单 case 超时
-- `testing.num_cases`：生成用例数
+- `testing.num_cases`：目标测例数量
 
-交互式程序可以使用 `run.input_mode: interactive`，runner 会读取 stdout 中的 prompt 并按配置自动应答：
+交互式程序可使用 prompt-response 自动应答：
 
 ```yaml
 run:
@@ -247,9 +143,7 @@ run:
         max_count: 1
 ```
 
-Agentic 模式还会调用 `InteractionAdapterAgent` 分析入口代码中的 `input(...)` 和现有配置，生成 `interaction_adapter.json`。模型只允许建议 prompt-response 规则、case 级隔离目录和风险说明；最终执行仍由 runner 的确定性校验层控制。
-
-对于命令行参数型系统，可在 `run.command` 中使用 `{input}`、`{safe_case_id}`、`{stock_symbol}` 等模板变量。例如金融分析系统会把每条 case 映射成不同股票代码：
+命令行参数型系统可在 `run.command` 中使用模板变量：
 
 ```yaml
 run:
@@ -257,7 +151,7 @@ run:
   input_mode: argv
 ```
 
-## 一键运行
+## 运行
 
 运行 toy 闭环：
 
@@ -265,7 +159,7 @@ run:
 scripts/run_demo.sh
 ```
 
-运行 toy 的内部多智能体测试流程：
+运行 toy 的 agentic 测试流程：
 
 ```bash
 python -m masentinel.cli run-agentic \
@@ -274,24 +168,67 @@ python -m masentinel.cli run-agentic \
   --test-model ds-v4-pro
 ```
 
-运行三个目标系统：
+运行三套目标系统：
 
 ```bash
 python run_all.py --config configs/all_systems.yaml --agentic --no-human
 ```
 
-`run_all.py` 默认会清空每个系统的旧输出目录后再跑，避免旧 regression/stale traces 混入最终报告；如需保留历史输出和回归池，可加 `--keep-output`。
-
-`run-agentic` 默认禁止人工介入，并在 `run_manifest.json` 中记录 `human_intervention_allowed: false`。如果目标系统请求 `input()` 或 AutoGen human input，runner 会记录 `HUMAN_INPUT_REQUESTED`。
-
-也可以分步运行：
+`run_all.py` 默认会清空每个系统的旧输出目录后再运行，避免 stale traces 或旧 regression cases 混入最终报告。如需保留历史输出和回归池，可加：
 
 ```bash
-python -m masentinel.cli analyze --config configs/system1.yaml --out outputs/system1/profile.json
-python -m masentinel.cli generate --profile outputs/system1/profile.json --num-cases 40 --out outputs/system1/testcases.json
-python -m masentinel.cli run --config configs/system1.yaml --testcases outputs/system1/testcases.json --out outputs/system1/runs
-python -m masentinel.cli diagnose --profile outputs/system1/profile.json --testcases outputs/system1/testcases.json --traces outputs/system1/runs/traces --out outputs/system1/faults.json
-python -m masentinel.cli report --profile outputs/system1/profile.json --testcases outputs/system1/testcases.json --traces outputs/system1/runs/traces --faults outputs/system1/faults.json --out outputs/system1/report
+python run_all.py --config configs/all_systems.yaml --agentic --no-human --keep-output
+```
+
+分步运行单系统：
+
+```bash
+python -m masentinel.cli analyze \
+  --config configs/system1.yaml \
+  --out outputs/system1/profile.json
+
+python -m masentinel.cli generate \
+  --profile outputs/system1/profile.json \
+  --num-cases 40 \
+  --out outputs/system1/testcases.json
+
+python -m masentinel.cli run \
+  --config configs/system1.yaml \
+  --testcases outputs/system1/testcases.json \
+  --out outputs/system1/runs
+
+python -m masentinel.cli diagnose \
+  --profile outputs/system1/profile.json \
+  --testcases outputs/system1/testcases.json \
+  --traces outputs/system1/runs/traces \
+  --out outputs/system1/faults.json
+
+python -m masentinel.cli report \
+  --profile outputs/system1/profile.json \
+  --testcases outputs/system1/testcases.json \
+  --traces outputs/system1/runs/traces \
+  --faults outputs/system1/faults.json \
+  --out outputs/system1/report
+```
+
+## 离线重建报告
+
+如果修改了 oracle、coverage 或 fault classifier，希望不重跑被测系统、只基于已保存 trace 重新计算结果：
+
+```bash
+python scripts/rebuild_reports_from_outputs.py \
+  --output-dir outputs \
+  --project-report
+```
+
+该脚本会按当前 `test_plan.json` 过滤 stale case/trace，并写出 `suite_consistency_report.json`。若一致性报告中出现 `missing_selected_contract_patterns`，说明当前测试计划包含已有 trace 尚未覆盖的模式，需要 clean rerun。
+
+也可以只重生成项目总报告：
+
+```bash
+python scripts/generate_project_report.py \
+  --output-dir outputs \
+  --config configs/all_systems.yaml
 ```
 
 ## 输出文件
@@ -302,124 +239,123 @@ outputs/
   summary.md
   项目报告.md
   project_report.agent.json
-  project_report_agent/
-    agent_trace.jsonl
-    model_usage.json
+  site/index.html
   system1_iterative_coding/
-    agent_trace.jsonl
-    model_usage.json
-    target_model_usage.json
-    agentic_summary.json
-    run_manifest.json
     profile.json
     semantic_graph.json
+    system_features.json
+    test_plan.json
     testcases.generated.json
     testcases.validated.json
-    testcases.frozen.sha256
-    testcases.json
     testcases.executed.json
-    runs/
-      run_summary.json
-      traces/
+    runs/run_summary.json
+    runs/traces/
     oracle_results.json
-    non_target_issues.json
-    test_harness_issues.json
     faults.json
     fault_groups.json
     false_positive_audit.json
+    non_target_issues.json
+    test_harness_issues.json
     coverage.json
     trace_graph.json
-    dashboard.html
-    patch_suggestions.md
-    flaky_report.json
-    故障报告.md
     report.md
     report.html
-    fault_report.md
-    coverage.md
+    dashboard.html
+    故障报告.md
 ```
 
-## 最新运行结果快照
+## 最新结果快照
 
-以下为当前 `outputs/` 中最新一次三系统完整运行的汇总结果，运行入口为：
+以下为当前最终网页报告口径的三系统汇总结果。`Cases` 表示生成测例数；进程通过/失败统计实际执行结果；Oracle 通过/失败采用目标故障口径，即排除 model provider、外部依赖、test harness、non-target 和 soft budget 等非目标问题后的判定结果。
 
-```bash
-python scripts/run_with_boyue_api.py \
-  --config configs/all_systems.yaml \
-  --testing-model deepseek-v4-pro \
-  --target-model deepseek-v4-flash
-```
-
-| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqVerified | ContractCov | MASCov | Confirmed Primary Root Causes | Suspected FP | Non-target Excluded |
-|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|-------------|-------------|--------|-------------------------------|--------------|---------------------|
-| `system1_iterative_coding` | 24 | 20 | 4 | 18 | 6 | 1.00 | 1.00 | 0.71 | 0.25 | 0.50 | 0.71 | 6 | 5 | 11 |
-| `system2_research_agents` | 32 | 25 | 7 | 3 | 29 | 1.00 | 1.00 | 1.00 | 1.00 | 0.42 | 0.83 | 5 | 3 | 13 |
-| `system3_financial_analysis` | 32 | 31 | 1 | 12 | 20 | 0.36 | N/A | 0.36 | 1.00 | 0.50 | 0.56 | 6 | 3 | 23 |
-
-Ground truth 对齐结果：
-
-| Strict Matches | Partial Matches | Missed |
-|----------------|-----------------|--------|
-| 13 | 2 | 0 |
-
-其中 partial 包括：S1 输入校验运行异常仅形成部分匹配，S2 tool error handling 缺少 observed HTTP status 与结构化 tool result/error envelope，因此只作为 suspected/partial，不计入 confirmed primary root cause。
+| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqVerified | ContractCov | MASCov | Confirmed Primary Root Causes | Suspected/Partial | Non-target Excluded |
+|--------|------:|------------:|------------:|--------------:|--------------:|---------:|--------:|--------:|------------:|------------:|-------:|-------------------------------:|------------------:|--------------------:|
+| `system1_iterative_coding` | 28 | 20 | 4 | 20 | 8 | 1.00 | 1.00 | 0.71 | 0.25 | 0.50 | 0.71 | 6 | 5 | 11 |
+| `system2_research_agents` | 36 | 25 | 7 | 28 | 8 | 1.00 | 1.00 | 1.00 | 1.00 | 0.42 | 0.83 | 5 | 3 | 13 |
+| `system3_financial_analysis` | 36 | 31 | 1 | 26 | 10 | 0.36 | N/A | 0.36 | 1.00 | 0.50 | 0.56 | 6 | 3 | 23 |
+| **Total** | **100** | **76** | **12** | **74** | **26** | - | - | - | - | - | - | **17** | **11** | **47** |
 
 ## 覆盖率指标
 
-- Agent Coverage：已访问 agent / 识别出的 agent
-- Tool Coverage：已调用 tool / 识别出的 tool
-- Message Edge Coverage：已观测消息边 / profile 中的消息边
-- Requirement Coverage：有至少一条 case 覆盖的 requirement / requirements
-- Contract Coverage：已实例化的通用契约测试模式 / 契约模式全集
-- State Coverage：覆盖预定义状态，如 empty input、tool failure、termination、runtime exception
-- Fault Mode Coverage：覆盖预定义故障模式，如 tool schema mismatch、missing tool call、message routing error
-- Root Cause Evidence Rate：确认故障中具备代码证据或强 trace 证据的比例
-- MASCov：加权综合覆盖率
+- `AgentCov`：已访问 agent / 识别出的 agent。
+- `ToolCov`：已调用 tool / 识别出的 tool；无统一注册工具时记为 N/A。
+- `EdgeCov`：已观测消息边 / profile 中必需消息边。
+- `ReqIntentCov`：测例设计意图覆盖到的需求比例。
+- `ReqVerifiedCov`：至少被一个非阻塞且无目标故障用例有效验证的需求比例。
+- `StateCov`：正常、异常、终止、非终止、工具失败、空输入等状态覆盖比例。
+- `FaultCov`：已覆盖故障模式占目标故障模式集合的比例。
+- `ContractCov`：已实例化并执行的契约 pattern 占适用契约 pattern 的比例。
+- `TraceCompleteness`：trace 是否包含关键 agent/tool/message 事件。
+- `RootCauseEvidenceRate`：confirmed fault 中具备代码证据或强 trace 证据的比例。
+- `MASCov`：由 AgentCov、ToolCov、EdgeCov、ReqIntentCov、StateCov 和 FaultCov 加权得到的综合多智能体语义覆盖率。
+
+MASCov 当前权重：
 
 ```text
 MASCov =
-0.18 * AgentCoverage
-+ 0.18 * ToolCoverage
-+ 0.16 * MessageEdgeCoverage
-+ 0.16 * RequirementCoverage
-+ 0.16 * StateCoverage
-+ 0.16 * FaultModeCoverage
+  0.18 * AgentCov
++ 0.18 * ToolCov
++ 0.16 * EdgeCov
++ 0.16 * ReqIntentCov
++ 0.16 * StateCov
++ 0.16 * FaultCov
 ```
 
-如需用上传的 ground truth 文件评估召回，可运行：
+若某一维度不适用，例如 ToolCov 为 N/A，则该维度从分子和分母中同时剔除，并对剩余权重重新归一化。
+
+## 故障范围
+
+会计入 `faults.json` 的目标问题主要包括：
+
+- 应用层：路径处理、文件产物、schema、resume、CLI 文档一致性、API 参数、分页、数据不变量等问题。
+- AutoGen 框架层：human input 阻塞、speaker selection loop、handoff 只传递 TERMINATE、固定 max round 不适配任务规模、orchestrator/agent wiring 缺失等问题。
+
+不会计入目标故障的问题包括：
+
+- 模型服务鉴权失败、限流、网关超时。
+- 外部 API 或第三方服务不可用。
+- 测试 harness 未成功触达目标 agent/tool/message workflow。
+- 纯粹的大模型回答质量、风格或知识准确性问题。
+
+## 常见问题
+
+### `HTTP 401 Unauthorized: Invalid token`
+
+说明接口已经收到请求但拒绝 token。请确认环境变量不是示例占位符，并清理旧值：
 
 ```bash
-python scripts/evaluate_against_ground_truth.py \
-  --ground-truth ../analysis/ground_truth_defects.json \
-  --outputs outputs \
-  --out outputs/ground_truth_alignment.md
+unset BOYUE_API_KEY
+export BOYUE_API_KEY="真实 sk token"
+python scripts/run_with_boyue_api.py --config configs/all_systems.yaml
 ```
 
-## 故障类型
+### DeepSeek V4 pro 偶发超时
 
-规则 oracle 当前检测：
+可在 `configs/system*.yaml` 中增加超时和重试：
 
-- `RUNTIME_EXCEPTION`
-- `TIMEOUT`
-- `NON_TERMINATION`
-- `MISSING_AGENT`
-- `MISSING_TOOL_CALL`
-- `FORBIDDEN_TOOL_CALL`
-- `MISSING_MESSAGE_EDGE`
-- `OUTPUT_EMPTY`
-- `OUTPUT_SCHEMA_VIOLATION`
-- `REPETITIVE_LOOP`
-- `TOOL_SCHEMA_MISMATCH`
-- `TOOL_HALLUCINATION`
-- `HUMAN_INPUT_REQUESTED`
-- `METAMORPHIC_RELATION_VIOLATION`
+```yaml
+model:
+  testing_timeout_seconds: 90
+  testing_retries: 3
+```
 
-诊断器只把应用层和 AutoGen 框架层问题写入 `faults.json`，并输出 root cause、suggested fix 和复现命令。模型服务、环境和测试框架问题会进入 `non_target_issues.json`，用于说明为什么未计入目标故障。
+如果仍失败，MASentinel 会记录 fallback，不中断整体评测。
+
+### 本地 qwen/vLLM
+
+如需使用本地 qwen2.5-coder 运行被测系统，可启动 OpenAI-compatible 服务：
+
+```bash
+MODEL_PATH=Qwen/Qwen2.5-Coder-7B-Instruct \
+PORT=8001 \
+scripts/start_qwen_h200.sh
+```
+
+核心框架不依赖 vLLM；没有模型服务时，部分步骤会自动使用确定性启发式和模板生成。
 
 ## 当前限制
 
-- 完整运行三个目标 AutoGen 系统建议使用 Python 3.9/3.11/3.12 环境；Python 3.13 下部分 AutoGen/金融依赖可能没有兼容 wheel 或版本声明。
-- 对任意第三方系统，默认能稳定采集 stdout/stderr、进程状态和 `MAS_TRACE:` 显式事件；更细的 AutoGen send/receive/tool trace 需要在目标进程里导入可选 monkey patch。
-- AST 解析采用保守启发式，GroupChat 会生成潜在路由边，部分 missing edge 会标记为 suspected false positive。
-- MASentinel 会通过配置和 runtime patch 注入目标模型、API key、stdin、非交互模式和离线/mock 数据源，尽量先让被测系统进入真实 agent workflow；仍缺失的外部服务、模型网关鉴权/限流/超时会记录为 non-target issue，而不会计入应用/框架故障。
-- Agentic 模式会优先调用 DeepSeek V4 pro；API 不可用时会 fallback 到确定性工具，并在 `agent_trace.jsonl` 与 `model_usage.json` 中明确记录 fallback。被测系统侧默认注入 DeepSeek V4 flash，证据见 `target_model_usage.json` 与 `runs/run_summary.json`。
+- 完整运行三套目标 AutoGen 系统建议使用 Python 3.9/3.11/3.12；Python 3.13 下部分 AutoGen/金融依赖可能没有兼容 wheel 或版本声明。
+- AST 和 README 解析采用保守启发式，部分潜在 message edge 需要结合 trace 和 false-positive audit 解读。
+- HTTP tool error 若缺少 observed HTTP status 与结构化 tool result/error envelope，只作为 suspected/partial，不计入 confirmed primary root cause。
+- runtime patch 能增强 AutoGen send/receive/tool/last_message trace；若目标系统绕开 patch 路径，TraceCompleteness 会下降。
