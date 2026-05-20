@@ -1,5 +1,122 @@
 {
-  "coverage_gaps": [],
-  "new_test_requests": [],
-  "confidence": 1.0
+  "coverage_gaps": [
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "yfinance/stock data collection capability in data_collector",
+      "suggested_test_intent": "Register a deterministic yfinance mock tool for data_collector and test that financial_analyst and report_generator receive structured stock data, verifying tool execution and handoff."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "financial ratio calculation in financial_analyst",
+      "suggested_test_intent": "Implement a tool for calculating ROE/ROA/debt ratio, register it, and test that the tool is called with proper input and its output is used in subsequent report generation."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "enterprise agents data integration",
+      "suggested_test_intent": "Add a test that activates enterprise agents (e.g., enterprise_data_collector, enterprise_risk_analyst) via comprehensive mode, and verify they are visited and their outputs reach downstream agents."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
+      "target": "PDF/report generation in report_generator",
+      "suggested_test_intent": "If report generation involves file output, mock a file-writing tool and verify the artifact is created with correct structure and content from preceding analysts."
+    }
+  ],
+  "new_test_requests": [
+    {
+      "test_id": "system3_financial_analysis_COV_002",
+      "type": "coverage_guided",
+      "objective": "Cover message edge financial_analyst->user_proxy and risk_analyst->user_proxy from the observed reverse edges, ensuring two-way communication during comprehensive analysis.",
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "target_agents": [
+        "user_proxy",
+        "financial_analyst",
+        "risk_analyst"
+      ],
+      "target_edges": [
+        [
+          "financial_analyst",
+          "user_proxy"
+        ],
+        [
+          "risk_analyst",
+          "user_proxy"
+        ]
+      ],
+      "oracle": {
+        "must_terminate": true,
+        "max_turns": 20,
+        "must_visit_agents": [
+          "financial_analyst",
+          "risk_analyst"
+        ]
+      }
+    },
+    {
+      "test_id": "system3_financial_analysis_COV_003",
+      "type": "coverage_guided",
+      "objective": "Cover enterprise agent `enterprise_data_collector` to improve agent coverage from 0.3571.",
+      "input": "请启动企业级数据收集器并报告数据质量。",
+      "target_agents": [
+        "enterprise_data_collector"
+      ],
+      "oracle": {
+        "must_terminate": true,
+        "max_turns": 30,
+        "must_visit_agents": [
+          "enterprise_data_collector"
+        ]
+      }
+    },
+    {
+      "test_id": "system3_financial_analysis_COV_004",
+      "type": "coverage_guided",
+      "objective": "Cover agent `report_generator` which is defined but not yet visited in any test.",
+      "input": "请生成一个关于 AAPL 的简短分析报告。",
+      "target_agents": [
+        "report_generator"
+      ],
+      "oracle": {
+        "must_terminate": true,
+        "max_turns": 15,
+        "must_visit_agents": [
+          "report_generator"
+        ]
+      }
+    },
+    {
+      "test_id": "system3_financial_analysis_COV_005",
+      "type": "coverage_guided",
+      "objective": "Cover message edge between investment_advisor and user_proxy (existing observed edge) and ensure two-way handoff.",
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "target_agents": [
+        "investment_advisor",
+        "user_proxy"
+      ],
+      "target_edges": [
+        [
+          "investment_advisor",
+          "user_proxy"
+        ]
+      ],
+      "oracle": {
+        "must_terminate": true,
+        "max_turns": 20
+      }
+    },
+    {
+      "test_id": "system3_financial_analysis_NEG_001",
+      "type": "negative",
+      "objective": "Cover negative case from R3: data_collector returns empty dict, financial_analyst should not crash with ZeroDivisionError.",
+      "input": "请模拟 yfinance 无法获取数据时的处理流程。",
+      "fault_injection": {
+        "type": "data_empty",
+        "agent": "data_collector"
+      },
+      "oracle": {
+        "must_terminate": true,
+        "must_not_crash": true
+      }
+    }
+  ],
+  "confidence": 0.85
 }

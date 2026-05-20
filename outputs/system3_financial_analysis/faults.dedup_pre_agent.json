@@ -79,7 +79,7 @@
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
-    "case_id": "system3_financial_analysis_COV_002",
+    "case_id": "system3_financial_analysis_COV_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
     "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
@@ -87,24 +87,24 @@
     "confidence": 0.9,
     "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "    3.  **修正公司基本信息：**",
-      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。",
-      "**目标价格**：**无法确定**（缺乏估值基础）",
-      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。",
       "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
-      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
-      "**行动建议**：",
-      "        *   **来源：** 金融数据终端 (如Bloomberg, FactSet) 或券商报告。",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "    3.  **修正公司基本信息：**",
       "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
-      "#### **4. 最终结论**",
+      "        *   **来源：** 金融数据终端 (如Bloomberg, FactSet) 或券商报告。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**综合投资建议**：",
+      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。",
+      "**根本性问题：无法给出有效的投资建议。** 在没有财务分析和实际风险数据的情况下，任何声称能给出“综合投资建议”的结论都是不负责任的。",
       "**投资建议：** **立即终止本次评估，并启动数据搜集工作。** 当前唯一合理的操作是保持现有仓位（如有）并获取完整信息。在获得完整的财务数据、真实的风险指标和正确的行业分类后，再进行一次完整的“财务+风险+估值”综合评估，届时才能给出**明确的买入/持有/卖出评级**和**可信的目标价格**。",
-      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。"
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "#### **4. 最终结论**"
     ],
     "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
     "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
+      "input": "python -m src.main analyze AAPL --type simple",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false,
     "evidence_strength": 0.57,
@@ -155,23 +155,33 @@
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
+      "system3_financial_analysis_COV_001",
       "system3_financial_analysis_COV_002",
+      "system3_financial_analysis_DATAINV_001",
       "system3_financial_analysis_FSSAFE_001",
+      "system3_financial_analysis_HANDOFF_001",
+      "system3_financial_analysis_HANDOFF_002",
       "system3_financial_analysis_OUTCONTRACT_001",
       "system3_financial_analysis_OUTCONTRACT_002",
+      "system3_financial_analysis_OUTCONTRACT_003",
       "system3_financial_analysis_REQ_001",
       "system3_financial_analysis_REQ_002",
       "system3_financial_analysis_REQ_003",
       "system3_financial_analysis_REQ_005"
     ],
     "duplicate_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_019",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_020"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_029",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_030",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_031",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_032",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_035",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_036",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_039"
     ],
     "diagnostic_only": false
   },
@@ -185,14 +195,14 @@
     "confidence": 0.82,
     "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
     "evidence": [
+      "report_generator",
       "data_collector",
-      "enterprise_financial_analyst",
-      "report_generator"
+      "agent"
     ],
     "root_cause": "The documented data collection capability is not backed by a robust registered tool, mock provider, or output contract fallback in the automated run.",
     "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
     "reproduction": {
-      "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
+      "input": "请让 agent 参与处理一个正常任务，并输出处理过程摘要。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
     },
     "suspected_false_positive": true,
@@ -214,12 +224,18 @@
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_COV_002",
-      "system3_financial_analysis_REQ_002",
+      "system3_financial_analysis_REQ_001",
+      "system3_financial_analysis_REQ_001",
+      "system3_financial_analysis_REQ_003",
+      "system3_financial_analysis_REQ_003",
       "system3_financial_analysis_REQ_005"
     ],
     "duplicate_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_021"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_033",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_034",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_037",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_038",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_040"
     ],
     "diagnostic_only": false
   },
@@ -233,19 +249,20 @@
     "confidence": 0.92,
     "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
-      "caller=_last_msg_as_summary",
-      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "agent=risk_analyst",
       "content=TERMINATE",
+      "agent=data_analyst",
       "agent=financial_analyst",
-      "caller=orchestrate_analysis"
+      "caller=_last_msg_as_summary"
     ],
     "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
     "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": true,
+    "suspected_false_positive": false,
     "evidence_strength": 0.58,
     "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
     "code_locations": [
@@ -281,18 +298,17 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
-    "diagnostic_only": true,
     "deterministic_confirmation": {
-      "confirmed": false,
+      "confirmed": true,
       "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "diagnostic_only_pattern",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
       "evidence_strength": 0.58,
       "root_cause_confidence": "code_evidence"
     },
-    "confirmation_status": "suspected_fault",
+    "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_HANDOFF_001",
@@ -301,66 +317,46 @@
       "system3_financial_analysis_HANDOFF_001",
       "system3_financial_analysis_HANDOFF_001",
       "system3_financial_analysis_HANDOFF_001",
-      "system3_financial_analysis_HANDOFF_001"
+      "system3_financial_analysis_HANDOFF_001",
+      "system3_financial_analysis_HANDOFF_001",
+      "system3_financial_analysis_HANDOFF_001",
+      "system3_financial_analysis_HANDOFF_001",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002",
+      "system3_financial_analysis_HANDOFF_002"
     ],
     "duplicate_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011"
-    ]
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-    "case_id": "system3_financial_analysis_OUTCONTRACT_003",
-    "layer": "application",
-    "fault_type": "Output Contract Violation",
-    "failure_code": "OUTPUT_SCHEMA_VIOLATION",
-    "severity": "medium",
-    "confidence": 0.78,
-    "summary": "Output contract expected keywords or sections were missing.",
-    "evidence": [
-      "=\n分析日期: 2026-05-20 12:39:37\nAutoGen协作摘要: AutoGen多智能体协作分析完成：数据分析师、财务分析师、风险分析师和投资顾问共同协作完成了完整的股票分析流程\n\n\n--- 关键财务指标 (百分比) ---\nroe: 146.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，所有模块均显示“TERMINATE”，即未能获取有效的财务数据、风险评估及公司基本信息。因此，目前无法对TSLA Mock Holdings进行任何有意义的综合投资评估。\n\n作为投资顾问，我建议您首先补充完整的财务分析（如营收、利润、现金流、负债结构等）、风险评估（市场、行业、运营、政策等维度）以及公司最新基本信息（业务模式、竞争地位、管理层背景）。只有在这些核心数据齐全后，我才能提供明确的投资评级（如买入、持有、卖出）及目标价格。\n\n请重新提交完整分析资料，我将为您制定专业的投资建议。",
-      "6.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据。公司基本信息仅知为“META Mock Holdings”（模拟控股公司），属于科技行业。\n\n**综合投资建议：**  \n由于缺乏可量化的财务指标（如营收、利润、现金流、增长率等）和风险因素（如市场、运营、财务、合规风险等）的具体分析，无法形成可靠的投资决策依据。在此情况下，**建议暂停任何投资操作**，并优先完成以下步骤：\n- 重新获取或核实财务分析数据，确保完整性；\n- 补充风险评估报告，明确关键风险敞口；\n- 明确公司实际业务模式及竞争地位（“Mock”可能暗示为模拟测试公司，需确认真实性）。\n\n**评级与目标价格：** 暂不适用（无有效数据支撑）。\n\n**行动建议：** 联系分析师要求重新提交完整分析，或寻找替代研究来源后才可给出具体评级与目标价。",
-      "missing_keywords=['记录']",
-      "missing_keywords=['代码']"
-    ],
-    "root_cause": "The rule oracle detected OUTPUT_SCHEMA_VIOLATION for system system3_financial_analysis.",
-    "suggested_fix": "Validate output before returning and add deterministic fallback formatting.",
-    "reproduction": {
-      "input": "请完成需求 R3，并按文档要求输出：系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
-    },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.3,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only",
-    "deterministic_confirmation": {
-      "confirmed": false,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "insufficient deterministic code/trace evidence",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.3,
-      "root_cause_confidence": "trace_only"
-    },
-    "confirmation_status": "suspected_fault",
-    "confirmation_source": "deterministic_oracle_evidence",
-    "affected_cases": [
-      "system3_financial_analysis_OUTCONTRACT_003",
-      "system3_financial_analysis_OUTCONTRACT_005"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_019",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_020",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_021",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_022",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_023",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_024",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_025",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_026",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_027",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_028"
     ],
     "diagnostic_only": false
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
     "case_id": "system3_financial_analysis_TERM_001",
     "layer": "autogen_framework",
     "fault_type": "Termination Signal Ignored",
@@ -403,6 +399,321 @@
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system3_financial_analysis_TERM_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
+    "case_id": "system3_financial_analysis_STATIC_tool_unstructured_error",
+    "layer": "application",
+    "fault_type": "Tool Error Contract Missing",
+    "failure_code": "TOOL_UNSTRUCTURED_ERROR",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "HTTP tool can return raw text or None instead of a structured success/error envelope.",
+    "evidence": [
+      "requests-based tool returns response.text/None without typed error envelope",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/security/security_manager.py",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_collector.py"
+    ],
+    "root_cause": "The tool wrapper does not normalize HTTP failures into a structured result.",
+    "suggested_fix": "Check status codes and return typed success/error payloads with status, message, and retryability.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "66",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "79",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "80",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "81",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "134",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.5,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_static_advisory",
+    "suspected_false_positive": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "deterministic_static_code_evidence",
+      "reason": "Static HTTP wrapper evidence requires an observed failing HTTP status and tool result/error envelope before confirmation.",
+      "evidence_strength": 0.5,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_tool_unstructured_error",
+      "system3_financial_analysis_STATIC_tool_unstructured_error",
+      "system3_financial_analysis_STATIC_tool_unstructured_error"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_043",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_044"
+    ],
+    "diagnostic_only": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
+    "case_id": "system3_financial_analysis_STATIC_numeric_sign_convention_error",
+    "layer": "application",
+    "fault_type": "Data Processing Invariant Violation",
+    "failure_code": "NUMERIC_SIGN_CONVENTION_ERROR",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Risk metrics are returned as negative signed returns where reports commonly expect positive magnitudes.",
+    "evidence": [
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+      "VaR/drawdown assigned from lower-tail/min return expressions",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/risk/risk_analyzer.py",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py"
+    ],
+    "root_cause": "Risk metric outputs are not normalized to documented/report magnitude semantics.",
+    "suggested_fix": "Normalize VaR and drawdown outputs to positive magnitudes or label them explicitly as signed returns.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "45",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "46",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "51",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "52",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "173",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.68,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.68,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_numeric_sign_convention_error",
+      "system3_financial_analysis_STATIC_numeric_sign_convention_error",
+      "system3_financial_analysis_STATIC_numeric_sign_convention_error"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_047",
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_048"
+    ],
+    "diagnostic_only": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
+    "case_id": "system3_financial_analysis_STATIC_partial_metric_zeroed",
+    "layer": "application",
+    "fault_type": "Data Processing Invariant Violation",
+    "failure_code": "PARTIAL_METRIC_ZEROED",
+    "severity": "medium",
+    "confidence": 0.84,
+    "summary": "Financial metric calculation can discard available metrics when one optional row lookup fails.",
+    "evidence": [
+      "direct .loc row lookups inside broad try/except",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py"
+    ],
+    "root_cause": "Independent financial metrics are computed in a shared exception scope, so one missing row can zero unrelated outputs.",
+    "suggested_fix": "Compute each metric independently and represent missing-row-dependent values as null/unavailable.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "21",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "71",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "81",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "87",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "92",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.7,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.7,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_partial_metric_zeroed"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
+    "case_id": "system3_financial_analysis_STATIC_documented_cli_command_missing",
+    "layer": "application",
+    "fault_type": "Documented CLI Command Missing",
+    "failure_code": "DOCUMENTED_CLI_COMMAND_MISSING",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Documented CLI command is not implemented by the parser or dispatcher: python -m src.main portfolio AAPL MSFT GOOG",
+    "evidence": [
+      "documented_command=python -m src.main interactive",
+      "subcommand parser registration not found in source",
+      "documented_command=python -m src.main portfolio AAPL MSFT GOOG"
+    ],
+    "root_cause": "Documentation advertises a CLI subcommand that the implementation does not register.",
+    "suggested_fix": "Add the documented subcommand to the parser/dispatcher or remove/update the documentation.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "9",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "101",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "104",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "107",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.66,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.66,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_documented_cli_command_missing",
+      "system3_financial_analysis_STATIC_documented_cli_command_missing"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_050"
+    ],
+    "diagnostic_only": false
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
+    "case_id": "system3_financial_analysis_STATIC_autogen_wiring_missing",
+    "layer": "autogen_framework",
+    "fault_type": "Agent Orchestration Wiring Missing",
+    "failure_code": "AUTOGEN_WIRING_MISSING",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Documented AutoGen workflow is initialized with an empty or missing agent mapping.",
+    "evidence": [
+      "{'file': '/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py', 'line': '115', 'risk': 'AgentOrchestrator initialized with an empty mapping or no agents.', 'call': 'AgentOrchestrator({})'}"
+    ],
+    "root_cause": "The orchestrator/factory wiring does not create or register the documented collaborating agents.",
+    "suggested_fix": "Create the required agents from the factory and pass a non-empty role-to-agent mapping into the orchestrator.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py",
+        "line": "115",
+        "function": "AgentOrchestrator"
+      }
+    ],
+    "evidence_strength": 0.76,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.76,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_autogen_wiring_missing"
     ],
     "duplicate_fault_ids": []
   }

@@ -12,9 +12,9 @@
     "ReportWriterAgent"
   ],
   "model_usage": {
-    "run_id": "agentic_1779250806_351c1bb8",
-    "total_calls": 17,
-    "successful_calls": 17,
+    "run_id": "agentic_1779256064_fefae4cb",
+    "total_calls": 25,
+    "successful_calls": 25,
     "fallback_calls": 0,
     "failed_calls": 0,
     "by_agent": {
@@ -24,8 +24,8 @@
       "InteractionAdapterAgent": 1,
       "TestDesignerAgent": 2,
       "ExecutionMonitorAgent": 1,
-      "FaultDiagnoserAgent": 4,
-      "FalsePositiveAuditorAgent": 4,
+      "FaultDiagnoserAgent": 8,
+      "FalsePositiveAuditorAgent": 8,
       "CoverageStrategistAgent": 1,
       "ReportWriterAgent": 1
     },
@@ -36,17 +36,17 @@
       "plan_interaction_adapter": 1,
       "generate_testcases": 2,
       "summarize_execution": 1,
-      "diagnose_fault": 4,
-      "audit_false_positive": 4,
+      "diagnose_fault": 8,
+      "audit_false_positive": 8,
       "analyze_coverage_gaps": 1,
       "write_report_narrative": 1
     },
     "by_model": {
-      "deepseek-v4-pro": 17
+      "deepseek-v4-pro": 25
     },
     "estimated_tokens": {
-      "input_tokens": 65920,
-      "output_tokens": 26310
+      "input_tokens": 80475,
+      "output_tokens": 33239
     }
   },
   "target_model_usage": {
@@ -62,12 +62,12 @@
     "target_api_key_envs": [
       "BOYUE_API_KEY"
     ],
-    "stdout_model_mentions": 46,
+    "stdout_model_mentions": 45,
     "stderr_model_mentions": 0,
-    "autogen_model_warning_count": 46,
+    "autogen_model_warning_count": 45,
     "case_summaries": [
       {
-        "case_id": "system2_research_agents_COV_001",
+        "case_id": "system2_research_agents_BUDGET_001",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -77,14 +77,24 @@
         "autogen_model_warning_count": 1
       },
       {
-        "case_id": "system2_research_agents_COV_002",
-        "status": "timeout",
+        "case_id": "system2_research_agents_COV_001",
+        "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 7,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 7
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system2_research_agents_COV_002",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system2_research_agents_COV_003",
@@ -92,9 +102,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 3
       },
       {
         "case_id": "system2_research_agents_COV_004",
@@ -122,36 +132,6 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 2,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 2
-      },
-      {
-        "case_id": "system2_research_agents_COV_007",
-        "status": "timeout",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
-      },
-      {
-        "case_id": "system2_research_agents_COV_008",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
-      },
-      {
-        "case_id": "system2_research_agents_COV_009",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 3
@@ -162,9 +142,29 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 2,
+        "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 2
+        "autogen_model_warning_count": 3
+      },
+      {
+        "case_id": "system2_research_agents_FUZZ_002",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 5,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 5
+      },
+      {
+        "case_id": "system2_research_agents_FUZZ_003",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system2_research_agents_HANDOFF_001",
@@ -172,9 +172,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 5,
+        "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 5
+        "autogen_model_warning_count": 3
       },
       {
         "case_id": "system2_research_agents_META_001",
@@ -198,13 +198,13 @@
       },
       {
         "case_id": "system2_research_agents_OUTCONTRACT_001",
-        "status": "passed",
+        "status": "timeout",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 1,
+        "stdout_model_mentions": 2,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 1
+        "autogen_model_warning_count": 2
       },
       {
         "case_id": "system2_research_agents_PROP_001",
@@ -228,7 +228,7 @@
       },
       {
         "case_id": "system2_research_agents_REQ_001",
-        "status": "timeout",
+        "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
@@ -252,13 +252,13 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
+        "stdout_model_mentions": 5,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
+        "autogen_model_warning_count": 5
       },
       {
         "case_id": "system2_research_agents_REQ_004",
-        "status": "passed",
+        "status": "timeout",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
@@ -272,9 +272,19 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 0,
+        "stdout_model_mentions": 3,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 0
+        "autogen_model_warning_count": 3
+      },
+      {
+        "case_id": "system2_research_agents_REQ_006",
+        "status": "timeout",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 7,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 7
       },
       {
         "case_id": "system2_research_agents_SMOKE_001",
@@ -302,9 +312,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system2_research_agents_TOOLCONTRACT_001",
@@ -362,16 +372,6 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 3,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 3
-      },
-      {
-        "case_id": "system2_research_agents_TOOLFUZZ_002",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
@@ -389,6 +389,38 @@
     ]
   },
   "non_target_issues": [
+    {
+      "case_id": "system2_research_agents_BUDGET_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=41",
+        "max_turns=40"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_COV_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=31",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
     {
       "case_id": "system2_research_agents_COV_004",
       "code": "TURN_BUDGET_EXCEEDED",
@@ -422,39 +454,39 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system2_research_agents_COV_008",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=17",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system2_research_agents_COV_009",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=17",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
       "case_id": "system2_research_agents_FUZZ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=17",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_FUZZ_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=23",
+        "max_turns=10"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_FUZZ_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -486,7 +518,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system2_research_agents_REQ_004",
+      "case_id": "system2_research_agents_REQ_001",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -495,6 +527,22 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=23",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_REQ_005",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=17",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -552,6 +600,38 @@
   ],
   "test_harness_issues": [
     {
+      "case_id": "system2_research_agents_BUDGET_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=41",
+        "max_turns=40"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_COV_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=31",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
       "case_id": "system2_research_agents_COV_004",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
@@ -584,39 +664,39 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system2_research_agents_COV_008",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=17",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system2_research_agents_COV_009",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=17",
-        "max_turns=15"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
       "case_id": "system2_research_agents_FUZZ_001",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=17",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_FUZZ_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=23",
+        "max_turns=10"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_FUZZ_003",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -648,7 +728,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system2_research_agents_REQ_004",
+      "case_id": "system2_research_agents_REQ_001",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -657,6 +737,22 @@
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
         "turn_count=23",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system2_research_agents_REQ_005",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=17",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -713,8 +809,8 @@
     }
   ],
   "run_manifest": {
-    "run_id": "system2_research_agents_2026-05-20T04:20:06.212203+00:00",
-    "start_time": "2026-05-20T04:20:06.212218+00:00",
+    "run_id": "system2_research_agents_2026-05-20T05:47:44.370794+00:00",
+    "start_time": "2026-05-20T05:47:44.370807+00:00",
     "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system2.yaml",
     "config_hash": "ca73ded2a2082548837a3fab0fea15e4553f1aaeb388ddc440680cd20e101139",
     "code_snapshot_hash": "bf309e6f5b2a651789a56a09c82a42b9851ab6f0c05b1b6a358fd2d041610ee9",
@@ -722,109 +818,40 @@
     "human_intervention_allowed": false,
     "entry_command": "scripts/run_with_boyue_api.py --config configs/all_systems.yaml --testing-model deepseek-v4-pro --target-model deepseek-v4-flash",
     "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
-    "pid": 89258
+    "pid": 94258
   },
-  "testcases_frozen_sha256": "7b5938b978a5fb31ff5e8cb09671ffa45ed5411228fd1155cecae044de76137f",
+  "testcases_frozen_sha256": "37fb21e4c8254b9839a9c6f8e4e602d482ac28c6da887667896e10f6c1142b77",
   "human_intervention_allowed": false,
   "agent_api_workers": 3,
   "semantic_graph_review": {
-    "semantic_graph_review": "Based on the AST+doc evidence, the group chat connects all five agents (user_proxy, researcher, research_manager, director, group_chat_manager). The message edges are correctly derived from the GroupChat configuration (app.py line 193) where all four domain agents are in the agents list, so any agent can communicate with any other. The edge user_proxy -> group_chat_manager is separately supported by the initiate_chat call. Tool assignments match the AST: researcher has google_search and web_scraping, director has get_airtable_records and update_single_airtable_record. No missing mandatory agent/tool links are evident from the static data. However, the tool registration for GPTAssistantAgent is done via the tools parameter of assistant_config, which is an AutoGen pattern; the actual behavior depends on the LLM endpoint (OpenAI assistants API), which is a runtime concern not modeled here.",
+    "semantic_graph_review": "The message edge graph depicts a fully connected GroupChat among user_proxy, researcher, research_manager, and director, with the group_chat_manager acting as orchestrator. This topology aligns with the autogen.GroupChat configuration observed in app.py, where all four agents are added to the group. The edges are labeled as potential routes, which is accurate because GroupChat uses a speaker selection policy (default 'auto') that can route to any member. The termination conditions (TERMINATE message, max_round=15, and process_exit) are correctly identified from the code. The agent-tool associations (researcher with google_search/web_scraping; director with get_airtable_records/update_single_airtable_record) are confirmed by the registration logic in app.py.",
     "suspected_risk_points": [
       {
         "type": "tool_schema_risk",
-        "evidence": "AST shows researcher tools are google_search and web_scraping, but the google_search signature in the profile has null signature and parameters. The functions are defined with parameters (e.g., google_search(search_query), web_scraping(url), get_airtable_records()) but the static analyzer could not capture their JSON schemas. If the function signatures are not properly serializable or conflict with the OpenAI function-calling schema, tool calls may fail at runtime. Related requirements: R2 (tool invocation).",
-        "related_tool": "google_search"
+        "evidence": "The GPTAssistantAgent instances (researcher, research_manager, director) are created without explicit 'tools' parameter, relying on the deprecated/backend 'function_map' or volatile registration. In app.py, tools are defined as regular Python functions but are registered via GPTAssistantAgent's llm_config or alternative mechanism. The code snippet shows researcher.assistant.register_function(google_search) and similar calls not present in the provided fragments, which indicates the tool registration might be conditional or missing. Without proper registration, the LLM cannot emit structured tool calls for google_search, web_scraping, get_airtable_records, or update_single_airtable_record, causing schema mismatches or runtime failures.",
+        "related_tool": "google_search, web_scraping, get_airtable_records, update_single_airtable_record"
       },
       {
         "type": "tool_schema_risk",
-        "evidence": "The researcher's web_scraping function (app.py line 68) uses requests with a timeout but does not clearly propagate exceptions or parse body in a structured way; potential runtime errors (network issues, invalid URLs) could return raw exceptions instead of descriptive error messages. Requirement R2 expects error handling.",
-        "related_tool": "web_scraping"
+        "evidence": "The functions google_search, web_scraping, get_airtable_records, and update_single_airtable_record lack type annotations and docstrings, which are essential for AutoGen's function schema generation when tools are registered. If the schema is incomplete, the LLM may generate invalid arguments or fail to call the tool. For example, web_scraping expects a 'url' parameter but its signature and docstrings are missing, leading to potential misinterpretation by the model.",
+        "related_tool": "google_search, web_scraping, get_airtable_records, update_single_airtable_record"
       },
       {
-        "type": "tool_schema_risk",
-        "evidence": "The director's get_airtable_records (app.py line 105) uses a hardcoded formula in a ?filterByFormula query string; authentication relies on an environment variable (AIRTABLE_API_KEY). If the key is missing or invalid, the tool returns an error message, but the function has no try/except for network errors—any exception could propagate. Requirement R2 expects caught errors.",
-        "related_tool": "get_airtable_records"
-      },
-      {
-        "type": "tool_schema_risk",
-        "evidence": "The director's update_single_airtable_record (app.py line 120) constructs a PATCH request; the 'fields' parameter is defined but the function does not validate the JSON structure or handle malformed inputs gracefully. Requirement R2 negative case 'tool_invalid_json' could trigger an unhandled exception.",
-        "related_tool": "update_single_airtable_record"
-      },
-      {
-        "type": "termination_risk",
-        "evidence": "The UserProxyAgent's is_termination_msg lambda (app.py line 143) checks 'TERMINATE' in msg['content'], which is case-sensitive. Requirement R4 expects detection; if an agent includes 'terminate' (lowercase) or embeds TERMINATE in a larger word, termination may not trigger. This is a deliberate design choice but could be a mismatch with requirement R4's negative case, though that case mentions 'if the implementation expects case-sensitive exact match'—so it is a known characteristic, not necessarily a bug. However, the group_chat_manager and max_round termination are also in place, so the risk is moderate.",
-        "related_tool": null
-      },
-      {
-        "type": "integration_config_risk",
-        "evidence": "The researcher and director are GPTAssistantAgent instances configured with an assistant_config that includes tools and a model. If the OpenAI assistants API returns cancellation or tool errors, the AutoGen framework's handling (via GPTAssistantAgent) must map those back to messages. The static analyzer cannot verify correct error mapping, but it is a known integration point where failures could violate R2's requirement of handling tool errors.",
-        "related_tool": null
+        "type": "integration_risk",
+        "evidence": "The GroupChatManager is configured with max_round=15 but the user_proxy has max_consecutive_auto_reply=1 and human_input_mode='ALWAYS'. If human input is required and not provided, the conversation could stall, potentially exceeding the max_round or looping erroneously. The termination condition relies on 'TERMINATE' message, but a human-in-the-loop scenario might not produce it, leading to silent exhaustion of rounds without proper task completion.",
+        "related_tool": "N/A"
       }
     ],
     "additional_edges": [],
     "confidence": 0.85
   },
   "interaction_adapter": {
-    "prompt_responses": [
-      {
-        "trigger": "How many different topics would you like to generate blogs for? (Enter a number)",
-        "response": "2",
-        "regex": false,
-        "max_count": 1
-      },
-      {
-        "trigger": "Enter the topic (or a set of topics comma separated) for which you want to generate the content about:",
-        "response": "Artificial Intelligence,Climate Change",
-        "regex": false,
-        "max_count": 1
-      },
-      {
-        "trigger": "Enter the objective of the report (e.g., 'Write a report about the current state of the global economy'):",
-        "response": "Write a report about {input}",
-        "regex": false,
-        "max_count": 1
-      },
-      {
-        "trigger": "How many maximum sub-topics to research per topic (max 5)?",
-        "response": "2",
-        "regex": false,
-        "max_count": 1
-      }
-    ],
-    "isolated_paths": [
-      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/outputs"
-    ],
-    "risk_notes": [
-      "App may prompt for 'Number of bullet points to generate per section (max 5):' under some flow branches; could add a fallback rule with response '3' if observed in future runs."
-    ],
-    "confidence": 0.8,
+    "prompt_responses": [],
+    "isolated_paths": [],
+    "risk_notes": [],
+    "confidence": 0.0,
     "applied": {
-      "added_prompt_responses": [
-        {
-          "trigger": "How many different topics would you like to generate blogs for? (Enter a number)",
-          "response": "2",
-          "regex": false,
-          "max_count": 1
-        },
-        {
-          "trigger": "Enter the topic (or a set of topics comma separated) for which you want to generate the content about:",
-          "response": "Artificial Intelligence,Climate Change",
-          "regex": false,
-          "max_count": 1
-        },
-        {
-          "trigger": "Enter the objective of the report (e.g., 'Write a report about the current state of the global economy'):",
-          "response": "Write a report about {input}",
-          "regex": false,
-          "max_count": 1
-        },
-        {
-          "trigger": "How many maximum sub-topics to research per topic (max 5)?",
-          "response": "2",
-          "regex": false,
-          "max_count": 1
-        }
-      ],
+      "added_prompt_responses": [],
       "added_isolated_paths": []
     }
   },
@@ -832,22 +859,22 @@
     "coverage_gaps": [
       {
         "gap_type": "missing_tool_coverage",
+        "target": "google_search",
+        "suggested_test_intent": "Verify that google_search is called with valid arguments and integrated into the researcher's workflow, ensuring the retrieved results are passed back into the group chat and influence subsequent agent behavior."
+      },
+      {
+        "gap_type": "missing_tool_coverage",
         "target": "get_airtable_records",
-        "suggested_test_intent": "Create a test that explicitly instructs the director to call get_airtable_records, using mock HTTP to return a multi-record or empty response, and verify the tool result appears in the group chat without crashing. This addresses the gap that get_airtable_records is in profile tools and assigned to director but has no dedicated test (the existing REQ_001 only requires update_single_airtable_record)."
+        "suggested_test_intent": "Verify that get_airtable_records is invoked by the director agent and its retrieved records are used in the conversation, confirming end-to-end integration from tool call to downstream processing."
       },
       {
         "gap_type": "missing_tool_coverage",
         "target": "update_single_airtable_record",
-        "suggested_test_intent": "Create a test that passes malformed or missing fields to update_single_airtable_record (e.g., missing 'fields' key, non-JSON body) and verifies the system returns a structured error and continues, directly covering the requirement R2 negative case 'tool_invalid_json' and the tool_schema_risk noted for this tool."
-      },
-      {
-        "gap_type": "semantic_gap",
-        "target": "R2 tool_error_handling_range",
-        "suggested_test_intent": "Add tests that individually exercise each tool's error path with mocked HTTP failures (401, 500, timeout) for web_scraping, google_search, get_airtable_records, and update_single_airtable_record, ensuring the error is reported back to the calling agent and the group chat does not terminate prematurely. The current coverage only has one TOOLERR test targeting web_scraping; the other three tools lack error envelope tests."
+        "suggested_test_intent": "Verify that update_single_airtable_record is called by the director agent to modify a record and that the update context is reflected in subsequent messages or final output."
       }
     ],
     "new_test_requests": [],
-    "confidence": 0.8
+    "confidence": 0.95
   },
   "test_plan": {
     "selected_patterns": [
@@ -856,23 +883,23 @@
         "applicability": "hard",
         "confidence": 0.9,
         "reasons": [
-          "System has registered tools web_scraping, google_search, get_airtable_records, update_single_airtable_record with HTTP/API/Airtable dependencies (has_http_tools, has_airtable_tools, has_external_api_tools true).",
-          "Requirements R2 explicitly expects correct tool invocation and response handling (usable results or handled errors).",
-          "Negative case tool_invalid_json demands robust argument validation and error recovery—matching tool_api_contract expectations."
+          "has_http_tools=true, has_external_api_tools=true, has_request_like_code=true",
+          "requirements R2 and R3 explicitly describe valid tool calls (google_search, web_scraping, get_airtable_records, update_single_airtable_record) and expected responses/errors",
+          "requirement R5 describes handling of incorrect or missing tool invocations, which implies contract verification"
         ],
         "required_features": [
           "has_http_tools",
-          "has_airtable_tools",
           "has_external_api_tools",
-          "has_tools"
+          "has_request_like_code",
+          "tool_api_contract pattern applicable to google_search, web_scraping, get_airtable_records, update_single_airtable_record"
         ],
         "required_evidence": [
-          "tool signatures or docstrings",
-          "tool response types",
-          "argument schemas for google_search, get_airtable_records, update_single_airtable_record"
+          "Tool signatures for google_search, web_scraping, get_airtable_records, update_single_airtable_record",
+          "Error handling code in tool implementations or agent wrappers",
+          "Logs/traces from test runs showing tool call success and failure modes"
         ],
         "oracle_strength": "hard",
-        "case_budget": 2,
+        "case_budget": 3,
         "source": "PatternApplicabilityAgent"
       },
       {
@@ -880,19 +907,40 @@
         "applicability": "hard",
         "confidence": 0.85,
         "reasons": [
-          "All tools are external (HTTP/API/Airtable) and prone to runtime failures (network, missing API key, malformed input).",
-          "Requirement R2 negative cases tool_failure and tool_invalid_json demand that agents handle tool errors gracefully, inform user, and not silently halt the group chat.",
-          "System features confirm has_external_api_tools and has_structured_error_contract, making error contract testing essential."
+          "has_structured_error_contract=true",
+          "Requirements R2 and R3 specify negative cases with errors (empty query, unreachable URL, missing credentials, record not found)",
+          "Requirement R5 explicitly targets unregistered tool name calls and persistent tool failures leading to infinite loops"
         ],
         "required_features": [
-          "has_external_api_tools",
           "has_structured_error_contract",
-          "has_tools"
+          "tools with documented error outputs (google_search, web_scraping, get_airtable_records, update_single_airtable_record)"
         ],
         "required_evidence": [
-          "error response format for each tool",
-          "agent fallback or recovery code",
-          "failure injection mechanism"
+          "Error response schemas or exception classes for each tool",
+          "Fallback behavior in agents when tool errors occur",
+          "Traces showing graceful degradation on tool failures"
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 3,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "scalable_budget",
+        "applicability": "hard",
+        "confidence": 0.85,
+        "reasons": [
+          "has_fixed_round_budget=true (max_round=15 mentioned in R1 termination condition)",
+          "Requirement R4 mentions context token limits and R5 mentions avoiding infinite loops, both related to resource bounds",
+          "GroupChat termination conditions include max_turns, making budget enforcement testable"
+        ],
+        "required_features": [
+          "has_fixed_round_budget",
+          "groupchat with max_round or max_turns specified"
+        ],
+        "required_evidence": [
+          "GroupChat configuration with max_round or max_turns parameter",
+          "Test scenarios exceeding/exhausting budget",
+          "Verification that termination occurs within constraint"
         ],
         "oracle_strength": "hard",
         "case_budget": 2,
@@ -900,24 +948,23 @@
       },
       {
         "pattern": "autogen_wiring",
-        "applicability": "hard",
-        "confidence": 0.8,
+        "applicability": "soft",
+        "confidence": 0.6,
         "reasons": [
-          "System uses AutoGen GroupChat with defined agents (user_proxy, researcher, research_manager, director) and a GroupChatManager.",
-          "Requirement R1 mandates correct agent wiring to enforce termination conditions and group chat flow.",
-          "Potential misconfiguration (e.g., wrong speaker selection logic, incorrect agent registration) could cause termination bypass or context loss; static_risks acknowledge absence of detected wiring risks but the system is still newly scanned and may have latent issues."
+          "uses_autogen=true, uses_groupchat=true",
+          "No static wiring risks flagged by system_features, but R5 negative cases (unregistered tool name call, persistent failure causing infinite auto-reply) could indicate wiring gaps",
+          "GroupChat with multiple GPTAssistantAgents could have misconfigurations in tools or agent registration"
         ],
         "required_features": [
           "uses_autogen",
-          "uses_groupchat",
-          "has_fixed_round_budget"
+          "uses_groupchat"
         ],
         "required_evidence": [
-          "GroupChat instantiation code",
-          "agent registration sequence",
-          "termination condition embedding"
+          "Agent registration code (tools, roles) for all agents",
+          "GroupChat configuration mapping agents to their tools",
+          "Traces of tool calls from agents confirming correct routing"
         ],
-        "oracle_strength": "hard",
+        "oracle_strength": "diagnostic",
         "case_budget": 1,
         "source": "PatternApplicabilityAgent"
       }
@@ -925,21 +972,21 @@
     "rejected_patterns": [
       {
         "pattern": "message_handoff_integrity",
-        "applicability": "diagnostic",
-        "confidence": 0.7,
+        "applicability": "soft",
+        "confidence": 0.6,
         "reasons": [
-          "Conversation context must be preserved across multiple turns (R3). Though no explicit last_message/chat_messages API calls are found, GroupChat agents must reference previous messages.",
-          "GroupChat potential routes show bidirectional edges among all agents, implying message passing that could be disrupted by misrouting or truncation.",
-          "No multi-stage handoff explicitly documented, so oracle strength is diagnostic only."
+          "GroupChat with message_edges showing all possible agent routes, indicating multi-turn context handoff",
+          "R4 explicitly requires maintaining multi-turn context so later messages can reference earlier outputs, which is a form of handoff integrity",
+          "No hard evidence of last_message/chat_messages calls or documented multi-stage handoff, but GroupChat inherently passes messages among agents, making soft applicability reasonable"
         ],
         "required_features": [
-          "uses_groupchat",
-          "has_multistage_handoff (false)"
+          "groupchat message flow",
+          "Requirement R4 context preservation"
         ],
         "required_evidence": [
-          "message history propagation logic",
-          "GroupChat message queue handling",
-          "examples of agent referencing earlier results"
+          "GroupChat message history handling mechanism",
+          "Test scenarios requiring context propagation across agents",
+          "Evidence that earlier outputs are used in later agent decisions"
         ],
         "oracle_strength": "diagnostic",
         "case_budget": 1,
@@ -949,44 +996,38 @@
       },
       {
         "pattern": "data_invariant",
-        "reason": "No pandas, financial/risk metrics, or dataframe features present. System is a research workflow agent, not a data processing pipeline.",
-        "confidence": 0.95,
-        "source": "PatternApplicabilityAgent"
-      },
-      {
-        "pattern": "artifact_contract",
-        "reason": "System does not write or version files; artifacts not documented; no file output features.",
-        "confidence": 0.95,
-        "source": "PatternApplicabilityAgent"
-      },
-      {
-        "pattern": "cli_doc_conformance",
-        "reason": "No documented Python CLI commands; uses_argparse false; documented_commands empty list.",
-        "confidence": 0.95,
-        "source": "PatternApplicabilityAgent"
-      },
-      {
-        "pattern": "filesystem_safety",
-        "reason": "No file writes or user-controlled paths; no resumes or versioned artifacts.",
-        "confidence": 0.95,
-        "source": "PatternApplicabilityAgent"
-      },
-      {
-        "pattern": "scalable_budget",
-        "reason": "Fixed max_round=15 is a simple round budget, not a complex token/llm-call budget. No enterprise orchestration risk or dynamic scaling requirement.",
-        "confidence": 0.9,
+        "reason": "No financial/risk/dataframe metrics (has_financial_metrics=false, has_risk_metrics=false, has_dataframe_metrics=false, has_pandas=false). No data processing invariants defined in requirements.",
+        "confidence": 0.0,
         "source": "PatternApplicabilityAgent"
       },
       {
         "pattern": "speaker_selection",
-        "reason": "Speaker selection disabled (has_speaker_selection false).",
-        "confidence": 0.95,
+        "reason": "has_speaker_selection=false explicitly; GroupChat uses default round-robin or auto replies, not speaker_selection_mode.",
+        "confidence": 0.0,
         "source": "PatternApplicabilityAgent"
       },
       {
         "pattern": "state_resume_contract",
-        "reason": "No resume state, versioned artifacts, or user-controlled path features.",
-        "confidence": 0.95,
+        "reason": "has_resume_state=false, has_versioned_artifacts=false, writes_files=false. No documented artifacts or state persistence to resume.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "cli_doc_conformance",
+        "reason": "has_documented_commands=false, documented_commands=[], uses_argparse=false. No CLI entry points mentioned.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "artifact_contract",
+        "reason": "writes_files=false, has_user_controlled_path=false, no file artifacts produced. Requirements do not describe file outputs.",
+        "confidence": 0.0,
+        "source": "PatternApplicabilityAgent"
+      },
+      {
+        "pattern": "filesystem_safety",
+        "reason": "No file writing operations (writes_files=false), no user-controlled paths. No filesystem artifacts or CLI file interactions.",
+        "confidence": 0.0,
         "source": "PatternApplicabilityAgent"
       },
       {
@@ -1014,12 +1055,6 @@
         "source": "deterministic_feature_extractor"
       },
       {
-        "pattern": "scalable_budget",
-        "reason": "requires GroupChat/fixed budget plus multi-record or paginated work",
-        "confidence": 0.9,
-        "source": "deterministic_feature_extractor"
-      },
-      {
         "pattern": "speaker_selection",
         "reason": "requires GroupChat or speaker-selection configuration",
         "confidence": 0.9,
@@ -1033,21 +1068,6 @@
       }
     ],
     "verifier_omitted_applicable_patterns": [
-      {
-        "pattern": "scalable_budget",
-        "applicability": "hard",
-        "oracle_strength": "hard",
-        "case_budget": 1,
-        "confidence": 0.9,
-        "reasons": [
-          "requires GroupChat/fixed budget plus multi-record or paginated work"
-        ],
-        "required_evidence": [
-          "record_count_or_budget_estimate",
-          "configured_max_round"
-        ],
-        "source": "deterministic_feature_extractor"
-      },
       {
         "pattern": "speaker_selection",
         "applicability": "hard",
@@ -1064,10 +1084,12 @@
         "source": "deterministic_feature_extractor"
       }
     ],
+    "verifier_promoted_patterns": [],
+    "verifier_overridden_rejections": [],
     "diagnostic_only_patterns": [
       {
         "pattern": "message_handoff_integrity",
-        "reason": "GroupChat context preservation is required but no explicit handoff APIs are present; pattern provides diagnostic insight rather than a hard failure oracle.",
+        "reason": "GroupChat with multi-agent route; R4 context requirement leans on soft applicability. No hard last_message/chat_messages evidence, so kept as diagnostic only.",
         "oracle_strength": "diagnostic",
         "case_budget": 1,
         "confidence": 0.5,
@@ -1171,85 +1193,104 @@
           "applicability": "hard",
           "confidence": 0.9,
           "reasons": [
-            "System has registered tools web_scraping, google_search, get_airtable_records, update_single_airtable_record with HTTP/API/Airtable dependencies (has_http_tools, has_airtable_tools, has_external_api_tools true).",
-            "Requirements R2 explicitly expects correct tool invocation and response handling (usable results or handled errors).",
-            "Negative case tool_invalid_json demands robust argument validation and error recovery—matching tool_api_contract expectations."
+            "has_http_tools=true, has_external_api_tools=true, has_request_like_code=true",
+            "requirements R2 and R3 explicitly describe valid tool calls (google_search, web_scraping, get_airtable_records, update_single_airtable_record) and expected responses/errors",
+            "requirement R5 describes handling of incorrect or missing tool invocations, which implies contract verification"
           ],
           "required_features": [
             "has_http_tools",
-            "has_airtable_tools",
             "has_external_api_tools",
-            "has_tools"
+            "has_request_like_code",
+            "tool_api_contract pattern applicable to google_search, web_scraping, get_airtable_records, update_single_airtable_record"
           ],
           "required_evidence": [
-            "tool signatures or docstrings",
-            "tool response types",
-            "argument schemas for google_search, get_airtable_records, update_single_airtable_record"
+            "Tool signatures for google_search, web_scraping, get_airtable_records, update_single_airtable_record",
+            "Error handling code in tool implementations or agent wrappers",
+            "Logs/traces from test runs showing tool call success and failure modes"
           ],
           "oracle_strength": "hard",
-          "case_budget": 2
+          "case_budget": 3
         },
         {
           "pattern": "tool_error_contract",
           "applicability": "hard",
           "confidence": 0.85,
           "reasons": [
-            "All tools are external (HTTP/API/Airtable) and prone to runtime failures (network, missing API key, malformed input).",
-            "Requirement R2 negative cases tool_failure and tool_invalid_json demand that agents handle tool errors gracefully, inform user, and not silently halt the group chat.",
-            "System features confirm has_external_api_tools and has_structured_error_contract, making error contract testing essential."
+            "has_structured_error_contract=true",
+            "Requirements R2 and R3 specify negative cases with errors (empty query, unreachable URL, missing credentials, record not found)",
+            "Requirement R5 explicitly targets unregistered tool name calls and persistent tool failures leading to infinite loops"
           ],
           "required_features": [
-            "has_external_api_tools",
             "has_structured_error_contract",
-            "has_tools"
+            "tools with documented error outputs (google_search, web_scraping, get_airtable_records, update_single_airtable_record)"
           ],
           "required_evidence": [
-            "error response format for each tool",
-            "agent fallback or recovery code",
-            "failure injection mechanism"
+            "Error response schemas or exception classes for each tool",
+            "Fallback behavior in agents when tool errors occur",
+            "Traces showing graceful degradation on tool failures"
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 3
+        },
+        {
+          "pattern": "scalable_budget",
+          "applicability": "hard",
+          "confidence": 0.85,
+          "reasons": [
+            "has_fixed_round_budget=true (max_round=15 mentioned in R1 termination condition)",
+            "Requirement R4 mentions context token limits and R5 mentions avoiding infinite loops, both related to resource bounds",
+            "GroupChat termination conditions include max_turns, making budget enforcement testable"
+          ],
+          "required_features": [
+            "has_fixed_round_budget",
+            "groupchat with max_round or max_turns specified"
+          ],
+          "required_evidence": [
+            "GroupChat configuration with max_round or max_turns parameter",
+            "Test scenarios exceeding/exhausting budget",
+            "Verification that termination occurs within constraint"
           ],
           "oracle_strength": "hard",
           "case_budget": 2
         },
         {
-          "pattern": "autogen_wiring",
-          "applicability": "hard",
-          "confidence": 0.8,
+          "pattern": "message_handoff_integrity",
+          "applicability": "soft",
+          "confidence": 0.6,
           "reasons": [
-            "System uses AutoGen GroupChat with defined agents (user_proxy, researcher, research_manager, director) and a GroupChatManager.",
-            "Requirement R1 mandates correct agent wiring to enforce termination conditions and group chat flow.",
-            "Potential misconfiguration (e.g., wrong speaker selection logic, incorrect agent registration) could cause termination bypass or context loss; static_risks acknowledge absence of detected wiring risks but the system is still newly scanned and may have latent issues."
+            "GroupChat with message_edges showing all possible agent routes, indicating multi-turn context handoff",
+            "R4 explicitly requires maintaining multi-turn context so later messages can reference earlier outputs, which is a form of handoff integrity",
+            "No hard evidence of last_message/chat_messages calls or documented multi-stage handoff, but GroupChat inherently passes messages among agents, making soft applicability reasonable"
           ],
           "required_features": [
-            "uses_autogen",
-            "uses_groupchat",
-            "has_fixed_round_budget"
+            "groupchat message flow",
+            "Requirement R4 context preservation"
           ],
           "required_evidence": [
-            "GroupChat instantiation code",
-            "agent registration sequence",
-            "termination condition embedding"
+            "GroupChat message history handling mechanism",
+            "Test scenarios requiring context propagation across agents",
+            "Evidence that earlier outputs are used in later agent decisions"
           ],
-          "oracle_strength": "hard",
+          "oracle_strength": "diagnostic",
           "case_budget": 1
         },
         {
-          "pattern": "message_handoff_integrity",
-          "applicability": "diagnostic",
-          "confidence": 0.7,
+          "pattern": "autogen_wiring",
+          "applicability": "soft",
+          "confidence": 0.6,
           "reasons": [
-            "Conversation context must be preserved across multiple turns (R3). Though no explicit last_message/chat_messages API calls are found, GroupChat agents must reference previous messages.",
-            "GroupChat potential routes show bidirectional edges among all agents, implying message passing that could be disrupted by misrouting or truncation.",
-            "No multi-stage handoff explicitly documented, so oracle strength is diagnostic only."
+            "uses_autogen=true, uses_groupchat=true",
+            "No static wiring risks flagged by system_features, but R5 negative cases (unregistered tool name call, persistent failure causing infinite auto-reply) could indicate wiring gaps",
+            "GroupChat with multiple GPTAssistantAgents could have misconfigurations in tools or agent registration"
           ],
           "required_features": [
-            "uses_groupchat",
-            "has_multistage_handoff (false)"
+            "uses_autogen",
+            "uses_groupchat"
           ],
           "required_evidence": [
-            "message history propagation logic",
-            "GroupChat message queue handling",
-            "examples of agent referencing earlier results"
+            "Agent registration code (tools, roles) for all agents",
+            "GroupChat configuration mapping agents to their tools",
+            "Traces of tool calls from agents confirming correct routing"
           ],
           "oracle_strength": "diagnostic",
           "case_budget": 1
@@ -1258,67 +1299,65 @@
       "rejected_patterns": [
         {
           "pattern": "data_invariant",
-          "reason": "No pandas, financial/risk metrics, or dataframe features present. System is a research workflow agent, not a data processing pipeline.",
-          "confidence": 0.95
-        },
-        {
-          "pattern": "artifact_contract",
-          "reason": "System does not write or version files; artifacts not documented; no file output features.",
-          "confidence": 0.95
-        },
-        {
-          "pattern": "cli_doc_conformance",
-          "reason": "No documented Python CLI commands; uses_argparse false; documented_commands empty list.",
-          "confidence": 0.95
-        },
-        {
-          "pattern": "filesystem_safety",
-          "reason": "No file writes or user-controlled paths; no resumes or versioned artifacts.",
-          "confidence": 0.95
-        },
-        {
-          "pattern": "scalable_budget",
-          "reason": "Fixed max_round=15 is a simple round budget, not a complex token/llm-call budget. No enterprise orchestration risk or dynamic scaling requirement.",
-          "confidence": 0.9
+          "reason": "No financial/risk/dataframe metrics (has_financial_metrics=false, has_risk_metrics=false, has_dataframe_metrics=false, has_pandas=false). No data processing invariants defined in requirements.",
+          "confidence": 0.0
         },
         {
           "pattern": "speaker_selection",
-          "reason": "Speaker selection disabled (has_speaker_selection false).",
-          "confidence": 0.95
+          "reason": "has_speaker_selection=false explicitly; GroupChat uses default round-robin or auto replies, not speaker_selection_mode.",
+          "confidence": 0.0
         },
         {
           "pattern": "state_resume_contract",
-          "reason": "No resume state, versioned artifacts, or user-controlled path features.",
-          "confidence": 0.95
+          "reason": "has_resume_state=false, has_versioned_artifacts=false, writes_files=false. No documented artifacts or state persistence to resume.",
+          "confidence": 0.0
+        },
+        {
+          "pattern": "cli_doc_conformance",
+          "reason": "has_documented_commands=false, documented_commands=[], uses_argparse=false. No CLI entry points mentioned.",
+          "confidence": 0.0
+        },
+        {
+          "pattern": "artifact_contract",
+          "reason": "writes_files=false, has_user_controlled_path=false, no file artifacts produced. Requirements do not describe file outputs.",
+          "confidence": 0.0
+        },
+        {
+          "pattern": "filesystem_safety",
+          "reason": "No file writing operations (writes_files=false), no user-controlled paths. No filesystem artifacts or CLI file interactions.",
+          "confidence": 0.0
         }
       ],
       "diagnostic_only_patterns": [
         {
           "pattern": "message_handoff_integrity",
-          "reason": "GroupChat context preservation is required but no explicit handoff APIs are present; pattern provides diagnostic insight rather than a hard failure oracle.",
+          "reason": "GroupChat with multi-agent route; R4 context requirement leans on soft applicability. No hard last_message/chat_messages evidence, so kept as diagnostic only.",
           "oracle_strength": "diagnostic"
         }
       ],
       "risk_notes": [
-        "Termination handling (R4) is not covered by a distinct pattern but may be exercised within autogen_wiring (checking TERMINATE embedding).",
-        "Empty input handling (R1 negative) also falls under autogen_wiring or generic robustness; no dedicated pattern maps exactly."
+        "GroupChat speaker_selection disabled, so speaker_selection pattern correctly excluded.",
+        "No financial/data processing features, data_invariant irrelevant.",
+        "No CLI or file artifacts, artifact_contract/cli_doc_conformance/filesystem_safety all correctly excluded.",
+        "autogen_wiring might be testable via R5 negative cases but requires deeper code review for actual wiring gaps; diagnostic only for now."
       ],
-      "confidence": 0.85
+      "confidence": 0.82
     },
     "selection_mode": "agent_verified",
     "metrics": {
-      "pattern_applicability_precision": 0.75,
-      "selected_count": 3,
-      "rejected_count": 15,
+      "pattern_applicability_precision": 0.8,
+      "selected_count": 4,
+      "rejected_count": 13,
       "diagnostic_only_count": 1,
-      "omitted_applicable_count": 2
+      "omitted_applicable_count": 1,
+      "verifier_promoted_count": 0
     },
     "confidence": 0.9,
     "agent_decision": {
       "fallback_used": false,
       "success": true,
       "error": null,
-      "confidence": 0.85
+      "confidence": 0.82
     }
   },
   "system_features": {
@@ -1410,7 +1449,7 @@
   "second_round": {
     "enabled": true,
     "target_mascov": 0.8,
-    "initial_mascov": 0.8352,
+    "initial_mascov": 0.8286,
     "extra_cases": 0,
     "reason": "target_reached"
   },
@@ -1420,11 +1459,14 @@
   },
   "flaky_report": {
     "history": {
+      "system2_research_agents_BUDGET_001": [
+        "passed"
+      ],
       "system2_research_agents_COV_001": [
         "passed"
       ],
       "system2_research_agents_COV_002": [
-        "timeout"
+        "passed"
       ],
       "system2_research_agents_COV_003": [
         "timeout"
@@ -1438,16 +1480,13 @@
       "system2_research_agents_COV_006": [
         "timeout"
       ],
-      "system2_research_agents_COV_007": [
-        "timeout"
-      ],
-      "system2_research_agents_COV_008": [
-        "passed"
-      ],
-      "system2_research_agents_COV_009": [
-        "passed"
-      ],
       "system2_research_agents_FUZZ_001": [
+        "passed"
+      ],
+      "system2_research_agents_FUZZ_002": [
+        "passed"
+      ],
+      "system2_research_agents_FUZZ_003": [
         "passed"
       ],
       "system2_research_agents_HANDOFF_001": [
@@ -1460,7 +1499,7 @@
         "passed"
       ],
       "system2_research_agents_OUTCONTRACT_001": [
-        "passed"
+        "timeout"
       ],
       "system2_research_agents_PROP_001": [
         "passed"
@@ -1469,7 +1508,7 @@
         "passed"
       ],
       "system2_research_agents_REQ_001": [
-        "timeout"
+        "passed"
       ],
       "system2_research_agents_REQ_002": [
         "passed"
@@ -1478,10 +1517,13 @@
         "timeout"
       ],
       "system2_research_agents_REQ_004": [
-        "passed"
+        "timeout"
       ],
       "system2_research_agents_REQ_005": [
         "passed"
+      ],
+      "system2_research_agents_REQ_006": [
+        "timeout"
       ],
       "system2_research_agents_SMOKE_001": [
         "passed"
@@ -1510,9 +1552,6 @@
       "system2_research_agents_TOOLFUZZ_001": [
         "passed"
       ],
-      "system2_research_agents_TOOLFUZZ_002": [
-        "passed"
-      ],
       "system2_research_agents_WIRING_001": [
         "passed"
       ]
@@ -1521,17 +1560,18 @@
     "flaky_count": 0
   },
   "report_narrative": {
-    "agentic_workflow_summary": "The agentic workflow executed a deterministic AST+doc heuristic to profile system2_research_agents, identifying 5 agents, 4 tools, and 13 message edges. It applied test patterns via CoverageStrategistAgent, generated test cases with TestDesignerAgent, monitored execution with ExecutionMonitorAgent, and diagnosed faults using FaultDiagnoserAgent and FalsePositiveAuditorAgent. A total of 16 model calls were made across 9 agent roles, all successful, using deepseek-v4-pro. The workflow achieved full agent, tool, message edge, and requirement coverage (all 1.0), with state coverage at 0.5417 and fault mode coverage at 0.4286. The effective workflow rate was 1.0, trace completeness 0.6667, contract coverage 0.3333, and root cause evidence rate 0.75. The final MASCOV score was 0.8352.",
-    "effectiveness_analysis": "The workflow successfully covered all agents, tools, and requirements, and verified each requirement through dedicated test cases. It identified 4 root fault groups, with 2 primary confirmed faults (SYSTEM2_RESEARCH_AGENTS_FAULT_001 for speaker selection loops and SYSTEM2_RESEARCH_AGENTS_FAULT_003 for timeout/missing termination) and 1 primary confirmed application fault (SYSTEM2_RESEARCH_AGENTS_FAULT_004 for missing error handling). The remaining fault (SYSTEM2_RESEARCH_AGENTS_FAULT_002) was suspected but lacked sufficient evidence and was marked as a false positive by the audit agent. The interaction adapter adapters enabled targeted testing of termination, tool error handling, and message handoff logic, resulting in deterministic confirmation of root causes. However, state and fault mode coverage remained below 0.55, indicating some untested behavioral classes, especially around tool API semantics and contract boundaries. Trace completeness (0.6667) suggests room for deeper instrumentation capture, though overall effective testing rate was perfect.",
-    "false_positive_analysis": "The FalsePositiveAuditorAgent reviewed all faults. SYSTEM2_RESEARCH_AGENTS_FAULT_001 was initially reported as a speaker selection loop but audited as a false positive with high confidence (0.95) because the trace demonstrated normal termination with a TERMINATE message and returncode=0; the 'Next speaker' lines reflected standard GroupChat orchestration. SYSTEM2_RESEARCH_AGENTS_FAULT_002 was classified as suspected fault with high false positive risk due to weak evidence (only tool names, no concrete trace of missing invocation). SYSTEM2_RESEARCH_AGENTS_FAULT_003 received a low false positive risk assessment based on reproducible timeout and looping pattern, though code evidence was partial. SYSTEM2_RESEARCH_AGENTS_FAULT_004 was judged low risk false positive given strong deterministic evidence of a NameError. The semantic graph review also flagged tool schema risks that could cause runtime tool failures but were not proven as false positives.",
+    "agentic_workflow_summary": "The testing system analyzed the research-agents-3.0 application, which implements a multi-agent group chat using AutoGen. The workflow involved system modeling, requirement extraction, test pattern selection, test case generation, execution monitoring, fault diagnosis, and false-positive auditing. Coverage data shows 100% agent and requirement coverage, but only 42.86% fault mode coverage, indicating that several known fault classes were not triggered. A total of 8 unique faults were identified: 1 confirmed as a primary speaker-selection loop (FAULT_001) and 7 additional faults including non-termination, human-input-mode errors, and tool API contract violations. The speaker-selection loop was the dominant fault, affecting 29 test cases and cascading into a missing-tool-call symptom.",
+    "effectiveness_analysis": "The deterministic oracle and agentic diagnostic pipeline successfully identified 8 faults with a root-cause evidence rate of 87.5%. The primary fault (speaker-selection loop) was confirmed with high confidence (0.86) and supported by strong trace evidence (turn count exceeding max_turns). However, fault-mode coverage is only 42.86%, suggesting that some fault classes (e.g., state-resume contracts, artifact contracts) were not exercised. The effective workflow rate is 100%, but trace completeness is 66.67%, indicating that some execution traces lacked sufficient detail for full root-cause determination. Tool-event coverage is 0%, meaning no tool-execution events were captured in traces, which limits the ability to diagnose tool-level faults. The pipeline correctly identified a human-input-mode misconfiguration (FAULT_004) and a scalable-budget error (FAULT_008) with strong static code evidence, demonstrating the value of combining dynamic and static analysis.",
+    "false_positive_analysis": "Seven of the eight faults were audited as 'suspected_fault' rather than confirmed false positives. FAULT_002 (non-termination) and FAULT_003 (missing tool call) were flagged as suspected false positives with medium-to-low evidence, but the audit concluded they are likely genuine framework or configuration issues. FAULT_005 (view-parameter-ignored) and FAULT_006 (pagination-not-followed) were identified from static code patterns without dynamic confirmation, carrying a medium false-positive risk. FAULT_007 (tool-error-contract) had the lowest evidence strength (0.5) and was noted as a plausible design gap rather than a confirmed runtime failure. No misdiagnoses of model behavior as software faults were identified; the pipeline correctly attributed all faults to autogen framework or application code. The speaker-selection loop (FAULT_001) was the only fault with deterministic confirmation and high evidence strength, making it the most reliable finding.",
     "next_steps": [
-      "Review and update the false positive audit for FAULT_001 to re-confirm whether the observed 'Next speaker' lines are indeed benign or mask a subtle speaker selection efficiency issue.",
-      "Hard-code max_turns or add a forced exit guard in GroupChat configuration (app.py line 193) to prevent non-termination loops observed in FAULT_003, and add a case-insensitive termination keyword check to match requirement R4.",
-      "Ensure tool functions (google_search, web_scraping, get_airtable_records, update_single_airtable_record) are properly imported and available in execution scope, or add error-handling wrappers to catch NameError as seen in FAULT_004.",
-      "Increase state and fault mode coverage by designing additional test cases targeting tool API semantics, edge case argument structures, and contract boundaries that remain uncovered (e.g., tool_contract_negative, state_resume_contract).",
-      "Improve trace completeness by instrumenting tool call and response payloads in execution monitoring to capture more deterministic evidence for fault diagnosis."
+      "Prioritize fixing the speaker-selection loop (FAULT_001) by enforcing max_turns strictly in GroupChat speaker selection, as it affects the majority of test cases.",
+      "Address the human-input-mode configuration (FAULT_004) to enable fully automated execution by setting human_input_mode='NEVER'.",
+      "Investigate the Airtable tool pagination (FAULT_006) and view-parameter handling (FAULT_005) by reviewing actual code at the indicated lines and adding dynamic tests to confirm the defect.",
+      "Increase fault-mode coverage by designing test cases that target unexercised fault classes, such as state-resume contracts and artifact contracts.",
+      "Improve trace completeness by enabling tool-execution logging to capture tool call/return events, which will improve diagnostic accuracy for tool-level faults.",
+      "Review the termination condition design (FAULT_002) to ensure the director agent produces an explicit TERMINATE signal after completing reviews."
     ],
-    "confidence": 0.85
+    "confidence": 0.78
   },
   "fallback_calls": 0
 }

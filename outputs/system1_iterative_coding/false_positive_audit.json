@@ -1,7 +1,7 @@
 [
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
-    "case_id": "system1_iterative_coding_FSSAFE_001",
+    "case_id": "system1_iterative_coding_COV_001",
     "suspected_false_positive": false,
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
@@ -12,92 +12,20 @@
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.58,
-      "root_cause_confidence": "code_evidence"
-    },
-    "agent_audit_influence": "advisory_only",
-    "audit": {
-      "audit_result": "suspected_fault",
-      "reason": "The deterministic oracle confirmed filesystem escape with evidence of files created outside the configured project root. Code locations in IterativeTools.py show that user-supplied project names are used directly without path sanitization or confinement. The trace indicates tool calls succeeded without rejection, consistent with the reported vulnerability. However, the evidence_strength is 0.58, just above the threshold, meaning the code evidence is borderline and could be due to insufficient code inspection depth. There is no indication this is a model behavioral or configuration issue; the fault resides in deterministic application code.",
-      "false_positive_risk": "low",
-      "confidence": 0.85
-    }
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
-    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
-    "suspected_false_positive": false,
-    "confirmation_status": "confirmed_fault",
-    "confirmation_source": "deterministic_oracle_evidence",
-    "deterministic_confirmation": {
-      "confirmed": true,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "deterministic oracle failure with sufficient code/trace evidence",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.57,
-      "root_cause_confidence": "code_evidence"
-    },
-    "agent_audit_influence": "advisory_only",
-    "audit": {
-      "audit_result": "suspected_fault",
-      "reason": "The failure signature (HUMAN_INPUT_REQUESTED during an automated no-human run) strongly suggests the target AutoGen system was not configured with human_input_mode='NEVER' or retained a blocking CLI input loop. The trace shows the reviewer repeatedly requesting code and the manager responding with 'sounds good', indicating a conversation stall typical of human-input blocking. However, the deterministic confirmation relies on a rule_oracle check (failure_code: HUMAN_INPUT_REQUESTED) and an evidence_strength of 0.57, which is below the 0.65 trace_evidence_threshold. The code_locations point to utility functions (parse_arguments, validate_file, count_lines, summarize_file, main) in script_v1.py, but none of these involve AutoGen instantiation or the CLI interaction loop directly, so they do not provide direct evidence of the blocking input mechanism. The diagnosis that this is a framework configuration flaw is plausible, but the evidence is incomplete for a definitive ruling; the failure could also stem from an unexpected interaction pattern or a missing termination condition that triggers an implicit human-input fallback.",
-      "false_positive_risk": "medium",
-      "confidence": 0.72
-    }
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
-    "suspected_false_positive": true,
-    "confirmation_status": "suspected_fault",
-    "confirmation_source": "deterministic_oracle_evidence",
-    "deterministic_confirmation": {
-      "confirmed": false,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "insufficient deterministic code/trace evidence",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.45,
-      "root_cause_confidence": "code_evidence"
-    },
-    "agent_audit_influence": "advisory_only",
-    "audit": {
-      "audit_result": "suspected_fault",
-      "reason": "Evidence shows non-termination (terminated=false, turn_count=20) and repeated reviewer messages without progress, consistent with a termination condition error. However, deterministic code/trace evidence is insufficient (evidence_strength 0.45 < 0.55 threshold) to rule out non-target causes like model looping or prompt issues, so the finding remains suspected rather than confirmed.",
-      "false_positive_risk": "low",
-      "confidence": 0.45
-    }
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
-    "suspected_false_positive": true,
-    "confirmation_status": "suspected_fault",
-    "confirmation_source": "deterministic_oracle_evidence",
-    "deterministic_confirmation": {
-      "confirmed": false,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "insufficient deterministic code/trace evidence",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.27,
+      "evidence_strength": 0.66,
       "root_cause_confidence": "trace_only"
     },
     "agent_audit_influence": "advisory_only",
     "audit": {
       "audit_result": "suspected_fault",
-      "reason": "The trace evidence shows the reviewer agent emitted two consecutive messages with identical content_hash (8cb824d118805e91). While this indicates a repetition, the root cause could be a model-side refusal or reasoning pattern (e.g., reviewer waiting for code and providing the same recommendation) rather than a definitive AutoGen speaker selection bug. The trace turns=20 without timeout suggests the loop may be driven by the model's response content, not a framework-level selection error. The fault is suspected but lacks deterministic code-level confirmation of a framework misconfiguration.",
-      "false_positive_risk": "medium",
-      "confidence": 0.4
+      "reason": "The evidence consistently shows an OSError (Errno 63) from os.makedirs due to an excessively long directory name built from a plan string. This is a deterministic, code-level error in the application/orchestration layer, not a model behavior issue. However, the finding lacks concrete code snippets or location details to confirm the exact line of path construction, which slightly weakens the auditability.",
+      "false_positive_risk": "low",
+      "confidence": 0.88
     }
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
-    "case_id": "system1_iterative_coding_REQ_002",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_002",
     "suspected_false_positive": false,
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
@@ -114,13 +42,109 @@
     "agent_audit_influence": "advisory_only",
     "audit": {
       "audit_result": "suspected_fault",
-      "reason": "The fault diagnosis points to missing termination conditions in the AutoGen group chat (human_input_mode not NEVER, no is_termination_msg, no max_turns guard). The trace evidence shows a timeout after 16 turns with a killed process, which aligns with an unmanaged conversation. However, without seeing the exact code at IterativeTools.py line 26 and the full group chat configuration, it is ambiguous whether the 16th turn was truly an infinite loop or a slow execution that merely exceeded the aggressive oracle max_turns of 15. The timeout could also be caused by a model API call hang or a blocking tool execution, which are non-target infrastructure issues. The current evidence is circumstantial for a framework-level non-termination bug.",
+      "reason": "The fault is classified as a non-termination issue in the AutoGen framework layer. The trace shows a timeout after 21 turns with 'sounds good' from the manager, suggesting a missing termination condition. The deterministic oracle confirms the timeout, and the suggested fix involves configuration changes like adding is_termination_msg and max_turns. While the evidence is consistent with a framework-level fault, I cannot 100% rule out non-target issues such as model response delay or network latency, but these are unlikely given the pattern. The evidence is strong but not exhaustive; for instance, only stdout tail is shown, and no full trace inspection was conducted to rule out other causes like an infinite loop in tool calls. However, the deterministic oracle and code location (IterativeTools.py line 26) support the fault. The false positive risk is low because the timeout is clearly observed and correlated with a missing termination condition in the configuration. Confidence is moderate because while the fault is likely real, the auditing process relies on the provided evidence and doesn't involve full reproduction or additional log analysis.",
+      "false_positive_risk": "low",
+      "confidence": 0.85
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
+    "case_id": "system1_iterative_coding_REQ_001",
+    "suspected_false_positive": true,
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.28,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "All evidence indicates the test passed and the conversation terminated naturally without attempting to call write_settled_plan. The trace shows no error, timeout, or tool invocation failure. The flagged tool is not required by the deterministic execution path observed here, and the evidence strength is only 0.28, far below the thresholds for code or trace evidence. This strongly suggests the oracle's must_call_tools condition is not reliable for this context, and the finding is a non-target issue arising from the observation framework rather than an actual application-layer fault.",
+      "false_positive_risk": "high",
+      "confidence": 0.92
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+    "case_id": "system1_iterative_coding_RESUME_001",
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The deterministic oracle flagged HUMAN_INPUT_REQUESTED, but the trace shows only agent-to-agent conversation with no human input prompt. The system terminated with returncode 0 after 24 turns, and the diagnostic report itself notes that the failure is not visually confirmed in the trace. This suggests a possible false positive in the oracle detection logic.",
+      "false_positive_risk": "high",
+      "confidence": 0.2
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+    "case_id": "system1_iterative_coding_RESUME_001",
+    "suspected_false_positive": true,
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.45,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "Evidence shows turn_count=24 without explicit termination, and last reviewer message is_terminate_only=false, indicating a missing termination condition. However, no trace of a hard max_turns=30 limit being reached or a timeout intervention is present, so the root cause could be an extended idle wait rather than a software logic error. The diagnosis cannot be fully confirmed without tracing the GroupChat configuration for is_termination_msg or max_consecutive_auto_reply.",
       "false_positive_risk": "medium",
-      "confidence": 0.55
+      "confidence": 0.45
     }
   },
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+    "case_id": "system1_iterative_coding_RESUME_001",
+    "suspected_false_positive": true,
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.27,
+      "root_cause_confidence": "trace_only"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The diagnosis is based on trace patterns (repetitive handoff, high turn count, no termination) but lacks direct code-level evidence such as the GroupChat configuration, speaker selection method implementation, or termination condition logic. The repetitive message and missing TERMINATE marker could be due to model behavior that does not call the termination tool, rather than a deterministic AutoGen framework bug. Without code confirmation, the fault remains suspected.",
+      "false_positive_risk": "medium",
+      "confidence": 0.45
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_007",
     "case_id": "system1_iterative_coding_RESUME_001",
     "suspected_false_positive": true,
     "confirmation_status": "suspected_fault",
@@ -138,13 +162,13 @@
     "agent_audit_influence": "advisory_only",
     "audit": {
       "audit_result": "suspected_fault",
-      "reason": "The evidence shows no calls to retrieve_latest_iteration or does_version_one_exist, which are needed to resume state. However, the observed failure (repeated 'Alright' message, no termination) could also be caused by an LLM misunderstanding of the resume intent, a prompt/instruction gap not instructing the model to call state‑retrieval tools, or a general conversation termination pattern unrelated to state inconsistency. No deterministic code path was traced; the diagnosis relies on absence of tool calls and indirect behavior without a runtime trace that confirms the exact control flow. Thus, while an application‑level resume‑state inconsistency is plausible, other causes (LLM behavior, configuration) cannot be ruled out, making this a suspected fault with moderate false‑positive risk.",
-      "false_positive_risk": "medium",
-      "confidence": 0.5
+      "reason": "The deterministic confirmation evidence is insufficient (strength 0.31) to confirm the fault. The trace indicates the conversation ended with a message that appears to request human input in a no-human run, which could be a non-target issue (e.g., model behavior or conversation flow) rather than a deterministic software fault. The code locations cited exist, but there is no direct trace evidence showing that these functions treated existing state as absent or started a fresh workflow incorrectly.",
+      "false_positive_risk": "high",
+      "confidence": 0.31
     }
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_007",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_008",
     "case_id": "system1_iterative_coding_TERM_001",
     "suspected_false_positive": true,
     "confirmation_status": "suspected_fault",
@@ -162,9 +186,81 @@
     "agent_audit_influence": "advisory_only",
     "audit": {
       "audit_result": "suspected_fault",
-      "reason": "Trace evidence shows no explicit TERMINATE string in the last message, and stdout contains polite closing remarks followed by continued handoff events. The conversation may have ended gracefully without a clear termination marker, so the 'termination signal ignored' claim lacks definitive proof.",
-      "false_positive_risk": "medium",
-      "confidence": 0.3
+      "reason": "The test case passed (terminated=true, 20 turns within max 30), and the trace shows no ignored TERMINATE signal. The final messages are polite conversational closings, not evidence of a termination failure. The deterministic oracle already rated evidence strength too low for confirmation, and no code locations or tool registration errors support the fault.",
+      "false_positive_risk": "high",
+      "confidence": 0.12
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_009",
+    "case_id": "system1_iterative_coding_STATIC_markdown_artifact_corruption",
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.78,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "confirmed_fault",
+      "reason": "Static code analysis confirms deterministic artifact corruption risk due to fragile string slicing instead of proper Markdown fence parsing. The evidence is credible and the fault can be fixed by modifying the application code.",
+      "false_positive_risk": "low",
+      "confidence": 0.85
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_010",
+    "case_id": "system1_iterative_coding_STATIC_artifact_schema_mismatch",
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.74,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The diagnosis correctly identifies a discrepancy between documentation and implementation for artifact extensions. However, the finding's classification as 'confirmed_fault' depends on whether the documentation explicitly defines an artifact schema contract or merely provides examples. The evidence lacks the actual documentation source (only describing what it 'documents'). Without seeing the documentation itself, it's unclear if this is a true schema mismatch or an inconsistency in comments/tutorials that doesn't affect runtime behavior. Additionally, the fault may be a documentation error rather than a code defect, which could be considered a non-target issue if the code behavior is intentional and only the documentation is outdated.",
+      "false_positive_risk": "low",
+      "confidence": 0.7
+    }
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_011",
+    "case_id": "system1_iterative_coding_STATIC_resume_state_incomplete",
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.7,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The diagnosis identifies a genuine code-level inconsistency: resume logic only checks for 'comments_v' but not 'script_v', which could lead to incomplete state recovery. However, deterministic confirmation relies solely on static code pattern analysis without runtime trace evidence showing an actual failure scenario (e.g., a case where 'script_v' is missing but resume proceeds). The 'evidence_strength' is 0.7, indicating some but not complete certainty. The lack of trace or execution evidence to validate the claimed impact means this finding should remain advisory rather than confirmed as a definitive fault; it is a plausible design weakness but not yet proven as an observable failure under the oracle criteria.",
+      "false_positive_risk": "low",
+      "confidence": 0.7
     }
   }
 ]

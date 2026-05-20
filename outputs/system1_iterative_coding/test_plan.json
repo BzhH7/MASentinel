@@ -5,40 +5,39 @@
       "applicability": "hard",
       "confidence": 0.9,
       "reasons": [
-        "System writes files (writes_files: true) for code, comments, and plans, documented in tools write_latest_iteration and write_settled_plan.",
-        "Requirements R1, R3, R5 explicitly describe expected artifact content, versioning, and 'only latest version' rules.",
-        "Negative cases specify corrupt, missing, or empty artifacts, providing strong oracle for contract violations."
+        "System writes files (write_latest_iteration, write_settled_plan) and has user-controlled paths; R5 explicitly requires code to be saved to script file.",
+        "Versioned artifacts and resume state imply file naming conventions and appropriate directory handling are required."
       ],
       "required_features": [
         "writes_files",
-        "has_documented_artifacts"
+        "has_user_controlled_path",
+        "has_versioned_artifacts"
       ],
       "required_evidence": [
-        "Tool source code for write_latest_iteration/write_settled_plan",
-        "Artifact file naming and versioning logic",
-        "Sample run artifacts or test mock file system"
+        "Tool signatures for write_latest_iteration/write_settled_plan",
+        "Manager agent configuration",
+        "Documentation or code showing file naming conventions (e.g., script_v1.py)"
       ],
       "oracle_strength": "hard",
-      "case_budget": 2,
+      "case_budget": 1,
       "source": "PatternApplicabilityAgent"
     },
     {
-      "pattern": "filesystem_safety",
+      "pattern": "autogen_wiring",
       "applicability": "hard",
-      "confidence": 0.9,
+      "confidence": 0.85,
       "reasons": [
-        "has_user_controlled_path: true — agents write to project folders specified at runtime.",
-        "Requirements R2, R3 describe file-based persistence and retrieval, with negative cases on file system errors and corrupted folders.",
-        "No evidence of path sanitization or safe failure modes; typical Autogen tool defaults may not prevent path traversal or crash on missing directories."
+        "System heavily uses AutoGen GroupChat with multiple agents and custom tools; any misconfiguration in agent creation, tool registration, or message routing could cause failures."
       ],
       "required_features": [
-        "writes_files",
-        "has_user_controlled_path"
+        "uses_autogen",
+        "uses_groupchat",
+        "has_tools"
       ],
       "required_evidence": [
-        "Implementation of tool functions that accept paths",
-        "Path handling in write_latest_iteration/write_settled_plan",
-        "Absence of path sanitization (e.g., no os.path.abspath checks)"
+        "Agent class definitions (UserProxyAgent, AssistantAgent)",
+        "GroupChat initialization code",
+        "Tool registration and execution handlers"
       ],
       "oracle_strength": "hard",
       "case_budget": 1,
@@ -49,18 +48,15 @@
       "applicability": "hard",
       "confidence": 0.85,
       "reasons": [
-        "has_resume_state: true — system claims to support resuming by detecting existing project folders (R3).",
-        "Tools like list_subdirectories, does_version_one_exist, retrieve_latest_iteration are mentioned in requirements.",
-        "Negative cases specify handling corrupted/missing files without infinite loop, forming a contract on resume behavior."
+        "R7 explicit requires support for resuming an existing project, and features confirm has_resume_state and has_versioned_artifacts."
       ],
       "required_features": [
         "has_resume_state",
         "has_versioned_artifacts"
       ],
       "required_evidence": [
-        "Resume logic in manager/programmer agents",
-        "Tool implementations for detection and retrieval",
-        "Test scenario with pre-existing, corrupted, or missing project folders"
+        "Code implementing resume logic (e.g., loading script_v{N}.py)",
+        "Manager or orchestrator logic to detect existing state"
       ],
       "oracle_strength": "hard",
       "case_budget": 1,
@@ -69,20 +65,19 @@
     {
       "pattern": "message_handoff_integrity",
       "applicability": "hard",
-      "confidence": 0.8,
+      "confidence": 0.85,
       "reasons": [
-        "has_multistage_handoff: true — two-phase workflow: planning → iterative coding with handoff between Planner, Coder, Reviewer.",
-        "has_last_message_calls: true — agents may rely on last_message() to retrieve context, making handoff sequences critical.",
-        "R1 negative case: transition to iteration phase only after approval. Out-of-sequence handoff could bypass this contract."
+        "Features confirm has_last_message_calls and has_multistage_handoff; system must pass code/plans between Planner->Manager, Coder->Reviewer, etc.",
+        "R6 and R8 both relate to correct iteration context and handoff (present latest script)."
       ],
       "required_features": [
-        "has_multistage_handoff",
-        "has_last_message_calls"
+        "has_last_message_calls",
+        "has_multistage_handoff"
       ],
       "required_evidence": [
-        "Implementation of phase transition logic (after write_settled_plan)",
-        "GroupChat speaker selection rules for handoff order",
-        "Message flow from manager→planner→manager→programmer↔reviewer"
+        "Message routing logic (initiate_chat edges)",
+        "Last message handling in agents",
+        "Iteration management code"
       ],
       "oracle_strength": "hard",
       "case_budget": 1,
@@ -91,20 +86,19 @@
     {
       "pattern": "speaker_selection",
       "applicability": "hard",
-      "confidence": 0.85,
+      "confidence": 0.9,
       "reasons": [
-        "has_speaker_selection: true — GroupChat with speaker selection method configured.",
-        "Message edges show manager initiates chat with each agent, but GroupChat may select wrong speaker during iteration.",
-        "R4 describes manager feedback to specific agents without automatically advancing stage; speaker selection must respect stage context."
+        "System uses GroupChat with speaker_selection; appropriate speaker transitions are critical for iterative workflow.",
+        "Requirements R1-R4, R6, R8 all imply expected speaker order (Manager->Planner->Manager, Coder->Reviewer, etc.)."
       ],
       "required_features": [
-        "uses_groupchat",
-        "has_speaker_selection"
+        "has_speaker_selection",
+        "uses_groupchat"
       ],
       "required_evidence": [
-        "GroupChat speaker_selection_method function",
-        "Transition logic between planning and iteration stages",
-        "Test scenario where incorrect agent responds during iteration"
+        "GroupChat configuration (speaker_selection_method)",
+        "Agent system messages and roles",
+        "Expected conversation flow from message_edges"
       ],
       "oracle_strength": "hard",
       "case_budget": 1,
@@ -114,45 +108,55 @@
   "rejected_patterns": [
     {
       "pattern": "tool_api_contract",
-      "reason": "No HTTP/API/Airtable/request-like tools or external API calls — all tools are local file writes.",
-      "confidence": 1.0,
-      "source": "PatternApplicabilityAgent"
+      "applicability": "hard",
+      "confidence": 0.85,
+      "reasons": [
+        "Two tools exist (write_latest_iteration, write_settled_plan) with documented expected behavior (saving code/plan).",
+        "R2 and R5 directly involve tool calls with specific contracts (e.g., write_settled_plan only when manager approves)."
+      ],
+      "required_features": [
+        "has_tools"
+      ],
+      "required_evidence": [
+        "Tool implementations and docstrings",
+        "Agent tool registration",
+        "Requirements R2 and R5"
+      ],
+      "oracle_strength": "diagnostic",
+      "case_budget": 1,
+      "source": "PatternApplicabilityAgent",
+      "rejected_by_verifier": true,
+      "verifier_reason": "requires HTTP/API/Airtable tool evidence"
     },
     {
-      "pattern": "tool_error_contract",
-      "reason": "Tools are local file writers without documented error contracts, and no external API error handling needed.",
-      "confidence": 0.9,
+      "pattern": "cli_doc_conformance",
+      "reason": "No documented Python CLI commands; has_documented_commands is false and documented_commands is empty list.",
+      "confidence": 1.0,
       "source": "PatternApplicabilityAgent"
     },
     {
       "pattern": "data_invariant",
-      "reason": "No pandas, financial metrics, risk metrics, or data frame processing — pure code generation workflow.",
+      "reason": "No financial, risk, or data processing features; has_pandas, has_financial_metrics, has_risk_metrics are all false.",
       "confidence": 1.0,
       "source": "PatternApplicabilityAgent"
     },
     {
-      "pattern": "cli_doc_conformance",
-      "reason": "No documented CLI commands; uses Python scripts invoked directly, not argparse-based CLI.",
-      "confidence": 1.0,
-      "source": "PatternApplicabilityAgent"
-    },
-    {
-      "pattern": "autogen_wiring",
-      "reason": "static_risks.has_autogen_wiring_risk: false — no GroupChat wiring risks flagged by deterministic scan.",
+      "pattern": "filesystem_safety",
+      "reason": "No tool that writes files with user-controlled paths (write_latest_iteration does write files, but safety is more about injection/overwrite; artifact_contract covers the main file contract). However, filesystem_safety pattern is focused on filesystem-level safety invariants, which are not explicitly required or evident in requirements.",
       "confidence": 0.9,
       "source": "PatternApplicabilityAgent"
     },
     {
       "pattern": "scalable_budget",
-      "reason": "Requirements mention max_turns but no evidence of budget scaling issues; not a primary concern for this profile.",
-      "confidence": 0.7,
+      "reason": "No evidence of variable message/cost budget constraints; termination is by TERMINATE/max_turns, but no budget risk signals.",
+      "confidence": 0.8,
       "source": "PatternApplicabilityAgent"
     },
     {
-      "pattern": "autogen_wiring",
-      "reason": "requires documented AutoGen/multi-agent workflow or static wiring risk",
+      "pattern": "tool_error_contract",
+      "reason": "No HTTP/API tools; tools are local Python functions, and no evidence of structured error contracts for external calls.",
       "confidence": 0.9,
-      "source": "deterministic_feature_extractor"
+      "source": "PatternApplicabilityAgent"
     },
     {
       "pattern": "cli_doc_conformance",
@@ -185,23 +189,21 @@
       "source": "deterministic_feature_extractor"
     }
   ],
-  "verifier_omitted_applicable_patterns": [
+  "verifier_omitted_applicable_patterns": [],
+  "verifier_promoted_patterns": [],
+  "verifier_overridden_rejections": [],
+  "diagnostic_only_patterns": [
     {
-      "pattern": "autogen_wiring",
-      "applicability": "hard",
-      "oracle_strength": "hard",
+      "pattern": "filesystem_safety",
+      "reason": "Writes files with user-controlled path, so there might be some risk of unsafe file handling. But no explicit safety requirement; could be non-target.",
+      "oracle_strength": "diagnostic",
       "case_budget": 1,
-      "confidence": 0.9,
-      "reasons": [
-        "requires documented AutoGen/multi-agent workflow or static wiring risk"
-      ],
+      "confidence": 0.85,
       "required_evidence": [
-        "static_wiring_risk_or_missing_runtime_messages"
-      ],
-      "source": "deterministic_feature_extractor"
+        "observed_filesystem_effects"
+      ]
     }
   ],
-  "diagnostic_only_patterns": [],
   "deterministic_features": {
     "system_id": "system1_iterative_coding",
     "source_summary": {
@@ -293,39 +295,38 @@
         "applicability": "hard",
         "confidence": 0.9,
         "reasons": [
-          "System writes files (writes_files: true) for code, comments, and plans, documented in tools write_latest_iteration and write_settled_plan.",
-          "Requirements R1, R3, R5 explicitly describe expected artifact content, versioning, and 'only latest version' rules.",
-          "Negative cases specify corrupt, missing, or empty artifacts, providing strong oracle for contract violations."
+          "System writes files (write_latest_iteration, write_settled_plan) and has user-controlled paths; R5 explicitly requires code to be saved to script file.",
+          "Versioned artifacts and resume state imply file naming conventions and appropriate directory handling are required."
         ],
         "required_features": [
           "writes_files",
-          "has_documented_artifacts"
+          "has_user_controlled_path",
+          "has_versioned_artifacts"
         ],
         "required_evidence": [
-          "Tool source code for write_latest_iteration/write_settled_plan",
-          "Artifact file naming and versioning logic",
-          "Sample run artifacts or test mock file system"
+          "Tool signatures for write_latest_iteration/write_settled_plan",
+          "Manager agent configuration",
+          "Documentation or code showing file naming conventions (e.g., script_v1.py)"
         ],
         "oracle_strength": "hard",
-        "case_budget": 2
+        "case_budget": 1
       },
       {
-        "pattern": "filesystem_safety",
+        "pattern": "autogen_wiring",
         "applicability": "hard",
-        "confidence": 0.9,
+        "confidence": 0.85,
         "reasons": [
-          "has_user_controlled_path: true — agents write to project folders specified at runtime.",
-          "Requirements R2, R3 describe file-based persistence and retrieval, with negative cases on file system errors and corrupted folders.",
-          "No evidence of path sanitization or safe failure modes; typical Autogen tool defaults may not prevent path traversal or crash on missing directories."
+          "System heavily uses AutoGen GroupChat with multiple agents and custom tools; any misconfiguration in agent creation, tool registration, or message routing could cause failures."
         ],
         "required_features": [
-          "writes_files",
-          "has_user_controlled_path"
+          "uses_autogen",
+          "uses_groupchat",
+          "has_tools"
         ],
         "required_evidence": [
-          "Implementation of tool functions that accept paths",
-          "Path handling in write_latest_iteration/write_settled_plan",
-          "Absence of path sanitization (e.g., no os.path.abspath checks)"
+          "Agent class definitions (UserProxyAgent, AssistantAgent)",
+          "GroupChat initialization code",
+          "Tool registration and execution handlers"
         ],
         "oracle_strength": "hard",
         "case_budget": 1
@@ -335,18 +336,15 @@
         "applicability": "hard",
         "confidence": 0.85,
         "reasons": [
-          "has_resume_state: true — system claims to support resuming by detecting existing project folders (R3).",
-          "Tools like list_subdirectories, does_version_one_exist, retrieve_latest_iteration are mentioned in requirements.",
-          "Negative cases specify handling corrupted/missing files without infinite loop, forming a contract on resume behavior."
+          "R7 explicit requires support for resuming an existing project, and features confirm has_resume_state and has_versioned_artifacts."
         ],
         "required_features": [
           "has_resume_state",
           "has_versioned_artifacts"
         ],
         "required_evidence": [
-          "Resume logic in manager/programmer agents",
-          "Tool implementations for detection and retrieval",
-          "Test scenario with pre-existing, corrupted, or missing project folders"
+          "Code implementing resume logic (e.g., loading script_v{N}.py)",
+          "Manager or orchestrator logic to detect existing state"
         ],
         "oracle_strength": "hard",
         "case_budget": 1
@@ -354,20 +352,38 @@
       {
         "pattern": "message_handoff_integrity",
         "applicability": "hard",
-        "confidence": 0.8,
+        "confidence": 0.85,
         "reasons": [
-          "has_multistage_handoff: true — two-phase workflow: planning → iterative coding with handoff between Planner, Coder, Reviewer.",
-          "has_last_message_calls: true — agents may rely on last_message() to retrieve context, making handoff sequences critical.",
-          "R1 negative case: transition to iteration phase only after approval. Out-of-sequence handoff could bypass this contract."
+          "Features confirm has_last_message_calls and has_multistage_handoff; system must pass code/plans between Planner->Manager, Coder->Reviewer, etc.",
+          "R6 and R8 both relate to correct iteration context and handoff (present latest script)."
         ],
         "required_features": [
-          "has_multistage_handoff",
-          "has_last_message_calls"
+          "has_last_message_calls",
+          "has_multistage_handoff"
         ],
         "required_evidence": [
-          "Implementation of phase transition logic (after write_settled_plan)",
-          "GroupChat speaker selection rules for handoff order",
-          "Message flow from manager→planner→manager→programmer↔reviewer"
+          "Message routing logic (initiate_chat edges)",
+          "Last message handling in agents",
+          "Iteration management code"
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 1
+      },
+      {
+        "pattern": "tool_api_contract",
+        "applicability": "hard",
+        "confidence": 0.85,
+        "reasons": [
+          "Two tools exist (write_latest_iteration, write_settled_plan) with documented expected behavior (saving code/plan).",
+          "R2 and R5 directly involve tool calls with specific contracts (e.g., write_settled_plan only when manager approves)."
+        ],
+        "required_features": [
+          "has_tools"
+        ],
+        "required_evidence": [
+          "Tool implementations and docstrings",
+          "Agent tool registration",
+          "Requirements R2 and R5"
         ],
         "oracle_strength": "hard",
         "case_budget": 1
@@ -375,20 +391,19 @@
       {
         "pattern": "speaker_selection",
         "applicability": "hard",
-        "confidence": 0.85,
+        "confidence": 0.9,
         "reasons": [
-          "has_speaker_selection: true — GroupChat with speaker selection method configured.",
-          "Message edges show manager initiates chat with each agent, but GroupChat may select wrong speaker during iteration.",
-          "R4 describes manager feedback to specific agents without automatically advancing stage; speaker selection must respect stage context."
+          "System uses GroupChat with speaker_selection; appropriate speaker transitions are critical for iterative workflow.",
+          "Requirements R1-R4, R6, R8 all imply expected speaker order (Manager->Planner->Manager, Coder->Reviewer, etc.)."
         ],
         "required_features": [
-          "uses_groupchat",
-          "has_speaker_selection"
+          "has_speaker_selection",
+          "uses_groupchat"
         ],
         "required_evidence": [
-          "GroupChat speaker_selection_method function",
-          "Transition logic between planning and iteration stages",
-          "Test scenario where incorrect agent responds during iteration"
+          "GroupChat configuration (speaker_selection_method)",
+          "Agent system messages and roles",
+          "Expected conversation flow from message_edges"
         ],
         "oracle_strength": "hard",
         "case_budget": 1
@@ -396,56 +411,58 @@
     ],
     "rejected_patterns": [
       {
-        "pattern": "tool_api_contract",
-        "reason": "No HTTP/API/Airtable/request-like tools or external API calls — all tools are local file writes.",
+        "pattern": "cli_doc_conformance",
+        "reason": "No documented Python CLI commands; has_documented_commands is false and documented_commands is empty list.",
         "confidence": 1.0
-      },
-      {
-        "pattern": "tool_error_contract",
-        "reason": "Tools are local file writers without documented error contracts, and no external API error handling needed.",
-        "confidence": 0.9
       },
       {
         "pattern": "data_invariant",
-        "reason": "No pandas, financial metrics, risk metrics, or data frame processing — pure code generation workflow.",
+        "reason": "No financial, risk, or data processing features; has_pandas, has_financial_metrics, has_risk_metrics are all false.",
         "confidence": 1.0
       },
       {
-        "pattern": "cli_doc_conformance",
-        "reason": "No documented CLI commands; uses Python scripts invoked directly, not argparse-based CLI.",
-        "confidence": 1.0
-      },
-      {
-        "pattern": "autogen_wiring",
-        "reason": "static_risks.has_autogen_wiring_risk: false — no GroupChat wiring risks flagged by deterministic scan.",
+        "pattern": "filesystem_safety",
+        "reason": "No tool that writes files with user-controlled paths (write_latest_iteration does write files, but safety is more about injection/overwrite; artifact_contract covers the main file contract). However, filesystem_safety pattern is focused on filesystem-level safety invariants, which are not explicitly required or evident in requirements.",
         "confidence": 0.9
       },
       {
         "pattern": "scalable_budget",
-        "reason": "Requirements mention max_turns but no evidence of budget scaling issues; not a primary concern for this profile.",
-        "confidence": 0.7
+        "reason": "No evidence of variable message/cost budget constraints; termination is by TERMINATE/max_turns, but no budget risk signals.",
+        "confidence": 0.8
+      },
+      {
+        "pattern": "tool_error_contract",
+        "reason": "No HTTP/API tools; tools are local Python functions, and no evidence of structured error contracts for external calls.",
+        "confidence": 0.9
       }
     ],
-    "diagnostic_only_patterns": [],
-    "risk_notes": [
-      "tool_error_contract could become relevant if file I/O errors emerge during artifact write/read operations, but tools currently lack structured error contracts.",
-      "scalable_budget may become a concern if conversation length exceeds token limits in long iterative sessions, but no current evidence of failure."
+    "diagnostic_only_patterns": [
+      {
+        "pattern": "filesystem_safety",
+        "reason": "Writes files with user-controlled path, so there might be some risk of unsafe file handling. But no explicit safety requirement; could be non-target.",
+        "oracle_strength": "diagnostic"
+      }
     ],
-    "confidence": 0.9
+    "risk_notes": [
+      "R7 resume state contract is explicitly required, but failure scenarios may be environment-dependent (e.g., missing files) -> non-target if not a code bug.",
+      "Iterative coding workflow implies multiple rounds; speaker_selection and message_handoff_integrity patterns must be jointly tested with artifact_contract."
+    ],
+    "confidence": 0.87
   },
   "selection_mode": "agent_verified",
   "metrics": {
-    "pattern_applicability_precision": 1.0,
+    "pattern_applicability_precision": 0.8333,
     "selected_count": 5,
-    "rejected_count": 12,
-    "diagnostic_only_count": 0,
-    "omitted_applicable_count": 1
+    "rejected_count": 11,
+    "diagnostic_only_count": 1,
+    "omitted_applicable_count": 0,
+    "verifier_promoted_count": 0
   },
   "confidence": 0.9,
   "agent_decision": {
     "fallback_used": false,
     "success": true,
     "error": null,
-    "confidence": 0.9
+    "confidence": 0.87
   }
 }

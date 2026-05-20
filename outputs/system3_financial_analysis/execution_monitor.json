@@ -2,109 +2,30 @@
   "suspicious_cases": [
     {
       "case_id": "system3_financial_analysis_CLIDOC_001",
-      "reason": "Documented CLI entrypoint crashes with ModuleNotFoundError: No module named 'src' before controlled runtime setup, indicating broken packaging or missing module path that is fixable within the code base.",
+      "reason": "The runtime failed with ModuleNotFoundError: No module named 'src', indicating the documented entrypoint is broken, preventing the process from starting.",
       "rule_failures": [
-        {
-          "code": "RUNTIME_EXCEPTION",
-          "message": "The process ended with an unhandled runtime error.",
-          "severity": "high",
-          "evidence": [
-            "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python: Error while finding module specification for 'src.main' (ModuleNotFoundError: No module named 'src')"
-          ]
-        },
-        {
-          "code": "DOCUMENTED_ENTRYPOINT_BROKEN",
-          "message": "Documented entrypoint fails before controlled configuration/runtime handling.",
-          "severity": "high",
-          "evidence": [
-            "command=/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python -m src.main analyze AAPL",
-            "ModuleNotFoundError: No module named 'src'"
-          ]
-        }
+        "RUNTIME_EXCEPTION",
+        "DOCUMENTED_ENTRYPOINT_BROKEN"
       ],
-      "trace_summary": "Case system3_financial_analysis_CLIDOC_001 status=failed, returncode=1, turn_count=0. stderr shows ModuleNotFoundError for src.main. No agent interaction occurred."
-    },
-    {
-      "case_id": "system3_financial_analysis_HANDOFF_001",
-      "reason": "Multiple downstream agents (data_analyst, financial_analyst) returned only TERMINATE markers instead of substantive analysis results, pointing to handoff protocol or AutoGen configuration/termination condition issues that can be mitigated by code/framework adjustments.",
-      "rule_failures": [
-        {
-          "code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-          "message": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
-          "severity": "high",
-          "evidence": [
-            "agent=data_analyst caller=orchestrate_analysis content=TERMINATE",
-            "agent=financial_analyst caller=_last_msg_as_summary content=TERMINATE"
-          ]
-        }
-      ],
-      "trace_summary": "Case system3_financial_analysis_HANDOFF_001 status=failed. Multiple agents returned bare TERMINATE messages, interrupting the analysis workflow."
-    },
-    {
-      "case_id": "system3_financial_analysis_REQ_002",
-      "reason": "Combination of BUSINESS_TASK_FAILED (investment recommendation withheld due to incomplete data) and MISSING_AGENT (report_generator not observed) suggests a workflow coordination or agent registration defect that is fixable in app logic or AutoGen wiring.",
-      "rule_failures": [
-        {
-          "code": "BUSINESS_TASK_FAILED",
-          "message": "The process completed but the target task reported a business-level failure.",
-          "severity": "high",
-          "evidence": [
-            "综合投资建议：在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
-            "投资评级：**暂无**（需补充有效分析数据）",
-            "目标价格：**无法确定**（缺乏估值基础）"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: report_generator",
-          "severity": "medium",
-          "evidence": [
-            "report_generator"
-          ]
-        }
-      ],
-      "trace_summary": "Case system3_financial_analysis_REQ_002 status=failed. Task resulted in no-action recommendation due to missing data, and expected agent report_generator was absent from the run."
+      "trace_summary": "Status: failed, turn_count: 0, returncode: 1, stderr: ModuleNotFoundError: No module named 'src'."
     },
     {
       "case_id": "system3_financial_analysis_WIRING_001",
-      "reason": "Key expected agents data_collector and report_generator are completely missing from the execution. This indicates wiring/registration failures in agent configuration or AutoGen group setup.",
+      "reason": "Required agents data_collector and report_generator were never observed, suggesting agent registration or wiring is incomplete.",
       "rule_failures": [
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: data_collector",
-          "severity": "medium",
-          "evidence": [
-            "data_collector"
-          ]
-        },
-        {
-          "code": "MISSING_AGENT",
-          "message": "Expected agent was not observed: report_generator",
-          "severity": "medium",
-          "evidence": [
-            "report_generator"
-          ]
-        }
+        "MISSING_AGENT"
       ],
-      "trace_summary": "Case system3_financial_analysis_WIRING_001 status=failed. Both data_collector and report_generator agents were not observed during execution."
+      "trace_summary": "No counter-evidence; missing agents indicate agent registration/wiring gap."
     },
     {
-      "case_id": "system3_financial_analysis_TERM_001",
-      "reason": "TERMINATION_SIGNAL_IGNORED indicates the system continued to produce substantive investment recommendations after upstream analysts signaled termination. This suggests a prompt template or termination propagation logic issue in the orchestrator.",
+      "case_id": "system3_financial_analysis_HANDOFF_001",
+      "reason": "Multiple downstream handoffs (data_analyst, financial_analyst, risk_analyst) returned only TERMINATE markers instead of substantive analysis, indicating handoff logic is flawed.",
       "rule_failures": [
-        {
-          "code": "TERMINATION_SIGNAL_IGNORED",
-          "message": "The target emitted a termination marker but continued with substantive prompts/messages.",
-          "severity": "high",
-          "evidence": [
-            "根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据...",
-            "**综合投资建议：** ...**建议暂停任何投资操作**...",
-            "**评级与目标价格：** 暂不适用"
-          ]
-        }
+        "BUSINESS_TASK_FAILED",
+        "MESSAGE_HANDOFF_TERMINATE_ONLY"
       ],
-      "trace_summary": "Case system3_financial_analysis_TERM_001 status=failed. Termination markers were followed by detailed investment recommendations, indicating termination signal was ignored."
+      "trace_summary": "Downstream agents repeatedly returned TERMINATE-only responses, likely due to missing state or incorrect handoff implementation."
     }
   ],
-  "confidence": 0.92
+  "confidence": 0.85
 }

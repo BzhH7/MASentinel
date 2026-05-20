@@ -309,6 +309,7 @@ def _pattern_selection_lines(agentic_info: dict) -> list[str]:
         return []
     selected = [_pattern_item_summary(item) for item in test_plan.get("selected_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
     diagnostic = [_pattern_item_summary(item) for item in test_plan.get("diagnostic_only_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
+    promoted = [_pattern_item_summary(item) for item in test_plan.get("verifier_promoted_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
     rejected = [_pattern_item_summary(item) for item in test_plan.get("rejected_patterns", []) or [] if isinstance(item, dict) and item.get("pattern")]
     omitted = [
         str(item.get("pattern"))
@@ -322,6 +323,7 @@ def _pattern_selection_lines(agentic_info: dict) -> list[str]:
         f"- Selection mode: `{test_plan.get('selection_mode', 'unknown')}`",
         f"- PatternApplicabilityPrecision: {_format_metric(metrics.get('pattern_applicability_precision'))}",
         f"- Selected patterns: {'; '.join(selected) or 'None'}",
+        f"- Verifier-promoted patterns: {'; '.join(promoted) or 'None'}",
         f"- Diagnostic-only patterns: {'; '.join(diagnostic) or 'None'}",
         f"- Rejected patterns: {'; '.join(rejected[:12]) or 'None'}",
         f"- Verifier-applicable but not agent-selected: {', '.join(f'`{item}`' for item in omitted[:12]) or 'None'}",

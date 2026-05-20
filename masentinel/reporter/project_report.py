@@ -396,6 +396,7 @@ def _test_plan_summary(test_plan: dict[str, Any], coverage: dict[str, Any]) -> d
     return {
         "selection_mode": test_plan.get("selection_mode") or details.get("pattern_selection_mode"),
         "selected_patterns": _pattern_names(test_plan.get("selected_patterns", [])) or details.get("selected_patterns", []),
+        "verifier_promoted_patterns": _pattern_names(test_plan.get("verifier_promoted_patterns", [])) or details.get("verifier_promoted_patterns", []),
         "diagnostic_only_patterns": _pattern_names(test_plan.get("diagnostic_only_patterns", [])) or details.get("diagnostic_only_patterns", []),
         "rejected_patterns": _pattern_names(test_plan.get("rejected_patterns", [])) or details.get("rejected_patterns", []),
         "metrics": test_plan.get("metrics", {}),
@@ -416,11 +417,13 @@ def _pattern_names(items: object) -> list[str]:
 
 def _format_pattern_selection(test_plan: dict[str, Any]) -> str:
     selected = test_plan.get("selected_patterns", []) or []
+    promoted = test_plan.get("verifier_promoted_patterns", []) or []
     diagnostic = test_plan.get("diagnostic_only_patterns", []) or []
     rejected = test_plan.get("rejected_patterns", []) or []
     return (
         f"mode={test_plan.get('selection_mode', 'unknown')}；"
         f"selected={', '.join(f'`{item}`' for item in selected) or 'None'}；"
+        f"promoted={', '.join(f'`{item}`' for item in promoted) or 'None'}；"
         f"diagnostic={', '.join(f'`{item}`' for item in diagnostic) or 'None'}；"
         f"rejected={len(rejected)}"
     )

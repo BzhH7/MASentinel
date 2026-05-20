@@ -2,20 +2,20 @@
   "coverage_gaps": [
     {
       "gap_type": "missing_tool_coverage",
+      "target": "google_search",
+      "suggested_test_intent": "Verify that google_search is called with valid arguments and integrated into the researcher's workflow, ensuring the retrieved results are passed back into the group chat and influence subsequent agent behavior."
+    },
+    {
+      "gap_type": "missing_tool_coverage",
       "target": "get_airtable_records",
-      "suggested_test_intent": "Create a test that explicitly instructs the director to call get_airtable_records, using mock HTTP to return a multi-record or empty response, and verify the tool result appears in the group chat without crashing. This addresses the gap that get_airtable_records is in profile tools and assigned to director but has no dedicated test (the existing REQ_001 only requires update_single_airtable_record)."
+      "suggested_test_intent": "Verify that get_airtable_records is invoked by the director agent and its retrieved records are used in the conversation, confirming end-to-end integration from tool call to downstream processing."
     },
     {
       "gap_type": "missing_tool_coverage",
       "target": "update_single_airtable_record",
-      "suggested_test_intent": "Create a test that passes malformed or missing fields to update_single_airtable_record (e.g., missing 'fields' key, non-JSON body) and verifies the system returns a structured error and continues, directly covering the requirement R2 negative case 'tool_invalid_json' and the tool_schema_risk noted for this tool."
-    },
-    {
-      "gap_type": "semantic_gap",
-      "target": "R2 tool_error_handling_range",
-      "suggested_test_intent": "Add tests that individually exercise each tool's error path with mocked HTTP failures (401, 500, timeout) for web_scraping, google_search, get_airtable_records, and update_single_airtable_record, ensuring the error is reported back to the calling agent and the group chat does not terminate prematurely. The current coverage only has one TOOLERR test targeting web_scraping; the other three tools lack error envelope tests."
+      "suggested_test_intent": "Verify that update_single_airtable_record is called by the director agent to modify a record and that the update context is reflected in subsequent messages or final output."
     }
   ],
   "new_test_requests": [],
-  "confidence": 0.8
+  "confidence": 0.95
 }

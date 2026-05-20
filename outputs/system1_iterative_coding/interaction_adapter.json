@@ -14,15 +14,15 @@
     },
     {
       "trigger": "What name would you like to give this project?",
-      "response": "{project_name}",
+      "response": "{safe_case_id}",
       "regex": false,
       "max_count": 1
     },
     {
       "trigger": "Select project to continue:",
-      "response": "1",
+      "response": "2",
       "regex": false,
-      "max_count": 0
+      "max_count": 1
     }
   ],
   "isolated_paths": [
@@ -30,16 +30,22 @@
     ".masentinel_autoreply/{safe_case_id}"
   ],
   "risk_notes": [
-    "The program may prompt to continue an old project. Since no existing project is expected in isolated directories, choose 'Start a new project' (option 1) consistently. If the welcome prompt includes both new/old selection (trigger 'Selection:'), the response '1' handles it.",
-    "Timeout of 120 seconds and isolated directories must be enforced by the test harness. The program's project directory is derived from user input and may attempt to use relative paths; isolated_paths should be set as the working directory for each test case to avoid cross-case pollution.",
-    "If the program previously saved project directories, the 'Select project to continue' prompt may appear. In isolated mode with no prior projects, this prompt is unexpected. The regex can remain false because the prompt text is fixed. Set max_count to 0 to skip auto-response and raise an error if encountered, ensuring the test fails safely instead of stalling."
+    "The program has two code paths: one when no previous projects exist (no Selection prompt) and one when there are previous projects. The first path asks two questions directly; the second asks 'Selection:' first. The prompt_responses above cover both paths, but if stdin is provided as a single block, the first path will receive '1' as the answer to 'What python creation would you like?' which will cause invalid input. A conditional response or dedicated case-specific input sequence may be needed for the 'no previous projects' path.",
+    "The 'Select project to continue:' prompt expects an integer index. If no previous projects exist, this prompt will not appear. If a previous project exists but the index '2' is out of range, the program may crash. Safer to not include this prompt-response unless the test environment guarantees at least 2 existing projects.",
+    "The project_name response uses {safe_case_id} which may contain characters invalid for directory names (e.g., special chars, spaces). The program requirement 'must follow directory naming rules' is not enforced by the prompt-response; a wrapper or pre-sanitization may be needed to ensure {safe_case_id} is filesystem-safe."
   ],
-  "confidence": 0.9,
+  "confidence": 0.85,
   "applied": {
     "added_prompt_responses": [
       {
+        "trigger": "What name would you like to give this project?",
+        "response": "{safe_case_id}",
+        "regex": false,
+        "max_count": 1
+      },
+      {
         "trigger": "Select project to continue:",
-        "response": "1",
+        "response": "2",
         "regex": false,
         "max_count": 1
       }

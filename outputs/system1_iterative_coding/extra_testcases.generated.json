@@ -65,37 +65,25 @@
     "case_id": "system1_iterative_coding_REQ_001",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R1: The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
-    "input": "请完成以下任务并给出清晰结果：The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
+    "objective": "Validate requirement R1: Planner must generate a structured project plan with functional requirements when given a user request.",
+    "input": "请完成以下任务并给出清晰结果：Planner must generate a structured project plan with functional requirements when given a user request.",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
-      "manager",
-      "planner",
-      "programmer",
-      "reviewer"
+      "planner"
     ],
-    "target_tools": [
-      "write_settled_plan",
-      "write_latest_iteration"
-    ],
+    "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "manager",
-        "planner",
-        "programmer",
-        "reviewer"
+        "planner"
       ],
-      "must_call_tools": [
-        "write_settled_plan",
-        "write_latest_iteration"
-      ],
+      "must_call_tools": [],
       "must_cover_edges": [],
       "must_not_call_tools": [],
       "must_not_fabricate_tool_result": false,
@@ -177,7 +165,7 @@
       "generic_pattern": "safe_project_root",
       "applicability_reason": "profile combines user-controlled names/paths with filesystem writes",
       "target_fault_mode": "filesystem_escape",
-      "oracle_strength": "hard",
+      "oracle_strength": "diagnostic",
       "project_name": "../escaped_project",
       "malicious_names": [
         "../escaped_project",
@@ -189,7 +177,8 @@
         "controlled_validation_error"
       ],
       "expected_mode": "interactive",
-      "selected_pattern": "filesystem_safety"
+      "selected_pattern": "filesystem_safety",
+      "diagnostic_only": true
     }
   },
   {
@@ -275,6 +264,54 @@
         "forwarded_content_non_empty"
       ],
       "selected_pattern": "message_handoff_integrity"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_WIRING_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "autogen_wiring",
+    "objective": "Documented AutoGen/multi-agent workflow should initialize and route through non-empty agents.",
+    "input": "请运行一个需要文档中多智能体协作的正常任务，并输出各角色的处理摘要。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "manager",
+      "planner",
+      "programmer",
+      "reviewer"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 35,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "manager",
+        "planner",
+        "programmer",
+        "reviewer"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "generic_pattern": "autogen_wiring_conformance",
+      "applicability_reason": "profile/doc claims AutoGen or multi-agent orchestration",
+      "target_fault_mode": "autogen_wiring_missing",
+      "oracle_strength": "hard",
+      "assertions": [
+        "agent_factory_creates_nonempty_agents",
+        "orchestrator_has_nonempty_agent_map",
+        "runtime_trace_contains_documented_agents"
+      ],
+      "static_risks": [],
+      "selected_pattern": "autogen_wiring"
     }
   },
   {
@@ -386,21 +423,15 @@
     "system_id": "system1_iterative_coding",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R1.",
-    "input": "请完成需求 R1，并按文档要求输出：The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
+    "input": "请完成需求 R1，并按文档要求输出：Planner must generate a structured project plan with functional requirements when given a user request.",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
-      "manager",
-      "planner",
-      "programmer",
-      "reviewer"
+      "planner"
     ],
-    "target_tools": [
-      "write_settled_plan",
-      "write_latest_iteration"
-    ],
+    "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
@@ -413,9 +444,7 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
-        "plan",
-        "code",
-        "review"
+        "plan"
       ]
     },
     "fault_injection": null,
@@ -424,9 +453,7 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R1",
       "expected_keywords": [
-        "plan",
-        "code",
-        "review"
+        "plan"
       ],
       "oracle_strength": "medium"
     }
@@ -572,70 +599,6 @@
       "fuzz_template": "tool_failure",
       "tool_name": "write_latest_iteration",
       "oracle_strength": "hard"
-    }
-  },
-  {
-    "case_id": "system1_iterative_coding_META_001",
-    "system_id": "system1_iterative_coding",
-    "case_type": "metamorphic",
-    "objective": "Equivalent phrasing should preserve task-level outcome and output contract, while allowing different valid agent routes.",
-    "input": "请完成需求 R1 并总结三点。\n换一种说法完成同一需求 R1，并用三个要点概括。",
-    "input_sequence": [
-      {
-        "role": "user",
-        "content": "请完成需求 R1 并总结三点。"
-      },
-      {
-        "role": "user",
-        "content": "换一种说法完成同一需求 R1，并用三个要点概括。"
-      }
-    ],
-    "target_requirements": [
-      "R1"
-    ],
-    "target_agents": [
-      "manager",
-      "planner",
-      "programmer",
-      "reviewer"
-    ],
-    "target_tools": [
-      "write_settled_plan",
-      "write_latest_iteration"
-    ],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 30,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "generic_pattern": "metamorphic_task_equivalence",
-      "source_input": "请完成需求 R1 并总结三点。",
-      "mutated_input": "换一种说法完成同一需求 R1，并用三个要点概括。",
-      "expected_relation": {
-        "same_output_contract": true,
-        "same_required_capability": true,
-        "allow_different_agent_path": true,
-        "required_agents": [
-          "manager",
-          "planner",
-          "programmer",
-          "reviewer"
-        ],
-        "required_tools": [
-          "write_settled_plan",
-          "write_latest_iteration"
-        ]
-      }
     }
   }
 ]

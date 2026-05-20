@@ -1,30 +1,90 @@
 [
   {
-    "group_id": "filesystem:path-escape",
-    "title": "User-controlled path escaped configured root",
-    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
+    "group_id": "generic:application-artifact-persistence-corruption-the-artifact-writer-assumes-a-specific-code-fence-prefix-instead-of-parsing-",
+    "title": "Artifact Persistence Corruption",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_009",
     "fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_001"
+      "SYSTEM1_ITERATIVE_CODING_FAULT_009"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system1_iterative_coding_FSSAFE_001"
+      "system1_iterative_coding_STATIC_markdown_artifact_corruption"
     ],
     "failure_codes": [
-      "FILESYSTEM_ESCAPE"
+      "MARKDOWN_ARTIFACT_CORRUPTION"
     ],
     "severity": "high",
-    "confidence": 0.92,
-    "root_cause": "User-supplied project name '../escaped_project' is resolved without sanitization or confinement to the configured project root in multiple IterativeTools.py functions, allowing writes to escape the safe directory.",
-    "suggested_fix": "In all affected functions (write_latest_iteration_manual, write_latest_iteration_comments, write_latest_iteration, write_settled_plan, list_subdirectories), resolve the candidate path relative to the configured safe root using pathlib.Path.resolve() and enforce that the resolved path starts with the safe root. Reject and raise an error or return a controlled validation error for any path containing '..' components or absolute references outside the root.",
-    "summary": "User-controlled path/name caused writes outside the configured project root."
+    "confidence": 0.9,
+    "root_cause": "The artifact writer assumes a specific code fence prefix instead of parsing Markdown fences structurally.",
+    "suggested_fix": "Use a Markdown fence parser or regex that extracts the fenced body independent of optional language labels; compile-check Python artifacts before writing.",
+    "summary": "Markdown code fence extraction strips backticks and then slices a fixed prefix, which can corrupt valid unlabeled or short language-tag fences."
   },
   {
-    "group_id": "generic:application-resume-state-inconsistency-the-write_latest_iteration_comments-tool-was-called-without-first-calling-retriev",
-    "title": "Resume State Inconsistency",
-    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+    "group_id": "generic:application-missing-tool-call-there-is-insufficient-deterministic-evidence-that-write_settled_plan-was-actually-needed-o",
+    "title": "Missing Tool Call",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
     "fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_006"
+      "SYSTEM1_ITERATIVE_CODING_FAULT_003"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_REQ_001"
+    ],
+    "failure_codes": [
+      "MISSING_TOOL_CALL"
+    ],
+    "severity": "medium",
+    "confidence": 0.7,
+    "root_cause": "There is insufficient deterministic evidence that write_settled_plan was actually needed or should have been called in this conversation flow. The trace shows no sign of the planner attempting to use write_settled_plan, and the test case passed with no error. The oracle flagged MISSING_TOOL_CALL based on the test case's requirement that write_settled_plan must be called, but the trace summary shows the test status as 'passed' and the run completed with return code 0. This contradiction suggests the oracle's detection may be a false positive or the tool call was not actually required by the execution path. No code or trace evidence shows the tool was missing; the evidence strength is only 0.28, which is below the threshold for deterministic confirmation. The flagged issue is likely a non-target false positive arising from oracle or observation conditions rather than an actual application-layer tool call failure.",
+    "suggested_fix": "Re-evaluate the test oracle's must_call_tools condition for write_settled_plan in this specific conversational context. Verify whether the planner is actually expected to call write_settled_plan when the manager says 'sounds good' under all execution paths, or if the tool call is conditional. If the tool is truly required, check the Planner agent's prompt and tool registration to ensure write_settled_plan is available and instructions explicitly mandate its use upon plan approval. Consider enhancing prompting to make the expected tool call unambiguous and adding deterministic checks in the application code to confirm the call occurs.",
+    "summary": "Expected tool was not called: write_settled_plan"
+  },
+  {
+    "group_id": "generic:application-output-artifact-schema-mismatch-the-versioned-artifact-schema-for-comments_v-is-documented-as-supporting-fil",
+    "title": "Output Artifact Schema Mismatch",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_010",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_010"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_STATIC_artifact_schema_mismatch"
+    ],
+    "failure_codes": [
+      "ARTIFACT_SCHEMA_MISMATCH"
+    ],
+    "severity": "medium",
+    "confidence": 0.84,
+    "root_cause": "The versioned artifact schema for 'comments_v' is documented as supporting file extensions ['py', 'txt'], but the implementation in IterativeTools.py uses extensions ['log', 'py'] when persisting artifacts. This mismatch means downstream tools or readers expecting 'txt' files will fail to locate or consume the artifact.",
+    "suggested_fix": "Align the documentated extensions with the implementation by updating the documentation to reflect the actual extensions ['log', 'py'], or modify the artifact persistence code to save files with ['py', 'txt']. Ensure any downstream consumers that rely on these extensions are also updated accordingly.",
+    "summary": "Documented versioned artifact extension differs from the implementation's persisted artifact extension."
+  },
+  {
+    "group_id": "generic:application-resume-state-inconsistency-the-resume-detector-only-checks-for-the-existence-of-a-comments_v-file-and-does-n",
+    "title": "Resume State Inconsistency",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_011",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_011"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_STATIC_resume_state_incomplete"
+    ],
+    "failure_codes": [
+      "RESUME_STATE_INCOMPLETE"
+    ],
+    "severity": "medium",
+    "confidence": 0.84,
+    "root_cause": "The resume detector only checks for the existence of a 'comments_v' file and does not independently discover or validate the latest version of the 'script' artifact family. Consequently, a partially persisted state (comments present, script absent) is treated as a complete resume point.",
+    "suggested_fix": "Extend the state discovery logic to scan for both artifact families independently. Retrieve the latest version of each family (e.g., comments_<version>.md and script_<version>.py). If any required artifact family is missing, either refuse to resume and report an incomplete state or trigger explicit re-generation. After discovery, update the version pointer and state metadata for all families before proceeding.",
+    "summary": "Resume-state detection checks only part of the versioned artifact family."
+  },
+  {
+    "group_id": "generic:application-resume-state-inconsistency-the-resume-state-detector-treats-partial-but-meaningful-on-disk-state-as-absent-o",
+    "title": "Resume State Inconsistency",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_007",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_007"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
@@ -35,47 +95,46 @@
     ],
     "severity": "medium",
     "confidence": 0.84,
-    "root_cause": "The 'write_latest_iteration_comments' tool was called without first calling 'retrieve_latest_iteration' or 'does_version_one_exist', and the generated Last Message was the same 'Alright – I'll take that as confirmation...' repeated, indicating the system did not attempt to detect or resume the existing project state from the fixture files ('MasterPlan.txt', 'script_v1.py').",
-    "suggested_fix": "Modify the iterative coding workflow to call 'retrieve_latest_iteration' or 'does_version_one_exist' at the start of a resume session to detect the existing plan and script files. If an existing iteration is found, populate the agent's context with the retrieved state instead of treating the project as a first iteration.",
+    "root_cause": "The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow.",
+    "suggested_fix": "Discover plan, latest script, and latest comments independently; resume complete state or report incomplete state explicitly.",
     "summary": "Existing script state was ignored and the project was treated as a first iteration."
   },
   {
-    "group_id": "interaction:human-input-or-approval",
-    "title": "Unattended run blocked by human input or approval",
-    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+    "group_id": "interaction:timeout-or-non-termination",
+    "title": "Conversation timeout or missing termination guard",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
     "fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_005"
+      "SYSTEM1_ITERATIVE_CODING_FAULT_002"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system1_iterative_coding_REQ_002"
+      "system1_iterative_coding_OUTCONTRACT_002"
     ],
     "failure_codes": [
       "TIMEOUT"
     ],
     "severity": "high",
     "confidence": 0.82,
-    "root_cause": "The AutoGen group chat executing the two-phase planning+iterative coding workflow (manager, planner, programmer, reviewer) lacks a reliable termination condition. The conversation ran to 16 turns without a speaker selection constraint or termination message, exceeding the oracle max_turns and causing the run to be killed. The default human_input_mode was not set to NEVER, so the automated run could not auto-reply to human prompts, and no is_termination_msg function was configured on the agents to stop when the workflow is complete.",
-    "suggested_fix": "1. Set human_input_mode='NEVER' in the AssistantAgent configuration and group chat manager to allow full automation. 2. Define an is_termination_msg function that returns True on messages containing 'TERMINATE' or final workflow completion signals (e.g., after Reviewer approves with write_latest_iteration). 3. Enforce max_turns/max_round in the group chat configuration to a safe upper bound (e.g., 30) to guard against infinite loops. 4. Ensure the workflow states in IterativeTools.py properly transition to an exit condition.",
+    "root_cause": "The conversation lacks a reliable termination condition: when manager says 'sounds good', the system does not call a termination function or reach a max-turn limit quickly enough, causing infinite loop or excessive turns until timeout.",
+    "suggested_fix": "Implement a termination condition in the group chat or agent configuration. For example, add `is_termination_msg` that checks for 'sounds good' or similar approval phrases from manager, and set `human_input_mode='NEVER'` to prevent blocking. Also enforce `max_turns` (e.g., 30) in the GroupChat configuration to ensure termination even if logic fails.",
     "summary": "The process exceeded the configured timeout."
   },
   {
     "group_id": "interaction:unattended-termination-guard-missing",
     "title": "Unattended termination / approval guard missing",
-    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
     "fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_002",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_003",
       "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_007"
+      "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_008"
     ],
     "symptom_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-      "SYSTEM1_ITERATIVE_CODING_FAULT_007"
+      "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+      "SYSTEM1_ITERATIVE_CODING_FAULT_008"
     ],
     "affected_cases": [
-      "system1_iterative_coding_OUTCONTRACT_003",
       "system1_iterative_coding_RESUME_001",
       "system1_iterative_coding_TERM_001"
     ],
@@ -87,8 +146,29 @@
     ],
     "severity": "high",
     "confidence": 0.9,
-    "root_cause": "The target system was not configured with human_input_mode='NEVER' and/or still contained blocking input()/CLI prompt loops in the automated execution path. As a result, the agent interaction reached a point where human input was expected, causing the automated run to stall, exceeding max turns and failing to terminate normally.",
-    "suggested_fix": "Ensure AutoGen is instantiated with human_input_mode='NEVER' and remove all blocking input() or CLI prompt loops from the automated execution path. Replace them with programmatic decisions or pre-defined test inputs that satisfy the requirement without human intervention.",
+    "root_cause": "The deterministic oracle detected a failure code 'HUMAN_INPUT_REQUESTED', but the provided trace shows only agent-to-agent conversation, including a final message from the reviewer, and no trace of a human input prompt. The system terminated with returncode 0 after 24 turns without evidence of blocking on input. The failure is not visually confirmed in the trace, so the fault may be a false positive.",
+    "suggested_fix": "Review the deterministic oracle's detection logic to ensure it accurately identifies human input prompts in conversation-only traces. If the system truly requested human input, the trace should capture the prompt; if not, the oracle may need recalibration.",
     "summary": "The target system requested human input during an automated no-human run."
+  },
+  {
+    "group_id": "runtime:users-zhbai-code-cz_exp-autogen_iterativecoding-main-iterativetools.py:244:oserror:-errno-63-file-name-too-long:-.masent",
+    "title": "Unhandled startup/runtime exception",
+    "primary_fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
+    "fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_001"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system1_iterative_coding_COV_001",
+      "system1_iterative_coding_FSSAFE_001"
+    ],
+    "failure_codes": [
+      "RUNTIME_EXCEPTION"
+    ],
+    "severity": "high",
+    "confidence": 0.85,
+    "root_cause": "The working_dir path is constructed by concatenating a base directory with a long textual plan string, exceeding the filesystem's filename length limit. The application does not validate or truncate the path before calling os.makedirs, leading to an unhandled OSError.",
+    "suggested_fix": "Implement path length validation before os.makedirs call. Use a truncated or hashed version of the plan text as a directory name instead of the full string. Wrap os.makedirs in a try-except block to handle OSError gracefully and provide a clear error message.",
+    "summary": "The process ended with an unhandled runtime error."
   }
 ]

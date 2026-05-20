@@ -37,27 +37,42 @@
     {
       "id": "R1",
       "type": "requirement",
-      "description": "The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent."
+      "description": "Planner must generate a structured project plan with functional requirements when given a user request."
     },
     {
       "id": "R2",
       "type": "requirement",
-      "description": "The system must preserve context across iterations by reading and writing information outside the conversation context window, using file-based persistence (scripts and comments) to reduce token usage."
+      "description": "Planner must save the approved plan using write_settled_plan tool when manager says 'sounds good'."
     },
     {
       "id": "R3",
       "type": "requirement",
-      "description": "The system must support resuming an existing project by detecting existing project folders and presenting the latest plan, script, and comments to the Coder immediately upon restart."
+      "description": "Coder must output only well-formatted code blocks, no extra text."
     },
     {
       "id": "R4",
       "type": "requirement",
-      "description": "The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage."
+      "description": "Reviewer must provide comments evaluating code against plan, without writing any code."
     },
     {
       "id": "R5",
       "type": "requirement",
-      "description": "The system must ensure that only the latest version of code and comments is presented to agents on each iteration, preventing distraction from outdated or faulty artifacts."
+      "description": "Manager can execute write_latest_iteration to save Coder code to script file."
+    },
+    {
+      "id": "R6",
+      "type": "requirement",
+      "description": "Iteration loop must present latest script and comments to Coder and Reviewer."
+    },
+    {
+      "id": "R7",
+      "type": "requirement",
+      "description": "System must support resuming an existing project."
+    },
+    {
+      "id": "R8",
+      "type": "requirement",
+      "description": "System must handle manager feedback during iteration without moving to next agent."
     }
   ],
   "edges": [
@@ -73,106 +88,21 @@
     },
     {
       "source": "R1",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R1",
       "target": "planner",
       "type": "requires_agent"
     },
     {
-      "source": "R1",
-      "target": "programmer",
+      "source": "R2",
+      "target": "planner",
       "type": "requires_agent"
     },
     {
-      "source": "R1",
-      "target": "reviewer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R1",
+      "source": "R2",
       "target": "write_settled_plan",
       "type": "requires_tool"
     },
     {
-      "source": "R1",
-      "target": "write_latest_iteration",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R2",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R2",
-      "target": "write_latest_iteration",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R2",
-      "target": "write_latest_iteration_comments",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R2",
-      "target": "retrieve_latest_iteration",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R2",
-      "target": "retrieve_latest_iteration_comment",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R2",
-      "target": "read_text_file",
-      "type": "requires_tool"
-    },
-    {
       "source": "R3",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "programmer",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "list_subdirectories",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "does_version_one_exist",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "retrieve_latest_iteration",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "retrieve_latest_iteration_comment",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "read_text_file",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R4",
-      "target": "manager",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R4",
       "target": "programmer",
       "type": "requires_agent"
     },
@@ -183,23 +113,43 @@
     },
     {
       "source": "R5",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "write_latest_iteration",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R6",
       "target": "programmer",
       "type": "requires_agent"
     },
     {
-      "source": "R5",
+      "source": "R6",
       "target": "reviewer",
       "type": "requires_agent"
     },
     {
-      "source": "R5",
-      "target": "retrieve_latest_iteration",
-      "type": "requires_tool"
+      "source": "R7",
+      "target": "manager",
+      "type": "requires_agent"
     },
     {
-      "source": "R5",
-      "target": "retrieve_latest_iteration_comment",
-      "type": "requires_tool"
+      "source": "R8",
+      "target": "manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R8",
+      "target": "programmer",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R8",
+      "target": "reviewer",
+      "type": "requires_agent"
     },
     {
       "source": "manager",
@@ -218,6 +168,30 @@
       "target": "reviewer",
       "type": "message",
       "evidence": "initiate_chat"
+    },
+    {
+      "source": "planner",
+      "target": "manager",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "programmer",
+      "target": "reviewer",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "reviewer",
+      "target": "programmer",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "programmer",
+      "target": "manager",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
     }
   ]
 }

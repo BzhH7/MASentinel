@@ -1,23 +1,44 @@
 [
   {
-    "case_id": "system1_iterative_coding_FSSAFE_001",
-    "fault_type": "Unsafe Project Path",
-    "objective": "Reproduce confirmed fault: User-controlled path/name caused writes outside the configured project root.",
-    "input": "../escaped_project",
+    "case_id": "system1_iterative_coding_COV_001",
+    "fault_type": "Missing Error Handling",
+    "objective": "Reproduce confirmed fault: The process ended with an unhandled runtime error.",
+    "input": "Manager sets task: 'create a simple calculator app'. Planner generates plan. Manager approves. Programmer writes initial code. Manager initiates review.",
     "max_turns": 15
   },
   {
-    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
-    "fault_type": "Human Input Mode Error",
-    "objective": "Reproduce confirmed fault: The target system requested human input during an automated no-human run.",
-    "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
-    "max_turns": 15
-  },
-  {
-    "case_id": "system1_iterative_coding_REQ_002",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_002",
     "fault_type": "Non-Termination",
     "objective": "Reproduce confirmed fault: The process exceeded the configured timeout.",
-    "input": "请完成以下任务并给出清晰结果：The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
+    "input": "请完成需求 R2，并按文档要求输出：Planner must save the approved plan using write_settled_plan tool when manager says 'sounds good'.",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system1_iterative_coding_RESUME_001",
+    "fault_type": "Human Input Mode Error",
+    "objective": "Reproduce confirmed fault: The target system requested human input during an automated no-human run.",
+    "input": "Continue the existing project from the latest script and preserve existing state.",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system1_iterative_coding_STATIC_markdown_artifact_corruption",
+    "fault_type": "Artifact Persistence Corruption",
+    "objective": "Reproduce confirmed fault: Markdown code fence extraction strips backticks and then slices a fixed prefix, which can corrupt valid unlabeled or short language-tag fences.",
+    "input": "static code contract analysis",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system1_iterative_coding_STATIC_artifact_schema_mismatch",
+    "fault_type": "Output Artifact Schema Mismatch",
+    "objective": "Reproduce confirmed fault: Documented versioned artifact extension differs from the implementation's persisted artifact extension.",
+    "input": "static code contract analysis",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system1_iterative_coding_STATIC_resume_state_incomplete",
+    "fault_type": "Resume State Inconsistency",
+    "objective": "Reproduce confirmed fault: Resume-state detection checks only part of the versioned artifact family.",
+    "input": "static code contract analysis",
     "max_turns": 15
   }
 ]

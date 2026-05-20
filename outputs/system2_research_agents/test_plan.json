@@ -5,23 +5,23 @@
       "applicability": "hard",
       "confidence": 0.9,
       "reasons": [
-        "System has registered tools web_scraping, google_search, get_airtable_records, update_single_airtable_record with HTTP/API/Airtable dependencies (has_http_tools, has_airtable_tools, has_external_api_tools true).",
-        "Requirements R2 explicitly expects correct tool invocation and response handling (usable results or handled errors).",
-        "Negative case tool_invalid_json demands robust argument validation and error recovery—matching tool_api_contract expectations."
+        "has_http_tools=true, has_external_api_tools=true, has_request_like_code=true",
+        "requirements R2 and R3 explicitly describe valid tool calls (google_search, web_scraping, get_airtable_records, update_single_airtable_record) and expected responses/errors",
+        "requirement R5 describes handling of incorrect or missing tool invocations, which implies contract verification"
       ],
       "required_features": [
         "has_http_tools",
-        "has_airtable_tools",
         "has_external_api_tools",
-        "has_tools"
+        "has_request_like_code",
+        "tool_api_contract pattern applicable to google_search, web_scraping, get_airtable_records, update_single_airtable_record"
       ],
       "required_evidence": [
-        "tool signatures or docstrings",
-        "tool response types",
-        "argument schemas for google_search, get_airtable_records, update_single_airtable_record"
+        "Tool signatures for google_search, web_scraping, get_airtable_records, update_single_airtable_record",
+        "Error handling code in tool implementations or agent wrappers",
+        "Logs/traces from test runs showing tool call success and failure modes"
       ],
       "oracle_strength": "hard",
-      "case_budget": 2,
+      "case_budget": 3,
       "source": "PatternApplicabilityAgent"
     },
     {
@@ -29,19 +29,40 @@
       "applicability": "hard",
       "confidence": 0.85,
       "reasons": [
-        "All tools are external (HTTP/API/Airtable) and prone to runtime failures (network, missing API key, malformed input).",
-        "Requirement R2 negative cases tool_failure and tool_invalid_json demand that agents handle tool errors gracefully, inform user, and not silently halt the group chat.",
-        "System features confirm has_external_api_tools and has_structured_error_contract, making error contract testing essential."
+        "has_structured_error_contract=true",
+        "Requirements R2 and R3 specify negative cases with errors (empty query, unreachable URL, missing credentials, record not found)",
+        "Requirement R5 explicitly targets unregistered tool name calls and persistent tool failures leading to infinite loops"
       ],
       "required_features": [
-        "has_external_api_tools",
         "has_structured_error_contract",
-        "has_tools"
+        "tools with documented error outputs (google_search, web_scraping, get_airtable_records, update_single_airtable_record)"
       ],
       "required_evidence": [
-        "error response format for each tool",
-        "agent fallback or recovery code",
-        "failure injection mechanism"
+        "Error response schemas or exception classes for each tool",
+        "Fallback behavior in agents when tool errors occur",
+        "Traces showing graceful degradation on tool failures"
+      ],
+      "oracle_strength": "hard",
+      "case_budget": 3,
+      "source": "PatternApplicabilityAgent"
+    },
+    {
+      "pattern": "scalable_budget",
+      "applicability": "hard",
+      "confidence": 0.85,
+      "reasons": [
+        "has_fixed_round_budget=true (max_round=15 mentioned in R1 termination condition)",
+        "Requirement R4 mentions context token limits and R5 mentions avoiding infinite loops, both related to resource bounds",
+        "GroupChat termination conditions include max_turns, making budget enforcement testable"
+      ],
+      "required_features": [
+        "has_fixed_round_budget",
+        "groupchat with max_round or max_turns specified"
+      ],
+      "required_evidence": [
+        "GroupChat configuration with max_round or max_turns parameter",
+        "Test scenarios exceeding/exhausting budget",
+        "Verification that termination occurs within constraint"
       ],
       "oracle_strength": "hard",
       "case_budget": 2,
@@ -49,24 +70,23 @@
     },
     {
       "pattern": "autogen_wiring",
-      "applicability": "hard",
-      "confidence": 0.8,
+      "applicability": "soft",
+      "confidence": 0.6,
       "reasons": [
-        "System uses AutoGen GroupChat with defined agents (user_proxy, researcher, research_manager, director) and a GroupChatManager.",
-        "Requirement R1 mandates correct agent wiring to enforce termination conditions and group chat flow.",
-        "Potential misconfiguration (e.g., wrong speaker selection logic, incorrect agent registration) could cause termination bypass or context loss; static_risks acknowledge absence of detected wiring risks but the system is still newly scanned and may have latent issues."
+        "uses_autogen=true, uses_groupchat=true",
+        "No static wiring risks flagged by system_features, but R5 negative cases (unregistered tool name call, persistent failure causing infinite auto-reply) could indicate wiring gaps",
+        "GroupChat with multiple GPTAssistantAgents could have misconfigurations in tools or agent registration"
       ],
       "required_features": [
         "uses_autogen",
-        "uses_groupchat",
-        "has_fixed_round_budget"
+        "uses_groupchat"
       ],
       "required_evidence": [
-        "GroupChat instantiation code",
-        "agent registration sequence",
-        "termination condition embedding"
+        "Agent registration code (tools, roles) for all agents",
+        "GroupChat configuration mapping agents to their tools",
+        "Traces of tool calls from agents confirming correct routing"
       ],
-      "oracle_strength": "hard",
+      "oracle_strength": "diagnostic",
       "case_budget": 1,
       "source": "PatternApplicabilityAgent"
     }
@@ -74,21 +94,21 @@
   "rejected_patterns": [
     {
       "pattern": "message_handoff_integrity",
-      "applicability": "diagnostic",
-      "confidence": 0.7,
+      "applicability": "soft",
+      "confidence": 0.6,
       "reasons": [
-        "Conversation context must be preserved across multiple turns (R3). Though no explicit last_message/chat_messages API calls are found, GroupChat agents must reference previous messages.",
-        "GroupChat potential routes show bidirectional edges among all agents, implying message passing that could be disrupted by misrouting or truncation.",
-        "No multi-stage handoff explicitly documented, so oracle strength is diagnostic only."
+        "GroupChat with message_edges showing all possible agent routes, indicating multi-turn context handoff",
+        "R4 explicitly requires maintaining multi-turn context so later messages can reference earlier outputs, which is a form of handoff integrity",
+        "No hard evidence of last_message/chat_messages calls or documented multi-stage handoff, but GroupChat inherently passes messages among agents, making soft applicability reasonable"
       ],
       "required_features": [
-        "uses_groupchat",
-        "has_multistage_handoff (false)"
+        "groupchat message flow",
+        "Requirement R4 context preservation"
       ],
       "required_evidence": [
-        "message history propagation logic",
-        "GroupChat message queue handling",
-        "examples of agent referencing earlier results"
+        "GroupChat message history handling mechanism",
+        "Test scenarios requiring context propagation across agents",
+        "Evidence that earlier outputs are used in later agent decisions"
       ],
       "oracle_strength": "diagnostic",
       "case_budget": 1,
@@ -98,44 +118,38 @@
     },
     {
       "pattern": "data_invariant",
-      "reason": "No pandas, financial/risk metrics, or dataframe features present. System is a research workflow agent, not a data processing pipeline.",
-      "confidence": 0.95,
-      "source": "PatternApplicabilityAgent"
-    },
-    {
-      "pattern": "artifact_contract",
-      "reason": "System does not write or version files; artifacts not documented; no file output features.",
-      "confidence": 0.95,
-      "source": "PatternApplicabilityAgent"
-    },
-    {
-      "pattern": "cli_doc_conformance",
-      "reason": "No documented Python CLI commands; uses_argparse false; documented_commands empty list.",
-      "confidence": 0.95,
-      "source": "PatternApplicabilityAgent"
-    },
-    {
-      "pattern": "filesystem_safety",
-      "reason": "No file writes or user-controlled paths; no resumes or versioned artifacts.",
-      "confidence": 0.95,
-      "source": "PatternApplicabilityAgent"
-    },
-    {
-      "pattern": "scalable_budget",
-      "reason": "Fixed max_round=15 is a simple round budget, not a complex token/llm-call budget. No enterprise orchestration risk or dynamic scaling requirement.",
-      "confidence": 0.9,
+      "reason": "No financial/risk/dataframe metrics (has_financial_metrics=false, has_risk_metrics=false, has_dataframe_metrics=false, has_pandas=false). No data processing invariants defined in requirements.",
+      "confidence": 0.0,
       "source": "PatternApplicabilityAgent"
     },
     {
       "pattern": "speaker_selection",
-      "reason": "Speaker selection disabled (has_speaker_selection false).",
-      "confidence": 0.95,
+      "reason": "has_speaker_selection=false explicitly; GroupChat uses default round-robin or auto replies, not speaker_selection_mode.",
+      "confidence": 0.0,
       "source": "PatternApplicabilityAgent"
     },
     {
       "pattern": "state_resume_contract",
-      "reason": "No resume state, versioned artifacts, or user-controlled path features.",
-      "confidence": 0.95,
+      "reason": "has_resume_state=false, has_versioned_artifacts=false, writes_files=false. No documented artifacts or state persistence to resume.",
+      "confidence": 0.0,
+      "source": "PatternApplicabilityAgent"
+    },
+    {
+      "pattern": "cli_doc_conformance",
+      "reason": "has_documented_commands=false, documented_commands=[], uses_argparse=false. No CLI entry points mentioned.",
+      "confidence": 0.0,
+      "source": "PatternApplicabilityAgent"
+    },
+    {
+      "pattern": "artifact_contract",
+      "reason": "writes_files=false, has_user_controlled_path=false, no file artifacts produced. Requirements do not describe file outputs.",
+      "confidence": 0.0,
+      "source": "PatternApplicabilityAgent"
+    },
+    {
+      "pattern": "filesystem_safety",
+      "reason": "No file writing operations (writes_files=false), no user-controlled paths. No filesystem artifacts or CLI file interactions.",
+      "confidence": 0.0,
       "source": "PatternApplicabilityAgent"
     },
     {
@@ -163,12 +177,6 @@
       "source": "deterministic_feature_extractor"
     },
     {
-      "pattern": "scalable_budget",
-      "reason": "requires GroupChat/fixed budget plus multi-record or paginated work",
-      "confidence": 0.9,
-      "source": "deterministic_feature_extractor"
-    },
-    {
       "pattern": "speaker_selection",
       "reason": "requires GroupChat or speaker-selection configuration",
       "confidence": 0.9,
@@ -182,21 +190,6 @@
     }
   ],
   "verifier_omitted_applicable_patterns": [
-    {
-      "pattern": "scalable_budget",
-      "applicability": "hard",
-      "oracle_strength": "hard",
-      "case_budget": 1,
-      "confidence": 0.9,
-      "reasons": [
-        "requires GroupChat/fixed budget plus multi-record or paginated work"
-      ],
-      "required_evidence": [
-        "record_count_or_budget_estimate",
-        "configured_max_round"
-      ],
-      "source": "deterministic_feature_extractor"
-    },
     {
       "pattern": "speaker_selection",
       "applicability": "hard",
@@ -213,10 +206,12 @@
       "source": "deterministic_feature_extractor"
     }
   ],
+  "verifier_promoted_patterns": [],
+  "verifier_overridden_rejections": [],
   "diagnostic_only_patterns": [
     {
       "pattern": "message_handoff_integrity",
-      "reason": "GroupChat context preservation is required but no explicit handoff APIs are present; pattern provides diagnostic insight rather than a hard failure oracle.",
+      "reason": "GroupChat with multi-agent route; R4 context requirement leans on soft applicability. No hard last_message/chat_messages evidence, so kept as diagnostic only.",
       "oracle_strength": "diagnostic",
       "case_budget": 1,
       "confidence": 0.5,
@@ -320,85 +315,104 @@
         "applicability": "hard",
         "confidence": 0.9,
         "reasons": [
-          "System has registered tools web_scraping, google_search, get_airtable_records, update_single_airtable_record with HTTP/API/Airtable dependencies (has_http_tools, has_airtable_tools, has_external_api_tools true).",
-          "Requirements R2 explicitly expects correct tool invocation and response handling (usable results or handled errors).",
-          "Negative case tool_invalid_json demands robust argument validation and error recovery—matching tool_api_contract expectations."
+          "has_http_tools=true, has_external_api_tools=true, has_request_like_code=true",
+          "requirements R2 and R3 explicitly describe valid tool calls (google_search, web_scraping, get_airtable_records, update_single_airtable_record) and expected responses/errors",
+          "requirement R5 describes handling of incorrect or missing tool invocations, which implies contract verification"
         ],
         "required_features": [
           "has_http_tools",
-          "has_airtable_tools",
           "has_external_api_tools",
-          "has_tools"
+          "has_request_like_code",
+          "tool_api_contract pattern applicable to google_search, web_scraping, get_airtable_records, update_single_airtable_record"
         ],
         "required_evidence": [
-          "tool signatures or docstrings",
-          "tool response types",
-          "argument schemas for google_search, get_airtable_records, update_single_airtable_record"
+          "Tool signatures for google_search, web_scraping, get_airtable_records, update_single_airtable_record",
+          "Error handling code in tool implementations or agent wrappers",
+          "Logs/traces from test runs showing tool call success and failure modes"
         ],
         "oracle_strength": "hard",
-        "case_budget": 2
+        "case_budget": 3
       },
       {
         "pattern": "tool_error_contract",
         "applicability": "hard",
         "confidence": 0.85,
         "reasons": [
-          "All tools are external (HTTP/API/Airtable) and prone to runtime failures (network, missing API key, malformed input).",
-          "Requirement R2 negative cases tool_failure and tool_invalid_json demand that agents handle tool errors gracefully, inform user, and not silently halt the group chat.",
-          "System features confirm has_external_api_tools and has_structured_error_contract, making error contract testing essential."
+          "has_structured_error_contract=true",
+          "Requirements R2 and R3 specify negative cases with errors (empty query, unreachable URL, missing credentials, record not found)",
+          "Requirement R5 explicitly targets unregistered tool name calls and persistent tool failures leading to infinite loops"
         ],
         "required_features": [
-          "has_external_api_tools",
           "has_structured_error_contract",
-          "has_tools"
+          "tools with documented error outputs (google_search, web_scraping, get_airtable_records, update_single_airtable_record)"
         ],
         "required_evidence": [
-          "error response format for each tool",
-          "agent fallback or recovery code",
-          "failure injection mechanism"
+          "Error response schemas or exception classes for each tool",
+          "Fallback behavior in agents when tool errors occur",
+          "Traces showing graceful degradation on tool failures"
+        ],
+        "oracle_strength": "hard",
+        "case_budget": 3
+      },
+      {
+        "pattern": "scalable_budget",
+        "applicability": "hard",
+        "confidence": 0.85,
+        "reasons": [
+          "has_fixed_round_budget=true (max_round=15 mentioned in R1 termination condition)",
+          "Requirement R4 mentions context token limits and R5 mentions avoiding infinite loops, both related to resource bounds",
+          "GroupChat termination conditions include max_turns, making budget enforcement testable"
+        ],
+        "required_features": [
+          "has_fixed_round_budget",
+          "groupchat with max_round or max_turns specified"
+        ],
+        "required_evidence": [
+          "GroupChat configuration with max_round or max_turns parameter",
+          "Test scenarios exceeding/exhausting budget",
+          "Verification that termination occurs within constraint"
         ],
         "oracle_strength": "hard",
         "case_budget": 2
       },
       {
-        "pattern": "autogen_wiring",
-        "applicability": "hard",
-        "confidence": 0.8,
+        "pattern": "message_handoff_integrity",
+        "applicability": "soft",
+        "confidence": 0.6,
         "reasons": [
-          "System uses AutoGen GroupChat with defined agents (user_proxy, researcher, research_manager, director) and a GroupChatManager.",
-          "Requirement R1 mandates correct agent wiring to enforce termination conditions and group chat flow.",
-          "Potential misconfiguration (e.g., wrong speaker selection logic, incorrect agent registration) could cause termination bypass or context loss; static_risks acknowledge absence of detected wiring risks but the system is still newly scanned and may have latent issues."
+          "GroupChat with message_edges showing all possible agent routes, indicating multi-turn context handoff",
+          "R4 explicitly requires maintaining multi-turn context so later messages can reference earlier outputs, which is a form of handoff integrity",
+          "No hard evidence of last_message/chat_messages calls or documented multi-stage handoff, but GroupChat inherently passes messages among agents, making soft applicability reasonable"
         ],
         "required_features": [
-          "uses_autogen",
-          "uses_groupchat",
-          "has_fixed_round_budget"
+          "groupchat message flow",
+          "Requirement R4 context preservation"
         ],
         "required_evidence": [
-          "GroupChat instantiation code",
-          "agent registration sequence",
-          "termination condition embedding"
+          "GroupChat message history handling mechanism",
+          "Test scenarios requiring context propagation across agents",
+          "Evidence that earlier outputs are used in later agent decisions"
         ],
-        "oracle_strength": "hard",
+        "oracle_strength": "diagnostic",
         "case_budget": 1
       },
       {
-        "pattern": "message_handoff_integrity",
-        "applicability": "diagnostic",
-        "confidence": 0.7,
+        "pattern": "autogen_wiring",
+        "applicability": "soft",
+        "confidence": 0.6,
         "reasons": [
-          "Conversation context must be preserved across multiple turns (R3). Though no explicit last_message/chat_messages API calls are found, GroupChat agents must reference previous messages.",
-          "GroupChat potential routes show bidirectional edges among all agents, implying message passing that could be disrupted by misrouting or truncation.",
-          "No multi-stage handoff explicitly documented, so oracle strength is diagnostic only."
+          "uses_autogen=true, uses_groupchat=true",
+          "No static wiring risks flagged by system_features, but R5 negative cases (unregistered tool name call, persistent failure causing infinite auto-reply) could indicate wiring gaps",
+          "GroupChat with multiple GPTAssistantAgents could have misconfigurations in tools or agent registration"
         ],
         "required_features": [
-          "uses_groupchat",
-          "has_multistage_handoff (false)"
+          "uses_autogen",
+          "uses_groupchat"
         ],
         "required_evidence": [
-          "message history propagation logic",
-          "GroupChat message queue handling",
-          "examples of agent referencing earlier results"
+          "Agent registration code (tools, roles) for all agents",
+          "GroupChat configuration mapping agents to their tools",
+          "Traces of tool calls from agents confirming correct routing"
         ],
         "oracle_strength": "diagnostic",
         "case_budget": 1
@@ -407,66 +421,64 @@
     "rejected_patterns": [
       {
         "pattern": "data_invariant",
-        "reason": "No pandas, financial/risk metrics, or dataframe features present. System is a research workflow agent, not a data processing pipeline.",
-        "confidence": 0.95
-      },
-      {
-        "pattern": "artifact_contract",
-        "reason": "System does not write or version files; artifacts not documented; no file output features.",
-        "confidence": 0.95
-      },
-      {
-        "pattern": "cli_doc_conformance",
-        "reason": "No documented Python CLI commands; uses_argparse false; documented_commands empty list.",
-        "confidence": 0.95
-      },
-      {
-        "pattern": "filesystem_safety",
-        "reason": "No file writes or user-controlled paths; no resumes or versioned artifacts.",
-        "confidence": 0.95
-      },
-      {
-        "pattern": "scalable_budget",
-        "reason": "Fixed max_round=15 is a simple round budget, not a complex token/llm-call budget. No enterprise orchestration risk or dynamic scaling requirement.",
-        "confidence": 0.9
+        "reason": "No financial/risk/dataframe metrics (has_financial_metrics=false, has_risk_metrics=false, has_dataframe_metrics=false, has_pandas=false). No data processing invariants defined in requirements.",
+        "confidence": 0.0
       },
       {
         "pattern": "speaker_selection",
-        "reason": "Speaker selection disabled (has_speaker_selection false).",
-        "confidence": 0.95
+        "reason": "has_speaker_selection=false explicitly; GroupChat uses default round-robin or auto replies, not speaker_selection_mode.",
+        "confidence": 0.0
       },
       {
         "pattern": "state_resume_contract",
-        "reason": "No resume state, versioned artifacts, or user-controlled path features.",
-        "confidence": 0.95
+        "reason": "has_resume_state=false, has_versioned_artifacts=false, writes_files=false. No documented artifacts or state persistence to resume.",
+        "confidence": 0.0
+      },
+      {
+        "pattern": "cli_doc_conformance",
+        "reason": "has_documented_commands=false, documented_commands=[], uses_argparse=false. No CLI entry points mentioned.",
+        "confidence": 0.0
+      },
+      {
+        "pattern": "artifact_contract",
+        "reason": "writes_files=false, has_user_controlled_path=false, no file artifacts produced. Requirements do not describe file outputs.",
+        "confidence": 0.0
+      },
+      {
+        "pattern": "filesystem_safety",
+        "reason": "No file writing operations (writes_files=false), no user-controlled paths. No filesystem artifacts or CLI file interactions.",
+        "confidence": 0.0
       }
     ],
     "diagnostic_only_patterns": [
       {
         "pattern": "message_handoff_integrity",
-        "reason": "GroupChat context preservation is required but no explicit handoff APIs are present; pattern provides diagnostic insight rather than a hard failure oracle.",
+        "reason": "GroupChat with multi-agent route; R4 context requirement leans on soft applicability. No hard last_message/chat_messages evidence, so kept as diagnostic only.",
         "oracle_strength": "diagnostic"
       }
     ],
     "risk_notes": [
-      "Termination handling (R4) is not covered by a distinct pattern but may be exercised within autogen_wiring (checking TERMINATE embedding).",
-      "Empty input handling (R1 negative) also falls under autogen_wiring or generic robustness; no dedicated pattern maps exactly."
+      "GroupChat speaker_selection disabled, so speaker_selection pattern correctly excluded.",
+      "No financial/data processing features, data_invariant irrelevant.",
+      "No CLI or file artifacts, artifact_contract/cli_doc_conformance/filesystem_safety all correctly excluded.",
+      "autogen_wiring might be testable via R5 negative cases but requires deeper code review for actual wiring gaps; diagnostic only for now."
     ],
-    "confidence": 0.85
+    "confidence": 0.82
   },
   "selection_mode": "agent_verified",
   "metrics": {
-    "pattern_applicability_precision": 0.75,
-    "selected_count": 3,
-    "rejected_count": 15,
+    "pattern_applicability_precision": 0.8,
+    "selected_count": 4,
+    "rejected_count": 13,
     "diagnostic_only_count": 1,
-    "omitted_applicable_count": 2
+    "omitted_applicable_count": 1,
+    "verifier_promoted_count": 0
   },
   "confidence": 0.9,
   "agent_decision": {
     "fallback_used": false,
     "success": true,
     "error": null,
-    "confidence": 0.85
+    "confidence": 0.82
   }
 }

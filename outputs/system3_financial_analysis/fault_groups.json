@@ -1,6 +1,66 @@
 [
   {
-    "group_id": "generic:application-documented-entrypoint-broken-the-documented-entrypoint-python--m-src.main-analyze-aapl-in-readme-or-document",
+    "group_id": "generic:application-data-processing-invariant-violation-risk-metric-outputs-are-not-normalized-to-documented-report-magnitude-se",
+    "title": "Data Processing Invariant Violation",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
+    "fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_numeric_sign_convention_error"
+    ],
+    "failure_codes": [
+      "NUMERIC_SIGN_CONVENTION_ERROR"
+    ],
+    "severity": "medium",
+    "confidence": 0.82,
+    "root_cause": "Risk metric outputs are not normalized to documented/report magnitude semantics; VaR and drawdown are assigned from lower-tail/min return expressions, producing negative values where reports expect positive magnitudes.",
+    "suggested_fix": "Normalize VaR and drawdown outputs to positive magnitudes or label them explicitly as signed returns. For example, apply abs() or multiply by -1 after computation in risk_analyzer.py, and update report templates in student_autogen_system.py and simple_autogen_system.py to consistently reference the normalized sign convention.",
+    "summary": "Risk metrics are returned as negative signed returns where reports commonly expect positive magnitudes."
+  },
+  {
+    "group_id": "generic:application-data-processing-invariant-violation-the-financial-metric-calculation-function-get_stock_metrics-or-similar-p",
+    "title": "Data Processing Invariant Violation",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008",
+    "fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_partial_metric_zeroed"
+    ],
+    "failure_codes": [
+      "PARTIAL_METRIC_ZEROED"
+    ],
+    "severity": "medium",
+    "confidence": 0.84,
+    "root_cause": "The financial metric calculation function (get_stock_metrics or similar) performs multiple independent .loc row lookups inside a single try/except block. When one optional lookup (e.g., a specific column or ticker) fails, the except handler mistakenly zeros all metrics, discarding successfully retrieved values. This violates the intended invariant that available data should be preserved and only unavailable data should be reported as null/unavailable.",
+    "suggested_fix": "Refactor the metric computation to use individual try/except for each .loc lookup or to check for key/index existence before access. Each metric should be computed in its own protected scope. Missing data should result in None or a sentinel (e.g., 'N/A') rather than zero, so that valid values from other tickers or columns are not overwritten. If zero is a valid financial metric, use a distinct representation for missingness.",
+    "summary": "Financial metric calculation can discard available metrics when one optional row lookup fails."
+  },
+  {
+    "group_id": "generic:application-documented-cli-command-missing-the-cli-entry-point-in-simple_autogen-main.py-documents-or-implies-a-portfoli",
+    "title": "Documented CLI Command Missing",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
+    "fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_documented_cli_command_missing"
+    ],
+    "failure_codes": [
+      "DOCUMENTED_CLI_COMMAND_MISSING"
+    ],
+    "severity": "medium",
+    "confidence": 0.82,
+    "root_cause": "The CLI entry point in simple_autogen/main.py documents or implies a 'portfolio' subcommand, but the implementation's argument parser never registers this subcommand. Thus users following the documentation encounter an unrecognized-argument error.",
+    "suggested_fix": "Either (a) add a 'portfolio' subparser using parser.add_parser('portfolio') and wire it to the appropriate portfolio handler, or (b) remove the 'portfolio' usage example from documentation and help text if the feature is not intended for release.",
+    "summary": "Documented CLI command is not implemented by the parser or dispatcher: python -m src.main portfolio AAPL MSFT GOOG"
+  },
+  {
+    "group_id": "generic:application-documented-entrypoint-broken-the-readme-documented-entrypoint-python--m-src.main-analyze-aapl-refers-to-a-mo",
     "title": "Documented Entrypoint Broken",
     "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001",
     "fault_ids": [
@@ -15,30 +75,29 @@
     ],
     "severity": "high",
     "confidence": 0.9,
-    "root_cause": "The documented entrypoint 'python -m src.main analyze AAPL' in README or documentation points to a non-existent 'src' package. The actual Python project is rooted at 'autogen-financial-analysis-main', which likely contains a different module structure (e.g., a flat 'student_autogen_system.py' file without a 'src' directory). This causes a deterministic import failure before any agent or model logic is invoked.",
-    "suggested_fix": "Align the documented command with the actual project structure. If the main entrypoint is in 'student_autogen_system.py' at the project root, update the README command to 'python -m student_autogen_system analyze AAPL'. If a 'src' package is intended, create the directory structure with an __init__.py and move the main module there. Add a CI test that executes the documented command to prevent regression.",
+    "root_cause": "The README-documented entrypoint 'python -m src.main analyze AAPL' refers to a module 'src.main' that does not exist in the project structure under 'autogen-financial-analysis-main'. No file 'src/main.py' or '__init__.py' is present, causing a deterministic ModuleNotFoundError. The documentation is out of sync with the actual codebase layout.",
+    "suggested_fix": "Create the missing module 'src/main.py' or update the README to reflect the correct entrypoint matching the existing codebase structure. Ensure the module contains a main entrypoint that can accept 'analyze' and a symbol (e.g., 'AAPL') as arguments. Add a CI test that executes the documented command to prevent future regressions.",
     "summary": "Documented entrypoint fails before controlled configuration/runtime handling."
   },
   {
-    "group_id": "generic:application-output-contract-violation-the-application-layer-lacks-a-validation-step-for-stock-code-existence-before-proc",
-    "title": "Output Contract Violation",
-    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+    "group_id": "generic:autogen_framework-agent-orchestration-wiring-missing-the-orchestrator-wiring-in-main.py-at-line-115-creates-an-agentorch",
+    "title": "Agent Orchestration Wiring Missing",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
     "fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system3_financial_analysis_OUTCONTRACT_003",
-      "system3_financial_analysis_OUTCONTRACT_005"
+      "system3_financial_analysis_STATIC_autogen_wiring_missing"
     ],
     "failure_codes": [
-      "OUTPUT_SCHEMA_VIOLATION"
+      "AUTOGEN_WIRING_MISSING"
     ],
-    "severity": "medium",
-    "confidence": 0.78,
-    "root_cause": "The application layer lacks a validation step for stock code existence before proceeding with data collection. The tool or agent responsible for data collection (likely the 'data_collector' agent) does not check if the provided code is valid and does not generate a friendly error message containing the keyword '代码' when the code is invalid. Instead, it proceeds to collect data (possibly mock or empty data) and passes it to downstream agents, which then produce a generic financial analysis report rather than the required error response.",
-    "suggested_fix": "Add a deterministic validation step in the 'data_collector' agent or its associated tool that checks the validity of the stock code. If the code is invalid, the agent should immediately terminate and return a structured error message that includes the keyword '代码' (e.g., '输入的股票代码 META 无效，请检查代码后重试。'). This ensures the output contract is fulfilled when handling non-existent stock codes.",
-    "summary": "Output contract expected keywords or sections were missing."
+    "severity": "high",
+    "confidence": 0.9,
+    "root_cause": "The orchestrator wiring in main.py at line 115 creates an AgentOrchestrator instance with an empty dictionary, failing to provide the documented collaborating agents (financial_analyst, risk_analyst, report_writer). The factory pattern that should instantiate these agents and map them by role is either missing or not invoked.",
+    "suggested_fix": "Use the agent factory to create the required agents (e.g., create_financial_analyst(), create_risk_analyst(), create_report_writer()) and pass a populated role-to-agent mapping like {'analyst': financial_agent, 'risk': risk_agent, 'writer': writer_agent} into AgentOrchestrator. Verify the factory methods exist and are imported; add them if missing.",
+    "summary": "Documented AutoGen workflow is initialized with an empty or missing agent mapping."
   },
   {
     "group_id": "handoff:terminate-empty-or-wrong-source",
@@ -54,11 +113,15 @@
       "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004"
     ],
     "affected_cases": [
+      "system3_financial_analysis_COV_001",
       "system3_financial_analysis_COV_002",
+      "system3_financial_analysis_DATAINV_001",
       "system3_financial_analysis_FSSAFE_001",
       "system3_financial_analysis_HANDOFF_001",
+      "system3_financial_analysis_HANDOFF_002",
       "system3_financial_analysis_OUTCONTRACT_001",
       "system3_financial_analysis_OUTCONTRACT_002",
+      "system3_financial_analysis_OUTCONTRACT_003",
       "system3_financial_analysis_REQ_001",
       "system3_financial_analysis_REQ_002",
       "system3_financial_analysis_REQ_003",
@@ -70,16 +133,16 @@
     ],
     "severity": "high",
     "confidence": 0.92,
-    "root_cause": "The AutoGen framework's message handoff mechanism between agents forwards only TERMINATE/empty auto-reply content instead of passing the substantive analysis from previous stages. This occurs because the handoff logic in student_autogen_system.py does not properly extract and propagate prior assistant's analysis content when triggering downstream agents.",
-    "suggested_fix": "Modify the handoff logic in student_autogen_system.py to explicitly pass the previous assistant's analysis message instead of allowing TERMINATE markers to be forwarded. Specifically: 1) In the registered agent transitions, filter out TERMINATE-only messages before triggering downstream agents; 2) Ensure the last substantive message from each agent is stored and passed as context to the next agent; 3) Add validation in the handoff function to check for empty content and fall back to the most recent non-termination message.",
+    "root_cause": "In the AutoGen sequential mediation pattern, when a prior agent (e.g., data_analyst) completes its task and generates a termination message, the framework may forward only the termination trigger or an empty message body to the downstream agent (e.g., financial_analyst). This causes the downstream agent to receive no actual analysis data, leading to an empty handoff that triggers a TERMINATE-only response.",
+    "suggested_fix": "In the AutoGen workflow definition, modify the handoff mechanism to explicitly pass the full assistant message content from the previous agent instead of only TERMINATE signals. For example, before routing to financial_analyst, filter out TERMINATE-only payloads and extract the substantive analysis results from data_analyst, then inject them as context for the next stage. Alternatively, store the output of data_analyst in a shared context or state variable and access it directly in the financial_analyst prompt.",
     "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content."
   },
   {
     "group_id": "interaction:timeout-or-non-termination",
     "title": "Conversation timeout or missing termination guard",
-    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
     "fault_ids": [
-      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006"
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
@@ -90,8 +153,28 @@
     ],
     "severity": "high",
     "confidence": 0.88,
-    "root_cause": "Insufficient deterministic evidence to confirm the fault. The trace shows the run terminated successfully (status: passed, turn_count: 19, terminated: true) with exit code 0, and no code-level evidence (code_locations are empty) is available to confirm that termination signal handling is broken. The suspected fault is based solely on trace content interpretation, which is weak evidence.",
-    "suggested_fix": "No specific fix can be recommended until the fault is confirmed with deterministic code/trace evidence. If confirmed, ensure termination condition handlers in smpl_autogen_system.py (or equivalent orchestration module) immediately stop the conversation when a termination marker (e.g., 'TERMINATE') is detected, within the allowed grace messages (max 2).",
+    "root_cause": "测试观测到输出中包含 TERMINATE 后的附加文本，系统实际已在 19 轮内终止，可能为最终消息格式化而非终止信号忽略。无代码证据支持存在框架层故障。",
+    "suggested_fix": "如果确认是 false positive，可在测试断言中区分‘终止信号后的同轮文本’与‘新对话轮次’。若仍需修改，可在消息生成逻辑中确保 TERMINATE 后不附加任何建议文本，或调整测试预期。",
     "summary": "The target emitted a termination marker but continued with substantive prompts/messages."
+  },
+  {
+    "group_id": "tool:error-envelope-missing",
+    "title": "External tool error envelope missing",
+    "primary_fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
+    "fault_ids": [
+      "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system3_financial_analysis_STATIC_tool_unstructured_error"
+    ],
+    "failure_codes": [
+      "TOOL_UNSTRUCTURED_ERROR"
+    ],
+    "severity": "medium",
+    "confidence": 0.72,
+    "root_cause": "The tool wrapper does not normalize HTTP failures into a structured result.",
+    "suggested_fix": "Check status codes and return typed success/error payloads with status, message, and retryability.",
+    "summary": "HTTP tool can return raw text or None instead of a structured success/error envelope."
   }
 ]

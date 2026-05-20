@@ -199,6 +199,29 @@ def test_agent_selected_patterns_are_not_auto_expanded_by_verifier(tmp_path: Pat
     assert {"tool_api_contract", "tool_error_contract", "autogen_wiring"} <= omitted
 
 
+def test_verifier_backstops_agent_omitted_data_invariant_when_features_are_strong(tmp_path: Path) -> None:
+    profile = rich_profile(tmp_path)
+    plan = build_test_plan(
+        extract_system_features(profile),
+        {
+            "selected_patterns": [
+                {"pattern": "autogen_wiring", "reasons": ["Agent selected wiring only."]},
+            ],
+            "rejected_patterns": [
+                {"pattern": "data_invariant", "reasons": ["Agent missed deterministic metric code."]},
+            ],
+            "diagnostic_only_patterns": [],
+        },
+    )
+    selected = set(selected_pattern_names(plan))
+    promoted = {item["pattern"] for item in plan["verifier_promoted_patterns"]}
+    overridden = {item["pattern"] for item in plan["verifier_overridden_rejections"]}
+
+    assert {"autogen_wiring", "data_invariant"} <= selected
+    assert promoted == {"data_invariant"}
+    assert overridden == {"data_invariant"}
+
+
 def test_agent_selected_pattern_must_pass_feature_verifier(tmp_path: Path) -> None:
     profile = iterative_coding_profile(tmp_path)
     plan = build_test_plan(

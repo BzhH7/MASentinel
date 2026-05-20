@@ -53,22 +53,27 @@
     {
       "id": "R1",
       "type": "requirement",
-      "description": "The system must implement a multi-agent research workflow using a group chat with user_proxy, researcher, research_manager, and director, respecting the defined termination conditions (TERMINATE keyword, max_round=15, and user input mode)."
+      "description": "The multi-agent group chat must route a research task through the defined agents (user_proxy, researcher, research_manager, director) and terminate according to the configured termination conditions."
     },
     {
       "id": "R2",
       "type": "requirement",
-      "description": "The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors."
+      "description": "The researcher agent must be able to successfully call the google_search and web_scraping tools with valid inputs and handle responses or errors gracefully."
     },
     {
       "id": "R3",
       "type": "requirement",
-      "description": "The system must preserve conversation context across multiple turns in the group chat, allowing agents to refer to previous messages and tool results."
+      "description": "The director agent must be able to invoke get_airtable_records and update_single_airtable_record to retrieve and update Airtable data, handling missing credentials or empty results."
     },
     {
       "id": "R4",
       "type": "requirement",
-      "description": "The system must enforce termination when the user (or any agent) sends a message containing the keyword 'TERMINATE'."
+      "description": "The group chat must maintain multi-turn context so that later messages can reference earlier outputs (e.g., search results fed to the research_manager or director)."
+    },
+    {
+      "id": "R5",
+      "type": "requirement",
+      "description": "The system must handle incorrect or missing tool invocations without hanging or entering an infinite loop, eventually reaching a termination condition."
     }
   ],
   "edges": [
@@ -113,24 +118,9 @@
       "type": "requires_agent"
     },
     {
-      "source": "R1",
-      "target": "group_chat_manager",
-      "type": "requires_agent"
-    },
-    {
       "source": "R2",
       "target": "researcher",
       "type": "requires_agent"
-    },
-    {
-      "source": "R2",
-      "target": "director",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R2",
-      "target": "web_scraping",
-      "type": "requires_tool"
     },
     {
       "source": "R2",
@@ -139,28 +129,8 @@
     },
     {
       "source": "R2",
-      "target": "get_airtable_records",
+      "target": "web_scraping",
       "type": "requires_tool"
-    },
-    {
-      "source": "R2",
-      "target": "update_single_airtable_record",
-      "type": "requires_tool"
-    },
-    {
-      "source": "R3",
-      "target": "user_proxy",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "researcher",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R3",
-      "target": "research_manager",
-      "type": "requires_agent"
     },
     {
       "source": "R3",
@@ -169,8 +139,13 @@
     },
     {
       "source": "R3",
-      "target": "group_chat_manager",
-      "type": "requires_agent"
+      "target": "get_airtable_records",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R3",
+      "target": "update_single_airtable_record",
+      "type": "requires_tool"
     },
     {
       "source": "R4",
@@ -179,8 +154,53 @@
     },
     {
       "source": "R4",
-      "target": "group_chat_manager",
+      "target": "researcher",
       "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "research_manager",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "director",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "researcher",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "director",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R5",
+      "target": "google_search",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R5",
+      "target": "web_scraping",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R5",
+      "target": "get_airtable_records",
+      "type": "requires_tool"
+    },
+    {
+      "source": "R5",
+      "target": "update_single_airtable_record",
+      "type": "requires_tool"
     },
     {
       "source": "director",

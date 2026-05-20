@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import shutil
 
 from masentinel.agents.orchestrator import AgenticTestOrchestrator
 from masentinel.analyzer.profile_builder import build_profile_from_config, save_profile_bundle
@@ -24,6 +25,7 @@ def run_all(
     test_model: str | None = None,
     no_human: bool = True,
     build_site: bool = True,
+    clean_output: bool = True,
 ) -> list[dict]:
     config_path = Path(config_path)
     all_config = load_yaml(config_path)
@@ -39,7 +41,7 @@ def run_all(
         loaded_system_configs.append(system_config)
         system_config.setdefault("run", {})["no_human"] = no_human
         system_id = str(system_config.get("system_id") or system_config_path.stem)
-        system_out = ensure_dir(output_dir / system_id)
+        system_out = _prepare_system_output(output_dir, system_id, clean_output)
         _log(f"system {index}/{len(systems)} start: {system_id} -> {system_out}")
         if agentic:
             result = AgenticTestOrchestrator(test_model=test_model, no_human=no_human).run_system(system_config_path, system_out)
@@ -124,6 +126,13 @@ def _log(message: str) -> None:
     print(f"[MASentinel][run_all] {message}", flush=True)
 
 
+def _prepare_system_output(output_dir: Path, system_id: str, clean_output: bool) -> Path:
+    system_out = output_dir / system_id
+    if clean_output and system_out.exists():
+        shutil.rmtree(system_out)
+    return ensure_dir(system_out)
+
+
 def _write_summary_md(results: list[dict], output_dir: Path) -> None:
     lines = [
         "# MASentinel Summary",
@@ -166,10 +175,20 @@ def main() -> None:
     parser.add_argument("--allow-human", dest="no_human", action="store_false", help="Allow target systems to request human input")
     parser.add_argument("--test-model", default=None, help="Override the testing-agent model name")
     parser.add_argument("--no-site", dest="build_site", action="store_false", help="Skip building outputs/site static dashboard")
+    parser.add_argument("--clean-output", dest="clean_output", action="store_true", help="Clear each system output directory before running")
+    parser.add_argument("--keep-output", dest="clean_output", action="store_false", help="Keep existing output files and regression pools")
     parser.set_defaults(no_human=True)
     parser.set_defaults(build_site=True)
+    parser.set_defaults(clean_output=True)
     args = parser.parse_args()
-    run_all(args.config, agentic=args.agentic, test_model=args.test_model, no_human=args.no_human, build_site=args.build_site)
+    run_all(
+        args.config,
+        agentic=args.agentic,
+        test_model=args.test_model,
+        no_human=args.no_human,
+        build_site=args.build_site,
+        clean_output=args.clean_output,
+    )
 
 
 if __name__ == "__main__":

@@ -87,27 +87,27 @@
     {
       "id": "R1",
       "type": "requirement",
-      "description": "多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。"
+      "description": "系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。"
     },
     {
       "id": "R2",
       "type": "requirement",
-      "description": "报告生成Agent整合分析结果生成简洁报告：report_generator应获取financial_analyst和risk_analyst的输出，生成包含投资建议和风险提示的结构化报告。"
+      "description": "系统应支持命令行参数 '--type comprehensive'，并利用多个分析代理（如风险分析师、量化分析师）执行综合分析。"
     },
     {
       "id": "R3",
       "type": "requirement",
-      "description": "系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。"
+      "description": "系统应能处理数据收集异常，例如当 yfinance 无法获取 AAPL 数据时，data_collector 应返回明确的错误指示，而不是返回空数据导致后续代理产生幻觉。"
     },
     {
       "id": "R4",
       "type": "requirement",
-      "description": "量化分析流程独立执行因子模型与回报计算：enterprise_quantitative_analyst负责因子暴露计算、因子收益率、信息系数；enterprise_portfolio_manager负责投资组合优化、回测统计。"
+      "description": "多代理通信应遵循预定义的协作模式：user_proxy 按顺序向 data_analyst、financial_analyst、risk_analyst、investment_advisor 发起聊天，并汇总最终消息。"
     },
     {
       "id": "R5",
       "type": "requirement",
-      "description": "多源数据集成与质量校验：enterprise_data_collector从Yahoo Finance、Alpha Vantage等源获取数据，进行一致性校验和缺失值处理，记录数据质量指标。"
+      "description": "系统应包含明确的终止条件，当代理输出 'TERMINATE' 或在达到最大轮次后，协作流程应停止。"
     }
   ],
   "edges": [
@@ -118,7 +118,7 @@
     },
     {
       "source": "R1",
-      "target": "data_analyst",
+      "target": "data_collector",
       "type": "requires_agent"
     },
     {
@@ -128,21 +128,21 @@
     },
     {
       "source": "R1",
-      "target": "risk_analyst",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R1",
-      "target": "investment_advisor",
-      "type": "requires_agent"
-    },
-    {
-      "source": "R2",
       "target": "report_generator",
       "type": "requires_agent"
     },
     {
       "source": "R2",
+      "target": "user_proxy",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R2",
       "target": "financial_analyst",
       "type": "requires_agent"
     },
@@ -152,8 +152,8 @@
       "type": "requires_agent"
     },
     {
-      "source": "R3",
-      "target": "user_proxy",
+      "source": "R2",
+      "target": "investment_advisor",
       "type": "requires_agent"
     },
     {
@@ -163,17 +163,32 @@
     },
     {
       "source": "R4",
-      "target": "enterprise_quantitative_analyst",
+      "target": "user_proxy",
       "type": "requires_agent"
     },
     {
       "source": "R4",
-      "target": "enterprise_portfolio_manager",
+      "target": "data_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "financial_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "risk_analyst",
+      "type": "requires_agent"
+    },
+    {
+      "source": "R4",
+      "target": "investment_advisor",
       "type": "requires_agent"
     },
     {
       "source": "R5",
-      "target": "enterprise_data_collector",
+      "target": "user_proxy",
       "type": "requires_agent"
     },
     {
@@ -205,6 +220,42 @@
       "target": "risk_analyst",
       "type": "message",
       "evidence": "initiate_chat"
+    },
+    {
+      "source": "enterprise_data_collector",
+      "target": "user_proxy",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_financial_analyst",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_risk_analyst",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_quantitative_analyst",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_compliance_officer",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_portfolio_manager",
+      "type": "message",
+      "evidence": "SystemModelingAgent additional edge"
     }
   ]
 }

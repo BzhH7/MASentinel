@@ -3,14 +3,26 @@
     "case_id": "system1_iterative_coding_REQ_001",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Verify Planner saves plan only after Manager approval signal, then transition to iteration phase",
-    "input": "Manager: 'Write a calculator app.' Planner: proposes plan. Manager: 'sounds good, proceed'",
-    "input_sequence": [],
+    "objective": "Verify planner saves approved plan via write_settled_plan when manager says 'sounds good'.",
+    "input": "Manager: 'Build a simple calculator app.' Planner: Generates plan. Manager: 'sounds good'.",
+    "input_sequence": [
+      {
+        "agent": "manager",
+        "message": "Build a simple calculator app."
+      },
+      {
+        "agent": "planner",
+        "message": "Plan: 1) Parse math expressions, 2) Evaluate safely, 3) CLI interface."
+      },
+      {
+        "agent": "manager",
+        "message": "sounds good"
+      }
+    ],
     "target_requirements": [
-      "R1"
+      "R2"
     ],
     "target_agents": [
-      "manager",
       "planner"
     ],
     "target_tools": [
@@ -22,8 +34,8 @@
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "manager",
-        "planner"
+        "planner",
+        "manager"
       ],
       "must_call_tools": [
         "write_settled_plan"
@@ -35,24 +47,38 @@
       "expected_keywords": []
     },
     "fault_injection": null,
-    "metadata": {
-      "phase": "planning",
-      "approval_signal": "sounds good"
-    }
+    "metadata": {}
   },
   {
     "case_id": "system1_iterative_coding_COV_001",
     "system_id": "system1_iterative_coding",
     "case_type": "coverage_guided",
-    "objective": "Verify that the manager can successfully initiate chat with the planner to start the planning phase.",
-    "input": "Start a new project. Manager sends initial request to Planner.",
-    "input_sequence": [],
+    "objective": "Verify missing logical edge programmer -> reviewer is covered during iteration loop: Manager triggers reviewer after programmer code output, reviewer provides feedback.",
+    "input": "Manager sets task: 'create a simple calculator app'. Planner generates plan. Manager approves. Programmer writes initial code. Manager initiates review.",
+    "input_sequence": [
+      {
+        "agent": "manager",
+        "content": "Create a simple calculator app with add, subtract, multiply, divide functions."
+      },
+      {
+        "agent": "planner",
+        "content": "The manager wants a simple calculator app with four basic arithmetic operations. The main challenge is handling division by zero and input validation. Plan: 1) Define functions for add, subtract, multiply, divide. 2) Implement input handling for user. 3) Print results."
+      },
+      {
+        "agent": "manager",
+        "content": "sounds good"
+      },
+      {
+        "agent": "programmer",
+        "content": "def add(x, y): return x+y\ndef subtract(x, y): return x-y\ndef multiply(x, y): return x*y\ndef divide(x, y): return x/y if y != 0 else 'Error: Division by zero'\n# Main execution\nif __name__ == '__main__':\n    print('Calculator')\n    a = 10\n    b = 5\n    print(f'{a}+{b}={add(a,b)}')\n    print(f'{a}-{b}={subtract(a,b)}')\n    print(f'{a}*{b}={multiply(a,b)}')\n    print(f'{a}/{b}={divide(a,b)}')"
+      }
+    ],
     "target_requirements": [
-      "R1"
+      "R6"
     ],
     "target_agents": [
-      "manager",
-      "planner"
+      "programmer",
+      "reviewer"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -61,6 +87,101 @@
       "max_turns": 10,
       "must_not_crash": true,
       "must_visit_agents": [
+        "programmer",
+        "reviewer"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "coverage_focus": "message_edge",
+      "edge_type": "logical_flow",
+      "iteration_stage": "review"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_REQ_002",
+    "system_id": "system1_iterative_coding",
+    "case_type": "requirement_positive",
+    "objective": "Verify that the planner calls write_settled_plan with the correct plan content after manager approval.",
+    "input": "Direct the manager to send a task request to the planner (e.g., 'Create a calculator app'). After the planner outputs a plan, simulate the manager replying 'sounds good'.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2"
+    ],
+    "target_agents": [
+      "planner",
+      "manager"
+    ],
+    "target_tools": [
+      "write_settled_plan"
+    ],
+    "target_edges": [
+      [
+        "planner",
+        "manager"
+      ],
+      [
+        "manager",
+        "planner"
+      ]
+    ],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 8,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "manager",
+        "planner"
+      ],
+      "must_call_tools": [
+        "write_settled_plan"
+      ],
+      "must_cover_edges": [
+        [
+          "planner",
+          "manager"
+        ]
+      ],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "coverage_focus": "tool_call_coverage",
+      "notes": "Tests the tool registration and invocation flow for planner. Since the profile currently lists planner with no tools, this case may reveal a wiring issue if the test harness relies on the profile."
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_TOOLFUZZ_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "fuzz_tool_failure",
+    "objective": "Verify Planner cannot call write_settled_plan when tool is not registered, triggering a tool-call failure rather than a silent skip.",
+    "input": "Initiate chat from manager to planner with request 'Create a plan for a to-do app'. Planner attempts to call write_settled_plan but the tool is deliberately not registered for this agent in the test harness.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2"
+    ],
+    "target_agents": [
+      "planner"
+    ],
+    "target_tools": [
+      "write_settled_plan"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": false,
+      "max_turns": 10,
+      "must_not_crash": false,
+      "must_visit_agents": [
+        "manager",
         "planner"
       ],
       "must_call_tools": [],
@@ -72,85 +193,8 @@
     },
     "fault_injection": null,
     "metadata": {
-      "coverage_focus": "message_edge_coverage"
-    }
-  },
-  {
-    "case_id": "system1_iterative_coding_PROP_001",
-    "system_id": "system1_iterative_coding",
-    "case_type": "property_boundary",
-    "objective": "Boundary test: write_latest_iteration called with empty string content, ensuring it saves empty file without crash.",
-    "input": "task: produce an empty script file as placeholder.",
-    "input_sequence": [],
-    "target_requirements": [
-      "R2"
-    ],
-    "target_agents": [
-      "programmer"
-    ],
-    "target_tools": [
-      "write_latest_iteration"
-    ],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 10,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "programmer"
-      ],
-      "must_call_tools": [
-        "write_latest_iteration"
-      ],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "focus": "tool_call_coverage",
-      "boundary": "empty_content"
-    }
-  },
-  {
-    "case_id": "system1_iterative_coding_FUZZ_001",
-    "system_id": "system1_iterative_coding",
-    "case_type": "fuzz_negative",
-    "objective": "Negative fuzz: tool write_settled_plan receives non-plan content (random noise) but does not crash and does not transition workflow.",
-    "input": "task: save plan. Provide '!@#NOISE#@!' as plan content.",
-    "input_sequence": [],
-    "target_requirements": [
-      "R1"
-    ],
-    "target_agents": [
-      "planner"
-    ],
-    "target_tools": [
-      "write_settled_plan"
-    ],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 10,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "planner"
-      ],
-      "must_call_tools": [
-        "write_settled_plan"
-      ],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "focus": "tool_call_coverage",
-      "fuzz": "noise_input"
+      "fault_injection": "tool_registration_missing",
+      "profile_evidence": "Planner tools array is empty in provided profile, contradicting R2 expectation; suspends tool reg if harness uses profile."
     }
   },
   {
@@ -216,40 +260,28 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_REQ_002",
+    "case_id": "system1_iterative_coding_REQ_003",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R1: The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
-    "input": "请完成以下任务并给出清晰结果：The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
+    "objective": "Validate requirement R1: Planner must generate a structured project plan with functional requirements when given a user request.",
+    "input": "请完成以下任务并给出清晰结果：Planner must generate a structured project plan with functional requirements when given a user request.",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
-      "manager",
-      "planner",
-      "programmer",
-      "reviewer"
+      "planner"
     ],
-    "target_tools": [
-      "write_settled_plan",
-      "write_latest_iteration"
-    ],
+    "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "manager",
-        "planner",
-        "programmer",
-        "reviewer"
+        "planner"
       ],
-      "must_call_tools": [
-        "write_settled_plan",
-        "write_latest_iteration"
-      ],
+      "must_call_tools": [],
       "must_cover_edges": [],
       "must_not_call_tools": [],
       "must_not_fabricate_tool_result": false,
@@ -331,7 +363,7 @@
       "generic_pattern": "safe_project_root",
       "applicability_reason": "profile combines user-controlled names/paths with filesystem writes",
       "target_fault_mode": "filesystem_escape",
-      "oracle_strength": "hard",
+      "oracle_strength": "diagnostic",
       "project_name": "../escaped_project",
       "malicious_names": [
         "../escaped_project",
@@ -343,7 +375,8 @@
         "controlled_validation_error"
       ],
       "expected_mode": "interactive",
-      "selected_pattern": "filesystem_safety"
+      "selected_pattern": "filesystem_safety",
+      "diagnostic_only": true
     }
   },
   {
@@ -429,6 +462,54 @@
         "forwarded_content_non_empty"
       ],
       "selected_pattern": "message_handoff_integrity"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_WIRING_001",
+    "system_id": "system1_iterative_coding",
+    "case_type": "autogen_wiring",
+    "objective": "Documented AutoGen/multi-agent workflow should initialize and route through non-empty agents.",
+    "input": "请运行一个需要文档中多智能体协作的正常任务，并输出各角色的处理摘要。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "manager",
+      "planner",
+      "programmer",
+      "reviewer"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 35,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "manager",
+        "planner",
+        "programmer",
+        "reviewer"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "generic_pattern": "autogen_wiring_conformance",
+      "applicability_reason": "profile/doc claims AutoGen or multi-agent orchestration",
+      "target_fault_mode": "autogen_wiring_missing",
+      "oracle_strength": "hard",
+      "assertions": [
+        "agent_factory_creates_nonempty_agents",
+        "orchestrator_has_nonempty_agent_map",
+        "runtime_trace_contains_documented_agents"
+      ],
+      "static_risks": [],
+      "selected_pattern": "autogen_wiring"
     }
   },
   {
@@ -540,21 +621,15 @@
     "system_id": "system1_iterative_coding",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R1.",
-    "input": "请完成需求 R1，并按文档要求输出：The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
+    "input": "请完成需求 R1，并按文档要求输出：Planner must generate a structured project plan with functional requirements when given a user request.",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
-      "manager",
-      "planner",
-      "programmer",
-      "reviewer"
+      "planner"
     ],
-    "target_tools": [
-      "write_settled_plan",
-      "write_latest_iteration"
-    ],
+    "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
@@ -567,9 +642,7 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
-        "plan",
-        "code",
-        "review"
+        "plan"
       ]
     },
     "fault_injection": null,
@@ -578,9 +651,7 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R1",
       "expected_keywords": [
-        "plan",
-        "code",
-        "review"
+        "plan"
       ],
       "oracle_strength": "medium"
     }
@@ -633,7 +704,7 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_PROP_002",
+    "case_id": "system1_iterative_coding_PROP_001",
     "system_id": "system1_iterative_coding",
     "case_type": "property_boundary",
     "objective": "Boundary/property robustness test: empty_input",
@@ -662,7 +733,7 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_FUZZ_002",
+    "case_id": "system1_iterative_coding_FUZZ_001",
     "system_id": "system1_iterative_coding",
     "case_type": "fuzz_negative",
     "objective": "Instruction conflict should not crash or wait for human input.",
@@ -691,7 +762,7 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_TOOLFUZZ_001",
+    "case_id": "system1_iterative_coding_TOOLFUZZ_002",
     "system_id": "system1_iterative_coding",
     "case_type": "fuzz_tool_failure",
     "objective": "Robustness test for write_latest_iteration: tool_failure",
@@ -748,15 +819,9 @@
       "R1"
     ],
     "target_agents": [
-      "manager",
-      "planner",
-      "programmer",
-      "reviewer"
+      "planner"
     ],
-    "target_tools": [
-      "write_settled_plan",
-      "write_latest_iteration"
-    ],
+    "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
@@ -780,15 +845,9 @@
         "same_required_capability": true,
         "allow_different_agent_path": true,
         "required_agents": [
-          "manager",
-          "planner",
-          "programmer",
-          "reviewer"
+          "planner"
         ],
-        "required_tools": [
-          "write_settled_plan",
-          "write_latest_iteration"
-        ]
+        "required_tools": []
       }
     }
   },
@@ -859,14 +918,55 @@
     "case_id": "system1_iterative_coding_OUTCONTRACT_002",
     "system_id": "system1_iterative_coding",
     "case_type": "output_contract",
+    "objective": "System output should satisfy documented output intent for requirement R2.",
+    "input": "请完成需求 R2，并按文档要求输出：Planner must save the approved plan using write_settled_plan tool when manager says 'sounds good'.",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2"
+    ],
+    "target_agents": [
+      "planner"
+    ],
+    "target_tools": [
+      "write_settled_plan"
+    ],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 30,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": [
+        "plan"
+      ]
+    },
+    "fault_injection": null,
+    "metadata": {
+      "generic_pattern": "output_contract",
+      "applicability_reason": "requirement text exposes output/business contract keywords",
+      "source_requirement": "R2",
+      "expected_keywords": [
+        "plan"
+      ],
+      "oracle_strength": "medium"
+    }
+  },
+  {
+    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
+    "system_id": "system1_iterative_coding",
+    "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R3.",
-    "input": "请完成需求 R3，并按文档要求输出：The system must support resuming an existing project by detecting existing project folders and presenting the latest plan, script, and comments to the Coder immediately upon restart.",
+    "input": "请完成需求 R3，并按文档要求输出：Coder must output only well-formatted code blocks, no extra text.",
     "input_sequence": [],
     "target_requirements": [
       "R3"
     ],
     "target_agents": [
-      "manager",
       "programmer"
     ],
     "target_tools": [],
@@ -882,7 +982,6 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
-        "plan",
         "code"
       ]
     },
@@ -892,25 +991,22 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R3",
       "expected_keywords": [
-        "plan",
         "code"
       ],
       "oracle_strength": "medium"
     }
   },
   {
-    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_004",
     "system_id": "system1_iterative_coding",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R4.",
-    "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
+    "input": "请完成需求 R4，并按文档要求输出：Reviewer must provide comments evaluating code against plan, without writing any code.",
     "input_sequence": [],
     "target_requirements": [
       "R4"
     ],
     "target_agents": [
-      "manager",
-      "programmer",
       "reviewer"
     ],
     "target_tools": [],
@@ -926,6 +1022,7 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
+        "plan",
         "code",
         "review"
       ]
@@ -936,6 +1033,7 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R4",
       "expected_keywords": [
+        "plan",
         "code",
         "review"
       ],
@@ -943,20 +1041,21 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_OUTCONTRACT_004",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_005",
     "system_id": "system1_iterative_coding",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R5.",
-    "input": "请完成需求 R5，并按文档要求输出：The system must ensure that only the latest version of code and comments is presented to agents on each iteration, preventing distraction from outdated or faulty artifacts.",
+    "input": "请完成需求 R5，并按文档要求输出：Manager can execute write_latest_iteration to save Coder code to script file.",
     "input_sequence": [],
     "target_requirements": [
       "R5"
     ],
     "target_agents": [
-      "programmer",
-      "reviewer"
+      "manager"
     ],
-    "target_tools": [],
+    "target_tools": [
+      "write_latest_iteration"
+    ],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
@@ -984,20 +1083,20 @@
     }
   },
   {
-    "case_id": "system1_iterative_coding_REQ_003",
+    "case_id": "system1_iterative_coding_REQ_004",
     "system_id": "system1_iterative_coding",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R2: The system must preserve context across iterations by reading and writing information outside the conversation context window, using file-based persistence (scripts and comments) to reduce token usage.",
-    "input": "请完成以下任务并给出清晰结果：The system must preserve context across iterations by reading and writing information outside the conversation context window, using file-based persistence (scripts and comments) to reduce token usage.",
+    "objective": "Validate requirement R2: Planner must save the approved plan using write_settled_plan tool when manager says 'sounds good'.",
+    "input": "请完成以下任务并给出清晰结果：Planner must save the approved plan using write_settled_plan tool when manager says 'sounds good'.",
     "input_sequence": [],
     "target_requirements": [
       "R2"
     ],
     "target_agents": [
-      "manager"
+      "planner"
     ],
     "target_tools": [
-      "write_latest_iteration"
+      "write_settled_plan"
     ],
     "target_edges": [],
     "oracle": {
@@ -1005,81 +1104,11 @@
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "manager"
+        "planner"
       ],
       "must_call_tools": [
-        "write_latest_iteration"
+        "write_settled_plan"
       ],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {}
-  },
-  {
-    "case_id": "system1_iterative_coding_REQ_004",
-    "system_id": "system1_iterative_coding",
-    "case_type": "requirement_positive",
-    "objective": "Validate requirement R3: The system must support resuming an existing project by detecting existing project folders and presenting the latest plan, script, and comments to the Coder immediately upon restart.",
-    "input": "请完成以下任务并给出清晰结果：The system must support resuming an existing project by detecting existing project folders and presenting the latest plan, script, and comments to the Coder immediately upon restart.",
-    "input_sequence": [],
-    "target_requirements": [
-      "R3"
-    ],
-    "target_agents": [
-      "manager",
-      "programmer"
-    ],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "manager",
-        "programmer"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {}
-  },
-  {
-    "case_id": "system1_iterative_coding_REQ_005",
-    "system_id": "system1_iterative_coding",
-    "case_type": "requirement_positive",
-    "objective": "Validate requirement R4: The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
-    "input": "请完成以下任务并给出清晰结果：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
-    "input_sequence": [],
-    "target_requirements": [
-      "R4"
-    ],
-    "target_agents": [
-      "manager",
-      "programmer",
-      "reviewer"
-    ],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "manager",
-        "programmer",
-        "reviewer"
-      ],
-      "must_call_tools": [],
       "must_cover_edges": [],
       "must_not_call_tools": [],
       "must_not_fabricate_tool_result": false,

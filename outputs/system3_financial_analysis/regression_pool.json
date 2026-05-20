@@ -7,10 +7,45 @@
     "max_turns": 15
   },
   {
-    "case_id": "system3_financial_analysis_COV_002",
+    "case_id": "system3_financial_analysis_COV_001",
     "fault_type": "Message Handoff Error",
     "objective": "Reproduce confirmed fault: Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
-    "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
+    "input": "python -m src.main analyze AAPL --type simple",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "fault_type": "Message Handoff Error",
+    "objective": "Reproduce confirmed fault: Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "input": "python -m src.main analyze AAPL --type comprehensive",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system3_financial_analysis_STATIC_numeric_sign_convention_error",
+    "fault_type": "Data Processing Invariant Violation",
+    "objective": "Reproduce confirmed fault: Risk metrics are returned as negative signed returns where reports commonly expect positive magnitudes.",
+    "input": "static code contract analysis",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system3_financial_analysis_STATIC_partial_metric_zeroed",
+    "fault_type": "Data Processing Invariant Violation",
+    "objective": "Reproduce confirmed fault: Financial metric calculation can discard available metrics when one optional row lookup fails.",
+    "input": "static code contract analysis",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system3_financial_analysis_STATIC_documented_cli_command_missing",
+    "fault_type": "Documented CLI Command Missing",
+    "objective": "Reproduce confirmed fault: Documented CLI command is not implemented by the parser or dispatcher: python -m src.main portfolio AAPL MSFT GOOG",
+    "input": "static code contract analysis",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system3_financial_analysis_STATIC_autogen_wiring_missing",
+    "fault_type": "Agent Orchestration Wiring Missing",
+    "objective": "Reproduce confirmed fault: Documented AutoGen workflow is initialized with an empty or missing agent mapping.",
+    "input": "static code contract analysis",
     "max_turns": 15
   }
 ]

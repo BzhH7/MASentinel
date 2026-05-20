@@ -65,18 +65,17 @@
     "case_id": "system3_financial_analysis_REQ_001",
     "system_id": "system3_financial_analysis",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R1: 多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
-    "input": "请完成以下任务并给出清晰结果：多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
+    "objective": "Validate requirement R1: 系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
+    "input": "请完成以下任务并给出清晰结果：系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
       "user_proxy",
-      "data_analyst",
+      "data_collector",
       "financial_analyst",
-      "risk_analyst",
-      "investment_advisor"
+      "report_generator"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -86,10 +85,9 @@
       "must_not_crash": true,
       "must_visit_agents": [
         "user_proxy",
-        "data_analyst",
+        "data_collector",
         "financial_analyst",
-        "risk_analyst",
-        "investment_advisor"
+        "report_generator"
       ],
       "must_call_tools": [],
       "must_cover_edges": [],
@@ -100,6 +98,50 @@
     },
     "fault_injection": null,
     "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_ARTIFACT_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "artifact_contract",
+    "objective": "Persisted code artifact should preserve a valid Markdown code block body without fence corruption.",
+    "input": "Create a one-line Python script that prints hello. A valid answer may use an unlabeled, py, or python Markdown fence.",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 30,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "generic_pattern": "artifact_contract",
+      "applicability_reason": "profile mentions persisted files, code, reports, or artifact output",
+      "target_fault_mode": "artifact_corruption",
+      "oracle_strength": "hard",
+      "artifact_kind": "python_script",
+      "fence_variants": [
+        "unlabeled",
+        "py",
+        "python"
+      ],
+      "assertions": [
+        "artifact_exists",
+        "no_markdown_fence_markers",
+        "python_compile_succeeds",
+        "artifact_content_preserves_first_code_token"
+      ],
+      "selected_pattern": "artifact_contract"
+    }
   },
   {
     "case_id": "system3_financial_analysis_FSSAFE_001",
@@ -172,14 +214,59 @@
       "generic_pattern": "message_handoff_integrity",
       "applicability_reason": "profile has chained workflow or last_message style handoff",
       "target_fault_mode": "message_handoff_error",
-      "oracle_strength": "diagnostic",
+      "oracle_strength": "hard",
       "assertions": [
         "forwarded_content_not_terminate_only",
         "forwarded_content_from_expected_sender",
         "forwarded_content_non_empty"
       ],
-      "selected_pattern": "message_handoff_integrity",
-      "diagnostic_only": true
+      "selected_pattern": "message_handoff_integrity"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_DATAINV_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "data_invariant",
+    "objective": "Available financial metrics should be preserved when one optional row is missing.",
+    "input": "Analyze a mocked ticker where Total Revenue and Net Income exist but Total Debt is missing.",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 30,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "generic_pattern": "partial_data_invariant",
+      "applicability_reason": "profile contains financial/dataframe metric calculations",
+      "target_fault_mode": "partial_metric_zeroed",
+      "oracle_strength": "hard",
+      "fixture": {
+        "mock_data_fixture": "partial_financial_rows",
+        "financials": {
+          "Total Revenue": 1000,
+          "Net Income": 100,
+          "Total Debt": null
+        }
+      },
+      "stock_symbol": "AAPL",
+      "assertions": [
+        "available_metrics_nonzero",
+        "missing_metric_null_or_unavailable",
+        "missing_row_recorded"
+      ],
+      "selected_pattern": "data_invariant"
     }
   },
   {
@@ -279,48 +366,6 @@
     }
   },
   {
-    "case_id": "system3_financial_analysis_BUDGET_001",
-    "system_id": "system3_financial_analysis",
-    "case_type": "scalable_budget",
-    "objective": "Round/turn budget should scale with multi-record work or batch it inside tools.",
-    "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 40,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "generic_pattern": "scalable_budget",
-      "applicability_reason": "profile mentions records/items and fixed round/turn budgets",
-      "target_fault_mode": "scalable_budget_error",
-      "oracle_strength": "diagnostic",
-      "fixture": {
-        "record_count": 5
-      },
-      "required_steps_estimate": 10,
-      "assertions": [
-        "required_steps_estimate_within_configured_budget",
-        "all_records_processed",
-        "termination_reason_is_completion"
-      ],
-      "selected_pattern": "scalable_budget",
-      "diagnostic_only": true
-    }
-  },
-  {
     "case_id": "system3_financial_analysis_TERM_001",
     "system_id": "system3_financial_analysis",
     "case_type": "termination_signal",
@@ -358,17 +403,16 @@
     "system_id": "system3_financial_analysis",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R1.",
-    "input": "请完成需求 R1，并按文档要求输出：多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
+    "input": "请完成需求 R1，并按文档要求输出：系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
       "user_proxy",
-      "data_analyst",
+      "data_collector",
       "financial_analyst",
-      "risk_analyst",
-      "investment_advisor"
+      "report_generator"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -383,10 +427,8 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
-        "risk",
-        "风险",
-        "建议",
-        "data"
+        "data",
+        "分析"
       ]
     },
     "fault_injection": null,
@@ -395,10 +437,8 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R1",
       "expected_keywords": [
-        "risk",
-        "风险",
-        "建议",
-        "data"
+        "data",
+        "分析"
       ],
       "oracle_strength": "medium"
     }
@@ -544,10 +584,9 @@
     ],
     "target_agents": [
       "user_proxy",
-      "data_analyst",
+      "data_collector",
       "financial_analyst",
-      "risk_analyst",
-      "investment_advisor"
+      "report_generator"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -574,41 +613,12 @@
         "allow_different_agent_path": true,
         "required_agents": [
           "user_proxy",
-          "data_analyst",
+          "data_collector",
           "financial_analyst",
-          "risk_analyst",
-          "investment_advisor"
+          "report_generator"
         ],
         "required_tools": []
       }
-    }
-  },
-  {
-    "case_id": "system3_financial_analysis_REG_001",
-    "system_id": "system3_financial_analysis",
-    "case_type": "regression",
-    "objective": "Baseline regression smoke test for known automated-run hazards.",
-    "input": "请执行一个常规任务，要求自动结束、不要请求人工输入，并在工具不可用时给出可诊断错误。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "source": "seed_regression"
     }
   }
 ]

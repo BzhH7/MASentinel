@@ -29,25 +29,10 @@
     "message": "The run terminated, but exceeded the expected soft turn budget.",
     "evidence": [
       "turn_count=19",
-      "max_turns=15"
+      "max_turns=12"
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
     "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-    "excluded_from_target_faults": true
-  },
-  {
-    "case_id": "system3_financial_analysis_COV_001",
-    "code": "MISSING_AGENT",
-    "layer": "inconclusive",
-    "issue_type": "Coverage Gap / Weak Routing Evidence",
-    "severity": "medium",
-    "confidence": 0.45,
-    "message": "Expected agent was not observed: agent",
-    "evidence": [
-      "agent"
-    ],
-    "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
-    "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
     "excluded_from_target_faults": true
   },
   {
@@ -89,9 +74,9 @@
     "issue_type": "Coverage Gap / Weak Routing Evidence",
     "severity": "medium",
     "confidence": 0.45,
-    "message": "Expected agent was not observed: enterprise_risk_analyst",
+    "message": "Expected agent was not observed: enterprise_data_collector",
     "evidence": [
-      "enterprise_risk_analyst"
+      "enterprise_data_collector"
     ],
     "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
     "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
@@ -120,9 +105,9 @@
     "issue_type": "Coverage Gap / Weak Routing Evidence",
     "severity": "medium",
     "confidence": 0.45,
-    "message": "Expected agent was not observed: enterprise_compliance_officer",
+    "message": "Expected agent was not observed: enterprise_financial_analyst",
     "evidence": [
-      "enterprise_compliance_officer"
+      "enterprise_financial_analyst"
     ],
     "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
     "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
@@ -145,7 +130,22 @@
     "excluded_from_target_faults": true
   },
   {
-    "case_id": "system3_financial_analysis_FUZZ_001",
+    "case_id": "system3_financial_analysis_COV_005",
+    "code": "MISSING_AGENT",
+    "layer": "inconclusive",
+    "issue_type": "Coverage Gap / Weak Routing Evidence",
+    "severity": "medium",
+    "confidence": 0.45,
+    "message": "Expected agent was not observed: enterprise_risk_analyst",
+    "evidence": [
+      "enterprise_risk_analyst"
+    ],
+    "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
+    "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+    "excluded_from_target_faults": true
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_006",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
     "issue_type": "Soft Turn Budget Exceeded",
@@ -154,30 +154,14 @@
     "message": "The run terminated, but exceeded the expected soft turn budget.",
     "evidence": [
       "turn_count=19",
-      "max_turns=12"
+      "max_turns=15"
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
     "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
     "excluded_from_target_faults": true
   },
   {
-    "case_id": "system3_financial_analysis_FUZZ_002",
-    "code": "TURN_BUDGET_EXCEEDED",
-    "layer": "test_harness",
-    "issue_type": "Soft Turn Budget Exceeded",
-    "severity": "low",
-    "confidence": 0.95,
-    "message": "The run terminated, but exceeded the expected soft turn budget.",
-    "evidence": [
-      "turn_count=19",
-      "max_turns=10"
-    ],
-    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-    "excluded_from_target_faults": true
-  },
-  {
-    "case_id": "system3_financial_analysis_FUZZ_002",
+    "case_id": "system3_financial_analysis_COV_006",
     "code": "MISSING_AGENT",
     "layer": "inconclusive",
     "issue_type": "Coverage Gap / Weak Routing Evidence",
@@ -192,22 +176,23 @@
     "excluded_from_target_faults": true
   },
   {
-    "case_id": "system3_financial_analysis_FUZZ_002",
-    "code": "MISSING_AGENT",
-    "layer": "inconclusive",
-    "issue_type": "Coverage Gap / Weak Routing Evidence",
-    "severity": "medium",
-    "confidence": 0.45,
-    "message": "Expected agent was not observed: enterprise_portfolio_manager",
+    "case_id": "system3_financial_analysis_FUZZ_001",
+    "code": "TURN_BUDGET_EXCEEDED",
+    "layer": "test_harness",
+    "issue_type": "Soft Turn Budget Exceeded",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "The run terminated, but exceeded the expected soft turn budget.",
     "evidence": [
-      "enterprise_portfolio_manager"
+      "turn_count=19",
+      "max_turns=15"
     ],
-    "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
-    "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
+    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
     "excluded_from_target_faults": true
   },
   {
-    "case_id": "system3_financial_analysis_FUZZ_003",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
     "issue_type": "Soft Turn Budget Exceeded",
@@ -255,6 +240,22 @@
     "excluded_from_target_faults": true
   },
   {
+    "case_id": "system3_financial_analysis_REQ_001",
+    "code": "TURN_BUDGET_EXCEEDED",
+    "layer": "test_harness",
+    "issue_type": "Soft Turn Budget Exceeded",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "The run terminated, but exceeded the expected soft turn budget.",
+    "evidence": [
+      "turn_count=19",
+      "max_turns=15"
+    ],
+    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+    "excluded_from_target_faults": true
+  },
+  {
     "case_id": "system3_financial_analysis_REQ_003",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
@@ -284,21 +285,6 @@
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
     "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-    "excluded_from_target_faults": true
-  },
-  {
-    "case_id": "system3_financial_analysis_REQ_004",
-    "code": "MISSING_AGENT",
-    "layer": "inconclusive",
-    "issue_type": "Coverage Gap / Weak Routing Evidence",
-    "severity": "medium",
-    "confidence": 0.45,
-    "message": "Expected agent was not observed: report_generator",
-    "evidence": [
-      "report_generator"
-    ],
-    "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
-    "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
     "excluded_from_target_faults": true
   },
   {
@@ -334,36 +320,6 @@
     "excluded_from_target_faults": true
   },
   {
-    "case_id": "system3_financial_analysis_REQ_006",
-    "code": "MISSING_AGENT",
-    "layer": "inconclusive",
-    "issue_type": "Coverage Gap / Weak Routing Evidence",
-    "severity": "medium",
-    "confidence": 0.45,
-    "message": "Expected agent was not observed: enterprise_quantitative_analyst",
-    "evidence": [
-      "enterprise_quantitative_analyst"
-    ],
-    "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
-    "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
-    "excluded_from_target_faults": true
-  },
-  {
-    "case_id": "system3_financial_analysis_REQ_006",
-    "code": "MISSING_AGENT",
-    "layer": "inconclusive",
-    "issue_type": "Coverage Gap / Weak Routing Evidence",
-    "severity": "medium",
-    "confidence": 0.45,
-    "message": "Expected agent was not observed: enterprise_portfolio_manager",
-    "evidence": [
-      "enterprise_portfolio_manager"
-    ],
-    "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
-    "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
-    "excluded_from_target_faults": true
-  },
-  {
     "case_id": "system3_financial_analysis_REQ_007",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
@@ -377,21 +333,6 @@
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
     "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-    "excluded_from_target_faults": true
-  },
-  {
-    "case_id": "system3_financial_analysis_REQ_007",
-    "code": "MISSING_AGENT",
-    "layer": "inconclusive",
-    "issue_type": "Coverage Gap / Weak Routing Evidence",
-    "severity": "medium",
-    "confidence": 0.45,
-    "message": "Expected agent was not observed: enterprise_data_collector",
-    "evidence": [
-      "enterprise_data_collector"
-    ],
-    "root_cause": "The process completed without a blocking target failure, but the trace did not prove the expected routing path.",
-    "suggested_fix": "Improve AutoGen send/receive instrumentation or add a focused case before treating this as an application/framework fault.",
     "excluded_from_target_faults": true
   },
   {

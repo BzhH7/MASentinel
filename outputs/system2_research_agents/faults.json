@@ -1,7 +1,7 @@
 [
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
-    "case_id": "system2_research_agents_COV_001",
+    "case_id": "system2_research_agents_BUDGET_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "SPEAKER_SELECTION_LOOP",
@@ -9,27 +9,27 @@
     "confidence": 0.86,
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
     "evidence": [
+      "请自动完成任务，不要请求人工输入；如果信息不足，请给出可诊断说明并结束。",
+      "任务完成。如需进一步细化或更改任务，请指示。",
+      "unknown language unknown",
+      "    print(report)",
+      "2. **数据校验与风险标注**  ",
       "--------------------------------------------------------------------------------",
-      "期待开始执行。",
-      "- **EU AI Act** – provisional agreement reached; risk-based rules for foundation models.",
-      "- **Agentic AI** – AutoGPT, BabyAGI, Copilot actions gaining traction.",
-      "一旦你给出任务，我会立即规划研究步骤、调用工具（如网络搜索、知识库查询、数据抽取），并与你协作验证中间结果，最终交付高质量的研究输出。请指示。",
-      "**阶段三输出 → 阶段四输入**：五大关键趋势与潜在黑天鹅  ",
-      "**Is this sufficient for your Airtable record?** If so, please provide the Airtable record details and I will generate the API call payload. Otherwise, let me know how you'd like to proceed.",
       "Next speaker: research_manager",
-      "以上任务通过 research_manager 统筹规划、researcher 深度调研并最终整合输出，体现了高效协作的研究交付模式。如需针对某一维度深入，可立即启动第二轮细化研究。",
-      "- **Open‑source explosion** – Mistral Mixtral 8x22B, Meta Llama 3.",
-      "Next speaker: user_proxy",
-      "TERMINATE"
+      "**结论**：group_chat_manager 成功协调多智能体完成正常任务，输出报告质量符合要求，可进入下一审批环节。",
+      "exitcode: 1 (execution failed)",
+      "    — 在表格末尾增加一列“当前风险等级”（低/中/高/极高），已列入我的工作清单。",
+      "以上机制共同保证了系统在任何异常情况下都能在有限时间内终止，不会无限等待或循环。",
+      "4. **状态机与防死锁**：通过有限状态机管理调用流程，每个状态有明确出口；设置全局连续失败计数器，超阈值则强制终止并报错。"
     ],
-    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
-    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
+    "root_cause": "The AutoGen GroupChat speaker selection logic allowed conversation to continue beyond the configured max_turns limit (40), reaching 41 turns before termination. This indicates the next speaker selection failed to enforce the turn budget strictly, possibly due to repeated rejection of the next speaker selection or failure to parse the termination condition until an extra iteration.",
+    "suggested_fix": "Enforce max_turns limit strictly in speaker selection by checking turn count before selecting the next speaker and terminating immediately when the limit is reached, rather than after generating another message. Additionally, harden speaker name normalization and add a retry cap for empty/ invalid responses to prevent loops.",
     "reproduction": {
-      "input": "Director, please update the Airtable record with ID recXXX with a new field 'status':'reviewed' and then report the result to user_proxy.",
+      "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": false,
-    "evidence_strength": 0.91,
+    "evidence_strength": 0.71,
     "not_model_fault_because": "The failure follows from AutoGen configuration or orchestration wiring, not LLM parameter behavior.",
     "code_locations": [],
     "root_cause_confidence": "trace_only",
@@ -40,22 +40,21 @@
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.91,
+      "evidence_strength": 0.71,
       "root_cause_confidence": "trace_only"
     },
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
-      "system2_research_agents_COV_001",
+      "system2_research_agents_BUDGET_001",
       "system2_research_agents_COV_002",
       "system2_research_agents_COV_003",
       "system2_research_agents_COV_004",
       "system2_research_agents_COV_005",
       "system2_research_agents_COV_006",
-      "system2_research_agents_COV_007",
-      "system2_research_agents_COV_008",
-      "system2_research_agents_COV_009",
       "system2_research_agents_FUZZ_001",
+      "system2_research_agents_FUZZ_002",
+      "system2_research_agents_FUZZ_003",
       "system2_research_agents_HANDOFF_001",
       "system2_research_agents_META_001",
       "system2_research_agents_NOHUMAN_001",
@@ -65,6 +64,8 @@
       "system2_research_agents_REQ_001",
       "system2_research_agents_REQ_003",
       "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_005",
+      "system2_research_agents_REQ_006",
       "system2_research_agents_SMOKE_001",
       "system2_research_agents_TOOLAPI_001",
       "system2_research_agents_TOOLCONTRACT_001",
@@ -73,55 +74,65 @@
       "system2_research_agents_TOOLCONTRACT_004",
       "system2_research_agents_TOOLERR_001",
       "system2_research_agents_TOOLFUZZ_001",
-      "system2_research_agents_TOOLFUZZ_002",
       "system2_research_agents_WIRING_001"
     ],
     "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_009",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_010",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_011",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_013",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_012",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_014",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_015",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_016",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_018",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_019",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_020",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_021",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_022",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_023",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_026",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_028",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_025",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_027",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_029",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_030",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_031",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_032",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_033",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_034",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_035",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_036",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_037",
       "SYSTEM2_RESEARCH_AGENTS_FAULT_038",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_039"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_039",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_040"
     ],
     "diagnostic_only": false,
     "agentic_diagnosis": {
-      "fault_confirmed": false,
+      "fault_confirmed": true,
       "layer": "autogen_framework",
       "fault_type": "Speaker Selection Error",
       "severity": "high",
-      "confidence": 0.0,
-      "evidence": [],
-      "root_cause": "",
-      "suggested_fix": ""
+      "confidence": 0.86,
+      "evidence": [
+        "Case status: passed, returncode: 0, terminated: true, turn_count: 41 (exceeds max_turns: 40 but terminated).",
+        "Trace shows TERMINATE message broadcast to all agents at turn 41, but no evidence of early completion.",
+        "Oracle requires must_terminate: true, max_turns: 40; turn_count 41 violates max_turns constraint, indicating near-boundary speaker selection loop or delayed termination decision.",
+        "Evidence from deterministic oracle: Speaker selection path appeared to loop on empty, invalid, or noisy speaker responses before final termination."
+      ],
+      "root_cause": "The AutoGen GroupChat speaker selection logic allowed conversation to continue beyond the configured max_turns limit (40), reaching 41 turns before termination. This indicates the next speaker selection failed to enforce the turn budget strictly, possibly due to repeated rejection of the next speaker selection or failure to parse the termination condition until an extra iteration.",
+      "suggested_fix": "Enforce max_turns limit strictly in speaker selection by checking turn count before selecting the next speaker and terminating immediately when the limit is reached, rather than after generating another message. Additionally, harden speaker name normalization and add a retry cap for empty/ invalid responses to prevent loops."
     },
+    "agentic_evidence": [
+      "Case status: passed, returncode: 0, terminated: true, turn_count: 41 (exceeds max_turns: 40 but terminated).",
+      "Trace shows TERMINATE message broadcast to all agents at turn 41, but no evidence of early completion.",
+      "Oracle requires must_terminate: true, max_turns: 40; turn_count 41 violates max_turns constraint, indicating near-boundary speaker selection loop or delayed termination decision.",
+      "Evidence from deterministic oracle: Speaker selection path appeared to loop on empty, invalid, or noisy speaker responses before final termination."
+    ],
     "false_positive_audit": {
-      "audit_result": "false_positive",
-      "reason": "The evidence shows the chat terminated normally with a TERMINATE message sent by chat_manager to all agents, and returncode=0. The trace log indicates a standard handoff and termination flow, not a speaker selection loop. The 'Next speaker' lines appear as part of normal GroupChat orchestration. There is no evidence of empty, invalid, or noisy speaker responses causing a loop.",
-      "false_positive_risk": "high",
-      "confidence": 0.95
+      "audit_result": "suspected_fault",
+      "reason": "Strong deterministic evidence from trace shows max_turns=40 violated with turn_count=41 before termination, and oracle confirms termination boundary weakness. However, the evidence linking the extra turn to 'empty/noisy speaker responses' is largely derived from agentic inference rather than concrete parsed trace excerpts, and several exitcode=1 / stderr entries in evidence list are unrelated noise. Code location is missing, and oracle evidence_strength=0.56 is below the 0.55 threshold, which keeps the fault in suspected rather than unambiguously confirmed by code-level proof.",
+      "false_positive_risk": "low",
+      "confidence": 0.72
     },
     "agent_audit_influence": "advisory_only",
     "root_cause_group_id": "interaction:speaker-selection-loop",
@@ -131,21 +142,111 @@
   },
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
-    "case_id": "system2_research_agents_COV_001",
+    "case_id": "system2_research_agents_COV_003",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
+    "evidence": [
+      "45"
+    ],
+    "root_cause": "The conversation between director and research_manager lacks a reliable termination condition. After completing the review, the director continues to send messages (Director审阅反馈 repeated) without triggering agent termination. The system either does not register a proper `is_termination_msg` function, or max_turns/max_round is not enforced at the AutoGen framework level, causing the conversation to spin until timeout.",
+    "suggested_fix": "1) Define an explicit termination message e.g., a custom function `is_termination_msg` that checks for 'APPROVED' or 'TASK_COMPLETE' in chat content. 2) In the group chat configuration, set `max_round` (or `max_turns`) to a reasonable value (e.g., 15) so the conversation terminates even if the LLM fails to send a termination keyword. 3) Set `human_input_mode='NEVER'` to prevent the system from waiting for human input that never arrives. 4) Modify the system prompt for director to output 'TERMINATE' after the review is complete.",
+    "reproduction": {
+      "input": "请完成一个需要 director 与 research_manager 协作的任务。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.6,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.6,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system2_research_agents_COV_003",
+      "system2_research_agents_COV_006",
+      "system2_research_agents_HANDOFF_001",
+      "system2_research_agents_OUTCONTRACT_001",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_006"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_013",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_017",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_026",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_028",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_031"
+    ],
+    "diagnostic_only": false,
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "autogen_framework",
+      "fault_type": "Non-Termination",
+      "severity": "high",
+      "confidence": 0.82,
+      "evidence": [
+        "Execution exceeded configured timeout: trace shows turn_count=30 without termination",
+        "Oracle violation: must_terminate=true, but process timed out",
+        "Output shows repeated Director review content, suggesting a loop without termination trigger",
+        "No explicit termination message (e.g., TERMINATE) observed in provided trace tail",
+        "Multiple similar cases (COV_006, HANDOFF_001, OUTCONTRACT_001, REQ_003, REQ_004, REQ_006) affected by same non-termination pattern"
+      ],
+      "root_cause": "The conversation between director and research_manager lacks a reliable termination condition. After completing the review, the director continues to send messages (Director审阅反馈 repeated) without triggering agent termination. The system either does not register a proper `is_termination_msg` function, or max_turns/max_round is not enforced at the AutoGen framework level, causing the conversation to spin until timeout.",
+      "suggested_fix": "1) Define an explicit termination message e.g., a custom function `is_termination_msg` that checks for 'APPROVED' or 'TASK_COMPLETE' in chat content. 2) In the group chat configuration, set `max_round` (or `max_turns`) to a reasonable value (e.g., 15) so the conversation terminates even if the LLM fails to send a termination keyword. 3) Set `human_input_mode='NEVER'` to prevent the system from waiting for human input that never arrives. 4) Modify the system prompt for director to output 'TERMINATE' after the review is complete."
+    },
+    "agentic_evidence": [
+      "Execution exceeded configured timeout: trace shows turn_count=30 without termination",
+      "Oracle violation: must_terminate=true, but process timed out",
+      "Output shows repeated Director review content, suggesting a loop without termination trigger",
+      "No explicit termination message (e.g., TERMINATE) observed in provided trace tail",
+      "Multiple similar cases (COV_006, HANDOFF_001, OUTCONTRACT_001, REQ_003, REQ_004, REQ_006) affected by same non-termination pattern"
+    ],
+    "false_positive_audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The trace evidence clearly shows repeated Director review content without a termination signal, indicating a loop. The root cause analysis points to a missing termination condition in the AutoGen framework, which is a legitimate software fault that can be fixed in code/configuration. The confidence is moderate due to lack of direct code evidence, but the failure pattern is well-established across multiple affected cases.",
+      "false_positive_risk": "low",
+      "confidence": 0.78
+    },
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "interaction:timeout-or-non-termination",
+    "root_cause_group_title": "Conversation timeout or missing termination guard",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "case_id": "system2_research_agents_REQ_001",
     "layer": "application",
     "fault_type": "Missing Tool Call",
     "failure_code": "MISSING_TOOL_CALL",
     "severity": "medium",
     "confidence": 0.7,
-    "summary": "Expected tool was not called: update_single_airtable_record",
+    "summary": "Expected tool was not called: google_search",
     "evidence": [
+      "google_search",
       "update_single_airtable_record",
-      "google_search"
+      "web_scraping",
+      "get_airtable_records"
     ],
-    "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system2_research_agents.",
-    "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
+    "root_cause": "The trace shows successful termination with TERMINATE message distribution, but no deterministic evidence confirms 'google_search' was missing. The rule oracle flagged MISSING_TOOL_CALL with low evidence_strength (0.28), and the deterministic confirmation deemed it 'suspected_fault' with insufficient code/trace evidence.",
+    "suggested_fix": "Review tool registration and agent configuration to ensure 'google_search' is available to the researcher agent. Check if the tool was called within the 23-turn conversation but not captured by the trace, or if the model chose not to invoke it. If no code defect is found, classify as non-target issue (model decision/behavior) and reduce severity.",
     "reproduction": {
-      "input": "Director, please update the Airtable record with ID recXXX with a new field 'status':'reviewed' and then report the result to user_proxy.",
+      "input": "Please initiate a group chat to research the latest autonomous drone regulations and file a summary using Airtable.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
     },
     "suspected_false_positive": true,
@@ -166,11 +267,15 @@
     "confirmation_status": "suspected_fault",
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
-      "system2_research_agents_COV_001",
-      "system2_research_agents_TOOLFUZZ_001"
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_001",
+      "system2_research_agents_REQ_001"
     ],
     "duplicate_fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_037"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_022",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_023",
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_024"
     ],
     "diagnostic_only": false,
     "agentic_diagnosis": {
@@ -178,51 +283,15 @@
       "layer": "application",
       "fault_type": "Missing Tool Call",
       "severity": "medium",
-      "confidence": 0.28,
-      "evidence": [
-        "update_single_airtable_record",
-        "google_search"
-      ],
-      "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system2_research_agents.",
-      "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
-      "reproduction": {
-        "input": "Director, please update the Airtable record with ID recXXX with a new field 'status':'reviewed' and then report the result to user_proxy.",
-        "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
-      },
-      "suspected_false_positive": true,
-      "evidence_strength": 0.28,
-      "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-      "code_locations": [],
-      "root_cause_confidence": "trace_only",
-      "deterministic_confirmation": {
-        "confirmed": false,
-        "source": "rule_oracle_and_deterministic_evidence",
-        "reason": "insufficient deterministic code/trace evidence",
-        "confidence_threshold": 0.65,
-        "code_evidence_strength_threshold": 0.55,
-        "trace_evidence_strength_threshold": 0.65,
-        "evidence_strength": 0.28,
-        "root_cause_confidence": "trace_only"
-      },
-      "confirmation_status": "suspected_fault",
-      "confirmation_source": "deterministic_oracle_evidence",
-      "affected_cases": [
-        "system2_research_agents_COV_001",
-        "system2_research_agents_TOOLFUZZ_001"
-      ],
-      "duplicate_fault_ids": [
-        "SYSTEM2_RESEARCH_AGENTS_FAULT_037"
-      ],
-      "diagnostic_only": false
+      "confidence": 0.0,
+      "evidence": [],
+      "root_cause": "The trace shows successful termination with TERMINATE message distribution, but no deterministic evidence confirms 'google_search' was missing. The rule oracle flagged MISSING_TOOL_CALL with low evidence_strength (0.28), and the deterministic confirmation deemed it 'suspected_fault' with insufficient code/trace evidence.",
+      "suggested_fix": "Review tool registration and agent configuration to ensure 'google_search' is available to the researcher agent. Check if the tool was called within the 23-turn conversation but not captured by the trace, or if the model chose not to invoke it. If no code defect is found, classify as non-target issue (model decision/behavior) and reduce severity."
     },
-    "agentic_evidence": [
-      "update_single_airtable_record",
-      "google_search"
-    ],
     "false_positive_audit": {
       "audit_result": "suspected_fault",
-      "reason": "The diagnostic report identifies MISSING_TOOL_CALL for update_single_airtable_record, but the provided evidence consists only of tool names (update_single_airtable_record, google_search) and an assertion from the rule oracle. No code locations, trace excerpts showing expected vs. actual tool invocations, nor deterministic confirmation are present. The trace summary indicates the test case passed with return code 0, terminating cleanly after 11 turns; stderr and stdout tails show only deprecation warnings and termination messages, not tool call errors. Without concrete code/trace evidence that the tool invocation was actually missing due to an application-level fault (as opposed to model behavior, orchestration logic, or a benign alternative path), this finding cannot be confirmed as a true positive.",
-      "false_positive_risk": "high",
+      "reason": "The fault is based entirely on a rule oracle flagging a missing 'google_search' tool call, but there is no code or trace evidence showing the tool should have been invoked or was incorrectly excluded. The trace confirms successful termination with no error, and the evidence strength is very low (0.28). This could simply be a model decision not to use the tool in this specific conversation, which is a non-target behavioral variation, not a code or configuration defect.",
+      "false_positive_risk": "medium",
       "confidence": 0.28
     },
     "agent_audit_influence": "advisory_only",
@@ -233,28 +302,46 @@
     "classification_note": "Derived symptom: the target failed before MASentinel could judge downstream agent/tool/message behavior."
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
-    "case_id": "system2_research_agents_COV_002",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "case_id": "system2_research_agents_STATIC_human_input_requested",
     "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
+    "fault_type": "Human Input Mode Error",
+    "failure_code": "HUMAN_INPUT_REQUESTED",
     "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
+    "confidence": 0.9,
+    "summary": "AutoGen user proxy is configured to always request human input in an automated workflow.",
     "evidence": [
-      "45"
+      "human_input_mode='ALWAYS'",
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
     ],
-    "root_cause": "The conversation lacks a reliable termination condition: speaker_selection_agent keeps selecting 'researcher' cycle without producing a termination signal; there is no is_termination_msg check, max_turns guard, or forced exit after exceeding configured limit.",
-    "suggested_fix": "Add a termination message function that checks for keywords like 'TERMINATE' or 'exit'. Configure max_turns=12 in groupchat/agent settings and set human_input_mode='NEVER' for automated runs. Implement a fallback speaker selection logic that picks 'checking_agent' when a cycle is detected.",
+    "root_cause": "The framework configuration is incompatible with unattended automated evaluation.",
+    "suggested_fix": "Set human_input_mode='NEVER' or provide a deterministic non-blocking input adapter for automated runs.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "12",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "143",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "145",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.76,
+    "root_cause_confidence": "code_evidence",
     "reproduction": {
-      "input": "Researcher, please search for 'latest AI trends' and share the summary with research_manager.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+      "input": "static code contract analysis",
+      "command": ""
     },
     "suspected_false_positive": false,
-    "evidence_strength": 0.8,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only",
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "deterministic_confirmation": {
       "confirmed": true,
       "source": "rule_oracle_and_deterministic_evidence",
@@ -262,86 +349,94 @@
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.8,
-      "root_cause_confidence": "trace_only"
+      "evidence_strength": 0.76,
+      "root_cause_confidence": "code_evidence"
     },
-    "confirmation_status": "confirmed_fault",
-    "confirmation_source": "deterministic_oracle_evidence",
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
     "affected_cases": [
-      "system2_research_agents_COV_002",
-      "system2_research_agents_COV_003",
-      "system2_research_agents_COV_006",
-      "system2_research_agents_COV_007",
-      "system2_research_agents_HANDOFF_001",
-      "system2_research_agents_REQ_001",
-      "system2_research_agents_REQ_003"
+      "system2_research_agents_STATIC_human_input_requested"
     ],
-    "duplicate_fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_010",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_012",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_017",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_024",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_027"
-    ],
-    "diagnostic_only": false,
+    "duplicate_fault_ids": [],
     "agentic_diagnosis": {
       "fault_confirmed": false,
       "layer": "autogen_framework",
-      "fault_type": "Non-Termination",
+      "fault_type": "Human Input Mode Error",
       "severity": "high",
-      "confidence": 0.82,
+      "confidence": 0.9,
       "evidence": [
-        "Trace shows turn_count=22 with timeout=true, terminated=false, exceeding typical max_turns=12."
+        "human_input_mode='ALWAYS'",
+        "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
       ],
-      "root_cause": "The conversation lacks a reliable termination condition: speaker_selection_agent keeps selecting 'researcher' cycle without producing a termination signal; there is no is_termination_msg check, max_turns guard, or forced exit after exceeding configured limit.",
-      "suggested_fix": "Add a termination message function that checks for keywords like 'TERMINATE' or 'exit'. Configure max_turns=12 in groupchat/agent settings and set human_input_mode='NEVER' for automated runs. Implement a fallback speaker selection logic that picks 'checking_agent' when a cycle is detected."
+      "root_cause": "The framework configuration is incompatible with unattended automated evaluation.",
+      "suggested_fix": "Set human_input_mode='NEVER' or provide a deterministic non-blocking input adapter for automated runs."
     },
     "agentic_evidence": [
-      "Trace shows turn_count=22 with timeout=true, terminated=false, exceeding typical max_turns=12."
+      "human_input_mode='ALWAYS'",
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
     ],
     "false_positive_audit": {
       "audit_result": "suspected_fault",
-      "reason": "The diagnosis is plausible—trace shows 22 turns and a timeout, and the root cause explanation (lack of termination condition) is logically consistent with the observed behavior. However, deterministic confirmation is weak: no concrete code snippet showing missing max_turns or is_termination_msg is provided, and the evidence is entirely trace-based. The suggested fix (max_turns=12) might inadvertently mask unnecessary cycles rather than ensuring correct termination logic. Low risk of false positive because the timeout is reproducible and the trace pattern supports looping.",
+      "reason": "The fault report identifies a deterministic configuration issue (human_input_mode='ALWAYS') in the AutoGen user proxy, which is a framework-level misconfiguration that can block unattended execution. The evidence points to direct code locations in app.py, suggesting a genuine incompatibility with automated workflows. However, the report lacks a trace excerpt or runtime log confirming that human input was actually requested during a test run, so the impact is inferred from static analysis rather than observed failure. Further, the failure may be by design if the application is intended for interactive use, which would make this a non-target issue for MASentinel's automation-focused scope. Nevertheless, the configuration pattern is a reliable indicator of potential automation blockage.",
       "false_positive_risk": "low",
-      "confidence": 0.72
+      "confidence": 0.85
     },
     "agent_audit_influence": "advisory_only",
-    "root_cause_group_id": "interaction:timeout-or-non-termination",
-    "root_cause_group_title": "Conversation timeout or missing termination guard",
+    "root_cause_group_id": "interaction:unattended-termination-guard-missing",
+    "root_cause_group_title": "Unattended termination / approval guard missing",
     "is_primary_fault": true,
     "cascades_from": null
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
-    "case_id": "system2_research_agents_REQ_003",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+    "case_id": "system2_research_agents_STATIC_view_parameter_ignored",
     "layer": "application",
-    "fault_type": "Missing Error Handling",
-    "failure_code": "RUNTIME_EXCEPTION",
+    "fault_type": "Tool API Semantics Error",
+    "failure_code": "VIEW_PARAMETER_IGNORED",
     "severity": "high",
-    "confidence": 0.85,
-    "summary": "The process ended with an unhandled runtime error.",
+    "confidence": 0.88,
+    "summary": "External table/API tool constructs requests without preserving documented view/filter parameters.",
     "evidence": [
-      "  warnings.warn(",
-      "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/lib/python3.9/site-packages/flaml/__init__.py:20: UserWarning: flaml.automl is not available. Please install flaml[automl] to enable AutoML functionalities.",
-      "  warnings.warn(\"flaml.automl is not available. Please install flaml[automl] to enable AutoML functionalities.\")",
-      "Traceback (most recent call last):",
-      "  File \"\", line 26, in <module>",
-      "    web_scraping,",
-      "NameError: name 'web_scraping' is not defined",
-      "--------------------------------------------------------------------------------"
+      "Airtable API call found without view/query parameter handling",
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
     ],
-    "root_cause": "The researcher agent attempted to execute dynamically generated Python code that referenced 'web_scraping' without the tool being previously defined or imported in the execution scope. No error handling was present to catch NameError and recover gracefully, causing a runtime crash that propagated to the agent and resulted in task failure.",
-    "suggested_fix": "Modify the code generation logic or the Python execution environment to ensure all required tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) are properly imported and defined before executing user code. Add a try/except block around the execution to catch NameError and other exceptions, allowing the agent to handle missing tools gracefully rather than crashing. Alternatively, explicitly list tool names injected into the code namespace.",
+    "root_cause": "The tool wrapper for Airtable API (or similar external table/API tool) constructs HTTP requests without parsing and preserving documented view/filter parameters (e.g., view, query, filterByFormula). This causes requests to ignore view-specific data filtering, leading to unexpected query results when views are specified.",
+    "suggested_fix": "Parse the semantic fields (base, table, view, query, filterByFormula, etc.) from the tool input and explicitly include them as query parameters in the API request URL. Ensure that the request builder proxies all relevant semantic parameters to the downstream API call.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "38",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "88",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "106",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "112",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "121",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.72,
+    "root_cause_confidence": "code_evidence",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python app.py"
+      "input": "static code contract analysis",
+      "command": ""
     },
     "suspected_false_positive": false,
-    "evidence_strength": 0.66,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only",
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
     "deterministic_confirmation": {
       "confirmed": true,
       "source": "rule_oracle_and_deterministic_evidence",
@@ -349,45 +444,371 @@
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.66,
-      "root_cause_confidence": "trace_only"
+      "evidence_strength": 0.72,
+      "root_cause_confidence": "code_evidence"
     },
-    "confirmation_status": "confirmed_fault",
-    "confirmation_source": "deterministic_oracle_evidence",
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
     "affected_cases": [
-      "system2_research_agents_REQ_003"
+      "system2_research_agents_STATIC_view_parameter_ignored"
     ],
     "duplicate_fault_ids": [],
     "agentic_diagnosis": {
       "fault_confirmed": true,
       "layer": "application",
-      "fault_type": "Missing Error Handling",
+      "fault_type": "Tool API Semantics Error",
       "severity": "high",
-      "confidence": 0.85,
+      "confidence": 0.88,
       "evidence": [
-        "Stderr shows NameError: name 'web_scraping' is not defined at line 26 in generated code.",
-        "Trace event shows researcher agent receiving exitcode: 1 (execution failed) with the same NameError.",
-        "Test case requires researcher to call web_scraping and google_search tools, but researcher fails with unhandled exception.",
-        "Turn count exceeded max_turns (17 > 15), indicating task did not terminate successfully."
+        {
+          "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+          "line": 38,
+          "description": "Airtable API call referenced but no view/query parameter handling detected"
+        },
+        {
+          "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+          "line": 88,
+          "description": "Possible semantic parameter stripping in URL construction"
+        },
+        {
+          "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+          "line": 106,
+          "description": "Filter/view parameter ignored in API wrapper logic"
+        },
+        {
+          "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+          "line": 112,
+          "description": "Missing parameter propagation through request builder"
+        },
+        {
+          "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+          "line": 121,
+          "description": "API call completed without incorporating view/filter semantics"
+        }
       ],
-      "root_cause": "The researcher agent attempted to execute dynamically generated Python code that referenced 'web_scraping' without the tool being previously defined or imported in the execution scope. No error handling was present to catch NameError and recover gracefully, causing a runtime crash that propagated to the agent and resulted in task failure.",
-      "suggested_fix": "Modify the code generation logic or the Python execution environment to ensure all required tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) are properly imported and defined before executing user code. Add a try/except block around the execution to catch NameError and other exceptions, allowing the agent to handle missing tools gracefully rather than crashing. Alternatively, explicitly list tool names injected into the code namespace."
+      "root_cause": "The tool wrapper for Airtable API (or similar external table/API tool) constructs HTTP requests without parsing and preserving documented view/filter parameters (e.g., view, query, filterByFormula). This causes requests to ignore view-specific data filtering, leading to unexpected query results when views are specified.",
+      "suggested_fix": "Parse the semantic fields (base, table, view, query, filterByFormula, etc.) from the tool input and explicitly include them as query parameters in the API request URL. Ensure that the request builder proxies all relevant semantic parameters to the downstream API call."
     },
     "agentic_evidence": [
-      "Stderr shows NameError: name 'web_scraping' is not defined at line 26 in generated code.",
-      "Trace event shows researcher agent receiving exitcode: 1 (execution failed) with the same NameError.",
-      "Test case requires researcher to call web_scraping and google_search tools, but researcher fails with unhandled exception.",
-      "Turn count exceeded max_turns (17 > 15), indicating task did not terminate successfully."
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": 38,
+        "description": "Airtable API call referenced but no view/query parameter handling detected"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": 88,
+        "description": "Possible semantic parameter stripping in URL construction"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": 106,
+        "description": "Filter/view parameter ignored in API wrapper logic"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": 112,
+        "description": "Missing parameter propagation through request builder"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": 121,
+        "description": "API call completed without incorporating view/filter semantics"
+      }
     ],
     "false_positive_audit": {
       "audit_result": "suspected_fault",
-      "reason": "The evidence (NameError: name 'web_scraping' is not defined in generated code, trace with exitcode: 1, and test failure due to missing tool) strongly supports a deterministic application-layer fault. The fault can be mitigated by code changes (tool registration, error handling) without altering model parameters. There is no indication this is a model service issue. The deterministic oracle confirms the fault with code/trace evidence exceeding the thresholds.",
-      "false_positive_risk": "low",
-      "confidence": 0.85
+      "reason": "The diagnosis identifies a potential Tool API Semantics Error in the Airtable wrapper within /app.py, but the audit notes several evidence gaps: 1) Evidence descriptions are generic ('possible semantic parameter stripping', 'filter/view parameter ignored') and do not include actual code snippets showing missing parameter handling; 2) No dynamic trace or execution log is provided to demonstrate that a view parameter was actually sent and ignored at runtime; 3) Without seeing the full function signatures and request construction code, it's possible that view/filter are not documented inputs for the wrapper's intended use case, making this a design limitation rather than a fault. The evidence_strength of 0.72 suggests some uncertainty, and the deterministic confirmation source 'deterministic_static_code_evidence' relies on static pattern matching which can be misleading without concrete code examples. The finding remains plausible as an application-layer tool API issue but requires stronger static evidence before it can be considered fully confirmed.",
+      "false_positive_risk": "medium",
+      "confidence": 0.55
     },
     "agent_audit_influence": "advisory_only",
-    "root_cause_group_id": "runtime:nameerror:name-web_scraping-is-not-defined",
-    "root_cause_group_title": "Unhandled startup/runtime exception",
+    "root_cause_group_id": "generic:application-tool-api-semantics-error-the-tool-wrapper-for-airtable-api-or-similar-external-table-api-tool-constructs-htt",
+    "root_cause_group_title": "Tool API Semantics Error",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
+    "case_id": "system2_research_agents_STATIC_pagination_not_followed",
+    "layer": "application",
+    "fault_type": "Tool API Pagination Missing",
+    "failure_code": "PAGINATION_NOT_FOLLOWED",
+    "severity": "high",
+    "confidence": 0.88,
+    "summary": "External table/API tool does not follow paginated responses.",
+    "evidence": [
+      "Airtable API call found without offset pagination loop",
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    ],
+    "root_cause": "The tool wrapper in app.py issues a single Airtable API request without iterating over paginated 'offset' values, so it retrieves only the initial page of records and discards the rest.",
+    "suggested_fix": "Refactor the Airtable tool functions to loop while an 'offset' is present in the response, accumulate all records from successive pages, and return the complete merged list. Ensure that the loop terminates when no further offset is returned to avoid infinite requests.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "38",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "88",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "106",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "112",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "121",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.72,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.72,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system2_research_agents_STATIC_pagination_not_followed"
+    ],
+    "duplicate_fault_ids": [],
+    "agentic_diagnosis": {
+      "fault_confirmed": true,
+      "layer": "application",
+      "fault_type": "Tool API Pagination Missing",
+      "severity": "high",
+      "confidence": 0.88,
+      "evidence": [
+        "Static code inspection confirms Airtable API call is made without offset-based pagination loop at the indicated locations in app.py.",
+        "File /Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py contains function(s) returning only the first page of Airtable results."
+      ],
+      "root_cause": "The tool wrapper in app.py issues a single Airtable API request without iterating over paginated 'offset' values, so it retrieves only the initial page of records and discards the rest.",
+      "suggested_fix": "Refactor the Airtable tool functions to loop while an 'offset' is present in the response, accumulate all records from successive pages, and return the complete merged list. Ensure that the loop terminates when no further offset is returned to avoid infinite requests."
+    },
+    "agentic_evidence": [
+      "Static code inspection confirms Airtable API call is made without offset-based pagination loop at the indicated locations in app.py.",
+      "File /Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py contains function(s) returning only the first page of Airtable results."
+    ],
+    "false_positive_audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The diagnosis claims deterministic_static_code_evidence that the Airtable tool does not follow pagination, but the provided evidence is only a filename and line numbers without actual code snippets showing the missing loop or any Airtable API response structure. The evidence_strength is marked as 0.72, which is below the threshold for confirmed fault under strict deterministic oracle rules. Without code excerpts or mock API responses, the pagination behavior cannot be verified; the issue might be a configuration where the table is small enough or a view is already filtered, making pagination unnecessary. This could be a non-target issue related to data volume expectations rather than a code defect.",
+      "false_positive_risk": "medium",
+      "confidence": 0.55
+    },
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "generic:application-tool-api-pagination-missing-the-tool-wrapper-in-app.py-issues-a-single-airtable-api-request-without-iteratin",
+    "root_cause_group_title": "Tool API Pagination Missing",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
+    "case_id": "system2_research_agents_STATIC_tool_unstructured_error",
+    "layer": "application",
+    "fault_type": "Tool Error Contract Missing",
+    "failure_code": "TOOL_UNSTRUCTURED_ERROR",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "HTTP tool can return raw text or None instead of a structured success/error envelope.",
+    "evidence": [
+      "requests-based tool returns response.text/None without typed error envelope",
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    ],
+    "root_cause": "The tool wrapper does not normalize HTTP failures into a structured result.",
+    "suggested_fix": "Check status codes and return typed success/error payloads with status, message, and retryability.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "2",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "38",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "40",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "88",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "91",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.5,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "suspected_false_positive": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.5,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system2_research_agents_STATIC_tool_unstructured_error"
+    ],
+    "duplicate_fault_ids": [],
+    "agentic_diagnosis": {
+      "fault_confirmed": false,
+      "layer": "application",
+      "fault_type": "Tool Error Contract Missing",
+      "severity": "medium",
+      "confidence": 0.72,
+      "evidence": [
+        "requests-based tool returns response.text/None without typed error envelope",
+        "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+      ],
+      "root_cause": "The tool wrapper does not normalize HTTP failures into a structured result.",
+      "suggested_fix": "Check status codes and return typed success/error payloads with status, message, and retryability."
+    },
+    "agentic_evidence": [
+      "requests-based tool returns response.text/None without typed error envelope",
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    ],
+    "false_positive_audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The finding is based solely on static code analysis of the HTTP tool wrapper, which is noted to return response.text or None without a typed error envelope. This indicates a plausible design gap where the system may not handle HTTP failures in a structured way. However, there is no observed failure, specific HTTP status code, or tool execution trace to confirm that the missing envelope caused an actual error or affected downstream behavior. The evidence is sufficient to flag a risk, but deterministic confirmation requires an observed failing HTTP status and tool result/error envelope.",
+      "false_positive_risk": "medium",
+      "confidence": 0.45
+    },
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "tool:error-envelope-missing",
+    "root_cause_group_title": "External tool error envelope missing",
+    "is_primary_fault": true,
+    "cascades_from": null
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
+    "case_id": "system2_research_agents_STATIC_scalable_budget_exceeded",
+    "layer": "autogen_framework",
+    "fault_type": "Scalable Turn Budget Error",
+    "failure_code": "SCALABLE_BUDGET_EXCEEDED",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "GroupChat uses a fixed max_round for work that scales with records/items.",
+    "evidence": [
+      "max_round=15",
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    ],
+    "root_cause": "The configured conversation budget (max_round=15) is fixed while the task workload scales with external records/items. As the number of records grows, each round must process more items, eventually exceeding the budget before all records are processed. The group chat has no mechanism to dynamically adjust max_round based on input size.",
+    "suggested_fix": "Scale max_round with record count or move repeated per-record work into deterministic batched tools. For example: calculate max_round as BASE_ROUNDS + (num_records * ROUNDS_PER_RECORD) or refactor the workflow to batch all record processing into a single deterministic tool call before entering the group chat, so the conversation itself doesn't scale with data volume.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "19",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "104",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "105",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "106",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py",
+        "line": "109",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.68,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.68,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system2_research_agents_STATIC_scalable_budget_exceeded"
+    ],
+    "duplicate_fault_ids": [],
+    "agentic_diagnosis": {
+      "fault_confirmed": true,
+      "layer": "autogen_framework",
+      "fault_type": "Scalable Turn Budget Error",
+      "severity": "medium",
+      "confidence": 0.82,
+      "evidence": [
+        "max_round=15",
+        "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+      ],
+      "root_cause": "The configured conversation budget (max_round=15) is fixed while the task workload scales with external records/items. As the number of records grows, each round must process more items, eventually exceeding the budget before all records are processed. The group chat has no mechanism to dynamically adjust max_round based on input size.",
+      "suggested_fix": "Scale max_round with record count or move repeated per-record work into deterministic batched tools. For example: calculate max_round as BASE_ROUNDS + (num_records * ROUNDS_PER_RECORD) or refactor the workflow to batch all record processing into a single deterministic tool call before entering the group chat, so the conversation itself doesn't scale with data volume."
+    },
+    "agentic_evidence": [
+      "max_round=15",
+      "/Users/zhbai/code/cz_exp/research-agents-3.0-main/app.py"
+    ],
+    "false_positive_audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The finding is supported by static code location (app.py with max_round=15), which is a deterministic configuration defect. However, the audit cannot verify whether the workload truly scales with external records/items in the actual runtime flow without a dynamic trace or an explicit workload scaling function in the provided snippet. The evidence strength (0.68) is moderate, and the root cause relies on inferring that each round processes more items as records grow. A false positive risk exists if the workload is actually bounded or if max_round is intentionally set for a different purpose. The classification as an AutoGen framework fault is plausible but could also be a simple configuration oversight in the application layer if the conversation design doesn't inherently scale.",
+      "false_positive_risk": "medium",
+      "confidence": 0.68
+    },
+    "agent_audit_influence": "advisory_only",
+    "root_cause_group_id": "generic:autogen_framework-scalable-turn-budget-error-the-configured-conversation-budget-max_round-15-is-fixed-while-the-task-wor",
+    "root_cause_group_title": "Scalable Turn Budget Error",
     "is_primary_fault": true,
     "cascades_from": null
   }

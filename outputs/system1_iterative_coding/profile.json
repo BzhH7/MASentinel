@@ -61,80 +61,126 @@
   "requirements": [
     {
       "id": "R1",
-      "description": "The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
+      "description": "Planner must generate a structured project plan with functional requirements when given a user request.",
       "expected_agents": [
-        "manager",
-        "planner",
-        "programmer",
-        "reviewer"
+        "planner"
       ],
-      "expected_tools": [
-        "write_settled_plan",
-        "write_latest_iteration"
-      ],
+      "expected_tools": [],
       "expected_behavior": [
-        "In the planning phase, the Manager and Planner converse until the Manager approves the plan with 'sounds good', after which the Planner calls write_settled_plan to persist the plan.",
-        "In the iteration phase, the Coder generates a Python script to satisfy the plan, and its output is saved via write_latest_iteration as script_v1.py.",
-        "The Reviewer then evaluates the script against the plan and produces comments, which are saved via write_latest_iteration_comments as comments_v1.txt.",
-        "Subsequent iterations present the plan, the latest script, and the latest comments to the Coder and Reviewer, incrementing version numbers.",
-        "The Manager can manually test the code and provide feedback at any point during the iteration phase."
+        "Planner responds with a plan containing numbered functional requirements.",
+        "Plan must include explanation of request, challenges, and a list of features/guides."
       ],
       "negative_cases": [
-        "If the Planner saves the plan without Manager approval (e.g., no 'sounds good' signal), the workflow should not transition to the iteration phase.",
-        "If the Coder outputs non-code content or fails to produce a valid script, the write_latest_iteration tool should not create a broken script file.",
-        "If the Reviewer generates an empty or irrelevant comment file, the next Coder iteration may lack guidance."
+        "Planner outputs only a single line without structured plan.",
+        "Planner refuses to generate any plan."
       ]
     },
     {
       "id": "R2",
-      "description": "The system must preserve context across iterations by reading and writing information outside the conversation context window, using file-based persistence (scripts and comments) to reduce token usage.",
+      "description": "Planner must save the approved plan using write_settled_plan tool when manager says 'sounds good'.",
       "expected_agents": [
-        "manager"
+        "planner"
       ],
       "expected_tools": [
-        "write_latest_iteration",
-        "write_latest_iteration_comments",
-        "retrieve_latest_iteration",
-        "retrieve_latest_iteration_comment",
-        "read_text_file"
+        "write_settled_plan"
       ],
       "expected_behavior": [
-        "On each iteration, the latest script_vN.py is retrieved and presented to the Coder/Reviewer.",
-        "On each iteration, the latest comments_vN.txt is retrieved and presented to the Coder/Reviewer.",
-        "The plan file is loaded and presented to agents on every iteration.",
-        "Writing operations (code and comments) must correctly increment version numbers and not overwrite previous versions."
+        "When manager input contains 'sounds good', planner calls write_settled_plan.",
+        "Plan content saved to file in the project folder.",
+        "Planner confirms write completion."
       ],
       "negative_cases": [
-        "If the file system is unavailable or the project folder is missing, retrieval should fail gracefully (e.g., error message) instead of crashing.",
-        "If version numbers are not correctly tracked, agents may see stale or non-existent files."
+        "Planner saves plan without manager approval.",
+        "Planner modifies plan content after calling write_settled_plan."
       ]
     },
     {
       "id": "R3",
-      "description": "The system must support resuming an existing project by detecting existing project folders and presenting the latest plan, script, and comments to the Coder immediately upon restart.",
+      "description": "Coder must output only well-formatted code blocks, no extra text.",
       "expected_agents": [
-        "manager",
         "programmer"
       ],
-      "expected_tools": [
-        "list_subdirectories",
-        "does_version_one_exist",
-        "retrieve_latest_iteration",
-        "retrieve_latest_iteration_comment",
-        "read_text_file"
-      ],
+      "expected_tools": [],
       "expected_behavior": [
-        "When main.py starts, it checks for the presence of IterCode_Projects folder and any subdirectories.",
-        "If existing projects are found, the user is prompted to continue or start a new project.",
-        "Choosing to continue immediately starts a new iteration with the Coder, presenting the existing plan, latest script, and latest comments."
+        "Coder message contains only a code block or multiple code blocks.",
+        "No conversational text, explanations, or summaries."
       ],
       "negative_cases": [
-        "If the project folder is corrupted or missing expected files (e.g., no plan file), the resume feature should handle the error and not enter an infinite loop."
+        "Coder outputs prose before or after code block.",
+        "Coder refuses to generate code because of missing context."
       ]
     },
     {
       "id": "R4",
-      "description": "The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
+      "description": "Reviewer must provide comments evaluating code against plan, without writing any code.",
+      "expected_agents": [
+        "reviewer"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "Reviewer explains what works OK and what needs improvement in the context of the plan.",
+        "Reviewer output is pure text, no code blocks."
+      ],
+      "negative_cases": [
+        "Reviewer generates replacement code.",
+        "Reviewer only outputs 'looks good' without specifics."
+      ]
+    },
+    {
+      "id": "R5",
+      "description": "Manager can execute write_latest_iteration to save Coder code to script file.",
+      "expected_agents": [
+        "manager"
+      ],
+      "expected_tools": [
+        "write_latest_iteration"
+      ],
+      "expected_behavior": [
+        "When manager triggers write_latest_iteration, code content is written to a new script_v{n}.py in project folder.",
+        "Version number increments correctly."
+      ],
+      "negative_cases": [
+        "Function call fails silently.",
+        "File is saved to wrong directory."
+      ]
+    },
+    {
+      "id": "R6",
+      "description": "Iteration loop must present latest script and comments to Coder and Reviewer.",
+      "expected_agents": [
+        "programmer",
+        "reviewer"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "Coder receives plan + latest script + latest comments as context.",
+        "Reviewer receives plan + latest script + latest comments as context.",
+        "Only latest versions are presented, not previous iterations."
+      ],
+      "negative_cases": [
+        "Old script versions are included in context.",
+        "Iteration continues after manager exit signal."
+      ]
+    },
+    {
+      "id": "R7",
+      "description": "System must support resuming an existing project.",
+      "expected_agents": [
+        "manager"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "On restart, system detects existing projects and offers continue option.",
+        "If continued, latest plan, script, and comments are loaded and an iteration starts with Coder."
+      ],
+      "negative_cases": [
+        "Resume loads wrong project state.",
+        "Resume crashes if no script_v1.py exists."
+      ]
+    },
+    {
+      "id": "R8",
+      "description": "System must handle manager feedback during iteration without moving to next agent.",
       "expected_agents": [
         "manager",
         "programmer",
@@ -142,33 +188,12 @@
       ],
       "expected_tools": [],
       "expected_behavior": [
-        "After the Coder or Reviewer outputs their content, the Manager can enter feedback before typing 'exit'.",
-        "The agent (Coder or Reviewer) processes the feedback and regenerates their output (code or comments).",
-        "The Manager can perform multiple feedback cycles within the same iteration before finally sending 'exit' to proceed."
+        "When manager provides feedback (not exit), the current agent revises its output.",
+        "The conversation remains on the same agent until manager types exit."
       ],
       "negative_cases": [
-        "If the agent misinterprets feedback and produces a regression, the Manager should be able to iterate further before saving.",
-        "If the Manager never enters 'exit', the conversation remains active, but the system should not block indefinitely (relies on human control)."
-      ]
-    },
-    {
-      "id": "R5",
-      "description": "The system must ensure that only the latest version of code and comments is presented to agents on each iteration, preventing distraction from outdated or faulty artifacts.",
-      "expected_agents": [
-        "programmer",
-        "reviewer"
-      ],
-      "expected_tools": [
-        "retrieve_latest_iteration",
-        "retrieve_latest_iteration_comment"
-      ],
-      "expected_behavior": [
-        "When preparing the prompt for the Coder, only script_vN.py (where N is the current latest) is included, not earlier versions.",
-        "When preparing the prompt for the Reviewer, only comments_vN.txt (latest) is included.",
-        "The plan file remains unchanged and is presented each time."
-      ],
-      "negative_cases": [
-        "If the retrieval logic accidentally loads an older version due to naming mishap, agents may revert to previously rejected code."
+        "Manager input 'exit' is ignored and conversation continues.",
+        "Feedback results in immediate switch to next agent."
       ]
     }
   ],
@@ -187,6 +212,26 @@
       "source": "manager",
       "target": "reviewer",
       "evidence": "initiate_chat"
+    },
+    {
+      "source": "planner",
+      "target": "manager",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "programmer",
+      "target": "reviewer",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "reviewer",
+      "target": "programmer",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "programmer",
+      "target": "manager",
+      "evidence": "SystemModelingAgent additional edge"
     }
   ],
   "termination_conditions": [
@@ -196,7 +241,9 @@
   ],
   "raw_notes": {
     "warnings": [
+      "SyntaxError in /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_FUZZ_001/mas_system1_iterative_coding_FUZZ_001/script_v1.py: invalid syntax (<unknown>, line 1)",
       "SyntaxError in /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_001/mas_system1_iterative_coding_OUTCONTRACT_001/script_v1.py: invalid syntax (<unknown>, line 1)",
+      "SyntaxError in /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_003/mas_system1_iterative_coding_OUTCONTRACT_003/script_v1.py: invalid syntax (<unknown>, line 1)",
       "SyntaxError in /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_008/mas_system1_iterative_coding_R2_008/script_v1.py: invalid syntax (<unknown>, line 5)",
       "SyntaxError in /Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_TOOLERR_001/mas_system1_iterative_coding_TOOLERR_001/script_v1.py: invalid syntax (<unknown>, line 1)"
     ],
@@ -206,18 +253,22 @@
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/main.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_autoreply/system1_smoke_api_001/tmp_code_18e1bdf22d98fbf80f254fbcf2369c40.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_fixture/system1_iterative_coding_RESUME_001/script_v1.py",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_ARTIFACT_001/mas_system1_iterative_coding_ARTIFACT_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_BUDGET_001/mas_system1_iterative_coding_BUDGET_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_COV_001/mas_system1_iterative_coding_COV_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_COV_002/mas_system1_iterative_coding_COV_002/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_DATAINV_001/mas_system1_iterative_coding_DATAINV_001/script_v1.py",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_FSSAFE_001/mas_system1_iterative_coding_FSSAFE_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_FUZZ_001/mas_system1_iterative_coding_FUZZ_001/script_v1.py",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_FUZZ_002/mas_system1_iterative_coding_FUZZ_002/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_HANDOFF_001/mas_system1_iterative_coding_HANDOFF_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_META_001/换一种说法完成同一需求 R1，并用三个要点概括。/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_NOHUMAN_001/mas_system1_iterative_coding_NOHUMAN_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_001/mas_system1_iterative_coding_OUTCONTRACT_001/script_v1.py",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_002/mas_system1_iterative_coding_OUTCONTRACT_002/script_v1.py",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_003/mas_system1_iterative_coding_OUTCONTRACT_003/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_001/mas_system1_iterative_coding_PROP_001/script_v1.py",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_002/mas_system1_iterative_coding_PROP_002/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_001/mas_system1_iterative_coding_R2_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_002/mas_system1_iterative_coding_R2_002/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_R2_003/mas_system1_iterative_coding_R2_003/script_v1.py",
@@ -235,6 +286,7 @@
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_TERM_001/mas_system1_iterative_coding_TERM_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_TOOLAPI_001/mas_system1_iterative_coding_TOOLAPI_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_TOOLCONTRACT_001/mas_system1_iterative_coding_TOOLCONTRACT_001/script_v1.py",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_TOOLCONTRACT_002/mas_system1_iterative_coding_TOOLCONTRACT_002/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_TOOLERR_001/mas_system1_iterative_coding_TOOLERR_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_TOOLFUZZ_001/mas_system1_iterative_coding_TOOLFUZZ_001/script_v1.py",
       "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_WIRING_001/mas_system1_iterative_coding_WIRING_001/script_v1.py",
@@ -356,6 +408,27 @@
         "docstring": "Main calculator function."
       },
       {
+        "name": "detect_escapes",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/script_v1.py",
+        "line": "31",
+        "in_class": false,
+        "docstring": "Scan text for escaped sequences and return list of (original, decoded) tuples."
+      },
+      {
+        "name": "scan_directory",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/script_v1.py",
+        "line": "67",
+        "in_class": false,
+        "docstring": "Recursively walk directory, read text files, detect escapes, and print report."
+      },
+      {
+        "name": "main",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/script_v1.py",
+        "line": "120",
+        "in_class": false,
+        "docstring": null
+      },
+      {
         "name": "__init__",
         "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_BUDGET_001/mas_system1_iterative_coding_BUDGET_001/script_v1.py",
         "line": "6",
@@ -384,9 +457,23 @@
         "docstring": null
       },
       {
+        "name": "celsius_to_fahrenheit",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_COV_001/mas_system1_iterative_coding_COV_001/script_v1.py",
+        "line": "8",
+        "in_class": false,
+        "docstring": null
+      },
+      {
+        "name": "fahrenheit_to_celsius",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_COV_001/mas_system1_iterative_coding_COV_001/script_v1.py",
+        "line": "11",
+        "in_class": false,
+        "docstring": null
+      },
+      {
         "name": "main",
         "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_COV_001/mas_system1_iterative_coding_COV_001/script_v1.py",
-        "line": "4",
+        "line": "14",
         "in_class": false,
         "docstring": null
       },
@@ -457,34 +544,6 @@
         "name": "main",
         "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_DATAINV_001/mas_system1_iterative_coding_DATAINV_001/script_v1.py",
         "line": "78",
-        "in_class": false,
-        "docstring": null
-      },
-      {
-        "name": "detect_escapes",
-        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_FSSAFE_001/mas_system1_iterative_coding_FSSAFE_001/script_v1.py",
-        "line": "31",
-        "in_class": false,
-        "docstring": "Scan text for escaped sequences and return list of (original, decoded) tuples."
-      },
-      {
-        "name": "scan_directory",
-        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_FSSAFE_001/mas_system1_iterative_coding_FSSAFE_001/script_v1.py",
-        "line": "67",
-        "in_class": false,
-        "docstring": "Recursively walk directory, read text files, detect escapes, and print report."
-      },
-      {
-        "name": "main",
-        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_FSSAFE_001/mas_system1_iterative_coding_FSSAFE_001/script_v1.py",
-        "line": "120",
-        "in_class": false,
-        "docstring": null
-      },
-      {
-        "name": "main",
-        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_FUZZ_001/mas_system1_iterative_coding_FUZZ_001/script_v1.py",
-        "line": "11",
         "in_class": false,
         "docstring": null
       },
@@ -601,22 +660,92 @@
         "docstring": "Main entry point: parse args, validate, execute operation, output result."
       },
       {
-        "name": "celsius_to_fahrenheit",
+        "name": "ensure_projects_dir",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_002/mas_system1_iterative_coding_OUTCONTRACT_002/script_v1.py",
+        "line": "10",
+        "in_class": false,
+        "docstring": "Create projects directory if it doesn't exist."
+      },
+      {
+        "name": "scan_existing_projects",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_002/mas_system1_iterative_coding_OUTCONTRACT_002/script_v1.py",
+        "line": "14",
+        "in_class": false,
+        "docstring": "Return list of project directory names (subdirectories inside PROJECTS_DIR)."
+      },
+      {
+        "name": "get_latest_file",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_002/mas_system1_iterative_coding_OUTCONTRACT_002/script_v1.py",
+        "line": "21",
+        "in_class": false,
+        "docstring": "For a given project directory and file_type (e.g., \"plan\"),\nfind the most recent version.\nSupports:\n  - single file named {file_type}.txt (or .py for script)\n  - versioned files like {file_type}_v1.txt, {file_type}_v2.txt, ...\nReturns absolute path to the latest file, or None if no file found."
+      },
+      {
+        "name": "read_file",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_002/mas_system1_iterative_coding_OUTCONTRACT_002/script_v1.py",
+        "line": "61",
+        "in_class": false,
+        "docstring": "Return content of file, or empty string on error."
+      },
+      {
+        "name": "display_project",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_002/mas_system1_iterative_coding_OUTCONTRACT_002/script_v1.py",
+        "line": "69",
+        "in_class": false,
+        "docstring": "Load and display the latest plan, script, comments for a given project."
+      },
+      {
+        "name": "main",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_OUTCONTRACT_002/mas_system1_iterative_coding_OUTCONTRACT_002/script_v1.py",
+        "line": "85",
+        "in_class": false,
+        "docstring": null
+      },
+      {
+        "name": "generate_python_template",
         "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_001/mas_system1_iterative_coding_PROP_001/script_v1.py",
+        "line": "12",
+        "in_class": false,
+        "docstring": "Return the content for a Python placeholder script."
+      },
+      {
+        "name": "generate_shell_template",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_001/mas_system1_iterative_coding_PROP_001/script_v1.py",
+        "line": "30",
+        "in_class": false,
+        "docstring": "Return the content for a shell placeholder script."
+      },
+      {
+        "name": "write_script",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_001/mas_system1_iterative_coding_PROP_001/script_v1.py",
+        "line": "44",
+        "in_class": false,
+        "docstring": "Write content to filename, asking before overwrite if not forced."
+      },
+      {
+        "name": "main",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_001/mas_system1_iterative_coding_PROP_001/script_v1.py",
+        "line": "60",
+        "in_class": false,
+        "docstring": null
+      },
+      {
+        "name": "celsius_to_fahrenheit",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_002/mas_system1_iterative_coding_PROP_002/script_v1.py",
         "line": "8",
         "in_class": false,
         "docstring": null
       },
       {
         "name": "fahrenheit_to_celsius",
-        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_001/mas_system1_iterative_coding_PROP_001/script_v1.py",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_002/mas_system1_iterative_coding_PROP_002/script_v1.py",
         "line": "11",
         "in_class": false,
         "docstring": null
       },
       {
         "name": "main",
-        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_001/mas_system1_iterative_coding_PROP_001/script_v1.py",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_PROP_002/mas_system1_iterative_coding_PROP_002/script_v1.py",
         "line": "14",
         "in_class": false,
         "docstring": null
@@ -753,6 +882,62 @@
         "line": "18",
         "in_class": false,
         "docstring": null
+      },
+      {
+        "name": "print_header",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_002/mas_system1_iterative_coding_REQ_002/script_v1.py",
+        "line": "15",
+        "in_class": false,
+        "docstring": "Print a formatted header."
+      },
+      {
+        "name": "print_separator",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_002/mas_system1_iterative_coding_REQ_002/script_v1.py",
+        "line": "21",
+        "in_class": false,
+        "docstring": null
+      },
+      {
+        "name": "read_plan_from_file",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_002/mas_system1_iterative_coding_REQ_002/script_v1.py",
+        "line": "24",
+        "in_class": false,
+        "docstring": "Read plan.txt and return its content or empty string."
+      },
+      {
+        "name": "read_code_from_file",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_002/mas_system1_iterative_coding_REQ_002/script_v1.py",
+        "line": "31",
+        "in_class": false,
+        "docstring": "Read code.py and return its content or empty string."
+      },
+      {
+        "name": "planning_phase",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_002/mas_system1_iterative_coding_REQ_002/script_v1.py",
+        "line": "38",
+        "in_class": false,
+        "docstring": "Phase 1: User describes a project goal and structures a plan step-by-step.\nPlan is saved to plan.txt after explicit approval."
+      },
+      {
+        "name": "coding_phase",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_002/mas_system1_iterative_coding_REQ_002/script_v1.py",
+        "line": "88",
+        "in_class": false,
+        "docstring": "Phase 2: Coder Agent reads the approved plan and prompts the user to write code.\nCode is saved to code.py.\nIf feedback is provided (from a failed review), it is displayed first."
+      },
+      {
+        "name": "review_phase",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_002/mas_system1_iterative_coding_REQ_002/script_v1.py",
+        "line": "127",
+        "in_class": false,
+        "docstring": "Phase 3: Reviewer Agent reads code and plan, provides feedback.\nUser rates/approves code. If fails, returns feedback to coding phase."
+      },
+      {
+        "name": "main",
+        "source_file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_REQ_002/mas_system1_iterative_coding_REQ_002/script_v1.py",
+        "line": "160",
+        "in_class": false,
+        "docstring": "Main state machine loop."
       },
       {
         "name": "__init__",
@@ -1172,12 +1357,41 @@
     "analyzer": "deterministic_ast_plus_doc_heuristic",
     "agentic": {
       "semantic_graph_review": {
-        "semantic_graph_review": "Fallback: static semantic graph accepted without LLM revision.",
-        "suspected_risk_points": [],
-        "additional_edges": [],
-        "confidence": 0.35,
-        "fallback": true,
-        "error": "Model call failed after 3 attempt(s): The read operation timed out"
+        "semantic_graph_review": "The semantic graph is mostly consistent with the documented agent roles. The manager initiates chats with planner, programmer, and reviewer, which matches the main loop logic. However, there are missing edges that reflect the actual runtime handoffs: planner -> manager (for approval), manager -> programmer (after approval), programmer -> reviewer (via manager-controlled loop), reviewer -> programmer (for iterative feedback), and programmer -> manager (when iteration is done). Currently only manager-initiated edges are present, which under-represents the actual communication flow. Additionally, the tool assignments are incomplete: the planner is listed without tools in the profile, but the system message and R2 clearly indicate that planner must call write_settled_plan. In the actual agent definition (IterativeTools.py line 26), planner is configured with a 'functions' list that includes write_settled_plan. This discrepancy is a semantic inconsistency. Similarly, the reviewer is not assigned any tools in the profile, but the underlying code provides write_latest_iteration_comments; however, review of the system message shows the reviewer is explicitly told not to write code, only explain, which is consistent with not having tools, so this is not a risk. The termination conditions 'TERMINATE' and 'max_turns' are standard. The profile states only manager has tools, but the evidence from requirements and code shows planner should have write_settled_plan. This mismatch can lead to test failures where planner is expected to use the tool but the tool is not registered for it in tests, resulting in tool_schema_risk.",
+        "suspected_risk_points": [
+          {
+            "type": "tool_schema_risk",
+            "evidence": "Profile lists planner with tools: [] (no tools). However, requirement R2 expects planner to call write_settled_plan. In the source code IterativeTools.py line 26, planner is created with a 'functions' parameter that includes write_settled_plan. This indicates the tool should be available to planner, but the profile omits it. If the test environment relies on the profile to decide tool registration, planner will not have access to write_settled_plan, causing tool call failures.",
+            "related_tool": "write_settled_plan"
+          }
+        ],
+        "additional_edges": [
+          {
+            "source": "planner",
+            "target": "manager",
+            "evidence": "Planner must interact with manager to get approval ('sounds good') as per R2.",
+            "type": "conversation"
+          },
+          {
+            "source": "programmer",
+            "target": "reviewer",
+            "evidence": "In the iteration loop (main.py), after programmer produces code, the manager initiates a chat with reviewer passing the code. This creates a logical edge.",
+            "type": "logical_flow"
+          },
+          {
+            "source": "reviewer",
+            "target": "programmer",
+            "evidence": "Reviewer feedback is passed back to programmer for next iteration, as per system description and R6.",
+            "type": "logical_flow"
+          },
+          {
+            "source": "programmer",
+            "target": "manager",
+            "evidence": "Manager triggers write_latest_iteration after programmer output, and can provide feedback directly to programmer during iteration.",
+            "type": "conversation"
+          }
+        ],
+        "confidence": 0.85
       }
     }
   }

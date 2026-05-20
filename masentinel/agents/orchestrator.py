@@ -992,6 +992,11 @@ class AgenticTestOrchestrator:
             for item in test_plan.get("diagnostic_only_patterns", []) or []
             if isinstance(item, dict) and item.get("pattern")
         ]
+        details["verifier_promoted_patterns"] = [
+            str(item.get("pattern"))
+            for item in test_plan.get("verifier_promoted_patterns", []) or []
+            if isinstance(item, dict) and item.get("pattern")
+        ]
         details["rejected_patterns"] = [
             str(item.get("pattern"))
             for item in test_plan.get("rejected_patterns", []) or []

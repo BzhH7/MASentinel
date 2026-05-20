@@ -3,11 +3,49 @@
     "case_id": "system3_financial_analysis_REQ_001",
     "system_id": "system3_financial_analysis",
     "case_type": "requirement_positive",
-    "objective": "验证多Agent协作完成股票分析基本流程，所有预期Agent均被调用并传递消息",
-    "input": "analyze AAPL",
+    "objective": "Verify that the system can analyze AAPL using data_collector, financial_analyst, and report_generator",
+    "input": "python -m src.main analyze AAPL",
     "input_sequence": [],
     "target_requirements": [
       "R1"
+    ],
+    "target_agents": [
+      "user_proxy",
+      "data_collector",
+      "financial_analyst",
+      "report_generator"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "data_collector",
+        "financial_analyst",
+        "report_generator"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_REQ_002",
+    "system_id": "system3_financial_analysis",
+    "case_type": "requirement_positive",
+    "objective": "Verify comprehensive analysis workflow with data_analyst, financial_analyst, risk_analyst, investment_advisor",
+    "input": "python -m src.main analyze AAPL --type comprehensive",
+    "input_sequence": [],
+    "target_requirements": [
+      "R2",
+      "R4"
     ],
     "target_agents": [
       "user_proxy",
@@ -23,7 +61,6 @@
       "max_turns": 20,
       "must_not_crash": true,
       "must_visit_agents": [
-        "user_proxy",
         "data_analyst",
         "financial_analyst",
         "risk_analyst",
@@ -37,55 +74,17 @@
       "expected_keywords": []
     },
     "fault_injection": null,
-    "metadata": {
-      "context": "确保基本分析链完整，所有Agent按顺序执行并输出结果"
-    }
+    "metadata": {}
   },
   {
-    "case_id": "system3_financial_analysis_REQ_002",
+    "case_id": "system3_financial_analysis_COV_001",
     "system_id": "system3_financial_analysis",
-    "case_type": "requirement_positive",
-    "objective": "验证report_generator整合财务分析和风险评估结果生成结构化报告",
-    "input": "analyze AAPL --report",
+    "case_type": "coverage_guided",
+    "objective": "Cover message edge user_proxy->data_analyst and verify handoff of collected data to financial_analyst via sequential mediation.",
+    "input": "python -m src.main analyze AAPL --type simple",
     "input_sequence": [],
     "target_requirements": [
-      "R2"
-    ],
-    "target_agents": [
-      "report_generator",
-      "financial_analyst",
-      "risk_analyst"
-    ],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 20,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "report_generator"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "context": "确保报告生成Agent被调用且其输入来自财务分析和风险评估Agent"
-    }
-  },
-  {
-    "case_id": "system3_financial_analysis_FUZZ_001",
-    "system_id": "system3_financial_analysis",
-    "case_type": "fuzz_negative",
-    "objective": "验证消息传递链条在缺失上游输出时能否保持完整，financial_analyst未收到data_analyst输出即被触发执行",
-    "input": "跳过data_analyst执行，直接让user_proxy向financial_analyst发送空消息启动分析",
-    "input_sequence": [],
-    "target_requirements": [
-      "R1"
+      "R4"
     ],
     "target_agents": [
       "user_proxy",
@@ -99,7 +98,7 @@
       "max_turns": 12,
       "must_not_crash": true,
       "must_visit_agents": [
-        "user_proxy",
+        "data_analyst",
         "financial_analyst"
       ],
       "must_call_tools": [],
@@ -111,33 +110,33 @@
     },
     "fault_injection": null,
     "metadata": {
-      "strategy": "message_edge_coverage",
-      "method": "directly invoke financial_analyst with empty last_message to test early-stage handoff failure"
+      "coverage_focus": "message_edge_coverage"
     }
   },
   {
-    "case_id": "system3_financial_analysis_FUZZ_002",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
     "system_id": "system3_financial_analysis",
-    "case_type": "fuzz_negative",
-    "objective": "验证quantitative_analyst输出为空时enterprise_portfolio_manager能否正确处理，不崩溃并提供异常信息",
-    "input": "enterprise_quantitative_analyst生成空因子暴露和空回报序列作为last_message，然后调用enterprise_portfolio_manager进行优化",
+    "case_type": "message_handoff_integrity",
+    "objective": "Verify that when risk_analyst returns empty string, investment_advisor detects missing context and requests retry or terminates gracefully.",
+    "input": "python -m src.main analyze AAPL --type comprehensive",
     "input_sequence": [],
     "target_requirements": [
       "R4"
     ],
     "target_agents": [
-      "enterprise_quantitative_analyst",
-      "enterprise_portfolio_manager"
+      "user_proxy",
+      "risk_analyst",
+      "investment_advisor"
     ],
     "target_tools": [],
     "target_edges": [],
     "oracle": {
       "must_terminate": true,
-      "max_turns": 10,
+      "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "enterprise_quantitative_analyst",
-        "enterprise_portfolio_manager"
+        "risk_analyst",
+        "investment_advisor"
       ],
       "must_call_tools": [],
       "must_cover_edges": [],
@@ -148,8 +147,10 @@
     },
     "fault_injection": null,
     "metadata": {
-      "strategy": "message_edge_coverage",
-      "method": "engineer empty factor exposures and zero returns to test enterprise quant-to-portfolio handoff"
+      "coverage_focus": "message_edge_coverage",
+      "negative_case": "R4 negative case: empty handoff",
+      "selected_pattern": "message_handoff_integrity",
+      "oracle_strength": "hard"
     }
   },
   {
@@ -218,18 +219,17 @@
     "case_id": "system3_financial_analysis_REQ_003",
     "system_id": "system3_financial_analysis",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R1: 多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
-    "input": "请完成以下任务并给出清晰结果：多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
+    "objective": "Validate requirement R1: 系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
+    "input": "请完成以下任务并给出清晰结果：系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
       "user_proxy",
-      "data_analyst",
+      "data_collector",
       "financial_analyst",
-      "risk_analyst",
-      "investment_advisor"
+      "report_generator"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -239,10 +239,9 @@
       "must_not_crash": true,
       "must_visit_agents": [
         "user_proxy",
-        "data_analyst",
+        "data_collector",
         "financial_analyst",
-        "risk_analyst",
-        "investment_advisor"
+        "report_generator"
       ],
       "must_call_tools": [],
       "must_cover_edges": [],
@@ -253,6 +252,50 @@
     },
     "fault_injection": null,
     "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_ARTIFACT_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "artifact_contract",
+    "objective": "Persisted code artifact should preserve a valid Markdown code block body without fence corruption.",
+    "input": "Create a one-line Python script that prints hello. A valid answer may use an unlabeled, py, or python Markdown fence.",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 30,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "generic_pattern": "artifact_contract",
+      "applicability_reason": "profile mentions persisted files, code, reports, or artifact output",
+      "target_fault_mode": "artifact_corruption",
+      "oracle_strength": "hard",
+      "artifact_kind": "python_script",
+      "fence_variants": [
+        "unlabeled",
+        "py",
+        "python"
+      ],
+      "assertions": [
+        "artifact_exists",
+        "no_markdown_fence_markers",
+        "python_compile_succeeds",
+        "artifact_content_preserves_first_code_token"
+      ],
+      "selected_pattern": "artifact_contract"
+    }
   },
   {
     "case_id": "system3_financial_analysis_FSSAFE_001",
@@ -298,7 +341,7 @@
     }
   },
   {
-    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
     "system_id": "system3_financial_analysis",
     "case_type": "message_handoff_integrity",
     "objective": "Downstream agent must receive substantive prior assistant output, not TERMINATE, empty content, or an auto-reply.",
@@ -325,14 +368,59 @@
       "generic_pattern": "message_handoff_integrity",
       "applicability_reason": "profile has chained workflow or last_message style handoff",
       "target_fault_mode": "message_handoff_error",
-      "oracle_strength": "diagnostic",
+      "oracle_strength": "hard",
       "assertions": [
         "forwarded_content_not_terminate_only",
         "forwarded_content_from_expected_sender",
         "forwarded_content_non_empty"
       ],
-      "selected_pattern": "message_handoff_integrity",
-      "diagnostic_only": true
+      "selected_pattern": "message_handoff_integrity"
+    }
+  },
+  {
+    "case_id": "system3_financial_analysis_DATAINV_001",
+    "system_id": "system3_financial_analysis",
+    "case_type": "data_invariant",
+    "objective": "Available financial metrics should be preserved when one optional row is missing.",
+    "input": "Analyze a mocked ticker where Total Revenue and Net Income exist but Total Debt is missing.",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 30,
+      "must_not_crash": true,
+      "must_visit_agents": [],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {
+      "generic_pattern": "partial_data_invariant",
+      "applicability_reason": "profile contains financial/dataframe metric calculations",
+      "target_fault_mode": "partial_metric_zeroed",
+      "oracle_strength": "hard",
+      "fixture": {
+        "mock_data_fixture": "partial_financial_rows",
+        "financials": {
+          "Total Revenue": 1000,
+          "Net Income": 100,
+          "Total Debt": null
+        }
+      },
+      "stock_symbol": "AAPL",
+      "assertions": [
+        "available_metrics_nonzero",
+        "missing_metric_null_or_unavailable",
+        "missing_row_recorded"
+      ],
+      "selected_pattern": "data_invariant"
     }
   },
   {
@@ -432,48 +520,6 @@
     }
   },
   {
-    "case_id": "system3_financial_analysis_BUDGET_001",
-    "system_id": "system3_financial_analysis",
-    "case_type": "scalable_budget",
-    "objective": "Round/turn budget should scale with multi-record work or batch it inside tools.",
-    "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 40,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "generic_pattern": "scalable_budget",
-      "applicability_reason": "profile mentions records/items and fixed round/turn budgets",
-      "target_fault_mode": "scalable_budget_error",
-      "oracle_strength": "diagnostic",
-      "fixture": {
-        "record_count": 5
-      },
-      "required_steps_estimate": 10,
-      "assertions": [
-        "required_steps_estimate_within_configured_budget",
-        "all_records_processed",
-        "termination_reason_is_completion"
-      ],
-      "selected_pattern": "scalable_budget",
-      "diagnostic_only": true
-    }
-  },
-  {
     "case_id": "system3_financial_analysis_TERM_001",
     "system_id": "system3_financial_analysis",
     "case_type": "termination_signal",
@@ -511,17 +557,16 @@
     "system_id": "system3_financial_analysis",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R1.",
-    "input": "请完成需求 R1，并按文档要求输出：多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
+    "input": "请完成需求 R1，并按文档要求输出：系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
     "input_sequence": [],
     "target_requirements": [
       "R1"
     ],
     "target_agents": [
       "user_proxy",
-      "data_analyst",
+      "data_collector",
       "financial_analyst",
-      "risk_analyst",
-      "investment_advisor"
+      "report_generator"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -536,10 +581,8 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
-        "risk",
-        "风险",
-        "建议",
-        "data"
+        "data",
+        "分析"
       ]
     },
     "fault_injection": null,
@@ -548,10 +591,8 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R1",
       "expected_keywords": [
-        "risk",
-        "风险",
-        "建议",
-        "data"
+        "data",
+        "分析"
       ],
       "oracle_strength": "medium"
     }
@@ -589,7 +630,7 @@
     }
   },
   {
-    "case_id": "system3_financial_analysis_COV_001",
+    "case_id": "system3_financial_analysis_COV_002",
     "system_id": "system3_financial_analysis",
     "case_type": "coverage_guided",
     "objective": "Exercise agent agent",
@@ -648,7 +689,7 @@
     }
   },
   {
-    "case_id": "system3_financial_analysis_FUZZ_003",
+    "case_id": "system3_financial_analysis_FUZZ_001",
     "system_id": "system3_financial_analysis",
     "case_type": "fuzz_negative",
     "objective": "Instruction conflict should not crash or wait for human input.",
@@ -697,10 +738,9 @@
     ],
     "target_agents": [
       "user_proxy",
-      "data_analyst",
+      "data_collector",
       "financial_analyst",
-      "risk_analyst",
-      "investment_advisor"
+      "report_generator"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -727,10 +767,9 @@
         "allow_different_agent_path": true,
         "required_agents": [
           "user_proxy",
-          "data_analyst",
+          "data_collector",
           "financial_analyst",
-          "risk_analyst",
-          "investment_advisor"
+          "report_generator"
         ],
         "required_tools": []
       }
@@ -769,15 +808,17 @@
     "system_id": "system3_financial_analysis",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R2.",
-    "input": "请完成需求 R2，并按文档要求输出：报告生成Agent整合分析结果生成简洁报告：report_generator应获取financial_analyst和risk_analyst的输出，生成包含投资建议和风险提示的结构化报告。",
+    "input": "请完成需求 R2，并按文档要求输出：系统应支持命令行参数 '--type comprehensive'，并利用多个分析代理（如风险分析师、量化分析师）执行综合分析。",
     "input_sequence": [],
     "target_requirements": [
       "R2"
     ],
     "target_agents": [
-      "report_generator",
+      "user_proxy",
+      "data_analyst",
       "financial_analyst",
-      "risk_analyst"
+      "risk_analyst",
+      "investment_advisor"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -792,9 +833,7 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
-        "risk",
         "风险",
-        "建议",
         "分析"
       ]
     },
@@ -804,9 +843,7 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R2",
       "expected_keywords": [
-        "risk",
         "风险",
-        "建议",
         "分析"
       ],
       "oracle_strength": "medium"
@@ -817,13 +854,12 @@
     "system_id": "system3_financial_analysis",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R3.",
-    "input": "请完成需求 R3，并按文档要求输出：系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
+    "input": "请完成需求 R3，并按文档要求输出：系统应能处理数据收集异常，例如当 yfinance 无法获取 AAPL 数据时，data_collector 应返回明确的错误指示，而不是返回空数据导致后续代理产生幻觉。",
     "input_sequence": [],
     "target_requirements": [
       "R3"
     ],
     "target_agents": [
-      "user_proxy",
       "data_collector"
     ],
     "target_tools": [],
@@ -839,7 +875,8 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
-        "代码"
+        "data",
+        "数据"
       ]
     },
     "fault_injection": null,
@@ -848,7 +885,8 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R3",
       "expected_keywords": [
-        "代码"
+        "data",
+        "数据"
       ],
       "oracle_strength": "medium"
     }
@@ -858,14 +896,17 @@
     "system_id": "system3_financial_analysis",
     "case_type": "output_contract",
     "objective": "System output should satisfy documented output intent for requirement R4.",
-    "input": "请完成需求 R4，并按文档要求输出：量化分析流程独立执行因子模型与回报计算：enterprise_quantitative_analyst负责因子暴露计算、因子收益率、信息系数；enterprise_portfolio_manager负责投资组合优化、回测统计。",
+    "input": "请完成需求 R4，并按文档要求输出：多代理通信应遵循预定义的协作模式：user_proxy 按顺序向 data_analyst、financial_analyst、risk_analyst、investment_advisor 发起聊天，并汇总最终消息。",
     "input_sequence": [],
     "target_requirements": [
       "R4"
     ],
     "target_agents": [
-      "enterprise_quantitative_analyst",
-      "enterprise_portfolio_manager"
+      "user_proxy",
+      "data_analyst",
+      "financial_analyst",
+      "risk_analyst",
+      "investment_advisor"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -880,7 +921,8 @@
       "must_not_fabricate_tool_result": false,
       "output_contract": null,
       "expected_keywords": [
-        "分析"
+        "risk",
+        "data"
       ]
     },
     "fault_injection": null,
@@ -889,51 +931,8 @@
       "applicability_reason": "requirement text exposes output/business contract keywords",
       "source_requirement": "R4",
       "expected_keywords": [
-        "分析"
-      ],
-      "oracle_strength": "medium"
-    }
-  },
-  {
-    "case_id": "system3_financial_analysis_OUTCONTRACT_005",
-    "system_id": "system3_financial_analysis",
-    "case_type": "output_contract",
-    "objective": "System output should satisfy documented output intent for requirement R5.",
-    "input": "请完成需求 R5，并按文档要求输出：多源数据集成与质量校验：enterprise_data_collector从Yahoo Finance、Alpha Vantage等源获取数据，进行一致性校验和缺失值处理，记录数据质量指标。",
-    "input_sequence": [],
-    "target_requirements": [
-      "R5"
-    ],
-    "target_agents": [
-      "enterprise_data_collector"
-    ],
-    "target_tools": [],
-    "target_edges": [],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 30,
-      "must_not_crash": true,
-      "must_visit_agents": [],
-      "must_call_tools": [],
-      "must_cover_edges": [],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": [
-        "记录",
-        "data",
-        "数据"
-      ]
-    },
-    "fault_injection": null,
-    "metadata": {
-      "generic_pattern": "output_contract",
-      "applicability_reason": "requirement text exposes output/business contract keywords",
-      "source_requirement": "R5",
-      "expected_keywords": [
-        "记录",
-        "data",
-        "数据"
+        "risk",
+        "data"
       ],
       "oracle_strength": "medium"
     }
@@ -942,16 +941,18 @@
     "case_id": "system3_financial_analysis_REQ_004",
     "system_id": "system3_financial_analysis",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R2: 报告生成Agent整合分析结果生成简洁报告：report_generator应获取financial_analyst和risk_analyst的输出，生成包含投资建议和风险提示的结构化报告。",
-    "input": "请完成以下任务并给出清晰结果：报告生成Agent整合分析结果生成简洁报告：report_generator应获取financial_analyst和risk_analyst的输出，生成包含投资建议和风险提示的结构化报告。",
+    "objective": "Validate requirement R2: 系统应支持命令行参数 '--type comprehensive'，并利用多个分析代理（如风险分析师、量化分析师）执行综合分析。",
+    "input": "请完成以下任务并给出清晰结果：系统应支持命令行参数 '--type comprehensive'，并利用多个分析代理（如风险分析师、量化分析师）执行综合分析。",
     "input_sequence": [],
     "target_requirements": [
       "R2"
     ],
     "target_agents": [
-      "report_generator",
+      "user_proxy",
+      "data_analyst",
       "financial_analyst",
-      "risk_analyst"
+      "risk_analyst",
+      "investment_advisor"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -960,9 +961,11 @@
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "report_generator",
+        "user_proxy",
+        "data_analyst",
         "financial_analyst",
-        "risk_analyst"
+        "risk_analyst",
+        "investment_advisor"
       ],
       "must_call_tools": [],
       "must_cover_edges": [],
@@ -978,14 +981,13 @@
     "case_id": "system3_financial_analysis_REQ_005",
     "system_id": "system3_financial_analysis",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R3: 系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
-    "input": "请完成以下任务并给出清晰结果：系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
+    "objective": "Validate requirement R3: 系统应能处理数据收集异常，例如当 yfinance 无法获取 AAPL 数据时，data_collector 应返回明确的错误指示，而不是返回空数据导致后续代理产生幻觉。",
+    "input": "请完成以下任务并给出清晰结果：系统应能处理数据收集异常，例如当 yfinance 无法获取 AAPL 数据时，data_collector 应返回明确的错误指示，而不是返回空数据导致后续代理产生幻觉。",
     "input_sequence": [],
     "target_requirements": [
       "R3"
     ],
     "target_agents": [
-      "user_proxy",
       "data_collector"
     ],
     "target_tools": [],
@@ -995,7 +997,6 @@
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "user_proxy",
         "data_collector"
       ],
       "must_call_tools": [],
@@ -1012,15 +1013,18 @@
     "case_id": "system3_financial_analysis_REQ_006",
     "system_id": "system3_financial_analysis",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R4: 量化分析流程独立执行因子模型与回报计算：enterprise_quantitative_analyst负责因子暴露计算、因子收益率、信息系数；enterprise_portfolio_manager负责投资组合优化、回测统计。",
-    "input": "请完成以下任务并给出清晰结果：量化分析流程独立执行因子模型与回报计算：enterprise_quantitative_analyst负责因子暴露计算、因子收益率、信息系数；enterprise_portfolio_manager负责投资组合优化、回测统计。",
+    "objective": "Validate requirement R4: 多代理通信应遵循预定义的协作模式：user_proxy 按顺序向 data_analyst、financial_analyst、risk_analyst、investment_advisor 发起聊天，并汇总最终消息。",
+    "input": "请完成以下任务并给出清晰结果：多代理通信应遵循预定义的协作模式：user_proxy 按顺序向 data_analyst、financial_analyst、risk_analyst、investment_advisor 发起聊天，并汇总最终消息。",
     "input_sequence": [],
     "target_requirements": [
       "R4"
     ],
     "target_agents": [
-      "enterprise_quantitative_analyst",
-      "enterprise_portfolio_manager"
+      "user_proxy",
+      "data_analyst",
+      "financial_analyst",
+      "risk_analyst",
+      "investment_advisor"
     ],
     "target_tools": [],
     "target_edges": [],
@@ -1029,8 +1033,11 @@
       "max_turns": 15,
       "must_not_crash": true,
       "must_visit_agents": [
-        "enterprise_quantitative_analyst",
-        "enterprise_portfolio_manager"
+        "user_proxy",
+        "data_analyst",
+        "financial_analyst",
+        "risk_analyst",
+        "investment_advisor"
       ],
       "must_call_tools": [],
       "must_cover_edges": [],
@@ -1046,12 +1053,42 @@
     "case_id": "system3_financial_analysis_REQ_007",
     "system_id": "system3_financial_analysis",
     "case_type": "requirement_positive",
-    "objective": "Validate requirement R5: 多源数据集成与质量校验：enterprise_data_collector从Yahoo Finance、Alpha Vantage等源获取数据，进行一致性校验和缺失值处理，记录数据质量指标。",
-    "input": "请完成以下任务并给出清晰结果：多源数据集成与质量校验：enterprise_data_collector从Yahoo Finance、Alpha Vantage等源获取数据，进行一致性校验和缺失值处理，记录数据质量指标。",
+    "objective": "Validate requirement R5: 系统应包含明确的终止条件，当代理输出 'TERMINATE' 或在达到最大轮次后，协作流程应停止。",
+    "input": "请完成以下任务并给出清晰结果：系统应包含明确的终止条件，当代理输出 'TERMINATE' 或在达到最大轮次后，协作流程应停止。",
     "input_sequence": [],
     "target_requirements": [
       "R5"
     ],
+    "target_agents": [
+      "user_proxy"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "user_proxy"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_003",
+    "system_id": "system3_financial_analysis",
+    "case_type": "coverage_guided",
+    "objective": "Exercise agent enterprise_data_collector",
+    "input": "请让 enterprise_data_collector 参与处理一个正常任务，并输出处理过程摘要。",
+    "input_sequence": [],
+    "target_requirements": [],
     "target_agents": [
       "enterprise_data_collector"
     ],
@@ -1075,7 +1112,7 @@
     "metadata": {}
   },
   {
-    "case_id": "system3_financial_analysis_COV_002",
+    "case_id": "system3_financial_analysis_COV_004",
     "system_id": "system3_financial_analysis",
     "case_type": "coverage_guided",
     "objective": "Exercise agent enterprise_financial_analyst",
@@ -1105,7 +1142,7 @@
     "metadata": {}
   },
   {
-    "case_id": "system3_financial_analysis_COV_003",
+    "case_id": "system3_financial_analysis_COV_005",
     "system_id": "system3_financial_analysis",
     "case_type": "coverage_guided",
     "objective": "Exercise agent enterprise_risk_analyst",
@@ -1135,7 +1172,37 @@
     "metadata": {}
   },
   {
-    "case_id": "system3_financial_analysis_COV_004",
+    "case_id": "system3_financial_analysis_COV_006",
+    "system_id": "system3_financial_analysis",
+    "case_type": "coverage_guided",
+    "objective": "Exercise agent enterprise_quantitative_analyst",
+    "input": "请让 enterprise_quantitative_analyst 参与处理一个正常任务，并输出处理过程摘要。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "enterprise_quantitative_analyst"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "enterprise_quantitative_analyst"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_007",
     "system_id": "system3_financial_analysis",
     "case_type": "coverage_guided",
     "objective": "Exercise agent enterprise_compliance_officer",
@@ -1165,7 +1232,37 @@
     "metadata": {}
   },
   {
-    "case_id": "system3_financial_analysis_COV_005",
+    "case_id": "system3_financial_analysis_COV_008",
+    "system_id": "system3_financial_analysis",
+    "case_type": "coverage_guided",
+    "objective": "Exercise agent enterprise_portfolio_manager",
+    "input": "请让 enterprise_portfolio_manager 参与处理一个正常任务，并输出处理过程摘要。",
+    "input_sequence": [],
+    "target_requirements": [],
+    "target_agents": [
+      "enterprise_portfolio_manager"
+    ],
+    "target_tools": [],
+    "target_edges": [],
+    "oracle": {
+      "must_terminate": true,
+      "max_turns": 15,
+      "must_not_crash": true,
+      "must_visit_agents": [
+        "enterprise_portfolio_manager"
+      ],
+      "must_call_tools": [],
+      "must_cover_edges": [],
+      "must_not_call_tools": [],
+      "must_not_fabricate_tool_result": false,
+      "output_contract": null,
+      "expected_keywords": []
+    },
+    "fault_injection": null,
+    "metadata": {}
+  },
+  {
+    "case_id": "system3_financial_analysis_COV_009",
     "system_id": "system3_financial_analysis",
     "case_type": "coverage_guided",
     "objective": "Exercise message edge user_proxy->data_analyst",
@@ -1212,7 +1309,7 @@
     }
   },
   {
-    "case_id": "system3_financial_analysis_COV_006",
+    "case_id": "system3_financial_analysis_COV_010",
     "system_id": "system3_financial_analysis",
     "case_type": "coverage_guided",
     "objective": "Exercise message edge user_proxy->financial_analyst",
@@ -1243,147 +1340,6 @@
         [
           "user_proxy",
           "financial_analyst"
-        ]
-      ],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "generic_pattern": "message_edge_coverage",
-      "applicability_reason": "profile message edge discovered by static analysis",
-      "oracle_strength": "hard",
-      "potential_edge": false
-    }
-  },
-  {
-    "case_id": "system3_financial_analysis_COV_007",
-    "system_id": "system3_financial_analysis",
-    "case_type": "coverage_guided",
-    "objective": "Exercise message edge user_proxy->investment_advisor",
-    "input": "请完成一个需要 user_proxy 与 investment_advisor 协作的任务。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [
-      "user_proxy",
-      "investment_advisor"
-    ],
-    "target_tools": [],
-    "target_edges": [
-      [
-        "user_proxy",
-        "investment_advisor"
-      ]
-    ],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "user_proxy",
-        "investment_advisor"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [
-        [
-          "user_proxy",
-          "investment_advisor"
-        ]
-      ],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "generic_pattern": "message_edge_coverage",
-      "applicability_reason": "profile message edge discovered by static analysis",
-      "oracle_strength": "hard",
-      "potential_edge": false
-    }
-  },
-  {
-    "case_id": "system3_financial_analysis_COV_008",
-    "system_id": "system3_financial_analysis",
-    "case_type": "coverage_guided",
-    "objective": "Exercise message edge user_proxy->report_generator",
-    "input": "请完成一个需要 user_proxy 与 report_generator 协作的任务。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [
-      "user_proxy",
-      "report_generator"
-    ],
-    "target_tools": [],
-    "target_edges": [
-      [
-        "user_proxy",
-        "report_generator"
-      ]
-    ],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "user_proxy",
-        "report_generator"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [
-        [
-          "user_proxy",
-          "report_generator"
-        ]
-      ],
-      "must_not_call_tools": [],
-      "must_not_fabricate_tool_result": false,
-      "output_contract": null,
-      "expected_keywords": []
-    },
-    "fault_injection": null,
-    "metadata": {
-      "generic_pattern": "message_edge_coverage",
-      "applicability_reason": "profile message edge discovered by static analysis",
-      "oracle_strength": "hard",
-      "potential_edge": false
-    }
-  },
-  {
-    "case_id": "system3_financial_analysis_COV_009",
-    "system_id": "system3_financial_analysis",
-    "case_type": "coverage_guided",
-    "objective": "Exercise message edge user_proxy->risk_analyst",
-    "input": "请完成一个需要 user_proxy 与 risk_analyst 协作的任务。",
-    "input_sequence": [],
-    "target_requirements": [],
-    "target_agents": [
-      "user_proxy",
-      "risk_analyst"
-    ],
-    "target_tools": [],
-    "target_edges": [
-      [
-        "user_proxy",
-        "risk_analyst"
-      ]
-    ],
-    "oracle": {
-      "must_terminate": true,
-      "max_turns": 15,
-      "must_not_crash": true,
-      "must_visit_agents": [
-        "user_proxy",
-        "risk_analyst"
-      ],
-      "must_call_tools": [],
-      "must_cover_edges": [
-        [
-          "user_proxy",
-          "risk_analyst"
         ]
       ],
       "must_not_call_tools": [],

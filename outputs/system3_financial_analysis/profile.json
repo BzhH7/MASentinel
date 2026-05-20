@@ -121,7 +121,26 @@
   "requirements": [
     {
       "id": "R1",
-      "description": "多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
+      "description": "系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
+      "expected_agents": [
+        "user_proxy",
+        "data_collector",
+        "financial_analyst",
+        "report_generator"
+      ],
+      "expected_tools": [],
+      "expected_behavior": [
+        "user_proxy 收到分析任务后，协调 data_collector 收集 AAPL 数据",
+        "financial_analyst 基于收集的数据进行财务分析",
+        "report_generator 整合分析结果生成最终报告"
+      ],
+      "negative_cases": [
+        "当 data_collector 或 financial_analyst 发生异常或返回非预期格式时，系统应能优雅降级或返回错误信息，而不是崩溃。"
+      ]
+    },
+    {
+      "id": "R2",
+      "description": "系统应支持命令行参数 '--type comprehensive'，并利用多个分析代理（如风险分析师、量化分析师）执行综合分析。",
       "expected_agents": [
         "user_proxy",
         "data_analyst",
@@ -131,87 +150,61 @@
       ],
       "expected_tools": [],
       "expected_behavior": [
-        "user_proxy通过initiate_chat启动与data_analyst的对话",
-        "data_analyst完成数据分析后输出结果",
-        "financial_analyst基于数据分析结果进行财务分析",
-        "risk_analyst基于数据分析结果进行风险评估",
-        "investment_advisor综合财务分析和风险评估结果给出投资建议"
+        "触发风险分析和投资建议的生成",
+        "最终输出包含多维度分析的综合报告"
       ],
       "negative_cases": [
-        "任意协作环节未收到前置Agent的输出即开始处理",
-        "协作链中断导致部分Agent未被执行"
-      ]
-    },
-    {
-      "id": "R2",
-      "description": "报告生成Agent整合分析结果生成简洁报告：report_generator应获取financial_analyst和risk_analyst的输出，生成包含投资建议和风险提示的结构化报告。",
-      "expected_agents": [
-        "report_generator",
-        "financial_analyst",
-        "risk_analyst"
-      ],
-      "expected_tools": [],
-      "expected_behavior": [
-        "report_generator接收financial_analyst的分析结果",
-        "report_generator接收risk_analyst的风险评估结果",
-        "report_generator生成清晰简洁的分析报告"
-      ],
-      "negative_cases": [
-        "report_generator缺少财务分析或风险评估输入",
-        "报告未包含投资建议或风险提示"
+        "如果只指定了类型但没有提供足够代理（如缺少 risk_analyst），系统应提示配置错误或自动启用默认代理。"
       ]
     },
     {
       "id": "R3",
-      "description": "系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
+      "description": "系统应能处理数据收集异常，例如当 yfinance 无法获取 AAPL 数据时，data_collector 应返回明确的错误指示，而不是返回空数据导致后续代理产生幻觉。",
       "expected_agents": [
-        "user_proxy",
         "data_collector"
       ],
       "expected_tools": [],
       "expected_behavior": [
-        "yfinance数据获取失败时抛出或返回错误",
-        "系统捕获异常并生成用户可读的错误消息",
-        "流程终止，不执行后续分析"
+        "如果数据源不可用，data_collector 应明确指示数据收集失败",
+        "下游代理（financial_analyst、report_generator）应对空数据或错误数据做出合理响应，例如要求重新收集或终止分析"
       ],
       "negative_cases": [
-        "系统崩溃或挂起",
-        "未提供任何错误信息即终止"
+        "data_collector 返回空字典或 None，financial_analyst 仍尝试计算比率导致 ZeroDivisionError",
+        "report_generator 在数据不完整时生成了误导性报告"
       ]
     },
     {
       "id": "R4",
-      "description": "量化分析流程独立执行因子模型与回报计算：enterprise_quantitative_analyst负责因子暴露计算、因子收益率、信息系数；enterprise_portfolio_manager负责投资组合优化、回测统计。",
+      "description": "多代理通信应遵循预定义的协作模式：user_proxy 按顺序向 data_analyst、financial_analyst、risk_analyst、investment_advisor 发起聊天，并汇总最终消息。",
       "expected_agents": [
-        "enterprise_quantitative_analyst",
-        "enterprise_portfolio_manager"
+        "user_proxy",
+        "data_analyst",
+        "financial_analyst",
+        "risk_analyst",
+        "investment_advisor"
       ],
       "expected_tools": [],
       "expected_behavior": [
-        "enterprise_quantitative_analyst使用历史数据计算因子暴露",
-        "enterprise_portfolio_manager基于因子结果构建最优组合",
-        "输出回测指标（累计收益、最大回撤、夏普比率等）"
+        "代理之间通过 last_message() 获取前序代理的输出作为上下文",
+        "investment_advisor 应能综合 financial_analyst 和 risk_analyst 的结果生成建议"
       ],
       "negative_cases": [
-        "因子计算结果为空或格式错误导致下游Agent失败",
-        "投资组合优化未收敛时无异常处理"
+        "如果某个代理未返回有效信息（如空字符串），后续代理应识别并请求重试或终止。"
       ]
     },
     {
       "id": "R5",
-      "description": "多源数据集成与质量校验：enterprise_data_collector从Yahoo Finance、Alpha Vantage等源获取数据，进行一致性校验和缺失值处理，记录数据质量指标。",
+      "description": "系统应包含明确的终止条件，当代理输出 'TERMINATE' 或在达到最大轮次后，协作流程应停止。",
       "expected_agents": [
-        "enterprise_data_collector"
+        "user_proxy"
       ],
       "expected_tools": [],
       "expected_behavior": [
-        "收集指定股票的历史价格和财务报表",
-        "识别并标记不一致或缺失的数据",
-        "输出数据质量评估报告"
+        "user_proxy 在收到配置的终止信号（如 'TERMINATE' 字符串）后停止聊天",
+        "达到 max_turns 限制时自动停止"
       ],
       "negative_cases": [
-        "单一数据源失败时未切换备用源",
-        "数据校验错误导致后续分析使用脏数据"
+        "代理未发出终止信号导致无限循环"
       ]
     }
   ],
@@ -240,6 +233,36 @@
       "source": "user_proxy",
       "target": "risk_analyst",
       "evidence": "initiate_chat"
+    },
+    {
+      "source": "enterprise_data_collector",
+      "target": "user_proxy",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_financial_analyst",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_risk_analyst",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_quantitative_analyst",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_compliance_officer",
+      "evidence": "SystemModelingAgent additional edge"
+    },
+    {
+      "source": "user_proxy",
+      "target": "enterprise_portfolio_manager",
+      "evidence": "SystemModelingAgent additional edge"
     }
   ],
   "termination_conditions": [
@@ -6961,36 +6984,41 @@
     "analyzer": "deterministic_ast_plus_doc_heuristic",
     "agentic": {
       "semantic_graph_review": {
-        "semantic_graph_review": "系统包含多个智能体定义，分为简单版（simple_autogen）和企业版（enterprise_agents）两套体系。需求R1至R5覆盖了从数据收集、分析、风险评估到报告生成等多步骤协作流程，系统中也存在对应的agent实体。从静态分析的message_edges看，user_proxy向data_analyst、financial_analyst、investment_advisor、report_generator、risk_analyst发起initiate_chat，但同时，系统实现代码中使用了AgentOrchestrator进行编排，且存在两种不同的协作方式（简单版通过AgentOrchestrator和last_message传递数据，企业版则依赖于独立的AssistantAgent），可能导致预期协作流程与实际代码行为不完全一致。此外，部分agent（如report_generator和data_collector）在简单版中的参与路径不明显，而简单版的协作流程实际通过AgentOrchestrator集中调用各个agent的last_message来实现信息传递，这与需求描述的“依次启动”模式有一定差异但功能可兼容。",
-        "suspected_risk_points": [
+        "semantic_graph_review": "The message edges are primarily star-shaped, with user_proxy as the hub initiating chats to data_analyst, financial_analyst, investment_advisor, report_generator, and risk_analyst. No direct edges exist between analyst agents; communication relies on user_proxy-mediated sequential chats and last_message() context sharing. Requirements R1-R5 expect ordered collaboration and context passing, which the graph partially supports but the edge set alone does not guarantee proper sequencing or data flow.",
+        "suspected_risk_points": [],
+        "additional_edges": [
           {
-            "type": "tool_schema_risk",
-            "evidence": "需求要求使用yfinance收集股票数据，但系统中所有agent均未注册任何工具函数。消息传递完全依赖LLM生成文本，无法执行实际API调用。这在R1和R3中会导致数据收集、分析、错误处理等任务无法完成。",
-            "related_tool": "N/A (无工具定义)"
+            "source": "enterprise_data_collector",
+            "target": "user_proxy",
+            "evidence": "Enterprise agents are defined but no message edges to user_proxy exist; if activated, they would need to be connected for compliance with R2."
           },
           {
-            "type": "agent_orchestration_risk",
-            "evidence": "在simple_autogen/simple_autogen_system.py中，financial_analyst和risk_analyst的输入通过AgentOrchestrator分别获取data_analyst.last_message()，investment_advisor也类似获取financial_analyst和risk_analyst的输出。但report_generator并未出现在该编排流程中，R2要求report_generator从financial_analyst和risk_analyst获取输出生成报告，缺少代码支持。可能导致R2未实现。",
-            "related_tool": null
+            "source": "user_proxy",
+            "target": "enterprise_financial_analyst",
+            "evidence": "Missing comprehensive analysis network implied by R2."
           },
           {
-            "type": "error_handling_risk",
-            "evidence": "在simple_autogen/main.py中，analyze_stock_command包装了yfinance调用，在股票代码无效时可能抛出异常（如IndexError或Ticker错误），但整个流程中未提供全局异常捕获并转换为用户可读错误消息的逻辑，无法满足R3要求。",
-            "related_tool": null
+            "source": "user_proxy",
+            "target": "enterprise_risk_analyst",
+            "evidence": "Missing comprehensive analysis network implied by R2."
           },
           {
-            "type": "agent_orchestration_risk",
-            "evidence": "企业版agent（enterprise_quantitative_analyst、enterprise_portfolio_manager等）在enterprise_agents.py中被定义但均未注册工具，且未发现将其纳入任何编排流程的代码。R4、R5依赖这些agent完成量化分析、数据质量校验，但系统缺少相应的任务调度和工具调用支持，可能导致这些功能无法实现。",
-            "related_tool": null
+            "source": "user_proxy",
+            "target": "enterprise_quantitative_analyst",
+            "evidence": "Missing comprehensive analysis network implied by R2."
           },
           {
-            "type": "autogen_integration_risk",
-            "evidence": "src/main.py中AgentOrchestrator({})以一个空字典初始化，未传入任何agent配置，可能导致企业版系统无法正常启动任何agent协作流程。",
-            "related_tool": "AgentOrchestrator"
+            "source": "user_proxy",
+            "target": "enterprise_compliance_officer",
+            "evidence": "Missing comprehensive analysis network implied by R2."
+          },
+          {
+            "source": "user_proxy",
+            "target": "enterprise_portfolio_manager",
+            "evidence": "Missing comprehensive analysis network implied by R2."
           }
         ],
-        "additional_edges": [],
-        "confidence": 0.85
+        "confidence": 0.8
       }
     }
   }

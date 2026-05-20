@@ -3,18 +3,18 @@
   "tool_coverage": 1.0,
   "agent_event_coverage": 1.0,
   "tool_event_coverage": 1.0,
-  "avg_case_agent_coverage": 1.0,
-  "avg_case_tool_coverage": 0.9375,
-  "message_edge_coverage": 1.0,
-  "requirement_coverage": 0.8,
-  "req_intent_coverage": 0.8,
-  "req_verified_coverage": 0.6,
-  "state_coverage": 0.5417,
-  "fault_mode_coverage": 0.381,
-  "effective_workflow_rate": 1.0,
+  "avg_case_agent_coverage": 0.9167,
+  "avg_case_tool_coverage": 0.8542,
+  "message_edge_coverage": 0.7143,
+  "requirement_coverage": 0.375,
+  "req_intent_coverage": 0.375,
+  "req_verified_coverage": 0.25,
+  "state_coverage": 0.625,
+  "fault_mode_coverage": 0.4762,
+  "effective_workflow_rate": 0.9167,
   "trace_completeness": 1.0,
-  "contract_coverage": 0.4167,
-  "root_cause_evidence_rate": 0.4286,
+  "contract_coverage": 0.5,
+  "root_cause_evidence_rate": 0.5455,
   "details": {
     "visited_agents": [
       "manager",
@@ -79,16 +79,15 @@
     "covered_requirements": [
       "R1",
       "R2",
-      "R3",
-      "R4"
+      "R6"
     ],
     "verified_requirements": [
       "R1",
-      "R2",
-      "R3"
+      "R2"
     ],
     "covered_states": [
       "artifact_contract",
+      "autogen_wiring",
       "conflicting_instruction",
       "empty_input",
       "filesystem_safety",
@@ -98,22 +97,26 @@
       "non_termination",
       "normal_task",
       "property_boundary",
+      "runtime_exception",
       "state_resume",
       "termination",
       "tool_failure"
     ],
     "covered_fault_modes": [
       "artifact_corruption",
+      "autogen_wiring_missing",
       "filesystem_escape",
       "human_input_mode_error",
       "message_handoff_error",
       "message_routing_error",
       "missing_error_handling",
+      "missing_tool_call",
       "non_termination",
       "resume_state_incomplete"
     ],
     "covered_contract_patterns": [
       "artifact_contract",
+      "autogen_wiring_conformance",
       "message_edge_coverage",
       "message_handoff_integrity",
       "metamorphic_task_equivalence",
@@ -130,26 +133,28 @@
     "applicability": {
       "agents": 4,
       "tools": 2,
-      "required_message_edges": 3,
-      "profile_message_edges": 3,
+      "required_message_edges": 7,
+      "profile_message_edges": 7,
       "potential_message_edges": 0
     },
     "selected_patterns": [
       "artifact_contract",
-      "filesystem_safety",
+      "autogen_wiring",
       "state_resume_contract",
       "message_handoff_integrity",
       "speaker_selection"
     ],
-    "diagnostic_only_patterns": [],
+    "diagnostic_only_patterns": [
+      "filesystem_safety"
+    ],
+    "verifier_promoted_patterns": [],
     "rejected_patterns": [
       "tool_api_contract",
-      "tool_error_contract",
-      "data_invariant",
       "cli_doc_conformance",
-      "autogen_wiring",
+      "data_invariant",
+      "filesystem_safety",
       "scalable_budget",
-      "autogen_wiring",
+      "tool_error_contract",
       "cli_doc_conformance",
       "data_invariant",
       "scalable_budget",
@@ -157,7 +162,7 @@
       "tool_error_contract"
     ],
     "pattern_selection_mode": "agent_verified",
-    "pattern_applicability_precision": 1.0
+    "pattern_applicability_precision": 0.8333
   },
-  "mascov": 0.7956
+  "mascov": 0.7105
 }

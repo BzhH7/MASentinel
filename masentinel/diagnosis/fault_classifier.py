@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 
+from masentinel.diagnosis.static_faults import detect_static_faults
 from masentinel.oracle.rule_oracle import RuleOracle
 from masentinel.schema import RunTrace, SystemProfile, TestCase
 
@@ -120,6 +121,7 @@ def classify_faults(profile: SystemProfile, testcases: list[TestCase], traces: l
             fault = apply_deterministic_confirmation_gate(fault)
             faults.append(fault)
             counter += 1
+    faults.extend(detect_static_faults(profile, start_index=counter))
     return faults
 
 

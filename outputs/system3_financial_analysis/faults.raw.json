@@ -75,7 +75,7 @@
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002",
-    "case_id": "system3_financial_analysis_COV_002",
+    "case_id": "system3_financial_analysis_COV_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
     "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
@@ -83,20 +83,20 @@
     "confidence": 0.9,
     "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "        *   **来源：** 金融数据终端 (如Bloomberg, FactSet) 或券商报告。",
-      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。",
-      "    3.  **修正公司基本信息：**",
-      "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
-      "#### **4. 最终结论**",
-      "**根本性问题：无法给出有效的投资建议。** 在没有财务分析和实际风险数据的情况下，任何声称能给出“综合投资建议”的结论都是不负责任的。",
-      "**投资建议：** **立即终止本次评估，并启动数据搜集工作。** 当前唯一合理的操作是保持现有仓位（如有）并获取完整信息。在获得完整的财务数据、真实的风险指标和正确的行业分类后，再进行一次完整的“财务+风险+估值”综合评估，届时才能给出**明确的买入/持有/卖出评级**和**可信的目标价格**。",
-      "**请执行此行动路线，我将随时准备基于您提供的新数据进行下一步的分析。**"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
     "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
     "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
+      "input": "python -m src.main analyze AAPL --type simple",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false,
     "evidence_strength": 0.57,
@@ -150,6 +150,80 @@
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003",
     "case_id": "system3_financial_analysis_COV_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+    "evidence": [
+      "        *   **来源：** 金融数据终端 (如Bloomberg, FactSet) 或券商报告。",
+      "        *   **重点：** 计算并跟踪JPM股票的**年化波动率**（当前水平）、**夏普比率**（过去1-3年）、**最大回撤**（近1年）、**VaR**（如适用）。将这些指标与标普500金融板块指数做对比。",
+      "    3.  **修正公司基本信息：**",
+      "        *   **重要纠错：** 您提供的公司信息中，行业分类为 **“Technology行业”**，此信息有误。**摩根大通 (JPM) 的行业归属是“金融 (Financials)”，具体子行业为“综合性银行 (Diversified Banks)”或“货币中心银行 (Money Center Banks)”**。请务必修正此基础信息，否则任何基于“科技行业”假设的分析都将完全偏离方向。",
+      "#### **4. 最终结论**",
+      "**根本性问题：无法给出有效的投资建议。** 在没有财务分析和实际风险数据的情况下，任何声称能给出“综合投资建议”的结论都是不负责任的。",
+      "**投资建议：** **立即终止本次评估，并启动数据搜集工作。** 当前唯一合理的操作是保持现有仓位（如有）并获取完整信息。在获得完整的财务数据、真实的风险指标和正确的行业分类后，再进行一次完整的“财务+风险+估值”综合评估，届时才能给出**明确的买入/持有/卖出评级**和**可信的目标价格**。",
+      "**请执行此行动路线，我将随时准备基于您提供的新数据进行下一步的分析。**"
+    ],
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
+    "reproduction": {
+      "input": "请让 agent 参与处理一个正常任务，并输出处理过程摘要。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
+    "case_id": "system3_financial_analysis_COV_002",
     "layer": "application",
     "fault_type": "Data Collection Tool Registration Missing",
     "failure_code": "BUSINESS_TASK_FAILED",
@@ -157,12 +231,12 @@
     "confidence": 0.82,
     "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
     "evidence": [
-      "enterprise_financial_analyst"
+      "agent"
     ],
     "root_cause": "The documented data collection capability is not backed by a robust registered tool, mock provider, or output contract fallback in the automated run.",
     "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
     "reproduction": {
-      "input": "请让 enterprise_financial_analyst 参与处理一个正常任务，并输出处理过程摘要。",
+      "input": "请让 agent 参与处理一个正常任务，并输出处理过程摘要。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze JPM"
     },
     "suspected_false_positive": true,
@@ -184,7 +258,81 @@
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
+    "case_id": "system3_financial_analysis_DATAINV_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+    "evidence": [
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
+    ],
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
+    "reproduction": {
+      "input": "Analyze a mocked ticker where Total Revenue and Net Income exist but Total Debt is missing.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
     "case_id": "system3_financial_analysis_FSSAFE_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
@@ -258,167 +406,32 @@
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005",
-    "case_id": "system3_financial_analysis_HANDOFF_001",
-    "layer": "autogen_framework",
-    "fault_type": "Message Handoff Error",
-    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-    "severity": "high",
-    "confidence": 0.92,
-    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
-    "evidence": [
-      "agent=data_analyst",
-      "caller=_last_msg_as_summary",
-      "content=TERMINATE"
-    ],
-    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
-    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
-    "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.58,
-    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "31"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "48"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "59"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "collect_stock_data",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "93"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "AssistantAgent",
-        "line": "211"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "diagnostic_only": true,
-    "deterministic_confirmation": {
-      "confirmed": false,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "diagnostic_only_pattern",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.58,
-      "root_cause_confidence": "code_evidence"
-    },
-    "confirmation_status": "suspected_fault",
-    "confirmation_source": "deterministic_oracle_evidence"
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006",
-    "case_id": "system3_financial_analysis_HANDOFF_001",
-    "layer": "autogen_framework",
-    "fault_type": "Message Handoff Error",
-    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-    "severity": "high",
-    "confidence": 0.92,
-    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
-    "evidence": [
-      "agent=data_analyst",
-      "caller=orchestrate_analysis",
-      "content=TERMINATE"
-    ],
-    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
-    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
-    "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.58,
-    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "31"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "48"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "59"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "collect_stock_data",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "93"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "AssistantAgent",
-        "line": "211"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "diagnostic_only": true,
-    "deterministic_confirmation": {
-      "confirmed": false,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "diagnostic_only_pattern",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.58,
-      "root_cause_confidence": "code_evidence"
-    },
-    "confirmation_status": "suspected_fault",
-    "confirmation_source": "deterministic_oracle_evidence"
-  },
-  {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007",
     "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
     "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
     "severity": "high",
-    "confidence": 0.92,
-    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "agent=financial_analyst",
-      "caller=_last_msg_as_summary",
-      "content=TERMINATE"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
-    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
-    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.58,
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
     "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
     "code_locations": [
       {
@@ -453,18 +466,17 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
-    "diagnostic_only": true,
     "deterministic_confirmation": {
-      "confirmed": false,
+      "confirmed": true,
       "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "diagnostic_only_pattern",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.58,
+      "evidence_strength": 0.57,
       "root_cause_confidence": "code_evidence"
     },
-    "confirmation_status": "suspected_fault",
+    "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
@@ -478,16 +490,16 @@
     "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
     "evidence": [
       "agent=data_analyst",
-      "caller=orchestrate_analysis",
+      "caller=_last_msg_as_summary",
       "content=TERMINATE"
     ],
     "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
     "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": true,
+    "suspected_false_positive": false,
     "evidence_strength": 0.58,
     "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
     "code_locations": [
@@ -523,92 +535,21 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
-    "diagnostic_only": true,
     "deterministic_confirmation": {
-      "confirmed": false,
+      "confirmed": true,
       "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "diagnostic_only_pattern",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
       "evidence_strength": 0.58,
       "root_cause_confidence": "code_evidence"
     },
-    "confirmation_status": "suspected_fault",
+    "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009",
-    "case_id": "system3_financial_analysis_HANDOFF_001",
-    "layer": "autogen_framework",
-    "fault_type": "Message Handoff Error",
-    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-    "severity": "high",
-    "confidence": 0.92,
-    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
-    "evidence": [
-      "agent=financial_analyst",
-      "caller=orchestrate_analysis",
-      "content=TERMINATE"
-    ],
-    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
-    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
-    "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
-    },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.58,
-    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "31"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "48"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "59"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "collect_stock_data",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "93"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "AssistantAgent",
-        "line": "211"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "diagnostic_only": true,
-    "deterministic_confirmation": {
-      "confirmed": false,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "diagnostic_only_pattern",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.58,
-      "root_cause_confidence": "code_evidence"
-    },
-    "confirmation_status": "suspected_fault",
-    "confirmation_source": "deterministic_oracle_evidence"
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
     "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
@@ -624,10 +565,10 @@
     "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
     "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": true,
+    "suspected_false_positive": false,
     "evidence_strength": 0.58,
     "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
     "code_locations": [
@@ -663,22 +604,228 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
-    "diagnostic_only": true,
     "deterministic_confirmation": {
-      "confirmed": false,
+      "confirmed": true,
       "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "diagnostic_only_pattern",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
       "evidence_strength": 0.58,
       "root_cause_confidence": "code_evidence"
     },
-    "confirmation_status": "suspected_fault",
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=financial_analyst",
+      "caller=_last_msg_as_summary",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
     "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_011",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=risk_analyst",
+      "caller=_last_msg_as_summary",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
     "case_id": "system3_financial_analysis_HANDOFF_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
@@ -694,10 +841,10 @@
     "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
     "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
     "reproduction": {
-      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze GOOGL"
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": true,
+    "suspected_false_positive": false,
     "evidence_strength": 0.58,
     "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
     "code_locations": [
@@ -733,22 +880,1061 @@
       }
     ],
     "root_cause_confidence": "code_evidence",
-    "diagnostic_only": true,
     "deterministic_confirmation": {
-      "confirmed": false,
+      "confirmed": true,
       "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "diagnostic_only_pattern",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
       "evidence_strength": 0.58,
       "root_cause_confidence": "code_evidence"
     },
-    "confirmation_status": "suspected_fault",
+    "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_012",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=risk_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=financial_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
+    "case_id": "system3_financial_analysis_HANDOFF_001",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=risk_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+    "evidence": [
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
+    ],
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_019",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=data_analyst",
+      "caller=_last_msg_as_summary",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_020",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_021",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=financial_analyst",
+      "caller=_last_msg_as_summary",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_022",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_023",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=risk_analyst",
+      "caller=_last_msg_as_summary",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_024",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=financial_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_025",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=risk_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_026",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=data_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_027",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=financial_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_028",
+    "case_id": "system3_financial_analysis_HANDOFF_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.92,
+    "summary": "Downstream handoff returned only a termination marker instead of substantive prior analysis.",
+    "evidence": [
+      "agent=risk_analyst",
+      "caller=orchestrate_analysis",
+      "content=TERMINATE"
+    ],
+    "root_cause": "The workflow forwards empty, termination-only, or wrong-source content to downstream agents instead of substantive prior analysis.",
+    "suggested_fix": "Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.",
+    "reproduction": {
+      "input": "请完成一个需要多阶段分析的任务，前一阶段结果必须交给后一阶段；最终给出汇总结论。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.58,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.58,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_029",
     "case_id": "system3_financial_analysis_OUTCONTRACT_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
@@ -769,7 +1955,7 @@
     "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
     "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成需求 R1，并按文档要求输出：多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
+      "input": "请完成需求 R1，并按文档要求输出：系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false,
@@ -822,7 +2008,7 @@
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_013",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_030",
     "case_id": "system3_financial_analysis_OUTCONTRACT_002",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
@@ -843,7 +2029,7 @@
     "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
     "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成需求 R2，并按文档要求输出：报告生成Agent整合分析结果生成简洁报告：report_generator应获取financial_analyst和risk_analyst的输出，生成包含投资建议和风险提示的结构化报告。",
+      "input": "请完成需求 R2，并按文档要求输出：系统应支持命令行参数 '--type comprehensive'，并利用多个分析代理（如风险分析师、量化分析师）执行综合分析。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false,
@@ -896,81 +2082,81 @@
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_014",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_031",
     "case_id": "system3_financial_analysis_OUTCONTRACT_003",
-    "layer": "application",
-    "fault_type": "Output Contract Violation",
-    "failure_code": "OUTPUT_SCHEMA_VIOLATION",
-    "severity": "medium",
-    "confidence": 0.78,
-    "summary": "Output contract expected keywords or sections were missing.",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
     "evidence": [
-      "missing_keywords=['代码']",
-      "6.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，财务分析与风险评估均显示为“TERMINATE”，即分析过程被终止或未获得有效数据。公司基本信息仅知为“META Mock Holdings”（模拟控股公司），属于科技行业。\n\n**综合投资建议：**  \n由于缺乏可量化的财务指标（如营收、利润、现金流、增长率等）和风险因素（如市场、运营、财务、合规风险等）的具体分析，无法形成可靠的投资决策依据。在此情况下，**建议暂停任何投资操作**，并优先完成以下步骤：\n- 重新获取或核实财务分析数据，确保完整性；\n- 补充风险评估报告，明确关键风险敞口；\n- 明确公司实际业务模式及竞争地位（“Mock”可能暗示为模拟测试公司，需确认真实性）。\n\n**评级与目标价格：** 暂不适用（无有效数据支撑）。\n\n**行动建议：** 联系分析师要求重新提交完整分析，或寻找替代研究来源后才可给出具体评级与目标价。"
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
     ],
-    "root_cause": "The rule oracle detected OUTPUT_SCHEMA_VIOLATION for system system3_financial_analysis.",
-    "suggested_fix": "Validate output before returning and add deterministic fallback formatting.",
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成需求 R3，并按文档要求输出：系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze META"
+      "input": "请完成需求 R3，并按文档要求输出：系统应能处理数据收集异常，例如当 yfinance 无法获取 AAPL 数据时，data_collector 应返回明确的错误指示，而不是返回空数据导致后续代理产生幻觉。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.3,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only",
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
     "deterministic_confirmation": {
-      "confirmed": false,
+      "confirmed": true,
       "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "insufficient deterministic code/trace evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.3,
-      "root_cause_confidence": "trace_only"
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
     },
-    "confirmation_status": "suspected_fault",
+    "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_015",
-    "case_id": "system3_financial_analysis_OUTCONTRACT_005",
-    "layer": "application",
-    "fault_type": "Output Contract Violation",
-    "failure_code": "OUTPUT_SCHEMA_VIOLATION",
-    "severity": "medium",
-    "confidence": 0.78,
-    "summary": "Output contract expected keywords or sections were missing.",
-    "evidence": [
-      "missing_keywords=['记录']",
-      "=\n分析日期: 2026-05-20 12:39:37\nAutoGen协作摘要: AutoGen多智能体协作分析完成：数据分析师、财务分析师、风险分析师和投资顾问共同协作完成了完整的股票分析流程\n\n\n--- 关键财务指标 (百分比) ---\nroe: 146.27%\nroa: 27.84%\ndebt_ratio: 80.97%\ngross_margin: 44.16%\nnet_margin: 25.45%\ncurrent_ratio: 1.11\n\n--- 投资顾问最终建议 ---\n根据您提供的分析结果，所有模块均显示“TERMINATE”，即未能获取有效的财务数据、风险评估及公司基本信息。因此，目前无法对TSLA Mock Holdings进行任何有意义的综合投资评估。\n\n作为投资顾问，我建议您首先补充完整的财务分析（如营收、利润、现金流、负债结构等）、风险评估（市场、行业、运营、政策等维度）以及公司最新基本信息（业务模式、竞争地位、管理层背景）。只有在这些核心数据齐全后，我才能提供明确的投资评级（如买入、持有、卖出）及目标价格。\n\n请重新提交完整分析资料，我将为您制定专业的投资建议。"
-    ],
-    "root_cause": "The rule oracle detected OUTPUT_SCHEMA_VIOLATION for system system3_financial_analysis.",
-    "suggested_fix": "Validate output before returning and add deterministic fallback formatting.",
-    "reproduction": {
-      "input": "请完成需求 R5，并按文档要求输出：多源数据集成与质量校验：enterprise_data_collector从Yahoo Finance、Alpha Vantage等源获取数据，进行一致性校验和缺失值处理，记录数据质量指标。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze TSLA"
-    },
-    "suspected_false_positive": true,
-    "evidence_strength": 0.3,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [],
-    "root_cause_confidence": "trace_only",
-    "deterministic_confirmation": {
-      "confirmed": false,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "insufficient deterministic code/trace evidence",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.3,
-      "root_cause_confidence": "trace_only"
-    },
-    "confirmation_status": "suspected_fault",
-    "confirmation_source": "deterministic_oracle_evidence"
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_016",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_032",
     "case_id": "system3_financial_analysis_REQ_001",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
@@ -991,7 +2177,7 @@
     "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
     "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "analyze AAPL",
+      "input": "python -m src.main analyze AAPL",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false,
@@ -1044,82 +2230,8 @@
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_017",
-    "case_id": "system3_financial_analysis_REQ_002",
-    "layer": "autogen_framework",
-    "fault_type": "Message Handoff Error",
-    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
-    "evidence": [
-      "**综合投资建议**：",
-      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
-      "**投资评级**：**暂无**（需补充有效分析数据）",
-      "**目标价格**：**无法确定**（缺乏估值基础）",
-      "**行动建议**：",
-      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
-      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
-      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
-    ],
-    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
-    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
-    "reproduction": {
-      "input": "analyze AAPL --report",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.57,
-    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "31"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "48"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "59"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "collect_stock_data",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "93"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "AssistantAgent",
-        "line": "211"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "deterministic_confirmation": {
-      "confirmed": true,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "deterministic oracle failure with sufficient code/trace evidence",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.57,
-      "root_cause_confidence": "code_evidence"
-    },
-    "confirmation_status": "confirmed_fault",
-    "confirmation_source": "deterministic_oracle_evidence"
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_018",
-    "case_id": "system3_financial_analysis_REQ_002",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_033",
+    "case_id": "system3_financial_analysis_REQ_001",
     "layer": "application",
     "fault_type": "Data Collection Tool Registration Missing",
     "failure_code": "BUSINESS_TASK_FAILED",
@@ -1127,12 +2239,12 @@
     "confidence": 0.82,
     "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
     "evidence": [
-      "report_generator"
+      "data_collector"
     ],
     "root_cause": "The documented data collection capability is not backed by a robust registered tool, mock provider, or output contract fallback in the automated run.",
     "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
     "reproduction": {
-      "input": "analyze AAPL --report",
+      "input": "python -m src.main analyze AAPL",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": true,
@@ -1154,7 +2266,117 @@
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_019",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_034",
+    "case_id": "system3_financial_analysis_REQ_001",
+    "layer": "application",
+    "fault_type": "Data Collection Tool Registration Missing",
+    "failure_code": "BUSINESS_TASK_FAILED",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
+    "evidence": [
+      "report_generator"
+    ],
+    "root_cause": "The documented data collection capability is not backed by a robust registered tool, mock provider, or output contract fallback in the automated run.",
+    "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.55,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.55,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_035",
+    "case_id": "system3_financial_analysis_REQ_002",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+    "evidence": [
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
+    ],
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
+    "reproduction": {
+      "input": "python -m src.main analyze AAPL --type comprehensive",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_036",
     "case_id": "system3_financial_analysis_REQ_003",
     "layer": "autogen_framework",
     "fault_type": "Message Handoff Error",
@@ -1175,7 +2397,7 @@
     "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
     "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：多Agent协作完成股票分析任务：UserProxy接收用户请求（如analyze AAPL），依次启动data_analyst分析数据、financial_analyst计算财务指标、risk_analyst评估风险、investment_advisor给出综合建议，最终将结果返回给用户。",
+      "input": "请完成以下任务并给出清晰结果：系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": false,
@@ -1228,82 +2450,8 @@
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_020",
-    "case_id": "system3_financial_analysis_REQ_005",
-    "layer": "autogen_framework",
-    "fault_type": "Message Handoff Error",
-    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
-    "severity": "high",
-    "confidence": 0.9,
-    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
-    "evidence": [
-      "**综合投资建议**：",
-      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
-      "**投资评级**：**暂无**（需补充有效分析数据）",
-      "**目标价格**：**无法确定**（缺乏估值基础）",
-      "**行动建议**：",
-      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
-      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
-      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
-    ],
-    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
-    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.57,
-    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "31"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "to_dict",
-        "line": "48"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "59"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "collect_stock_data",
-        "line": "62"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "__init__",
-        "line": "93"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
-        "function": "AssistantAgent",
-        "line": "211"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "deterministic_confirmation": {
-      "confirmed": true,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "deterministic oracle failure with sufficient code/trace evidence",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.57,
-      "root_cause_confidence": "code_evidence"
-    },
-    "confirmation_status": "confirmed_fault",
-    "confirmation_source": "deterministic_oracle_evidence"
-  },
-  {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_021",
-    "case_id": "system3_financial_analysis_REQ_005",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_037",
+    "case_id": "system3_financial_analysis_REQ_003",
     "layer": "application",
     "fault_type": "Data Collection Tool Registration Missing",
     "failure_code": "BUSINESS_TASK_FAILED",
@@ -1316,7 +2464,7 @@
     "root_cause": "The documented data collection capability is not backed by a robust registered tool, mock provider, or output contract fallback in the automated run.",
     "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
     "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：系统处理无效股票代码时给出明确错误信息：当输入不存在的股票代码时，系统应捕获异常并返回友好的错误提示，不崩溃。",
+      "input": "请完成以下任务并给出清晰结果：系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
     },
     "suspected_false_positive": true,
@@ -1338,7 +2486,153 @@
     "confirmation_source": "deterministic_oracle_evidence"
   },
   {
-    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_022",
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_038",
+    "case_id": "system3_financial_analysis_REQ_003",
+    "layer": "application",
+    "fault_type": "Data Collection Tool Registration Missing",
+    "failure_code": "BUSINESS_TASK_FAILED",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
+    "evidence": [
+      "report_generator"
+    ],
+    "root_cause": "The documented data collection capability is not backed by a robust registered tool, mock provider, or output contract fallback in the automated run.",
+    "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：系统应能启动一个多代理协作流程，当用户通过命令行执行 'python -m src.main analyze AAPL' 时，系统应能协调 data_collector、financial_analyst 和 report_generator 完成对 AAPL 股票的分析。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.55,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.55,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_039",
+    "case_id": "system3_financial_analysis_REQ_005",
+    "layer": "autogen_framework",
+    "fault_type": "Message Handoff Error",
+    "failure_code": "MESSAGE_HANDOFF_TERMINATE_ONLY",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Downstream task reported missing data after a prior-stage handoff appears to contain only TERMINATE/empty content.",
+    "evidence": [
+      "**综合投资建议**：",
+      "在当前信息不充分的情况下，**不建议立即进行买入或卖出操作**。建议等待获得完整的财务健康度、盈利能力、负债水平、现金流及市场风险等分析报告后，再做出决策。",
+      "**投资评级**：**暂无**（需补充有效分析数据）",
+      "**目标价格**：**无法确定**（缺乏估值基础）",
+      "**行动建议**：",
+      "1. 要求财务分析师和风险分析师补充完整的分析结果，特别是TERMINATE原因的说明。",
+      "2. 若此为模拟场景，可参考AAPL的历史表现和行业平均估值，保守假设中性评级，但需明确标注不确定性。",
+      "3. 在未掌握可靠数据前，维持当前持仓观望，避免因信息缺失导致误判。"
+    ],
+    "root_cause": "The workflow forwarded termination or empty auto-reply content instead of substantive upstream analysis.",
+    "suggested_fix": "Pass the previous assistant analysis explicitly, or filter termination markers before calling downstream agents.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：系统应能处理数据收集异常，例如当 yfinance 无法获取 AAPL 数据时，data_collector 应返回明确的错误指示，而不是返回空数据导致后续代理产生幻觉。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.57,
+    "not_model_fault_because": "The failure is in framework/application message plumbing that forwards empty or termination-only content.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "31"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "to_dict",
+        "line": "48"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "59"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "collect_stock_data",
+        "line": "62"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "__init__",
+        "line": "93"
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "function": "AssistantAgent",
+        "line": "211"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.57,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_040",
+    "case_id": "system3_financial_analysis_REQ_005",
+    "layer": "application",
+    "fault_type": "Data Collection Tool Registration Missing",
+    "failure_code": "BUSINESS_TASK_FAILED",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Data collection workflow ran or was requested, but produced missing/empty data or lacked a wired provider.",
+    "evidence": [
+      "data_collector"
+    ],
+    "root_cause": "The documented data collection capability is not backed by a robust registered tool, mock provider, or output contract fallback in the automated run.",
+    "suggested_fix": "Register the data provider/tool explicitly or add a deterministic mock data fallback and validate required report sections.",
+    "reproduction": {
+      "input": "请完成以下任务并给出清晰结果：系统应能处理数据收集异常，例如当 yfinance 无法获取 AAPL 数据时，data_collector 应返回明确的错误指示，而不是返回空数据导致后续代理产生幻觉。",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py analyze AAPL"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.55,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.55,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_041",
     "case_id": "system3_financial_analysis_TERM_001",
     "layer": "autogen_framework",
     "fault_type": "Termination Signal Ignored",
@@ -1379,5 +2673,574 @@
     },
     "confirmation_status": "suspected_fault",
     "confirmation_source": "deterministic_oracle_evidence"
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_042",
+    "case_id": "system3_financial_analysis_STATIC_tool_unstructured_error",
+    "layer": "application",
+    "fault_type": "Tool Error Contract Missing",
+    "failure_code": "TOOL_UNSTRUCTURED_ERROR",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "HTTP tool can return raw text or None instead of a structured success/error envelope.",
+    "evidence": [
+      "requests-based tool returns response.text/None without typed error envelope",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py"
+    ],
+    "root_cause": "The tool wrapper does not normalize HTTP failures into a structured result.",
+    "suggested_fix": "Check status codes and return typed success/error payloads with status, message, and retryability.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "66",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "79",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "80",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "81",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/cache/cache_manager.py",
+        "line": "134",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.5,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_static_advisory",
+    "suspected_false_positive": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "deterministic_static_code_evidence",
+      "reason": "Static HTTP wrapper evidence requires an observed failing HTTP status and tool result/error envelope before confirmation.",
+      "evidence_strength": 0.5,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_043",
+    "case_id": "system3_financial_analysis_STATIC_tool_unstructured_error",
+    "layer": "application",
+    "fault_type": "Tool Error Contract Missing",
+    "failure_code": "TOOL_UNSTRUCTURED_ERROR",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "HTTP tool can return raw text or None instead of a structured success/error envelope.",
+    "evidence": [
+      "requests-based tool returns response.text/None without typed error envelope",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_collector.py"
+    ],
+    "root_cause": "The tool wrapper does not normalize HTTP failures into a structured result.",
+    "suggested_fix": "Check status codes and return typed success/error payloads with status, message, and retryability.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_collector.py",
+        "line": "49",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_collector.py",
+        "line": "50",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_collector.py",
+        "line": "92",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_collector.py",
+        "line": "128",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/data/data_collector.py",
+        "line": "150",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.5,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_static_advisory",
+    "suspected_false_positive": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "deterministic_static_code_evidence",
+      "reason": "Static HTTP wrapper evidence requires an observed failing HTTP status and tool result/error envelope before confirmation.",
+      "evidence_strength": 0.5,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_044",
+    "case_id": "system3_financial_analysis_STATIC_tool_unstructured_error",
+    "layer": "application",
+    "fault_type": "Tool Error Contract Missing",
+    "failure_code": "TOOL_UNSTRUCTURED_ERROR",
+    "severity": "medium",
+    "confidence": 0.72,
+    "summary": "HTTP tool can return raw text or None instead of a structured success/error envelope.",
+    "evidence": [
+      "requests-based tool returns response.text/None without typed error envelope",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/security/security_manager.py"
+    ],
+    "root_cause": "The tool wrapper does not normalize HTTP failures into a structured result.",
+    "suggested_fix": "Check status codes and return typed success/error payloads with status, message, and retryability.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/security/security_manager.py",
+        "line": "395",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/security/security_manager.py",
+        "line": "411",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/security/security_manager.py",
+        "line": "423",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/security/security_manager.py",
+        "line": "428",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/security/security_manager.py",
+        "line": "440",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.5,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_static_advisory",
+    "suspected_false_positive": true,
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "deterministic_static_code_evidence",
+      "reason": "Static HTTP wrapper evidence requires an observed failing HTTP status and tool result/error envelope before confirmation.",
+      "evidence_strength": 0.5,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_045",
+    "case_id": "system3_financial_analysis_STATIC_numeric_sign_convention_error",
+    "layer": "application",
+    "fault_type": "Data Processing Invariant Violation",
+    "failure_code": "NUMERIC_SIGN_CONVENTION_ERROR",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Risk metrics are returned as negative signed returns where reports commonly expect positive magnitudes.",
+    "evidence": [
+      "VaR/drawdown assigned from lower-tail/min return expressions",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py"
+    ],
+    "root_cause": "Risk metric outputs are not normalized to documented/report magnitude semantics.",
+    "suggested_fix": "Normalize VaR and drawdown outputs to positive magnitudes or label them explicitly as signed returns.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "45",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "46",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "51",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "52",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/student_autogen_system.py",
+        "line": "173",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.68,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.68,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_046",
+    "case_id": "system3_financial_analysis_STATIC_partial_metric_zeroed",
+    "layer": "application",
+    "fault_type": "Data Processing Invariant Violation",
+    "failure_code": "PARTIAL_METRIC_ZEROED",
+    "severity": "medium",
+    "confidence": 0.84,
+    "summary": "Financial metric calculation can discard available metrics when one optional row lookup fails.",
+    "evidence": [
+      "direct .loc row lookups inside broad try/except",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py"
+    ],
+    "root_cause": "Independent financial metrics are computed in a shared exception scope, so one missing row can zero unrelated outputs.",
+    "suggested_fix": "Compute each metric independently and represent missing-row-dependent values as null/unavailable.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "21",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "71",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "81",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "87",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "92",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.7,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.7,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_047",
+    "case_id": "system3_financial_analysis_STATIC_numeric_sign_convention_error",
+    "layer": "application",
+    "fault_type": "Data Processing Invariant Violation",
+    "failure_code": "NUMERIC_SIGN_CONVENTION_ERROR",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Risk metrics are returned as negative signed returns where reports commonly expect positive magnitudes.",
+    "evidence": [
+      "VaR/drawdown assigned from lower-tail/min return expressions",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py"
+    ],
+    "root_cause": "Risk metric outputs are not normalized to documented/report magnitude semantics.",
+    "suggested_fix": "Normalize VaR and drawdown outputs to positive magnitudes or label them explicitly as signed returns.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "44",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "45",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "50",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "51",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/simple_autogen_system.py",
+        "line": "167",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.68,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.68,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_048",
+    "case_id": "system3_financial_analysis_STATIC_numeric_sign_convention_error",
+    "layer": "application",
+    "fault_type": "Data Processing Invariant Violation",
+    "failure_code": "NUMERIC_SIGN_CONVENTION_ERROR",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Risk metrics are returned as negative signed returns where reports commonly expect positive magnitudes.",
+    "evidence": [
+      "VaR/drawdown assigned from lower-tail/min return expressions",
+      "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/risk/risk_analyzer.py"
+    ],
+    "root_cause": "Risk metric outputs are not normalized to documented/report magnitude semantics.",
+    "suggested_fix": "Normalize VaR and drawdown outputs to positive magnitudes or label them explicitly as signed returns.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/risk/risk_analyzer.py",
+        "line": "64",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/risk/risk_analyzer.py",
+        "line": "65",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/risk/risk_analyzer.py",
+        "line": "71",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/risk/risk_analyzer.py",
+        "line": "72",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/risk/risk_analyzer.py",
+        "line": "78",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.68,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.68,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_049",
+    "case_id": "system3_financial_analysis_STATIC_documented_cli_command_missing",
+    "layer": "application",
+    "fault_type": "Documented CLI Command Missing",
+    "failure_code": "DOCUMENTED_CLI_COMMAND_MISSING",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Documented CLI command is not implemented by the parser or dispatcher: python -m src.main portfolio AAPL MSFT GOOG",
+    "evidence": [
+      "documented_command=python -m src.main portfolio AAPL MSFT GOOG",
+      "subcommand parser registration not found in source"
+    ],
+    "root_cause": "Documentation advertises a CLI subcommand that the implementation does not register.",
+    "suggested_fix": "Add the documented subcommand to the parser/dispatcher or remove/update the documentation.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "9",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "101",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "104",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "107",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.66,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.66,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_050",
+    "case_id": "system3_financial_analysis_STATIC_documented_cli_command_missing",
+    "layer": "application",
+    "fault_type": "Documented CLI Command Missing",
+    "failure_code": "DOCUMENTED_CLI_COMMAND_MISSING",
+    "severity": "medium",
+    "confidence": 0.82,
+    "summary": "Documented CLI command is not implemented by the parser or dispatcher: python -m src.main interactive",
+    "evidence": [
+      "documented_command=python -m src.main interactive",
+      "subcommand parser registration not found in source"
+    ],
+    "root_cause": "Documentation advertises a CLI subcommand that the implementation does not register.",
+    "suggested_fix": "Add the documented subcommand to the parser/dispatcher or remove/update the documentation.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "9",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "101",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "104",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/simple_autogen/main.py",
+        "line": "107",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.66,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.66,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
+  },
+  {
+    "fault_id": "SYSTEM3_FINANCIAL_ANALYSIS_FAULT_051",
+    "case_id": "system3_financial_analysis_STATIC_autogen_wiring_missing",
+    "layer": "autogen_framework",
+    "fault_type": "Agent Orchestration Wiring Missing",
+    "failure_code": "AUTOGEN_WIRING_MISSING",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Documented AutoGen workflow is initialized with an empty or missing agent mapping.",
+    "evidence": [
+      "{'file': '/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py', 'line': '115', 'risk': 'AgentOrchestrator initialized with an empty mapping or no agents.', 'call': 'AgentOrchestrator({})'}"
+    ],
+    "root_cause": "The orchestrator/factory wiring does not create or register the documented collaborating agents.",
+    "suggested_fix": "Create the required agents from the factory and pass a non-empty role-to-agent mapping into the orchestrator.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/autogen-financial-analysis-main/src/main.py",
+        "line": "115",
+        "function": "AgentOrchestrator"
+      }
+    ],
+    "evidence_strength": 0.76,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.76,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters."
   }
 ]

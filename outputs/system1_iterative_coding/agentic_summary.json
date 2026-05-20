@@ -12,11 +12,11 @@
     "ReportWriterAgent"
   ],
   "model_usage": {
-    "run_id": "agentic_1779248314_c33e6c4c",
-    "total_calls": 25,
-    "successful_calls": 22,
-    "fallback_calls": 3,
-    "failed_calls": 3,
+    "run_id": "agentic_1779254622_328cf738",
+    "total_calls": 33,
+    "successful_calls": 32,
+    "fallback_calls": 1,
+    "failed_calls": 1,
     "by_agent": {
       "RequirementAnalystAgent": 1,
       "SystemModelingAgent": 1,
@@ -24,8 +24,8 @@
       "InteractionAdapterAgent": 1,
       "TestDesignerAgent": 4,
       "ExecutionMonitorAgent": 1,
-      "FaultDiagnoserAgent": 7,
-      "FalsePositiveAuditorAgent": 7,
+      "FaultDiagnoserAgent": 11,
+      "FalsePositiveAuditorAgent": 11,
       "CoverageStrategistAgent": 1,
       "ReportWriterAgent": 1
     },
@@ -36,17 +36,17 @@
       "plan_interaction_adapter": 1,
       "generate_testcases": 4,
       "summarize_execution": 1,
-      "diagnose_fault": 7,
-      "audit_false_positive": 7,
+      "diagnose_fault": 11,
+      "audit_false_positive": 11,
       "analyze_coverage_gaps": 1,
       "write_report_narrative": 1
     },
     "by_model": {
-      "deepseek-v4-pro": 25
+      "deepseek-v4-pro": 33
     },
     "estimated_tokens": {
-      "input_tokens": 82960,
-      "output_tokens": 33880
+      "input_tokens": 115717,
+      "output_tokens": 50000
     }
   },
   "target_model_usage": {
@@ -62,9 +62,9 @@
     "target_api_key_envs": [
       "BOYUE_API_KEY"
     ],
-    "stdout_model_mentions": 91,
+    "stdout_model_mentions": 61,
     "stderr_model_mentions": 0,
-    "autogen_model_warning_count": 91,
+    "autogen_model_warning_count": 61,
     "case_summaries": [
       {
         "case_id": "system1_iterative_coding_ARTIFACT_001",
@@ -78,13 +78,13 @@
       },
       {
         "case_id": "system1_iterative_coding_COV_001",
-        "status": "passed",
+        "status": "failed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 4,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 4
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system1_iterative_coding_COV_002",
@@ -98,7 +98,7 @@
       },
       {
         "case_id": "system1_iterative_coding_FSSAFE_001",
-        "status": "passed",
+        "status": "failed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
@@ -108,16 +108,6 @@
       },
       {
         "case_id": "system1_iterative_coding_FUZZ_001",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
-      },
-      {
-        "case_id": "system1_iterative_coding_FUZZ_002",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -168,36 +158,16 @@
       },
       {
         "case_id": "system1_iterative_coding_OUTCONTRACT_002",
-        "status": "passed",
+        "status": "timeout",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 11,
+        "stdout_model_mentions": 10,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 11
-      },
-      {
-        "case_id": "system1_iterative_coding_OUTCONTRACT_003",
-        "status": "failed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 9,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 9
+        "autogen_model_warning_count": 10
       },
       {
         "case_id": "system1_iterative_coding_PROP_001",
-        "status": "passed",
-        "target_model": "deepseek-v4-flash",
-        "target_base_url": "https://apicz.boyuerichdata.com/v1",
-        "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 11,
-        "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 11
-      },
-      {
-        "case_id": "system1_iterative_coding_PROP_002",
         "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
@@ -222,19 +192,29 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 0,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system1_iterative_coding_REQ_002",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 12,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 12
       },
       {
-        "case_id": "system1_iterative_coding_REQ_002",
-        "status": "timeout",
+        "case_id": "system1_iterative_coding_REQ_003",
+        "status": "passed",
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 8,
+        "stdout_model_mentions": 12,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 8
+        "autogen_model_warning_count": 12
       },
       {
         "case_id": "system1_iterative_coding_RESUME_001",
@@ -292,9 +272,9 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
-        "stdout_model_mentions": 12,
+        "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
-        "autogen_model_warning_count": 12
+        "autogen_model_warning_count": 0
       },
       {
         "case_id": "system1_iterative_coding_TOOLFUZZ_001",
@@ -302,27 +282,49 @@
         "target_model": "deepseek-v4-flash",
         "target_base_url": "https://apicz.boyuerichdata.com/v1",
         "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 11,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 11
+      },
+      {
+        "case_id": "system1_iterative_coding_TOOLFUZZ_002",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
         "stdout_model_mentions": 0,
         "stderr_model_mentions": 0,
         "autogen_model_warning_count": 0
+      },
+      {
+        "case_id": "system1_iterative_coding_WIRING_001",
+        "status": "passed",
+        "target_model": "deepseek-v4-flash",
+        "target_base_url": "https://apicz.boyuerichdata.com/v1",
+        "target_api_key_env": "BOYUE_API_KEY",
+        "stdout_model_mentions": 4,
+        "stderr_model_mentions": 0,
+        "autogen_model_warning_count": 4
       }
     ]
   },
   "non_target_issues": [
     {
       "case_id": "system1_iterative_coding_COV_001",
-      "code": "TURN_BUDGET_EXCEEDED",
+      "code": "TARGET_WORKFLOW_NOT_OBSERVED",
       "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
+      "issue_type": "Target Workflow Not Observed",
       "severity": "low",
       "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "message": "The test run did not observe a meaningful target agent workflow, so routing/tool expectations cannot be judged as target faults.",
       "evidence": [
-        "turn_count=24",
-        "max_turns=10"
+        "turn_count=0",
+        "returncode=1",
+        "timeout=False",
+        "command=/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
       ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "root_cause": "The target process did not expose a meaningful agent workflow for this generated case, so routing/tool expectations would be unreliable as target faults.",
+      "suggested_fix": "Improve the case-to-target adapter, command template, or runtime instrumentation, then rerun the frozen testcase before judging application/framework faults.",
       "excluded_from_target_faults": true
     },
     {
@@ -342,39 +344,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system1_iterative_coding_FSSAFE_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=23",
-        "max_turns=20"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
       "case_id": "system1_iterative_coding_FUZZ_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=25",
-        "max_turns=10"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_FUZZ_002",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -391,22 +361,6 @@
     },
     {
       "case_id": "system1_iterative_coding_PROP_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=21",
-        "max_turns=10"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_PROP_002",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -446,7 +400,39 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
+        "turn_count=24",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system1_iterative_coding_REQ_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
         "turn_count=23",
+        "max_turns=8"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system1_iterative_coding_REQ_003",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=22",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -486,7 +472,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system1_iterative_coding_TOOLFUZZ_001",
+      "case_id": "system1_iterative_coding_TOOLFUZZ_002",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -505,18 +491,20 @@
   "test_harness_issues": [
     {
       "case_id": "system1_iterative_coding_COV_001",
-      "code": "TURN_BUDGET_EXCEEDED",
+      "code": "TARGET_WORKFLOW_NOT_OBSERVED",
       "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
+      "issue_type": "Target Workflow Not Observed",
       "severity": "low",
       "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "message": "The test run did not observe a meaningful target agent workflow, so routing/tool expectations cannot be judged as target faults.",
       "evidence": [
-        "turn_count=24",
-        "max_turns=10"
+        "turn_count=0",
+        "returncode=1",
+        "timeout=False",
+        "command=/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
       ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "root_cause": "The target process did not expose a meaningful agent workflow for this generated case, so routing/tool expectations would be unreliable as target faults.",
+      "suggested_fix": "Improve the case-to-target adapter, command template, or runtime instrumentation, then rerun the frozen testcase before judging application/framework faults.",
       "excluded_from_target_faults": true
     },
     {
@@ -536,39 +524,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system1_iterative_coding_FSSAFE_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=23",
-        "max_turns=20"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
       "case_id": "system1_iterative_coding_FUZZ_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=25",
-        "max_turns=10"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_FUZZ_002",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -585,22 +541,6 @@
     },
     {
       "case_id": "system1_iterative_coding_PROP_001",
-      "code": "TURN_BUDGET_EXCEEDED",
-      "layer": "test_harness",
-      "issue_type": "Soft Turn Budget Exceeded",
-      "severity": "low",
-      "confidence": 0.95,
-      "message": "The run terminated, but exceeded the expected soft turn budget.",
-      "evidence": [
-        "turn_count=21",
-        "max_turns=10"
-      ],
-      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-      "excluded_from_target_faults": true
-    },
-    {
-      "case_id": "system1_iterative_coding_PROP_002",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -640,7 +580,39 @@
       "confidence": 0.95,
       "message": "The run terminated, but exceeded the expected soft turn budget.",
       "evidence": [
+        "turn_count=24",
+        "max_turns=15"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system1_iterative_coding_REQ_002",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
         "turn_count=23",
+        "max_turns=8"
+      ],
+      "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+      "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+      "excluded_from_target_faults": true
+    },
+    {
+      "case_id": "system1_iterative_coding_REQ_003",
+      "code": "TURN_BUDGET_EXCEEDED",
+      "layer": "test_harness",
+      "issue_type": "Soft Turn Budget Exceeded",
+      "severity": "low",
+      "confidence": 0.95,
+      "message": "The run terminated, but exceeded the expected soft turn budget.",
+      "evidence": [
+        "turn_count=22",
         "max_turns=15"
       ],
       "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -680,7 +652,7 @@
       "excluded_from_target_faults": true
     },
     {
-      "case_id": "system1_iterative_coding_TOOLFUZZ_001",
+      "case_id": "system1_iterative_coding_TOOLFUZZ_002",
       "code": "TURN_BUDGET_EXCEEDED",
       "layer": "test_harness",
       "issue_type": "Soft Turn Budget Exceeded",
@@ -697,27 +669,56 @@
     }
   ],
   "run_manifest": {
-    "run_id": "system1_iterative_coding_2026-05-20T03:38:34.503034+00:00",
-    "start_time": "2026-05-20T03:38:34.503141+00:00",
+    "run_id": "system1_iterative_coding_2026-05-20T05:23:42.613162+00:00",
+    "start_time": "2026-05-20T05:23:42.613296+00:00",
     "config_path": "/Users/zhbai/code/cz_exp/MASentinel/configs/system1.yaml",
     "config_hash": "bd45be02a5f2543317909639d9daa3d1bbace92c0444d58ff6ea104fdbc5aa4f",
-    "code_snapshot_hash": "090e92e75c232954b17ee52a22227c6201bffc5021e61a5e92b05b9d505be589",
+    "code_snapshot_hash": "835b11df60940c9376869f4ae6457e9c8e747f4db7a7280be7ea834bd8dc6e5b",
     "doc_hash": "1ee7beafb5f91e4249e44a16d09d1405328375e9e1dbbf48e2c974e357880c43",
     "human_intervention_allowed": false,
     "entry_command": "scripts/run_with_boyue_api.py --config configs/all_systems.yaml --testing-model deepseek-v4-pro --target-model deepseek-v4-flash",
     "python_executable": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python",
-    "pid": 89258
+    "pid": 94258
   },
-  "testcases_frozen_sha256": "7ae674f4f38442ffe5f80d53af469243b0c2b520e78060c4920abc5126ad14a9",
+  "testcases_frozen_sha256": "2de709e65ab47ad0cfc9c504d9d06774212c317d480e0e304012939eed50a758",
   "human_intervention_allowed": false,
   "agent_api_workers": 3,
   "semantic_graph_review": {
-    "semantic_graph_review": "Fallback: static semantic graph accepted without LLM revision.",
-    "suspected_risk_points": [],
-    "additional_edges": [],
-    "confidence": 0.35,
-    "fallback": true,
-    "error": "Model call failed after 3 attempt(s): The read operation timed out"
+    "semantic_graph_review": "The semantic graph is mostly consistent with the documented agent roles. The manager initiates chats with planner, programmer, and reviewer, which matches the main loop logic. However, there are missing edges that reflect the actual runtime handoffs: planner -> manager (for approval), manager -> programmer (after approval), programmer -> reviewer (via manager-controlled loop), reviewer -> programmer (for iterative feedback), and programmer -> manager (when iteration is done). Currently only manager-initiated edges are present, which under-represents the actual communication flow. Additionally, the tool assignments are incomplete: the planner is listed without tools in the profile, but the system message and R2 clearly indicate that planner must call write_settled_plan. In the actual agent definition (IterativeTools.py line 26), planner is configured with a 'functions' list that includes write_settled_plan. This discrepancy is a semantic inconsistency. Similarly, the reviewer is not assigned any tools in the profile, but the underlying code provides write_latest_iteration_comments; however, review of the system message shows the reviewer is explicitly told not to write code, only explain, which is consistent with not having tools, so this is not a risk. The termination conditions 'TERMINATE' and 'max_turns' are standard. The profile states only manager has tools, but the evidence from requirements and code shows planner should have write_settled_plan. This mismatch can lead to test failures where planner is expected to use the tool but the tool is not registered for it in tests, resulting in tool_schema_risk.",
+    "suspected_risk_points": [
+      {
+        "type": "tool_schema_risk",
+        "evidence": "Profile lists planner with tools: [] (no tools). However, requirement R2 expects planner to call write_settled_plan. In the source code IterativeTools.py line 26, planner is created with a 'functions' parameter that includes write_settled_plan. This indicates the tool should be available to planner, but the profile omits it. If the test environment relies on the profile to decide tool registration, planner will not have access to write_settled_plan, causing tool call failures.",
+        "related_tool": "write_settled_plan"
+      }
+    ],
+    "additional_edges": [
+      {
+        "source": "planner",
+        "target": "manager",
+        "evidence": "Planner must interact with manager to get approval ('sounds good') as per R2.",
+        "type": "conversation"
+      },
+      {
+        "source": "programmer",
+        "target": "reviewer",
+        "evidence": "In the iteration loop (main.py), after programmer produces code, the manager initiates a chat with reviewer passing the code. This creates a logical edge.",
+        "type": "logical_flow"
+      },
+      {
+        "source": "reviewer",
+        "target": "programmer",
+        "evidence": "Reviewer feedback is passed back to programmer for next iteration, as per system description and R6.",
+        "type": "logical_flow"
+      },
+      {
+        "source": "programmer",
+        "target": "manager",
+        "evidence": "Manager triggers write_latest_iteration after programmer output, and can provide feedback directly to programmer during iteration.",
+        "type": "conversation"
+      }
+    ],
+    "confidence": 0.85
   },
   "interaction_adapter": {
     "prompt_responses": [
@@ -735,15 +736,15 @@
       },
       {
         "trigger": "What name would you like to give this project?",
-        "response": "{project_name}",
+        "response": "{safe_case_id}",
         "regex": false,
         "max_count": 1
       },
       {
         "trigger": "Select project to continue:",
-        "response": "1",
+        "response": "2",
         "regex": false,
-        "max_count": 0
+        "max_count": 1
       }
     ],
     "isolated_paths": [
@@ -751,16 +752,22 @@
       ".masentinel_autoreply/{safe_case_id}"
     ],
     "risk_notes": [
-      "The program may prompt to continue an old project. Since no existing project is expected in isolated directories, choose 'Start a new project' (option 1) consistently. If the welcome prompt includes both new/old selection (trigger 'Selection:'), the response '1' handles it.",
-      "Timeout of 120 seconds and isolated directories must be enforced by the test harness. The program's project directory is derived from user input and may attempt to use relative paths; isolated_paths should be set as the working directory for each test case to avoid cross-case pollution.",
-      "If the program previously saved project directories, the 'Select project to continue' prompt may appear. In isolated mode with no prior projects, this prompt is unexpected. The regex can remain false because the prompt text is fixed. Set max_count to 0 to skip auto-response and raise an error if encountered, ensuring the test fails safely instead of stalling."
+      "The program has two code paths: one when no previous projects exist (no Selection prompt) and one when there are previous projects. The first path asks two questions directly; the second asks 'Selection:' first. The prompt_responses above cover both paths, but if stdin is provided as a single block, the first path will receive '1' as the answer to 'What python creation would you like?' which will cause invalid input. A conditional response or dedicated case-specific input sequence may be needed for the 'no previous projects' path.",
+      "The 'Select project to continue:' prompt expects an integer index. If no previous projects exist, this prompt will not appear. If a previous project exists but the index '2' is out of range, the program may crash. Safer to not include this prompt-response unless the test environment guarantees at least 2 existing projects.",
+      "The project_name response uses {safe_case_id} which may contain characters invalid for directory names (e.g., special chars, spaces). The program requirement 'must follow directory naming rules' is not enforced by the prompt-response; a wrapper or pre-sanitization may be needed to ensure {safe_case_id} is filesystem-safe."
     ],
-    "confidence": 0.9,
+    "confidence": 0.85,
     "applied": {
       "added_prompt_responses": [
         {
+          "trigger": "What name would you like to give this project?",
+          "response": "{safe_case_id}",
+          "regex": false,
+          "max_count": 1
+        },
+        {
           "trigger": "Select project to continue:",
-          "response": "1",
+          "response": "2",
           "regex": false,
           "max_count": 1
         }
@@ -769,22 +776,9 @@
     }
   },
   "coverage_strategy": {
-    "coverage_gaps": [
-      {
-        "gap_type": "missing_state_coverage",
-        "target": "state_coverage",
-        "suggested_test_intent": "Generate additional cases to improve state_coverage."
-      },
-      {
-        "gap_type": "missing_fault_mode_coverage",
-        "target": "fault_mode_coverage",
-        "suggested_test_intent": "Generate additional cases to improve fault_mode_coverage."
-      }
-    ],
+    "coverage_gaps": [],
     "new_test_requests": [],
-    "confidence": 0.35,
-    "fallback": true,
-    "error": "Model call failed after 3 attempt(s): The read operation timed out"
+    "confidence": 0.0
   },
   "test_plan": {
     "selected_patterns": [
@@ -793,40 +787,39 @@
         "applicability": "hard",
         "confidence": 0.9,
         "reasons": [
-          "System writes files (writes_files: true) for code, comments, and plans, documented in tools write_latest_iteration and write_settled_plan.",
-          "Requirements R1, R3, R5 explicitly describe expected artifact content, versioning, and 'only latest version' rules.",
-          "Negative cases specify corrupt, missing, or empty artifacts, providing strong oracle for contract violations."
+          "System writes files (write_latest_iteration, write_settled_plan) and has user-controlled paths; R5 explicitly requires code to be saved to script file.",
+          "Versioned artifacts and resume state imply file naming conventions and appropriate directory handling are required."
         ],
         "required_features": [
           "writes_files",
-          "has_documented_artifacts"
+          "has_user_controlled_path",
+          "has_versioned_artifacts"
         ],
         "required_evidence": [
-          "Tool source code for write_latest_iteration/write_settled_plan",
-          "Artifact file naming and versioning logic",
-          "Sample run artifacts or test mock file system"
+          "Tool signatures for write_latest_iteration/write_settled_plan",
+          "Manager agent configuration",
+          "Documentation or code showing file naming conventions (e.g., script_v1.py)"
         ],
         "oracle_strength": "hard",
-        "case_budget": 2,
+        "case_budget": 1,
         "source": "PatternApplicabilityAgent"
       },
       {
-        "pattern": "filesystem_safety",
+        "pattern": "autogen_wiring",
         "applicability": "hard",
-        "confidence": 0.9,
+        "confidence": 0.85,
         "reasons": [
-          "has_user_controlled_path: true — agents write to project folders specified at runtime.",
-          "Requirements R2, R3 describe file-based persistence and retrieval, with negative cases on file system errors and corrupted folders.",
-          "No evidence of path sanitization or safe failure modes; typical Autogen tool defaults may not prevent path traversal or crash on missing directories."
+          "System heavily uses AutoGen GroupChat with multiple agents and custom tools; any misconfiguration in agent creation, tool registration, or message routing could cause failures."
         ],
         "required_features": [
-          "writes_files",
-          "has_user_controlled_path"
+          "uses_autogen",
+          "uses_groupchat",
+          "has_tools"
         ],
         "required_evidence": [
-          "Implementation of tool functions that accept paths",
-          "Path handling in write_latest_iteration/write_settled_plan",
-          "Absence of path sanitization (e.g., no os.path.abspath checks)"
+          "Agent class definitions (UserProxyAgent, AssistantAgent)",
+          "GroupChat initialization code",
+          "Tool registration and execution handlers"
         ],
         "oracle_strength": "hard",
         "case_budget": 1,
@@ -837,18 +830,15 @@
         "applicability": "hard",
         "confidence": 0.85,
         "reasons": [
-          "has_resume_state: true — system claims to support resuming by detecting existing project folders (R3).",
-          "Tools like list_subdirectories, does_version_one_exist, retrieve_latest_iteration are mentioned in requirements.",
-          "Negative cases specify handling corrupted/missing files without infinite loop, forming a contract on resume behavior."
+          "R7 explicit requires support for resuming an existing project, and features confirm has_resume_state and has_versioned_artifacts."
         ],
         "required_features": [
           "has_resume_state",
           "has_versioned_artifacts"
         ],
         "required_evidence": [
-          "Resume logic in manager/programmer agents",
-          "Tool implementations for detection and retrieval",
-          "Test scenario with pre-existing, corrupted, or missing project folders"
+          "Code implementing resume logic (e.g., loading script_v{N}.py)",
+          "Manager or orchestrator logic to detect existing state"
         ],
         "oracle_strength": "hard",
         "case_budget": 1,
@@ -857,20 +847,19 @@
       {
         "pattern": "message_handoff_integrity",
         "applicability": "hard",
-        "confidence": 0.8,
+        "confidence": 0.85,
         "reasons": [
-          "has_multistage_handoff: true — two-phase workflow: planning → iterative coding with handoff between Planner, Coder, Reviewer.",
-          "has_last_message_calls: true — agents may rely on last_message() to retrieve context, making handoff sequences critical.",
-          "R1 negative case: transition to iteration phase only after approval. Out-of-sequence handoff could bypass this contract."
+          "Features confirm has_last_message_calls and has_multistage_handoff; system must pass code/plans between Planner->Manager, Coder->Reviewer, etc.",
+          "R6 and R8 both relate to correct iteration context and handoff (present latest script)."
         ],
         "required_features": [
-          "has_multistage_handoff",
-          "has_last_message_calls"
+          "has_last_message_calls",
+          "has_multistage_handoff"
         ],
         "required_evidence": [
-          "Implementation of phase transition logic (after write_settled_plan)",
-          "GroupChat speaker selection rules for handoff order",
-          "Message flow from manager→planner→manager→programmer↔reviewer"
+          "Message routing logic (initiate_chat edges)",
+          "Last message handling in agents",
+          "Iteration management code"
         ],
         "oracle_strength": "hard",
         "case_budget": 1,
@@ -879,20 +868,19 @@
       {
         "pattern": "speaker_selection",
         "applicability": "hard",
-        "confidence": 0.85,
+        "confidence": 0.9,
         "reasons": [
-          "has_speaker_selection: true — GroupChat with speaker selection method configured.",
-          "Message edges show manager initiates chat with each agent, but GroupChat may select wrong speaker during iteration.",
-          "R4 describes manager feedback to specific agents without automatically advancing stage; speaker selection must respect stage context."
+          "System uses GroupChat with speaker_selection; appropriate speaker transitions are critical for iterative workflow.",
+          "Requirements R1-R4, R6, R8 all imply expected speaker order (Manager->Planner->Manager, Coder->Reviewer, etc.)."
         ],
         "required_features": [
-          "uses_groupchat",
-          "has_speaker_selection"
+          "has_speaker_selection",
+          "uses_groupchat"
         ],
         "required_evidence": [
-          "GroupChat speaker_selection_method function",
-          "Transition logic between planning and iteration stages",
-          "Test scenario where incorrect agent responds during iteration"
+          "GroupChat configuration (speaker_selection_method)",
+          "Agent system messages and roles",
+          "Expected conversation flow from message_edges"
         ],
         "oracle_strength": "hard",
         "case_budget": 1,
@@ -902,45 +890,55 @@
     "rejected_patterns": [
       {
         "pattern": "tool_api_contract",
-        "reason": "No HTTP/API/Airtable/request-like tools or external API calls — all tools are local file writes.",
-        "confidence": 1.0,
-        "source": "PatternApplicabilityAgent"
+        "applicability": "hard",
+        "confidence": 0.85,
+        "reasons": [
+          "Two tools exist (write_latest_iteration, write_settled_plan) with documented expected behavior (saving code/plan).",
+          "R2 and R5 directly involve tool calls with specific contracts (e.g., write_settled_plan only when manager approves)."
+        ],
+        "required_features": [
+          "has_tools"
+        ],
+        "required_evidence": [
+          "Tool implementations and docstrings",
+          "Agent tool registration",
+          "Requirements R2 and R5"
+        ],
+        "oracle_strength": "diagnostic",
+        "case_budget": 1,
+        "source": "PatternApplicabilityAgent",
+        "rejected_by_verifier": true,
+        "verifier_reason": "requires HTTP/API/Airtable tool evidence"
       },
       {
-        "pattern": "tool_error_contract",
-        "reason": "Tools are local file writers without documented error contracts, and no external API error handling needed.",
-        "confidence": 0.9,
+        "pattern": "cli_doc_conformance",
+        "reason": "No documented Python CLI commands; has_documented_commands is false and documented_commands is empty list.",
+        "confidence": 1.0,
         "source": "PatternApplicabilityAgent"
       },
       {
         "pattern": "data_invariant",
-        "reason": "No pandas, financial metrics, risk metrics, or data frame processing — pure code generation workflow.",
+        "reason": "No financial, risk, or data processing features; has_pandas, has_financial_metrics, has_risk_metrics are all false.",
         "confidence": 1.0,
         "source": "PatternApplicabilityAgent"
       },
       {
-        "pattern": "cli_doc_conformance",
-        "reason": "No documented CLI commands; uses Python scripts invoked directly, not argparse-based CLI.",
-        "confidence": 1.0,
-        "source": "PatternApplicabilityAgent"
-      },
-      {
-        "pattern": "autogen_wiring",
-        "reason": "static_risks.has_autogen_wiring_risk: false — no GroupChat wiring risks flagged by deterministic scan.",
+        "pattern": "filesystem_safety",
+        "reason": "No tool that writes files with user-controlled paths (write_latest_iteration does write files, but safety is more about injection/overwrite; artifact_contract covers the main file contract). However, filesystem_safety pattern is focused on filesystem-level safety invariants, which are not explicitly required or evident in requirements.",
         "confidence": 0.9,
         "source": "PatternApplicabilityAgent"
       },
       {
         "pattern": "scalable_budget",
-        "reason": "Requirements mention max_turns but no evidence of budget scaling issues; not a primary concern for this profile.",
-        "confidence": 0.7,
+        "reason": "No evidence of variable message/cost budget constraints; termination is by TERMINATE/max_turns, but no budget risk signals.",
+        "confidence": 0.8,
         "source": "PatternApplicabilityAgent"
       },
       {
-        "pattern": "autogen_wiring",
-        "reason": "requires documented AutoGen/multi-agent workflow or static wiring risk",
+        "pattern": "tool_error_contract",
+        "reason": "No HTTP/API tools; tools are local Python functions, and no evidence of structured error contracts for external calls.",
         "confidence": 0.9,
-        "source": "deterministic_feature_extractor"
+        "source": "PatternApplicabilityAgent"
       },
       {
         "pattern": "cli_doc_conformance",
@@ -973,23 +971,21 @@
         "source": "deterministic_feature_extractor"
       }
     ],
-    "verifier_omitted_applicable_patterns": [
+    "verifier_omitted_applicable_patterns": [],
+    "verifier_promoted_patterns": [],
+    "verifier_overridden_rejections": [],
+    "diagnostic_only_patterns": [
       {
-        "pattern": "autogen_wiring",
-        "applicability": "hard",
-        "oracle_strength": "hard",
+        "pattern": "filesystem_safety",
+        "reason": "Writes files with user-controlled path, so there might be some risk of unsafe file handling. But no explicit safety requirement; could be non-target.",
+        "oracle_strength": "diagnostic",
         "case_budget": 1,
-        "confidence": 0.9,
-        "reasons": [
-          "requires documented AutoGen/multi-agent workflow or static wiring risk"
-        ],
+        "confidence": 0.85,
         "required_evidence": [
-          "static_wiring_risk_or_missing_runtime_messages"
-        ],
-        "source": "deterministic_feature_extractor"
+          "observed_filesystem_effects"
+        ]
       }
     ],
-    "diagnostic_only_patterns": [],
     "deterministic_features": {
       "system_id": "system1_iterative_coding",
       "source_summary": {
@@ -1081,39 +1077,38 @@
           "applicability": "hard",
           "confidence": 0.9,
           "reasons": [
-            "System writes files (writes_files: true) for code, comments, and plans, documented in tools write_latest_iteration and write_settled_plan.",
-            "Requirements R1, R3, R5 explicitly describe expected artifact content, versioning, and 'only latest version' rules.",
-            "Negative cases specify corrupt, missing, or empty artifacts, providing strong oracle for contract violations."
+            "System writes files (write_latest_iteration, write_settled_plan) and has user-controlled paths; R5 explicitly requires code to be saved to script file.",
+            "Versioned artifacts and resume state imply file naming conventions and appropriate directory handling are required."
           ],
           "required_features": [
             "writes_files",
-            "has_documented_artifacts"
+            "has_user_controlled_path",
+            "has_versioned_artifacts"
           ],
           "required_evidence": [
-            "Tool source code for write_latest_iteration/write_settled_plan",
-            "Artifact file naming and versioning logic",
-            "Sample run artifacts or test mock file system"
+            "Tool signatures for write_latest_iteration/write_settled_plan",
+            "Manager agent configuration",
+            "Documentation or code showing file naming conventions (e.g., script_v1.py)"
           ],
           "oracle_strength": "hard",
-          "case_budget": 2
+          "case_budget": 1
         },
         {
-          "pattern": "filesystem_safety",
+          "pattern": "autogen_wiring",
           "applicability": "hard",
-          "confidence": 0.9,
+          "confidence": 0.85,
           "reasons": [
-            "has_user_controlled_path: true — agents write to project folders specified at runtime.",
-            "Requirements R2, R3 describe file-based persistence and retrieval, with negative cases on file system errors and corrupted folders.",
-            "No evidence of path sanitization or safe failure modes; typical Autogen tool defaults may not prevent path traversal or crash on missing directories."
+            "System heavily uses AutoGen GroupChat with multiple agents and custom tools; any misconfiguration in agent creation, tool registration, or message routing could cause failures."
           ],
           "required_features": [
-            "writes_files",
-            "has_user_controlled_path"
+            "uses_autogen",
+            "uses_groupchat",
+            "has_tools"
           ],
           "required_evidence": [
-            "Implementation of tool functions that accept paths",
-            "Path handling in write_latest_iteration/write_settled_plan",
-            "Absence of path sanitization (e.g., no os.path.abspath checks)"
+            "Agent class definitions (UserProxyAgent, AssistantAgent)",
+            "GroupChat initialization code",
+            "Tool registration and execution handlers"
           ],
           "oracle_strength": "hard",
           "case_budget": 1
@@ -1123,18 +1118,15 @@
           "applicability": "hard",
           "confidence": 0.85,
           "reasons": [
-            "has_resume_state: true — system claims to support resuming by detecting existing project folders (R3).",
-            "Tools like list_subdirectories, does_version_one_exist, retrieve_latest_iteration are mentioned in requirements.",
-            "Negative cases specify handling corrupted/missing files without infinite loop, forming a contract on resume behavior."
+            "R7 explicit requires support for resuming an existing project, and features confirm has_resume_state and has_versioned_artifacts."
           ],
           "required_features": [
             "has_resume_state",
             "has_versioned_artifacts"
           ],
           "required_evidence": [
-            "Resume logic in manager/programmer agents",
-            "Tool implementations for detection and retrieval",
-            "Test scenario with pre-existing, corrupted, or missing project folders"
+            "Code implementing resume logic (e.g., loading script_v{N}.py)",
+            "Manager or orchestrator logic to detect existing state"
           ],
           "oracle_strength": "hard",
           "case_budget": 1
@@ -1142,20 +1134,38 @@
         {
           "pattern": "message_handoff_integrity",
           "applicability": "hard",
-          "confidence": 0.8,
+          "confidence": 0.85,
           "reasons": [
-            "has_multistage_handoff: true — two-phase workflow: planning → iterative coding with handoff between Planner, Coder, Reviewer.",
-            "has_last_message_calls: true — agents may rely on last_message() to retrieve context, making handoff sequences critical.",
-            "R1 negative case: transition to iteration phase only after approval. Out-of-sequence handoff could bypass this contract."
+            "Features confirm has_last_message_calls and has_multistage_handoff; system must pass code/plans between Planner->Manager, Coder->Reviewer, etc.",
+            "R6 and R8 both relate to correct iteration context and handoff (present latest script)."
           ],
           "required_features": [
-            "has_multistage_handoff",
-            "has_last_message_calls"
+            "has_last_message_calls",
+            "has_multistage_handoff"
           ],
           "required_evidence": [
-            "Implementation of phase transition logic (after write_settled_plan)",
-            "GroupChat speaker selection rules for handoff order",
-            "Message flow from manager→planner→manager→programmer↔reviewer"
+            "Message routing logic (initiate_chat edges)",
+            "Last message handling in agents",
+            "Iteration management code"
+          ],
+          "oracle_strength": "hard",
+          "case_budget": 1
+        },
+        {
+          "pattern": "tool_api_contract",
+          "applicability": "hard",
+          "confidence": 0.85,
+          "reasons": [
+            "Two tools exist (write_latest_iteration, write_settled_plan) with documented expected behavior (saving code/plan).",
+            "R2 and R5 directly involve tool calls with specific contracts (e.g., write_settled_plan only when manager approves)."
+          ],
+          "required_features": [
+            "has_tools"
+          ],
+          "required_evidence": [
+            "Tool implementations and docstrings",
+            "Agent tool registration",
+            "Requirements R2 and R5"
           ],
           "oracle_strength": "hard",
           "case_budget": 1
@@ -1163,20 +1173,19 @@
         {
           "pattern": "speaker_selection",
           "applicability": "hard",
-          "confidence": 0.85,
+          "confidence": 0.9,
           "reasons": [
-            "has_speaker_selection: true — GroupChat with speaker selection method configured.",
-            "Message edges show manager initiates chat with each agent, but GroupChat may select wrong speaker during iteration.",
-            "R4 describes manager feedback to specific agents without automatically advancing stage; speaker selection must respect stage context."
+            "System uses GroupChat with speaker_selection; appropriate speaker transitions are critical for iterative workflow.",
+            "Requirements R1-R4, R6, R8 all imply expected speaker order (Manager->Planner->Manager, Coder->Reviewer, etc.)."
           ],
           "required_features": [
-            "uses_groupchat",
-            "has_speaker_selection"
+            "has_speaker_selection",
+            "uses_groupchat"
           ],
           "required_evidence": [
-            "GroupChat speaker_selection_method function",
-            "Transition logic between planning and iteration stages",
-            "Test scenario where incorrect agent responds during iteration"
+            "GroupChat configuration (speaker_selection_method)",
+            "Agent system messages and roles",
+            "Expected conversation flow from message_edges"
           ],
           "oracle_strength": "hard",
           "case_budget": 1
@@ -1184,57 +1193,59 @@
       ],
       "rejected_patterns": [
         {
-          "pattern": "tool_api_contract",
-          "reason": "No HTTP/API/Airtable/request-like tools or external API calls — all tools are local file writes.",
+          "pattern": "cli_doc_conformance",
+          "reason": "No documented Python CLI commands; has_documented_commands is false and documented_commands is empty list.",
           "confidence": 1.0
-        },
-        {
-          "pattern": "tool_error_contract",
-          "reason": "Tools are local file writers without documented error contracts, and no external API error handling needed.",
-          "confidence": 0.9
         },
         {
           "pattern": "data_invariant",
-          "reason": "No pandas, financial metrics, risk metrics, or data frame processing — pure code generation workflow.",
+          "reason": "No financial, risk, or data processing features; has_pandas, has_financial_metrics, has_risk_metrics are all false.",
           "confidence": 1.0
         },
         {
-          "pattern": "cli_doc_conformance",
-          "reason": "No documented CLI commands; uses Python scripts invoked directly, not argparse-based CLI.",
-          "confidence": 1.0
-        },
-        {
-          "pattern": "autogen_wiring",
-          "reason": "static_risks.has_autogen_wiring_risk: false — no GroupChat wiring risks flagged by deterministic scan.",
+          "pattern": "filesystem_safety",
+          "reason": "No tool that writes files with user-controlled paths (write_latest_iteration does write files, but safety is more about injection/overwrite; artifact_contract covers the main file contract). However, filesystem_safety pattern is focused on filesystem-level safety invariants, which are not explicitly required or evident in requirements.",
           "confidence": 0.9
         },
         {
           "pattern": "scalable_budget",
-          "reason": "Requirements mention max_turns but no evidence of budget scaling issues; not a primary concern for this profile.",
-          "confidence": 0.7
+          "reason": "No evidence of variable message/cost budget constraints; termination is by TERMINATE/max_turns, but no budget risk signals.",
+          "confidence": 0.8
+        },
+        {
+          "pattern": "tool_error_contract",
+          "reason": "No HTTP/API tools; tools are local Python functions, and no evidence of structured error contracts for external calls.",
+          "confidence": 0.9
         }
       ],
-      "diagnostic_only_patterns": [],
-      "risk_notes": [
-        "tool_error_contract could become relevant if file I/O errors emerge during artifact write/read operations, but tools currently lack structured error contracts.",
-        "scalable_budget may become a concern if conversation length exceeds token limits in long iterative sessions, but no current evidence of failure."
+      "diagnostic_only_patterns": [
+        {
+          "pattern": "filesystem_safety",
+          "reason": "Writes files with user-controlled path, so there might be some risk of unsafe file handling. But no explicit safety requirement; could be non-target.",
+          "oracle_strength": "diagnostic"
+        }
       ],
-      "confidence": 0.9
+      "risk_notes": [
+        "R7 resume state contract is explicitly required, but failure scenarios may be environment-dependent (e.g., missing files) -> non-target if not a code bug.",
+        "Iterative coding workflow implies multiple rounds; speaker_selection and message_handoff_integrity patterns must be jointly tested with artifact_contract."
+      ],
+      "confidence": 0.87
     },
     "selection_mode": "agent_verified",
     "metrics": {
-      "pattern_applicability_precision": 1.0,
+      "pattern_applicability_precision": 0.8333,
       "selected_count": 5,
-      "rejected_count": 12,
-      "diagnostic_only_count": 0,
-      "omitted_applicable_count": 1
+      "rejected_count": 11,
+      "diagnostic_only_count": 1,
+      "omitted_applicable_count": 0,
+      "verifier_promoted_count": 0
     },
     "confidence": 0.9,
     "agent_decision": {
       "fallback_used": false,
       "success": true,
       "error": null,
-      "confidence": 0.9
+      "confidence": 0.87
     }
   },
   "system_features": {
@@ -1324,7 +1335,7 @@
   "second_round": {
     "enabled": true,
     "target_mascov": 0.8,
-    "initial_mascov": 0.7956,
+    "initial_mascov": 0.7105,
     "extra_cases": 0,
     "reason": "no_new_valid_cases"
   },
@@ -1338,18 +1349,15 @@
         "passed"
       ],
       "system1_iterative_coding_COV_001": [
-        "passed"
+        "failed"
       ],
       "system1_iterative_coding_COV_002": [
         "passed"
       ],
       "system1_iterative_coding_FSSAFE_001": [
-        "passed"
+        "failed"
       ],
       "system1_iterative_coding_FUZZ_001": [
-        "passed"
-      ],
-      "system1_iterative_coding_FUZZ_002": [
         "passed"
       ],
       "system1_iterative_coding_HANDOFF_001": [
@@ -1365,15 +1373,9 @@
         "passed"
       ],
       "system1_iterative_coding_OUTCONTRACT_002": [
-        "passed"
-      ],
-      "system1_iterative_coding_OUTCONTRACT_003": [
-        "failed"
+        "timeout"
       ],
       "system1_iterative_coding_PROP_001": [
-        "passed"
-      ],
-      "system1_iterative_coding_PROP_002": [
         "passed"
       ],
       "system1_iterative_coding_REG_001": [
@@ -1383,7 +1385,10 @@
         "passed"
       ],
       "system1_iterative_coding_REQ_002": [
-        "timeout"
+        "passed"
+      ],
+      "system1_iterative_coding_REQ_003": [
+        "passed"
       ],
       "system1_iterative_coding_RESUME_001": [
         "failed"
@@ -1405,22 +1410,30 @@
       ],
       "system1_iterative_coding_TOOLFUZZ_001": [
         "passed"
+      ],
+      "system1_iterative_coding_TOOLFUZZ_002": [
+        "passed"
+      ],
+      "system1_iterative_coding_WIRING_001": [
+        "passed"
       ]
     },
     "flaky_cases": {},
     "flaky_count": 0
   },
   "report_narrative": {
-    "agentic_workflow_summary": "本次运行共发现 7 个疑似故障，其中 4 个被确认为目标故障 (confirmed_fault)，3 个因证据不足被标记为疑似故障 (suspected_fault)。确认故障中，1 个为文件系统逃逸 (SYSTEM1_ITERATIVE_CODING_FAULT_001)，3 个为交互终止/状态不一致类问题 (SYSTEM1_ITERATIVE_CODING_FAULT_002, SYSTEM1_ITERATIVE_CODING_FAULT_005, SYSTEM1_ITERATIVE_CODING_FAULT_006)。疑似故障主要为非终止和重复循环 (SYSTEM1_ITERATIVE_CODING_FAULT_003, SYSTEM1_ITERATIVE_CODING_FAULT_004, SYSTEM1_ITERATIVE_CODING_FAULT_007)。模型调用共 24 次，成功 21 次，3 次回退和失败。覆盖率方面，agent 和工具覆盖率为 100%，需求覆盖率 0.8，状态覆盖率和故障模式覆盖率较低（分别为 0.54 和 0.38），根因证据率为 0.43，整体确定性有效工作流率为 100%，masCov 综合指数为 0.7956。",
-    "effectiveness_analysis": "1. 测试有效性：共执行 24 个测试用例，覆盖了 13 种状态和 8 种故障模式，发现 7 个问题。其中文件系统逃逸漏洞和终止条件缺失等高危问题被检出，证明基于合约的自动化测试在发现架构级缺陷上具有价值。2. 覆盖有效性：agent、工具和消息边界的核心静态覆盖达到 100%，但需求验证覆盖率仅 0.6，说明部分需求的动态验证不足（如 R4 未验证）。状态和故障模式覆盖率偏低（0.54/0.38），可能因为未穷举所有负向交互路径。3. 故障诊断有效性：37.5% (3/8) 的故障模式在测试中触发，其中 60% (3/5) 的高危故障被确认为代码或配置缺陷。证据强度受限（多数在 0.3-0.6），因部分案例缺乏完整 trace 和 code-level 证据，仅靠规则引擎推断。4. 整体损失：错误发现率受限于合约和根因证据链的不足。50% 以上的确认故障集中在交互终止/状态恢复场景，建议优先加固这些区域。",
-    "false_positive_analysis": "在 7 个报告中，3 个 (SYSTEM1_ITERATIVE_CODING_FAULT_003, SYSTEM1_ITERATIVE_CODING_FAULT_004, SYSTEM1_ITERATIVE_CODING_FAULT_007) 的确定性证据不足，证据强度低于 0.5，且多为非终止/重复循环类问题。这些很可能源自交互配置不当导致同一条消息被 LLM 反复输出，或 prompt 缺乏终止引导，而非框架代码缺陷。FAULT_002/005 虽为配置类问题，但其影响严重（阻塞自动化测试）且定位清晰，属于目标故障。FAULT_001 的文件逃逸则为确定性代码漏洞，真实缺陷无疑。整体误报风险为低至中等，可通过增加运行时 trace 和强制 hook 校验来降低。",
+    "agentic_workflow_summary": "MASentinel 针对 AutoGen IterativeCoding 系统进行了完整的自动化测试工作流。首先进行了需求分析、语义图建模和测试模式选择。然后生成了多个测试用例，覆盖了正常任务、合约/接口、属性边界、数据不变性等多种场景。执行后，通过确定性 Oracle 和 Agentic 诊断管道对失败和异常进行了分析，最终识别出 11 个故障，其中 5 个为已确认的应用层/框架层故障，6 个为疑似或低证据故障。",
+    "effectiveness_analysis": "本次测试在覆盖率方面表现良好：Agent 覆盖率达到 100%（所有 4 个 agent 均被访问），工具覆盖率达到 100%（所有在 profile 中注册的工具均被调用），约束/需求覆盖率为 37.5% （覆盖了 8 项需求中的 3 项）。然而，实际验证的需求覆盖率仅为 25%（2/8）。在故障检测方面，确定性确认了 5 个真实故障，其中包含 3 个直接源自代码分析的应用层故障（文件系统路径过长、Artifact 持久化损坏、Schema 不匹配），以及 2 个运行时故障（超时非终止、人工输入请求）。Agentic 诊断管道有效辅助了故障定型和根因定位，但部分低证据故障（证据强度 <0.5）未能通过确定性确认，这些大多数被标记为疑似故障（如 Resume 状态不一致、终止信号忽略），表明 Oracle 对某些框架行为的判定需要进一步校准。整体而言，静态代码分析和动态运行监测相结合，成功识别了多个高风险缺陷。",
+    "false_positive_analysis": "在 6 个未确认的疑似故障中，有强烈的迹象表明部分可能属于误报或非目标问题。例如，SYSTEM1_ITERATIVE_CODING_FAULT_003（缺失 write_settled_plan 工具调用）在测试中回归为“passed”，且无任何工具调用错误痕迹，证据强度仅 0.28，极可能是 Oracle 条件设置不当。SYSTEM1_ITERATIVE_CODING_FAULT_008（Termination Signal Ignored）同样在满足终止条件的情况下被标记，且无 trace 证据证实信号被忽略。此外，关于 Resume 状态不完整的多个故障（FAULT_004/005/006/007）均来自同一用例，它们交织在一起，其中 FAULT_004（Human Input Requested）的 trace 中并未出现实际人工输入提示，很可能被误判。这反映出当前测试 Oracle 对“人类输入”和“终止”信号的检测在包含礼节性结束语的正常对话中可能产生误报。",
     "next_steps": [
-      "修复 FAULT_001 (文件逃逸)：为所有文件写入函数添加路径清理和根目录锁定，防止 .. 注入。",
-      "修复 FAULT_002/005 (终止/人机交互配置)：设置 human_input_mode='NEVER' 并添加 is_termination_msg，全局配置 max_turns 限制。",
-      "验证需求 R4 的动态行为并增加对应测试用例，提升 req_verified_coverage 至 0.8 以上。",
-      "为 INTERACTIVE 状态（如 resume、human feedback）增加精确的 trace 挂钩，提高故障证据强度。"
+      "修复已确认故障：处理 IterativeTools.py 中路径构建长度检查（FAULT_001），修改 Markdown 剥离逻辑（FAULT_009），以及修正 Artifact 扩展名 Schema（FAULT_010）。",
+      "添加显式终止条件：在 GroupChat 配置中实现基于 'sounds good' 等关键词的自动终止检测，并设置 max_rounds 以防止无限循环（FAULT_002）。",
+      "增强 Resume 状态恢复逻辑：发现并独立验证两个 Artifact 系列（script_v 和 comments_v）的存在性和最新性，如不完整则拒绝恢复或显式报告（FAULT_007/FAULT_011）。",
+      "优化测试 Oracle：审核 should_call_tools 和 must_terminate 的条件，避免在无实际故障时产生工具缺失和终止信号忽略的误报。引入对礼貌性结束语的过滤或更严格的终止标记要求。",
+      "扩展需求覆盖和验证：当前仅验证了 R1 和 R2，后续测试应设计 case 以严格验证 R3（Coder 仅输出代码块）、R4（Reviewer 不写代码）、R5（write_latest_iteration 功能）等，以提高 req_verified_coverage。",
+      "进行负向测试和变异测试以提升故障模式覆盖率：当前故障模式覆盖率约为 47.6%，应有针对性地设计更多异常输入、工具错误和合约违规的测试案例。"
     ],
-    "confidence": 0.89
+    "confidence": 0.9
   },
-  "fallback_calls": 3
+  "fallback_calls": 1
 }

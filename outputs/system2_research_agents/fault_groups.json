@@ -1,26 +1,85 @@
 [
   {
+    "group_id": "generic:application-tool-api-pagination-missing-the-tool-wrapper-in-app.py-issues-a-single-airtable-api-request-without-iteratin",
+    "title": "Tool API Pagination Missing",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_006"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_STATIC_pagination_not_followed"
+    ],
+    "failure_codes": [
+      "PAGINATION_NOT_FOLLOWED"
+    ],
+    "severity": "high",
+    "confidence": 0.88,
+    "root_cause": "The tool wrapper in app.py issues a single Airtable API request without iterating over paginated 'offset' values, so it retrieves only the initial page of records and discards the rest.",
+    "suggested_fix": "Refactor the Airtable tool functions to loop while an 'offset' is present in the response, accumulate all records from successive pages, and return the complete merged list. Ensure that the loop terminates when no further offset is returned to avoid infinite requests.",
+    "summary": "External table/API tool does not follow paginated responses."
+  },
+  {
+    "group_id": "generic:application-tool-api-semantics-error-the-tool-wrapper-for-airtable-api-or-similar-external-table-api-tool-constructs-htt",
+    "title": "Tool API Semantics Error",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_005"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_STATIC_view_parameter_ignored"
+    ],
+    "failure_codes": [
+      "VIEW_PARAMETER_IGNORED"
+    ],
+    "severity": "high",
+    "confidence": 0.88,
+    "root_cause": "The tool wrapper for Airtable API (or similar external table/API tool) constructs HTTP requests without parsing and preserving documented view/filter parameters (e.g., view, query, filterByFormula). This causes requests to ignore view-specific data filtering, leading to unexpected query results when views are specified.",
+    "suggested_fix": "Parse the semantic fields (base, table, view, query, filterByFormula, etc.) from the tool input and explicitly include them as query parameters in the API request URL. Ensure that the request builder proxies all relevant semantic parameters to the downstream API call.",
+    "summary": "External table/API tool constructs requests without preserving documented view/filter parameters."
+  },
+  {
+    "group_id": "generic:autogen_framework-scalable-turn-budget-error-the-configured-conversation-budget-max_round-15-is-fixed-while-the-task-wor",
+    "title": "Scalable Turn Budget Error",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_008"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_STATIC_scalable_budget_exceeded"
+    ],
+    "failure_codes": [
+      "SCALABLE_BUDGET_EXCEEDED"
+    ],
+    "severity": "medium",
+    "confidence": 0.82,
+    "root_cause": "The configured conversation budget (max_round=15) is fixed while the task workload scales with external records/items. As the number of records grows, each round must process more items, eventually exceeding the budget before all records are processed. The group chat has no mechanism to dynamically adjust max_round based on input size.",
+    "suggested_fix": "Scale max_round with record count or move repeated per-record work into deterministic batched tools. For example: calculate max_round as BASE_ROUNDS + (num_records * ROUNDS_PER_RECORD) or refactor the workflow to batch all record processing into a single deterministic tool call before entering the group chat, so the conversation itself doesn't scale with data volume.",
+    "summary": "GroupChat uses a fixed max_round for work that scales with records/items."
+  },
+  {
     "group_id": "interaction:speaker-selection-loop",
     "title": "GroupChat speaker selection loop",
     "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
     "fault_ids": [
       "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_002"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
     ],
     "symptom_fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_002"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
     ],
     "affected_cases": [
-      "system2_research_agents_COV_001",
+      "system2_research_agents_BUDGET_001",
       "system2_research_agents_COV_002",
       "system2_research_agents_COV_003",
       "system2_research_agents_COV_004",
       "system2_research_agents_COV_005",
       "system2_research_agents_COV_006",
-      "system2_research_agents_COV_007",
-      "system2_research_agents_COV_008",
-      "system2_research_agents_COV_009",
       "system2_research_agents_FUZZ_001",
+      "system2_research_agents_FUZZ_002",
+      "system2_research_agents_FUZZ_003",
       "system2_research_agents_HANDOFF_001",
       "system2_research_agents_META_001",
       "system2_research_agents_NOHUMAN_001",
@@ -30,6 +89,8 @@
       "system2_research_agents_REQ_001",
       "system2_research_agents_REQ_003",
       "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_005",
+      "system2_research_agents_REQ_006",
       "system2_research_agents_SMOKE_001",
       "system2_research_agents_TOOLAPI_001",
       "system2_research_agents_TOOLCONTRACT_001",
@@ -38,7 +99,6 @@
       "system2_research_agents_TOOLCONTRACT_004",
       "system2_research_agents_TOOLERR_001",
       "system2_research_agents_TOOLFUZZ_001",
-      "system2_research_agents_TOOLFUZZ_002",
       "system2_research_agents_WIRING_001"
     ],
     "failure_codes": [
@@ -47,54 +107,74 @@
     ],
     "severity": "high",
     "confidence": 0.86,
-    "root_cause": "The AutoGen GroupChat speaker selection path repeatedly rejected or failed to parse the next speaker.",
-    "suggested_fix": "Harden GroupChat speaker selection: normalize speaker names, handle empty responses, and cap repeated retries.",
+    "root_cause": "The AutoGen GroupChat speaker selection logic allowed conversation to continue beyond the configured max_turns limit (40), reaching 41 turns before termination. This indicates the next speaker selection failed to enforce the turn budget strictly, possibly due to repeated rejection of the next speaker selection or failure to parse the termination condition until an extra iteration.",
+    "suggested_fix": "Enforce max_turns limit strictly in speaker selection by checking turn count before selecting the next speaker and terminating immediately when the limit is reached, rather than after generating another message. Additionally, harden speaker name normalization and add a retry cap for empty/ invalid responses to prevent loops.",
     "summary": "The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses."
   },
   {
     "group_id": "interaction:timeout-or-non-termination",
     "title": "Conversation timeout or missing termination guard",
-    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
     "fault_ids": [
-      "SYSTEM2_RESEARCH_AGENTS_FAULT_003"
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_002"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system2_research_agents_COV_002",
       "system2_research_agents_COV_003",
       "system2_research_agents_COV_006",
-      "system2_research_agents_COV_007",
       "system2_research_agents_HANDOFF_001",
-      "system2_research_agents_REQ_001",
-      "system2_research_agents_REQ_003"
+      "system2_research_agents_OUTCONTRACT_001",
+      "system2_research_agents_REQ_003",
+      "system2_research_agents_REQ_004",
+      "system2_research_agents_REQ_006"
     ],
     "failure_codes": [
       "TIMEOUT"
     ],
     "severity": "high",
     "confidence": 0.82,
-    "root_cause": "The conversation lacks a reliable termination condition: speaker_selection_agent keeps selecting 'researcher' cycle without producing a termination signal; there is no is_termination_msg check, max_turns guard, or forced exit after exceeding configured limit.",
-    "suggested_fix": "Add a termination message function that checks for keywords like 'TERMINATE' or 'exit'. Configure max_turns=12 in groupchat/agent settings and set human_input_mode='NEVER' for automated runs. Implement a fallback speaker selection logic that picks 'checking_agent' when a cycle is detected.",
+    "root_cause": "The conversation between director and research_manager lacks a reliable termination condition. After completing the review, the director continues to send messages (Director审阅反馈 repeated) without triggering agent termination. The system either does not register a proper `is_termination_msg` function, or max_turns/max_round is not enforced at the AutoGen framework level, causing the conversation to spin until timeout.",
+    "suggested_fix": "1) Define an explicit termination message e.g., a custom function `is_termination_msg` that checks for 'APPROVED' or 'TASK_COMPLETE' in chat content. 2) In the group chat configuration, set `max_round` (or `max_turns`) to a reasonable value (e.g., 15) so the conversation terminates even if the LLM fails to send a termination keyword. 3) Set `human_input_mode='NEVER'` to prevent the system from waiting for human input that never arrives. 4) Modify the system prompt for director to output 'TERMINATE' after the review is complete.",
     "summary": "The process exceeded the configured timeout."
   },
   {
-    "group_id": "runtime:nameerror:name-web_scraping-is-not-defined",
-    "title": "Unhandled startup/runtime exception",
+    "group_id": "interaction:unattended-termination-guard-missing",
+    "title": "Unattended termination / approval guard missing",
     "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
     "fault_ids": [
       "SYSTEM2_RESEARCH_AGENTS_FAULT_004"
     ],
     "symptom_fault_ids": [],
     "affected_cases": [
-      "system2_research_agents_REQ_003"
+      "system2_research_agents_STATIC_human_input_requested"
     ],
     "failure_codes": [
-      "RUNTIME_EXCEPTION"
+      "HUMAN_INPUT_REQUESTED"
     ],
     "severity": "high",
-    "confidence": 0.85,
-    "root_cause": "The researcher agent attempted to execute dynamically generated Python code that referenced 'web_scraping' without the tool being previously defined or imported in the execution scope. No error handling was present to catch NameError and recover gracefully, causing a runtime crash that propagated to the agent and resulted in task failure.",
-    "suggested_fix": "Modify the code generation logic or the Python execution environment to ensure all required tools (web_scraping, google_search, get_airtable_records, update_single_airtable_record) are properly imported and defined before executing user code. Add a try/except block around the execution to catch NameError and other exceptions, allowing the agent to handle missing tools gracefully rather than crashing. Alternatively, explicitly list tool names injected into the code namespace.",
-    "summary": "The process ended with an unhandled runtime error."
+    "confidence": 0.9,
+    "root_cause": "The framework configuration is incompatible with unattended automated evaluation.",
+    "suggested_fix": "Set human_input_mode='NEVER' or provide a deterministic non-blocking input adapter for automated runs.",
+    "summary": "AutoGen user proxy is configured to always request human input in an automated workflow."
+  },
+  {
+    "group_id": "tool:error-envelope-missing",
+    "title": "External tool error envelope missing",
+    "primary_fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
+    "fault_ids": [
+      "SYSTEM2_RESEARCH_AGENTS_FAULT_007"
+    ],
+    "symptom_fault_ids": [],
+    "affected_cases": [
+      "system2_research_agents_STATIC_tool_unstructured_error"
+    ],
+    "failure_codes": [
+      "TOOL_UNSTRUCTURED_ERROR"
+    ],
+    "severity": "medium",
+    "confidence": 0.72,
+    "root_cause": "The tool wrapper does not normalize HTTP failures into a structured result.",
+    "suggested_fix": "Check status codes and return typed success/error payloads with status, message, and retryability.",
+    "summary": "HTTP tool can return raw text or None instead of a structured success/error envelope."
   }
 ]

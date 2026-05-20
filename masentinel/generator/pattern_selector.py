@@ -19,6 +19,12 @@ CONTRACT_PATTERNS = {
     "autogen_wiring",
 }
 
+DETERMINISTIC_BACKSTOP_PATTERNS = {
+    # Direct data-processing invariants are concrete enough for the verifier to
+    # exercise when an agent omits them despite matching deterministic features.
+    "data_invariant",
+}
+
 CASE_TYPE_PATTERN_ALIASES = {
     "speaker_selection_robustness": "speaker_selection",
 }
@@ -47,20 +53,39 @@ def build_test_plan(features: dict[str, Any], agent_plan: dict[str, Any] | None 
     verifier = ApplicabilityVerifier(features)
     verified, rejected = verifier.verify(proposed)
     diagnostic_verified, diagnostic_rejected = verifier.verify(agent_diagnostic, diagnostic=True)
-    rejected.extend(_mark_source(agent_rejected, "PatternApplicabilityAgent"))
     rejected.extend(diagnostic_rejected)
     selected_names = {item["pattern"] for item in verified}
     diagnostic_names = {item["pattern"] for item in diagnostic_verified}
-    rejected.extend(_deterministic_rejections(features, selected_names | diagnostic_names))
     omitted_applicable = []
+    verifier_promoted: list[dict[str, Any]] = []
     if selection_mode == "agent_verified":
         omitted_applicable = _deterministic_proposals(features, selected_names | diagnostic_names)
+        verifier_promoted = _promote_backstop_patterns(omitted_applicable)
+        if verifier_promoted:
+            verified.extend(verifier_promoted)
+            selected_names.update(item["pattern"] for item in verifier_promoted)
+            omitted_applicable = [item for item in omitted_applicable if item.get("pattern") not in selected_names]
+    agent_rejected_marked = _mark_source(agent_rejected, "PatternApplicabilityAgent")
+    promoted_names = {item["pattern"] for item in verifier_promoted}
+    rejected.extend([item for item in agent_rejected_marked if item.get("pattern") not in promoted_names])
+    overridden_rejections = [
+        {
+            **item,
+            "overridden_by_verifier": True,
+            "verifier_reason": "deterministic backstop pattern passed feature verification and should be exercised despite agent rejection",
+        }
+        for item in agent_rejected_marked
+        if item.get("pattern") in promoted_names
+    ]
+    rejected.extend(_deterministic_rejections(features, selected_names | diagnostic_names))
     precision_denominator = len(verified) + len([item for item in rejected if item.get("rejected_by_verifier")])
     precision = round(len(verified) / precision_denominator, 4) if precision_denominator else 1.0
     return {
         "selected_patterns": verified,
         "rejected_patterns": rejected,
         "verifier_omitted_applicable_patterns": omitted_applicable,
+        "verifier_promoted_patterns": verifier_promoted,
+        "verifier_overridden_rejections": overridden_rejections,
         "diagnostic_only_patterns": diagnostic_verified,
         "deterministic_features": features,
         "agent_rationale": agent_payload,
@@ -71,6 +96,7 @@ def build_test_plan(features: dict[str, Any], agent_plan: dict[str, Any] | None 
             "rejected_count": len(rejected),
             "diagnostic_only_count": len(diagnostic_verified),
             "omitted_applicable_count": len(omitted_applicable),
+            "verifier_promoted_count": len(verifier_promoted),
         },
         "confidence": min(1.0, max([float(item.get("confidence", 0.75) or 0.75) for item in verified] or [0.75])),
     }
@@ -186,6 +212,22 @@ def _deterministic_proposals(features: dict[str, Any], exclude: set[str] | None 
                 }
             )
     return proposals
+
+
+def _promote_backstop_patterns(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    promoted: list[dict[str, Any]] = []
+    for raw in items:
+        pattern = str(raw.get("pattern") or "")
+        if pattern not in DETERMINISTIC_BACKSTOP_PATTERNS:
+            continue
+        item = dict(raw)
+        item["source"] = "deterministic_verifier_backstop"
+        item["verifier_promoted"] = True
+        item["reasons"] = list(item.get("reasons", []) or []) + [
+            "PatternApplicabilityAgent omitted a deterministic invariant pattern that passed feature verification."
+        ]
+        promoted.append(item)
+    return promoted
 
 
 def _deterministic_rejections(features: dict[str, Any], selected_names: set[str]) -> list[dict[str, Any]]:

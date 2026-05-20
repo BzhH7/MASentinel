@@ -1,23 +1,37 @@
 [
   {
-    "case_id": "system2_research_agents_COV_001",
+    "case_id": "system2_research_agents_BUDGET_001",
     "fault_type": "Speaker Selection Error",
     "objective": "Reproduce confirmed fault: The GroupChat speaker selection path appears to loop on empty, invalid, or noisy speaker responses.",
-    "input": "Director, please update the Airtable record with ID recXXX with a new field 'status':'reviewed' and then report the result to user_proxy.",
+    "input": "请处理五条独立记录，每条都需要一次检索和一次更新；完成全部记录后结束。",
     "max_turns": 15
   },
   {
-    "case_id": "system2_research_agents_COV_002",
-    "fault_type": "Non-Termination",
-    "objective": "Reproduce confirmed fault: The process exceeded the configured timeout.",
-    "input": "Researcher, please search for 'latest AI trends' and share the summary with research_manager.",
+    "case_id": "system2_research_agents_STATIC_human_input_requested",
+    "fault_type": "Human Input Mode Error",
+    "objective": "Reproduce confirmed fault: AutoGen user proxy is configured to always request human input in an automated workflow.",
+    "input": "static code contract analysis",
     "max_turns": 15
   },
   {
-    "case_id": "system2_research_agents_REQ_003",
-    "fault_type": "Missing Error Handling",
-    "objective": "Reproduce confirmed fault: The process ended with an unhandled runtime error.",
-    "input": "请完成以下任务并给出清晰结果：The researcher agent must be able to call web_scraping and google_search tools, and the director must be able to call get_airtable_records and update_single_airtable_record, with the tools returning usable results or handled errors.",
+    "case_id": "system2_research_agents_STATIC_view_parameter_ignored",
+    "fault_type": "Tool API Semantics Error",
+    "objective": "Reproduce confirmed fault: External table/API tool constructs requests without preserving documented view/filter parameters.",
+    "input": "static code contract analysis",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system2_research_agents_STATIC_pagination_not_followed",
+    "fault_type": "Tool API Pagination Missing",
+    "objective": "Reproduce confirmed fault: External table/API tool does not follow paginated responses.",
+    "input": "static code contract analysis",
+    "max_turns": 15
+  },
+  {
+    "case_id": "system2_research_agents_STATIC_scalable_budget_exceeded",
+    "fault_type": "Scalable Turn Budget Error",
+    "objective": "Reproduce confirmed fault: GroupChat uses a fixed max_round for work that scales with records/items.",
+    "input": "static code contract analysis",
     "max_turns": 15
   }
 ]

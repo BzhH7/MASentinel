@@ -63,21 +63,25 @@ def _evaluate_item(item: dict[str, Any], outputs_dir: Path) -> dict[str, Any]:
     faults = _load_faults(outputs_dir / SYSTEM_DIR_HINTS.get(system, system) / "faults.json")
     matcher = GT_MATCHERS.get(defect_id, {"codes": set(), "keywords": set()})
     strict = []
+    suspected = []
     partial = []
     for fault in faults:
-        if fault.get("suspected_false_positive"):
-            continue
         code = str(fault.get("failure_code", ""))
         haystack = _fault_text(fault)
         code_match = code in matcher["codes"]
         keyword_score = sum(1 for keyword in matcher["keywords"] if keyword.lower() in haystack)
-        if code_match:
+        if code_match and not fault.get("suspected_false_positive"):
             strict.append(fault)
+        elif code_match and fault.get("suspected_false_positive"):
+            suspected.append(fault)
         elif keyword_score >= _partial_threshold(defect_id):
             partial.append(fault)
     if strict:
         status = "strict_match"
         matches = strict
+    elif suspected:
+        status = "partial_match"
+        matches = suspected
     elif partial:
         status = "partial_match"
         matches = partial

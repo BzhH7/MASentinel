@@ -1,52 +1,82 @@
 [
   {
     "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_001",
-    "case_id": "system1_iterative_coding_FSSAFE_001",
+    "case_id": "system1_iterative_coding_COV_001",
     "layer": "application",
-    "fault_type": "Unsafe Project Path",
-    "failure_code": "FILESYSTEM_ESCAPE",
+    "fault_type": "Missing Error Handling",
+    "failure_code": "RUNTIME_EXCEPTION",
     "severity": "high",
-    "confidence": 0.92,
-    "summary": "User-controlled path/name caused writes outside the configured project root.",
+    "confidence": 0.85,
+    "summary": "The process ended with an unhandled runtime error.",
     "evidence": [
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/MasterPlan.txt",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/comments_v1.log",
-      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/escaped_project/script_v1.py"
+      "    p.run()",
+      "    mkdir(name, mode)",
+      "Traceback (most recent call last):",
+      "OSError: [Errno 63] File name too long: '.masentinel_projects/system1_iterative_coding_COV_001/The manager wants a simple calculator app with four basic arithmetic operations. The main challenge is handling division by zero and input validation. Plan: 1) Define functions for add, subtract, multiply, divide. 2) Implement input handling for user. 3) Print results./'",
+      "FileExistsError: [Errno 17] File exists: '.masentinel_projects/system1_iterative_coding_FSSAFE_001/../escaped_project/'",
+      "    os.makedirs(self.working_dir)",
+      "  File \"/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py\", line 244, in run",
+      "  File \"/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/main.py\", line 24, in <module>",
+      "  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/os.py\", line 225, in makedirs"
     ],
-    "root_cause": "A user-controlled project/file name is resolved without constraining it to the configured safe root.",
-    "suggested_fix": "Resolve candidate paths, reject absolute/parent-directory components, and enforce relative_to(configured_project_root).",
+    "root_cause": "The application raised an unhandled exception during the test run.",
+    "suggested_fix": "Inspect stderr evidence, add defensive error handling, and make required environment/config dependencies explicit.",
     "reproduction": {
-      "input": "../escaped_project",
+      "input": "Manager sets task: 'create a simple calculator app'. Planner generates plan. Manager approves. Programmer writes initial code. Manager initiates review.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
-    "evidence_strength": 0.58,
-    "not_model_fault_because": "The failure is caused by deterministic filesystem/artifact handling code.",
+    "evidence_strength": 0.66,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [],
+    "root_cause_confidence": "trace_only",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.66,
+      "root_cause_confidence": "trace_only"
+    },
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_COV_001",
+      "system1_iterative_coding_FSSAFE_001"
+    ],
+    "duplicate_fault_ids": [
+      "SYSTEM1_ITERATIVE_CODING_FAULT_002"
+    ],
+    "diagnostic_only": false
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
+    "case_id": "system1_iterative_coding_OUTCONTRACT_002",
+    "layer": "autogen_framework",
+    "fault_type": "Non-Termination",
+    "failure_code": "TIMEOUT",
+    "severity": "high",
+    "confidence": 0.82,
+    "summary": "The process exceeded the configured timeout.",
+    "evidence": [
+      "120"
+    ],
+    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
+    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
+    "reproduction": {
+      "input": "请完成需求 R2，并按文档要求输出：Planner must save the approved plan using write_settled_plan tool when manager says 'sounds good'.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": false,
+    "evidence_strength": 0.75,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
     "code_locations": [
       {
         "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "write_latest_iteration_manual",
-        "line": "134"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "write_latest_iteration_comments",
-        "line": "148"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "write_latest_iteration",
-        "line": "175"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "write_settled_plan",
-        "line": "187"
-      },
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "list_subdirectories",
-        "line": "194"
+        "function": "AssistantAgent",
+        "line": "26"
       }
     ],
     "root_cause_confidence": "code_evidence",
@@ -57,19 +87,65 @@
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.58,
+      "evidence_strength": 0.75,
       "root_cause_confidence": "code_evidence"
     },
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
-      "system1_iterative_coding_FSSAFE_001"
+      "system1_iterative_coding_OUTCONTRACT_002"
     ],
     "duplicate_fault_ids": []
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_002",
-    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
+    "case_id": "system1_iterative_coding_REQ_001",
+    "layer": "application",
+    "fault_type": "Missing Tool Call",
+    "failure_code": "MISSING_TOOL_CALL",
+    "severity": "medium",
+    "confidence": 0.7,
+    "summary": "Expected tool was not called: write_settled_plan",
+    "evidence": [
+      "write_settled_plan"
+    ],
+    "root_cause": "The rule oracle detected MISSING_TOOL_CALL for system system1_iterative_coding.",
+    "suggested_fix": "Verify tool registration and prompting; ensure the target agent has access to the tool.",
+    "reproduction": {
+      "input": "Manager: 'Build a simple calculator app.' Planner: Generates plan. Manager: 'sounds good'.",
+      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
+    },
+    "suspected_false_positive": true,
+    "evidence_strength": 0.28,
+    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/.masentinel_projects/system1_iterative_coding_RESUME_001/mas_system1_iterative_coding_RESUME_001/script_v1.py",
+        "function": "load",
+        "line": "59"
+      }
+    ],
+    "root_cause_confidence": "code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.28,
+      "root_cause_confidence": "code_evidence"
+    },
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "affected_cases": [
+      "system1_iterative_coding_REQ_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
+    "case_id": "system1_iterative_coding_RESUME_001",
     "layer": "autogen_framework",
     "fault_type": "Human Input Mode Error",
     "failure_code": "HUMAN_INPUT_REQUESTED",
@@ -77,23 +153,19 @@
     "confidence": 0.9,
     "summary": "The target system requested human input during an automated no-human run.",
     "evidence": [
-      "--------------------------------------------------------------------------------",
-      "- The `exit` command terminates the program.",
-      "\u001b[33mreviewer\u001b[0m (to manager):",
-      "- A CLI loop that accepts commands: `view`, `feedback coder <message>`, `feedback reviewer <message>`, `next`, `exit`.",
-      "- The `next` command advances the stage only if the current stage is `coding` (→ `reviewing`) or `reviewing` (→ `done`); from `done`, it should do nothing or show a message.",
       "Glad it all checks out. You've got a solid, working implementation. If you ever need a review of the next iteration or want to discuss enhancements, just let me know. Good luck!",
-      "Alright – I'll take that as confirmation. If you need anything else in the future, just say the word. Best of luck with the project!",
-      "I recommend the programmer produce code that implements these behaviors and then submit it for review. Once code is provided, I can comment on its correctness and suggest improvements.",
+      "--------------------------------------------------------------------------------",
       "\u001b[33mmanager\u001b[0m (to reviewer):",
-      "- Storage for `code` and `comments` as modifiable strings (starting with placeholders like `\"# Initial code v1\"` and `\"// Initial review comments v1\"`).",
-      "- The `view` command displays current stage, code, and comments.",
-      "sounds good"
+      "sounds good",
+      "--------------------------------------------------------------------------------",
+      "\u001b[33mreviewer\u001b[0m (to manager):",
+      "Alright – I'll take that as confirmation. If you need anything else in the future, just say the word. Best of luck with the project!",
+      "--------------------------------------------------------------------------------"
     ],
     "root_cause": "The target system attempted to enter a manual input path after automated evaluation had started.",
     "suggested_fix": "Set human_input_mode='NEVER' and remove blocking input() calls from automated execution paths.",
     "reproduction": {
-      "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
+      "input": "Continue the existing project from the latest script and preserve existing state.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": false,
@@ -140,17 +212,13 @@
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
-      "system1_iterative_coding_OUTCONTRACT_003",
       "system1_iterative_coding_RESUME_001"
     ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_006"
-    ],
-    "diagnostic_only": false
+    "duplicate_fault_ids": []
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_003",
-    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
+    "case_id": "system1_iterative_coding_RESUME_001",
     "layer": "autogen_framework",
     "fault_type": "Termination Condition Error",
     "failure_code": "NON_TERMINATION",
@@ -158,13 +226,12 @@
     "confidence": 0.8,
     "summary": "The run did not terminate.",
     "evidence": [
-      "turn_count=24",
-      "turn_count=20"
+      "turn_count=24"
     ],
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
     "reproduction": {
-      "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
+      "input": "Continue the existing project from the latest script and preserve existing state.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": true,
@@ -211,17 +278,13 @@
     "confirmation_status": "suspected_fault",
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
-      "system1_iterative_coding_OUTCONTRACT_003",
       "system1_iterative_coding_RESUME_001"
     ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_007"
-    ],
-    "diagnostic_only": false
+    "duplicate_fault_ids": []
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_004",
-    "case_id": "system1_iterative_coding_OUTCONTRACT_003",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+    "case_id": "system1_iterative_coding_RESUME_001",
     "layer": "autogen_framework",
     "fault_type": "Speaker Selection Error",
     "failure_code": "REPETITIVE_LOOP",
@@ -232,7 +295,7 @@
     "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
     "suggested_fix": "Inspect the trace and configuration, then add a focused regression test for this case.",
     "reproduction": {
-      "input": "请完成需求 R4，并按文档要求输出：The system must allow the Manager to provide direct feedback to the Coder or Reviewer during an iteration, modifying the next code or comments accordingly, without automatically advancing to the next stage.",
+      "input": "Continue the existing project from the latest script and preserve existing state.",
       "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     },
     "suspected_false_positive": true,
@@ -253,62 +316,12 @@
     "confirmation_status": "suspected_fault",
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
-      "system1_iterative_coding_OUTCONTRACT_003",
       "system1_iterative_coding_RESUME_001"
-    ],
-    "duplicate_fault_ids": [
-      "SYSTEM1_ITERATIVE_CODING_FAULT_008"
-    ],
-    "diagnostic_only": false
-  },
-  {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_005",
-    "case_id": "system1_iterative_coding_REQ_002",
-    "layer": "autogen_framework",
-    "fault_type": "Non-Termination",
-    "failure_code": "TIMEOUT",
-    "severity": "high",
-    "confidence": 0.82,
-    "summary": "The process exceeded the configured timeout.",
-    "evidence": [
-      "120"
-    ],
-    "root_cause": "The conversation may lack a reliable termination condition, max-turn guard, or speaker selection constraint.",
-    "suggested_fix": "Set human_input_mode='NEVER' for automated runs, add is_termination_msg, and enforce max_turns/max_round.",
-    "reproduction": {
-      "input": "请完成以下任务并给出清晰结果：The system must support a two-phase workflow: a planning phase where the user and a Planner agent collaboratively create and approve a project plan, followed by an iterative code-and-review phase involving a Coder and a Reviewer agent.",
-      "command": "/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
-    },
-    "suspected_false_positive": false,
-    "evidence_strength": 0.75,
-    "not_model_fault_because": "The reported issue can be mitigated by code, configuration, tool, or orchestration changes without changing model parameters.",
-    "code_locations": [
-      {
-        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
-        "function": "AssistantAgent",
-        "line": "26"
-      }
-    ],
-    "root_cause_confidence": "code_evidence",
-    "deterministic_confirmation": {
-      "confirmed": true,
-      "source": "rule_oracle_and_deterministic_evidence",
-      "reason": "deterministic oracle failure with sufficient code/trace evidence",
-      "confidence_threshold": 0.65,
-      "code_evidence_strength_threshold": 0.55,
-      "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.75,
-      "root_cause_confidence": "code_evidence"
-    },
-    "confirmation_status": "confirmed_fault",
-    "confirmation_source": "deterministic_oracle_evidence",
-    "affected_cases": [
-      "system1_iterative_coding_REQ_002"
     ],
     "duplicate_fault_ids": []
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_006",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_007",
     "case_id": "system1_iterative_coding_RESUME_001",
     "layer": "application",
     "fault_type": "Resume State Inconsistency",
@@ -318,12 +331,12 @@
     "summary": "Existing script state was ignored and the project was treated as a first iteration.",
     "evidence": [
       "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
-      "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
       "autogen stdout message boundary",
       "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
       "alright – i'll take that as confirmation. if you need anything else in the future, just say the word. best of luck with the project!",
       "build a small python command-line app for this request: continue the existing project from the latest script and preserve existing state.",
       "mas_system1_iterative_coding_resume_001",
+      "system1_iterative_coding_resume_001",
       "target system requested human input during a no-human masentinel run."
     ],
     "root_cause": "The resume-state detector treats partial but meaningful on-disk state as absent or silently starts a fresh workflow.",
@@ -381,7 +394,7 @@
     "duplicate_fault_ids": []
   },
   {
-    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_007",
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_008",
     "case_id": "system1_iterative_coding_TERM_001",
     "layer": "autogen_framework",
     "fault_type": "Termination Signal Ignored",
@@ -424,6 +437,186 @@
     "confirmation_source": "deterministic_oracle_evidence",
     "affected_cases": [
       "system1_iterative_coding_TERM_001"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_009",
+    "case_id": "system1_iterative_coding_STATIC_markdown_artifact_corruption",
+    "layer": "application",
+    "fault_type": "Artifact Persistence Corruption",
+    "failure_code": "MARKDOWN_ARTIFACT_CORRUPTION",
+    "severity": "high",
+    "confidence": 0.9,
+    "summary": "Markdown code fence extraction strips backticks and then slices a fixed prefix, which can corrupt valid unlabeled or short language-tag fences.",
+    "evidence": [
+      "detected backtick stripping plus fixed [6:] slicing",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py"
+    ],
+    "root_cause": "The artifact writer assumes a specific code fence prefix instead of parsing Markdown fences structurally.",
+    "suggested_fix": "Use a Markdown fence parser or regex that extracts the fenced body independent of optional language labels; compile-check Python artifacts before writing.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "138",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "141",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.78,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.78,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system1_iterative_coding_STATIC_markdown_artifact_corruption"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_010",
+    "case_id": "system1_iterative_coding_STATIC_artifact_schema_mismatch",
+    "layer": "application",
+    "fault_type": "Output Artifact Schema Mismatch",
+    "failure_code": "ARTIFACT_SCHEMA_MISMATCH",
+    "severity": "medium",
+    "confidence": 0.84,
+    "summary": "Documented versioned artifact extension differs from the implementation's persisted artifact extension.",
+    "evidence": [
+      "artifact_family=comments_v",
+      "documented_extensions=['py', 'txt']",
+      "implemented_extensions=['log', 'py']",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py"
+    ],
+    "root_cause": "Documentation and artifact persistence code disagree on a versioned artifact schema.",
+    "suggested_fix": "Align persisted artifact extensions with documentation or update documentation and downstream readers consistently.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "150",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "155",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "212",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "221",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "224",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.74,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.74,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system1_iterative_coding_STATIC_artifact_schema_mismatch"
+    ],
+    "duplicate_fault_ids": []
+  },
+  {
+    "fault_id": "SYSTEM1_ITERATIVE_CODING_FAULT_011",
+    "case_id": "system1_iterative_coding_STATIC_resume_state_incomplete",
+    "layer": "application",
+    "fault_type": "Resume State Inconsistency",
+    "failure_code": "RESUME_STATE_INCOMPLETE",
+    "severity": "medium",
+    "confidence": 0.84,
+    "summary": "Resume-state detection checks only part of the versioned artifact family.",
+    "evidence": [
+      "checked_artifacts=['comments_v']",
+      "unvalidated_artifacts=['script_v']",
+      "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py"
+    ],
+    "root_cause": "The resume detector does not discover all versioned artifacts independently.",
+    "suggested_fix": "Discover latest artifacts per family and resume complete state or report incomplete state explicitly.",
+    "code_locations": [
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "12",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "22",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "106",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "134",
+        "function": ""
+      },
+      {
+        "file": "/Users/zhbai/code/cz_exp/AutoGen_IterativeCoding-main/IterativeTools.py",
+        "line": "135",
+        "function": ""
+      }
+    ],
+    "evidence_strength": 0.7,
+    "root_cause_confidence": "code_evidence",
+    "reproduction": {
+      "input": "static code contract analysis",
+      "command": ""
+    },
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_static_code_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "deterministic_static_code_evidence",
+      "reason": "static code/documentation pattern with direct source evidence",
+      "evidence_strength": 0.7,
+      "root_cause_confidence": "code_evidence"
+    },
+    "not_model_fault_because": "The defect is present in deterministic code, documentation, or framework configuration and can be mitigated without changing model parameters.",
+    "affected_cases": [
+      "system1_iterative_coding_STATIC_resume_state_incomplete"
     ],
     "duplicate_fault_ids": []
   }

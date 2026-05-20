@@ -141,12 +141,6 @@ export INF_API_KEY_PRO="..."
 export INF_API_KEY_FLASH="..."
 ```
 
-如果本地有根目录的 `api.md`，也可以让 MASentinel 在运行进程内读取并映射密钥，不会打印密钥：
-
-```bash
-python scripts/run_with_api_md.py --config configs/all_systems.yaml --test-model ds-v4-pro
-```
-
 Agentic 模式会在三套系统跑完后自动调用 `ProjectReportAgent` 生成赛题提交报告：
 
 ```text
@@ -169,6 +163,8 @@ python scripts/generate_project_report.py --output-dir outputs --config configs/
 ```bash
 python scripts/rebuild_reports_from_outputs.py --output-dir outputs --project-report
 ```
+
+该脚本会按当前 `test_plan.json` 过滤 stale case/trace，并写出 `suite_consistency_report.json`；若报告中出现 `missing_selected_contract_patterns`，说明测试计划已被新 verifier 修正，但已有 trace 没覆盖新增模式，需要 clean rerun。
 
 `run_with_api_md.py` 同时支持题目原始 `curl` 写法和新的 OpenAI SDK 写法，例如：
 
@@ -284,6 +280,8 @@ python -m masentinel.cli run-agentic \
 python run_all.py --config configs/all_systems.yaml --agentic --no-human
 ```
 
+`run_all.py` 默认会清空每个系统的旧输出目录后再跑，避免旧 regression/stale traces 混入最终报告；如需保留历史输出和回归池，可加 `--keep-output`。
+
 `run-agentic` 默认禁止人工介入，并在 `run_manifest.json` 中记录 `human_intervention_allowed: false`。如果目标系统请求 `input()` 或 AutoGen human input，runner 会记录 `HUMAN_INPUT_REQUESTED`。
 
 也可以分步运行：
@@ -340,6 +338,31 @@ outputs/
     fault_report.md
     coverage.md
 ```
+
+## 最新运行结果快照
+
+以下为当前 `outputs/` 中最新一次三系统完整运行的汇总结果，运行入口为：
+
+```bash
+python scripts/run_with_boyue_api.py \
+  --config configs/all_systems.yaml \
+  --testing-model deepseek-v4-pro \
+  --target-model deepseek-v4-flash
+```
+
+| System | Cases | Proc Passed | Proc Failed | Oracle Passed | Oracle Failed | AgentCov | ToolCov | EdgeCov | ReqVerified | ContractCov | MASCov | Confirmed Primary Root Causes | Suspected FP | Non-target Excluded |
+|--------|-------|-------------|-------------|---------------|---------------|----------|---------|---------|-------------|-------------|--------|-------------------------------|--------------|---------------------|
+| `system1_iterative_coding` | 24 | 20 | 4 | 18 | 6 | 1.00 | 1.00 | 0.71 | 0.25 | 0.50 | 0.71 | 6 | 5 | 11 |
+| `system2_research_agents` | 32 | 25 | 7 | 3 | 29 | 1.00 | 1.00 | 1.00 | 1.00 | 0.42 | 0.83 | 5 | 3 | 13 |
+| `system3_financial_analysis` | 32 | 31 | 1 | 12 | 20 | 0.36 | N/A | 0.36 | 1.00 | 0.50 | 0.56 | 6 | 3 | 23 |
+
+Ground truth 对齐结果：
+
+| Strict Matches | Partial Matches | Missed |
+|----------------|-----------------|--------|
+| 13 | 2 | 0 |
+
+其中 partial 包括：S1 输入校验运行异常仅形成部分匹配，S2 tool error handling 缺少 observed HTTP status 与结构化 tool result/error envelope，因此只作为 suspected/partial，不计入 confirmed primary root cause。
 
 ## 覆盖率指标
 

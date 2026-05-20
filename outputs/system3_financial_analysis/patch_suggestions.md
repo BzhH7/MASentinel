@@ -3,47 +3,79 @@
 ## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_001: Documented Entrypoint Broken
 - Layer: application
 - Affected cases: system3_financial_analysis_CLIDOC_001
-- Suggested fix: Align the documented command with the actual project structure. If the main entrypoint is in 'student_autogen_system.py' at the project root, update the README command to 'python -m student_autogen_system analyze AAPL'. If a 'src' package is intended, create the directory structure with an __init__.py and move the main module there. Add a CI test that executes the documented command to prevent regression.
+- Suggested fix: Create the missing module 'src/main.py' or update the README to reflect the correct entrypoint matching the existing codebase structure. Ensure the module contains a main entrypoint that can accept 'analyze' and a symbol (e.g., 'AAPL') as arguments. Add a CI test that executes the documented command to prevent future regressions.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
 
 ## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_002: Message Handoff Error
 - Layer: autogen_framework
-- Affected cases: system3_financial_analysis_COV_002, system3_financial_analysis_FSSAFE_001, system3_financial_analysis_OUTCONTRACT_001, system3_financial_analysis_OUTCONTRACT_002, system3_financial_analysis_REQ_001, system3_financial_analysis_REQ_002, system3_financial_analysis_REQ_003, system3_financial_analysis_REQ_005
-- Suggested fix: Modify the handoff logic in student_autogen_system.py to explicitly pass the previous assistant's analysis message instead of allowing TERMINATE markers to be forwarded. Specifically: 1) In the registered agent transitions, filter out TERMINATE-only messages before triggering downstream agents; 2) Ensure the last substantive message from each agent is stored and passed as context to the next agent; 3) Add validation in the handoff function to check for empty content and fall back to the most recent non-termination message.
+- Affected cases: system3_financial_analysis_COV_001, system3_financial_analysis_COV_002, system3_financial_analysis_DATAINV_001, system3_financial_analysis_FSSAFE_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_OUTCONTRACT_001, system3_financial_analysis_OUTCONTRACT_002, system3_financial_analysis_OUTCONTRACT_003, system3_financial_analysis_REQ_001, system3_financial_analysis_REQ_002, system3_financial_analysis_REQ_003, system3_financial_analysis_REQ_005
+- Suggested fix: In the AutoGen workflow definition, modify the handoff mechanism to explicitly pass the full assistant message content from the previous agent instead of only TERMINATE signals. For example, before routing to financial_analyst, filter out TERMINATE-only payloads and extract the substantive analysis results from data_analyst, then inject them as context for the next stage. Alternatively, store the output of data_analyst in a shared context or state variable and access it directly in the financial_analyst prompt.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
 
 ## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_003: Data Collection Tool Registration Missing
 - Layer: application
-- Affected cases: system3_financial_analysis_COV_002, system3_financial_analysis_REQ_002, system3_financial_analysis_REQ_005
-- Suggested fix: 1) Explicitly register a data-collection tool (e.g., a yfinance wrapper or API client) in the agent configuration. 2) If a mock/stub is used, ensure it returns a deterministic dataset that satisfies the analyst agent's minimum schema (financial statements, risk metrics, sector classification). 3) Add a pre-flight check in the analyst agent to abort gracefully if required data fields are empty, and log which tool/output was expected. 4) Align report generation requirements with data availability so partial coverage (REQ_005) does not cause silent pass without data.
+- Affected cases: system3_financial_analysis_COV_002, system3_financial_analysis_REQ_001, system3_financial_analysis_REQ_001, system3_financial_analysis_REQ_003, system3_financial_analysis_REQ_003, system3_financial_analysis_REQ_005
+- Suggested fix: 1) Ensure a deterministic data collection tool (e.g., `fetch_stock_data` function utilizing `yfinance` or a CSV-backed mock) is registered with the `data_collector` agent in the AutoGen configuration. 2) Modify `simple_autogen_system.py` to explicitly call the registered tool via `user_proxy.execute_tool()` or `initiate_chats` and validate that the tool output is non-empty before proceeding. 3) Implement a structured output contract for data collection results, and add a post-collection assertion or log that confirms data presence and structure.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
 
 ## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_004: Message Handoff Error
 - Layer: autogen_framework
-- Affected cases: system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001
-- Suggested fix: Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content. Specifically, in the orchestrating agent's handoff logic, retrieve the last substantive message from the target agent rather than using the default last_message() which may return TERMINATE markers.
+- Affected cases: system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_001, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002, system3_financial_analysis_HANDOFF_002
+- Suggested fix: Store explicit upstream assistant outputs and pass those to downstream agents; filter TERMINATE/default auto-replies from handoff content.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
 
-## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005: Output Contract Violation
-- Layer: application
-- Affected cases: system3_financial_analysis_OUTCONTRACT_003, system3_financial_analysis_OUTCONTRACT_005
-- Suggested fix: Add a deterministic validation step in the 'data_collector' agent or its associated tool that checks the validity of the stock code. If the code is invalid, the agent should immediately terminate and return a structured error message that includes the keyword '代码' (e.g., '输入的股票代码 META 无效，请检查代码后重试。'). This ensures the output contract is fulfilled when handling non-existent stock codes.
-
-Suggested patch direction:
-- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
-
-## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006: Termination Signal Ignored
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_005: Termination Signal Ignored
 - Layer: autogen_framework
 - Affected cases: system3_financial_analysis_TERM_001
-- Suggested fix: No specific fix can be recommended until the fault is confirmed with deterministic code/trace evidence. If confirmed, ensure termination condition handlers in smpl_autogen_system.py (or equivalent orchestration module) immediately stop the conversation when a termination marker (e.g., 'TERMINATE') is detected, within the allowed grace messages (max 2).
+- Suggested fix: 如果确认是 false positive，可在测试断言中区分‘终止信号后的同轮文本’与‘新对话轮次’。若仍需修改，可在消息生成逻辑中确保 TERMINATE 后不附加任何建议文本，或调整测试预期。
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_006: Tool Error Contract Missing
+- Layer: application
+- Affected cases: system3_financial_analysis_STATIC_tool_unstructured_error, system3_financial_analysis_STATIC_tool_unstructured_error, system3_financial_analysis_STATIC_tool_unstructured_error
+- Suggested fix: Check status codes and return typed success/error payloads with status, message, and retryability.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_007: Data Processing Invariant Violation
+- Layer: application
+- Affected cases: system3_financial_analysis_STATIC_numeric_sign_convention_error, system3_financial_analysis_STATIC_numeric_sign_convention_error, system3_financial_analysis_STATIC_numeric_sign_convention_error
+- Suggested fix: Normalize VaR and drawdown outputs to positive magnitudes or label them explicitly as signed returns. For example, apply abs() or multiply by -1 after computation in risk_analyzer.py, and update report templates in student_autogen_system.py and simple_autogen_system.py to consistently reference the normalized sign convention.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_008: Data Processing Invariant Violation
+- Layer: application
+- Affected cases: system3_financial_analysis_STATIC_partial_metric_zeroed
+- Suggested fix: Refactor the metric computation to use individual try/except for each .loc lookup or to check for key/index existence before access. Each metric should be computed in its own protected scope. Missing data should result in None or a sentinel (e.g., 'N/A') rather than zero, so that valid values from other tickers or columns are not overwritten. If zero is a valid financial metric, use a distinct representation for missingness.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_009: Documented CLI Command Missing
+- Layer: application
+- Affected cases: system3_financial_analysis_STATIC_documented_cli_command_missing, system3_financial_analysis_STATIC_documented_cli_command_missing
+- Suggested fix: Either (a) add a 'portfolio' subparser using parser.add_parser('portfolio') and wire it to the appropriate portfolio handler, or (b) remove the 'portfolio' usage example from documentation and help text if the feature is not intended for release.
+
+Suggested patch direction:
+- Inspect the recorded trace evidence, then add a focused regression test before changing behavior.
+
+## SYSTEM3_FINANCIAL_ANALYSIS_FAULT_010: Agent Orchestration Wiring Missing
+- Layer: autogen_framework
+- Affected cases: system3_financial_analysis_STATIC_autogen_wiring_missing
+- Suggested fix: Use the agent factory to create the required agents (e.g., create_financial_analyst(), create_risk_analyst(), create_report_writer()) and pass a populated role-to-agent mapping like {'analyst': financial_agent, 'risk': risk_agent, 'writer': writer_agent} into AgentOrchestrator. Verify the factory methods exist and are imported; add them if missing.
 
 Suggested patch direction:
 - Inspect the recorded trace evidence, then add a focused regression test before changing behavior.

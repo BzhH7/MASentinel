@@ -1,7 +1,7 @@
 [
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_001",
-    "case_id": "system2_research_agents_COV_001",
+    "case_id": "system2_research_agents_BUDGET_001",
     "suspected_false_positive": false,
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
@@ -12,20 +12,44 @@
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.91,
+      "evidence_strength": 0.71,
       "root_cause_confidence": "trace_only"
     },
     "agent_audit_influence": "advisory_only",
     "audit": {
-      "audit_result": "false_positive",
-      "reason": "The evidence shows the chat terminated normally with a TERMINATE message sent by chat_manager to all agents, and returncode=0. The trace log indicates a standard handoff and termination flow, not a speaker selection loop. The 'Next speaker' lines appear as part of normal GroupChat orchestration. There is no evidence of empty, invalid, or noisy speaker responses causing a loop.",
-      "false_positive_risk": "high",
-      "confidence": 0.95
+      "audit_result": "suspected_fault",
+      "reason": "Strong deterministic evidence from trace shows max_turns=40 violated with turn_count=41 before termination, and oracle confirms termination boundary weakness. However, the evidence linking the extra turn to 'empty/noisy speaker responses' is largely derived from agentic inference rather than concrete parsed trace excerpts, and several exitcode=1 / stderr entries in evidence list are unrelated noise. Code location is missing, and oracle evidence_strength=0.56 is below the 0.55 threshold, which keeps the fault in suspected rather than unambiguously confirmed by code-level proof.",
+      "false_positive_risk": "low",
+      "confidence": 0.72
     }
   },
   {
     "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_002",
-    "case_id": "system2_research_agents_COV_001",
+    "case_id": "system2_research_agents_COV_003",
+    "suspected_false_positive": true,
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.6,
+      "root_cause_confidence": "trace_only"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The trace evidence clearly shows repeated Director review content without a termination signal, indicating a loop. The root cause analysis points to a missing termination condition in the AutoGen framework, which is a legitimate software fault that can be fixed in code/configuration. The confidence is moderate due to lack of direct code evidence, but the failure pattern is well-established across multiple affected cases.",
+      "false_positive_risk": "low",
+      "confidence": 0.78
+    }
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
+    "case_id": "system2_research_agents_REQ_001",
     "suspected_false_positive": true,
     "confirmation_status": "suspected_fault",
     "confirmation_source": "deterministic_oracle_evidence",
@@ -42,14 +66,14 @@
     "agent_audit_influence": "advisory_only",
     "audit": {
       "audit_result": "suspected_fault",
-      "reason": "The diagnostic report identifies MISSING_TOOL_CALL for update_single_airtable_record, but the provided evidence consists only of tool names (update_single_airtable_record, google_search) and an assertion from the rule oracle. No code locations, trace excerpts showing expected vs. actual tool invocations, nor deterministic confirmation are present. The trace summary indicates the test case passed with return code 0, terminating cleanly after 11 turns; stderr and stdout tails show only deprecation warnings and termination messages, not tool call errors. Without concrete code/trace evidence that the tool invocation was actually missing due to an application-level fault (as opposed to model behavior, orchestration logic, or a benign alternative path), this finding cannot be confirmed as a true positive.",
-      "false_positive_risk": "high",
+      "reason": "The fault is based entirely on a rule oracle flagging a missing 'google_search' tool call, but there is no code or trace evidence showing the tool should have been invoked or was incorrectly excluded. The trace confirms successful termination with no error, and the evidence strength is very low (0.28). This could simply be a model decision not to use the tool in this specific conversation, which is a non-target behavioral variation, not a code or configuration defect.",
+      "false_positive_risk": "medium",
       "confidence": 0.28
     }
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_003",
-    "case_id": "system2_research_agents_COV_002",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
+    "case_id": "system2_research_agents_STATIC_human_input_requested",
     "suspected_false_positive": false,
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
@@ -60,20 +84,20 @@
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.8,
-      "root_cause_confidence": "trace_only"
+      "evidence_strength": 0.76,
+      "root_cause_confidence": "code_evidence"
     },
     "agent_audit_influence": "advisory_only",
     "audit": {
       "audit_result": "suspected_fault",
-      "reason": "The diagnosis is plausible—trace shows 22 turns and a timeout, and the root cause explanation (lack of termination condition) is logically consistent with the observed behavior. However, deterministic confirmation is weak: no concrete code snippet showing missing max_turns or is_termination_msg is provided, and the evidence is entirely trace-based. The suggested fix (max_turns=12) might inadvertently mask unnecessary cycles rather than ensuring correct termination logic. Low risk of false positive because the timeout is reproducible and the trace pattern supports looping.",
+      "reason": "The fault report identifies a deterministic configuration issue (human_input_mode='ALWAYS') in the AutoGen user proxy, which is a framework-level misconfiguration that can block unattended execution. The evidence points to direct code locations in app.py, suggesting a genuine incompatibility with automated workflows. However, the report lacks a trace excerpt or runtime log confirming that human input was actually requested during a test run, so the impact is inferred from static analysis rather than observed failure. Further, the failure may be by design if the application is intended for interactive use, which would make this a non-target issue for MASentinel's automation-focused scope. Nevertheless, the configuration pattern is a reliable indicator of potential automation blockage.",
       "false_positive_risk": "low",
-      "confidence": 0.72
+      "confidence": 0.85
     }
   },
   {
-    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_004",
-    "case_id": "system2_research_agents_REQ_003",
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_005",
+    "case_id": "system2_research_agents_STATIC_view_parameter_ignored",
     "suspected_false_positive": false,
     "confirmation_status": "confirmed_fault",
     "confirmation_source": "deterministic_oracle_evidence",
@@ -84,15 +108,87 @@
       "confidence_threshold": 0.65,
       "code_evidence_strength_threshold": 0.55,
       "trace_evidence_strength_threshold": 0.65,
-      "evidence_strength": 0.66,
-      "root_cause_confidence": "trace_only"
+      "evidence_strength": 0.72,
+      "root_cause_confidence": "code_evidence"
     },
     "agent_audit_influence": "advisory_only",
     "audit": {
       "audit_result": "suspected_fault",
-      "reason": "The evidence (NameError: name 'web_scraping' is not defined in generated code, trace with exitcode: 1, and test failure due to missing tool) strongly supports a deterministic application-layer fault. The fault can be mitigated by code changes (tool registration, error handling) without altering model parameters. There is no indication this is a model service issue. The deterministic oracle confirms the fault with code/trace evidence exceeding the thresholds.",
-      "false_positive_risk": "low",
-      "confidence": 0.85
+      "reason": "The diagnosis identifies a potential Tool API Semantics Error in the Airtable wrapper within /app.py, but the audit notes several evidence gaps: 1) Evidence descriptions are generic ('possible semantic parameter stripping', 'filter/view parameter ignored') and do not include actual code snippets showing missing parameter handling; 2) No dynamic trace or execution log is provided to demonstrate that a view parameter was actually sent and ignored at runtime; 3) Without seeing the full function signatures and request construction code, it's possible that view/filter are not documented inputs for the wrapper's intended use case, making this a design limitation rather than a fault. The evidence_strength of 0.72 suggests some uncertainty, and the deterministic confirmation source 'deterministic_static_code_evidence' relies on static pattern matching which can be misleading without concrete code examples. The finding remains plausible as an application-layer tool API issue but requires stronger static evidence before it can be considered fully confirmed.",
+      "false_positive_risk": "medium",
+      "confidence": 0.55
+    }
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_006",
+    "case_id": "system2_research_agents_STATIC_pagination_not_followed",
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.72,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The diagnosis claims deterministic_static_code_evidence that the Airtable tool does not follow pagination, but the provided evidence is only a filename and line numbers without actual code snippets showing the missing loop or any Airtable API response structure. The evidence_strength is marked as 0.72, which is below the threshold for confirmed fault under strict deterministic oracle rules. Without code excerpts or mock API responses, the pagination behavior cannot be verified; the issue might be a configuration where the table is small enough or a view is already filtered, making pagination unnecessary. This could be a non-target issue related to data volume expectations rather than a code defect.",
+      "false_positive_risk": "medium",
+      "confidence": 0.55
+    }
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_007",
+    "case_id": "system2_research_agents_STATIC_tool_unstructured_error",
+    "suspected_false_positive": true,
+    "confirmation_status": "suspected_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": false,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "insufficient deterministic code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.5,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The finding is based solely on static code analysis of the HTTP tool wrapper, which is noted to return response.text or None without a typed error envelope. This indicates a plausible design gap where the system may not handle HTTP failures in a structured way. However, there is no observed failure, specific HTTP status code, or tool execution trace to confirm that the missing envelope caused an actual error or affected downstream behavior. The evidence is sufficient to flag a risk, but deterministic confirmation requires an observed failing HTTP status and tool result/error envelope.",
+      "false_positive_risk": "medium",
+      "confidence": 0.45
+    }
+  },
+  {
+    "fault_id": "SYSTEM2_RESEARCH_AGENTS_FAULT_008",
+    "case_id": "system2_research_agents_STATIC_scalable_budget_exceeded",
+    "suspected_false_positive": false,
+    "confirmation_status": "confirmed_fault",
+    "confirmation_source": "deterministic_oracle_evidence",
+    "deterministic_confirmation": {
+      "confirmed": true,
+      "source": "rule_oracle_and_deterministic_evidence",
+      "reason": "deterministic oracle failure with sufficient code/trace evidence",
+      "confidence_threshold": 0.65,
+      "code_evidence_strength_threshold": 0.55,
+      "trace_evidence_strength_threshold": 0.65,
+      "evidence_strength": 0.68,
+      "root_cause_confidence": "code_evidence"
+    },
+    "agent_audit_influence": "advisory_only",
+    "audit": {
+      "audit_result": "suspected_fault",
+      "reason": "The finding is supported by static code location (app.py with max_round=15), which is a deterministic configuration defect. However, the audit cannot verify whether the workload truly scales with external records/items in the actual runtime flow without a dynamic trace or an explicit workload scaling function in the provided snippet. The evidence strength (0.68) is moderate, and the root cause relies on inferring that each round processes more items as records grow. A false positive risk exists if the workload is actually bounded or if max_round is intentionally set for a different purpose. The classification as an AutoGen framework fault is plausible but could also be a simple configuration oversight in the application layer if the conversation design doesn't inherently scale.",
+      "false_positive_risk": "medium",
+      "confidence": 0.68
     }
   }
 ]

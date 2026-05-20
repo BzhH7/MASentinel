@@ -1,18 +1,20 @@
 [
   {
     "case_id": "system1_iterative_coding_COV_001",
-    "code": "TURN_BUDGET_EXCEEDED",
+    "code": "TARGET_WORKFLOW_NOT_OBSERVED",
     "layer": "test_harness",
-    "issue_type": "Soft Turn Budget Exceeded",
+    "issue_type": "Target Workflow Not Observed",
     "severity": "low",
     "confidence": 0.95,
-    "message": "The run terminated, but exceeded the expected soft turn budget.",
+    "message": "The test run did not observe a meaningful target agent workflow, so routing/tool expectations cannot be judged as target faults.",
     "evidence": [
-      "turn_count=24",
-      "max_turns=10"
+      "turn_count=0",
+      "returncode=1",
+      "timeout=False",
+      "command=/Users/zhbai/code/cz_exp/MASentinel/.venv-runtime/bin/python main.py"
     ],
-    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+    "root_cause": "The target process did not expose a meaningful agent workflow for this generated case, so routing/tool expectations would be unreliable as target faults.",
+    "suggested_fix": "Improve the case-to-target adapter, command template, or runtime instrumentation, then rerun the frozen testcase before judging application/framework faults.",
     "excluded_from_target_faults": true
   },
   {
@@ -32,39 +34,7 @@
     "excluded_from_target_faults": true
   },
   {
-    "case_id": "system1_iterative_coding_FSSAFE_001",
-    "code": "TURN_BUDGET_EXCEEDED",
-    "layer": "test_harness",
-    "issue_type": "Soft Turn Budget Exceeded",
-    "severity": "low",
-    "confidence": 0.95,
-    "message": "The run terminated, but exceeded the expected soft turn budget.",
-    "evidence": [
-      "turn_count=23",
-      "max_turns=20"
-    ],
-    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-    "excluded_from_target_faults": true
-  },
-  {
     "case_id": "system1_iterative_coding_FUZZ_001",
-    "code": "TURN_BUDGET_EXCEEDED",
-    "layer": "test_harness",
-    "issue_type": "Soft Turn Budget Exceeded",
-    "severity": "low",
-    "confidence": 0.95,
-    "message": "The run terminated, but exceeded the expected soft turn budget.",
-    "evidence": [
-      "turn_count=25",
-      "max_turns=10"
-    ],
-    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-    "excluded_from_target_faults": true
-  },
-  {
-    "case_id": "system1_iterative_coding_FUZZ_002",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
     "issue_type": "Soft Turn Budget Exceeded",
@@ -81,22 +51,6 @@
   },
   {
     "case_id": "system1_iterative_coding_PROP_001",
-    "code": "TURN_BUDGET_EXCEEDED",
-    "layer": "test_harness",
-    "issue_type": "Soft Turn Budget Exceeded",
-    "severity": "low",
-    "confidence": 0.95,
-    "message": "The run terminated, but exceeded the expected soft turn budget.",
-    "evidence": [
-      "turn_count=21",
-      "max_turns=10"
-    ],
-    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
-    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
-    "excluded_from_target_faults": true
-  },
-  {
-    "case_id": "system1_iterative_coding_PROP_002",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
     "issue_type": "Soft Turn Budget Exceeded",
@@ -136,7 +90,39 @@
     "confidence": 0.95,
     "message": "The run terminated, but exceeded the expected soft turn budget.",
     "evidence": [
+      "turn_count=24",
+      "max_turns=15"
+    ],
+    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+    "excluded_from_target_faults": true
+  },
+  {
+    "case_id": "system1_iterative_coding_REQ_002",
+    "code": "TURN_BUDGET_EXCEEDED",
+    "layer": "test_harness",
+    "issue_type": "Soft Turn Budget Exceeded",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "The run terminated, but exceeded the expected soft turn budget.",
+    "evidence": [
       "turn_count=23",
+      "max_turns=8"
+    ],
+    "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
+    "suggested_fix": "Treat max_turns as a soft efficiency budget, adjust the generated oracle budget, and do not count this as an application/framework defect by itself.",
+    "excluded_from_target_faults": true
+  },
+  {
+    "case_id": "system1_iterative_coding_REQ_003",
+    "code": "TURN_BUDGET_EXCEEDED",
+    "layer": "test_harness",
+    "issue_type": "Soft Turn Budget Exceeded",
+    "severity": "low",
+    "confidence": 0.95,
+    "message": "The run terminated, but exceeded the expected soft turn budget.",
+    "evidence": [
+      "turn_count=22",
       "max_turns=15"
     ],
     "root_cause": "The target workflow terminated successfully, but the generated oracle turn budget was too strict for this interaction.",
@@ -176,7 +162,7 @@
     "excluded_from_target_faults": true
   },
   {
-    "case_id": "system1_iterative_coding_TOOLFUZZ_001",
+    "case_id": "system1_iterative_coding_TOOLFUZZ_002",
     "code": "TURN_BUDGET_EXCEEDED",
     "layer": "test_harness",
     "issue_type": "Soft Turn Budget Exceeded",
