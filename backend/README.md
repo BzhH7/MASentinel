@@ -8,7 +8,7 @@ It does not rewrite or modify `masentinel/` core code.
 From the MASentinel repository root:
 
 ```bash
-uvicorn backend.main:app --reload --port 8000
+python -m uvicorn backend.main:app --reload --host 127.0.0.1 --port 18777
 ```
 
 If `uvicorn` or `fastapi` is missing:

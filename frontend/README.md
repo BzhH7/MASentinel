@@ -7,7 +7,7 @@
 必须先在仓库根目录启动后端：
 
 ```bash
-python -m uvicorn backend.main:app --reload --port 8000
+python -m uvicorn backend.main:app --reload --host 127.0.0.1 --port 18777
 ```
 
 再启动前端：
@@ -24,7 +24,11 @@ npm run dev -- --port 5173
 http://127.0.0.1:5173/
 ```
 
-前端 Vite 代理默认把 `/api` 转发到 `http://127.0.0.1:8000`。如果 Windows 不允许绑定 8000，请同步修改 `vite.config.ts` 里的 proxy target 和后端启动端口。
+前端 Vite 代理默认把 `/api` 转发到 `http://127.0.0.1:18777`。如果你想换后端端口，在 `frontend/.env.local` 中设置：
+
+```env
+VITE_PROXY_TARGET=http://127.0.0.1:你的端口
+```
 
 ## 默认演示数据
 
