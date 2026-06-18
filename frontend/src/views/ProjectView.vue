@@ -6,7 +6,7 @@
           <h2>项目管理</h2>
           <p>管理被测智能体应用的适配器、启动命令、模型和 Oracle 配置。</p>
         </div>
-        <el-button type="primary" @click="openCreate">新建项目</el-button>
+        <el-button type="primary" @click="placeholderAction">新建项目</el-button>
       </div>
       <el-table :data="store.projects" @row-click="selectProject">
         <el-table-column prop="name" label="name" min-width="220" />
@@ -73,7 +73,7 @@ import { useAppStore } from '@/stores/app'
 import type { Project } from '@/types/domain'
 
 const store = useAppStore()
-const selectedId = ref('p-autogen-001')
+const selectedId = ref('system1_iterative_coding')
 const dialogVisible = ref(false)
 const analyzing = ref(false)
 const form = reactive<Project>(emptyProject())
@@ -100,11 +100,11 @@ function emptyProject(): Project {
 
 const selectProject = (row: Project) => {
   selectedId.value = row.id
+  store.loadProjectData(row.id)
 }
 
 const openCreate = () => {
-  Object.assign(form, emptyProject())
-  dialogVisible.value = true
+  placeholderAction()
 }
 
 const editProject = (project: Project) => {
@@ -114,17 +114,20 @@ const editProject = (project: Project) => {
 
 const save = async () => {
   form.adapter_type = form.config.adapter_type
-  await store.saveProject(structuredClone(form))
   dialogVisible.value = false
-  ElMessage.success('项目配置已保存')
+  placeholderAction()
 }
 
 const analyze = async (id: string) => {
   analyzing.value = true
-  await store.analyzeProject(id)
+  await Promise.resolve()
   analyzing.value = false
   selectedId.value = id
-  ElMessage.success('项目分析完成，已生成 SystemProfile 摘要')
+  placeholderAction()
+}
+
+const placeholderAction = () => {
+  ElMessage.warning('演示版本：当前展示的是已完成的真实测试数据，该操作未接入实时执行')
 }
 </script>
 

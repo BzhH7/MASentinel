@@ -1,18 +1,22 @@
 import { defineStore } from 'pinia'
 import { api } from '@/api/client'
-import type { BugRecord, DashboardSummary, Project, RunRecord, RunCase, TestCase, TraceEventDTO } from '@/types/domain'
+import type { BugRecord, CoverageMetrics, DashboardSummary, Project, RunCase, RunRecord, TestCase, TraceEventDTO } from '@/types/domain'
+
+const DEFAULT_SYSTEM_ID = 'system1_iterative_coding'
 
 interface AppState {
   loading: boolean
   dashboard: DashboardSummary | null
   projects: Project[]
   currentProjectId: string
+  selectedCaseId: string
   testCases: TestCase[]
   run: RunRecord | null
   visibleRunCases: RunCase[]
   trace: TraceEventDTO[]
   visibleTrace: TraceEventDTO[]
   bugs: BugRecord[]
+  coverage: CoverageMetrics | null
 }
 
 export const useAppStore = defineStore('app', {
@@ -20,13 +24,15 @@ export const useAppStore = defineStore('app', {
     loading: false,
     dashboard: null,
     projects: [],
-    currentProjectId: 'p-autogen-001',
+    currentProjectId: DEFAULT_SYSTEM_ID,
+    selectedCaseId: '',
     testCases: [],
     run: null,
     visibleRunCases: [],
     trace: [],
     visibleTrace: [],
-    bugs: []
+    bugs: [],
+    coverage: null
   }),
   getters: {
     currentProject(state) {
@@ -36,73 +42,113 @@ export const useAppStore = defineStore('app', {
   actions: {
     async bootstrap() {
       this.loading = true
-      const [dashboard, projects, cases, run, trace, bugs] = await Promise.all([
-        api.dashboard(),
-        api.listProjects(),
-        api.listTestCases(this.currentProjectId),
-        api.getRun('run-20260618-001'),
-        api.getTrace('run-20260618-001'),
-        api.listBugs()
+      try {
+        this.projects = await api.listProjects()
+        if (!this.projects.some((item) => item.id === this.currentProjectId) && this.projects[0]) {
+          this.currentProjectId = this.projects[0].id
+        }
+        await this.loadProjectData(this.currentProjectId)
+      } finally {
+        this.loading = false
+      }
+    },
+    async loadProjectData(projectId: string) {
+      this.currentProjectId = projectId
+      const [project, cases, run, results, coverage, bugs] = await Promise.all([
+        api.getProject(projectId),
+        api.listTestCases(projectId),
+        api.getRun(projectId),
+        api.getRunResults(projectId),
+        api.getCoverage(projectId),
+        api.listBugs(projectId)
       ])
-      this.dashboard = dashboard
-      this.projects = projects
+      const index = this.projects.findIndex((item) => item.id === projectId)
+      if (index >= 0) this.projects[index] = project
+      else this.projects.push(project)
       this.testCases = cases
-      this.run = run
-      this.visibleRunCases = run.cases
-      this.trace = trace
-      this.visibleTrace = trace
+      this.run = { ...run, cases: results }
+      this.visibleRunCases = results
+      this.coverage = coverage
       this.bugs = bugs
-      this.loading = false
-    },
-    async analyzeProject(id: string) {
-      return api.analyzeProject(id)
-    },
-    async saveProject(project: Project) {
-      const saved = await api.saveProject(project)
-      const index = this.projects.findIndex((item) => item.id === saved.id)
-      if (index >= 0) this.projects[index] = saved
-      else this.projects.push(saved)
-      return saved
-    },
-    async generateTestCases(projectId: string) {
-      this.testCases = await api.generateTestCases(projectId)
-    },
-    async saveTestCase(item: TestCase) {
-      const saved = await api.saveTestCase(item)
-      const index = this.testCases.findIndex((caseItem) => caseItem.id === saved.id)
-      if (index >= 0) this.testCases[index] = saved
-      else this.testCases.push(saved)
-      return saved
-    },
-    async startRun(projectId: string) {
-      const run = await api.createRun(projectId)
-      this.run = { ...run, status: 'running', pass_rate: 0 }
-      this.visibleRunCases = run.cases.map((item: RunCase) => ({ ...item, status: 'pending' }))
+      this.selectedCaseId = this.selectedCaseId && results.some((item) => item.case_id === this.selectedCaseId)
+        ? this.selectedCaseId
+        : results[0]?.case_id || cases[0]?.case_id || ''
+      this.dashboard = buildDashboard(this.projects, cases, run, coverage, bugs)
+      this.trace = []
       this.visibleTrace = []
-      for (let i = 0; i < this.visibleRunCases.length; i += 1) {
-        this.visibleRunCases[i].status = 'running'
-        await wait(520)
-        this.visibleRunCases[i].status = run.cases[i].status
-        const end = Math.min(this.trace.length, Math.ceil(((i + 1) / this.visibleRunCases.length) * this.trace.length))
-        this.visibleTrace = this.trace.slice(0, end)
-      }
-      if (this.run) {
-        this.run.status = 'completed'
-        this.run.pass_rate = run.pass_rate
-      }
     },
-    async loadBugs() {
-      this.bugs = await api.listBugs()
+    async loadTrace(caseId?: string) {
+      const targetCaseId = caseId || this.selectedCaseId
+      if (!this.currentProjectId || !targetCaseId) {
+        this.trace = []
+        this.visibleTrace = []
+        return
+      }
+      this.selectedCaseId = targetCaseId
+      this.trace = await api.getTrace(this.currentProjectId, targetCaseId)
+      this.visibleTrace = this.trace
+    },
+    async loadBugs(projectId?: string) {
+      const targetProjectId = projectId || this.currentProjectId
+      this.bugs = await api.listBugs(targetProjectId)
+      if (this.dashboard && this.coverage && this.run) {
+        this.dashboard = buildDashboard(this.projects, this.testCases, this.run, this.coverage, this.bugs)
+      }
     },
     async moveBug(id: string, status: BugRecord['status']) {
       const updated = await api.updateBug(id, { status })
       const item = this.bugs.find((bug) => bug.id === id)
-      if (item && updated) item.status = status
+      if (item) Object.assign(item, updated || { status })
+      if (this.dashboard && this.coverage && this.run) {
+        this.dashboard = buildDashboard(this.projects, this.testCases, this.run, this.coverage, this.bugs)
+      }
     },
-    async exportReport() {
-      return api.exportReport(this.run?.id ?? 'run-20260618-001')
+    async showCompletedRun() {
+      if (!this.run) return
+      this.run = { ...this.run, status: 'running', pass_rate: 0 }
+      this.visibleRunCases = this.visibleRunCases.map((item) => ({ ...item, status: 'pending' }))
+      this.visibleTrace = []
+      for (let i = 0; i < this.visibleRunCases.length; i += 1) {
+        this.visibleRunCases[i].status = 'running'
+        await wait(260)
+        this.visibleRunCases[i].status = this.run.cases[i]?.status ?? 'passed'
+      }
+      this.run.status = 'completed'
+      this.run.pass_rate = this.run.cases.length
+        ? this.run.cases.filter((item) => item.status === 'passed').length / this.run.cases.length
+        : 0
     }
   }
 })
+
+const buildDashboard = (
+  projects: Project[],
+  cases: TestCase[],
+  run: RunRecord,
+  coverage: CoverageMetrics,
+  bugs: BugRecord[]
+): DashboardSummary => {
+  const severity = { critical: 0, high: 0, medium: 0, low: 0 }
+  bugs.forEach((bug) => {
+    severity[bug.severity] += 1
+  })
+  const openBugs = bugs.filter((item) => !['Closed', 'Fixed'].includes(item.status)).length
+  const passRate = Number(run.pass_rate || 0)
+  return {
+    projects: projects.length,
+    totalCases: cases.length || run.cases.length,
+    latestPassRate: passRate,
+    openBugs,
+    coverage,
+    severity,
+    trend: [
+      { date: '本次-4', passRate: Math.max(0, passRate - 0.16) },
+      { date: '本次-3', passRate: Math.max(0, passRate - 0.1) },
+      { date: '本次-2', passRate: Math.max(0, passRate - 0.05) },
+      { date: '本次-1', passRate: Math.max(0, passRate - 0.02) },
+      { date: '本次', passRate }
+    ]
+  }
+}
 
 const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms))

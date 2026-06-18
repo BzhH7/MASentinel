@@ -1,13 +1,13 @@
 export type AdapterType = 'autogen' | 'generic_cli' | 'generic_http'
 export type ProjectStatus = 'analyzed' | 'draft' | 'running' | 'error'
-export type CaseType = 'baseline' | 'contract' | 'negative' | 'metamorphic' | 'tool_error'
+export type CaseType = string
 export type RunCaseStatus = 'pending' | 'running' | 'passed' | 'failed'
 export type TraceStatus = 'pending' | 'running' | 'passed' | 'failed'
 export type BugStatus = 'Open' | 'Processing' | 'Fixed' | 'Closed' | 'Reopen'
 export type Severity = 'critical' | 'high' | 'medium' | 'low'
 
 export interface ProjectConfig {
-  adapter_type: AdapterType
+  adapter_type: string
   project_path: string
   command_template: string
   http_url: string
@@ -19,8 +19,8 @@ export interface ProjectConfig {
 export interface Project {
   id: string
   name: string
-  adapter_type: AdapterType
-  status: ProjectStatus
+  adapter_type: string
+  status: string
   created_at: string
   config: ProjectConfig
   profile?: SystemProfile
@@ -39,7 +39,7 @@ export interface TestCase {
   case_id: string
   case_type: CaseType
   objective: string
-  oracle_type: 'rule_oracle' | 'contract_oracle' | 'llm_judge' | 'metamorphic_oracle'
+  oracle_type: string
   enabled: boolean
 }
 

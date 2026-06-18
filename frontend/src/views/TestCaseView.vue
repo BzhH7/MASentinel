@@ -22,7 +22,7 @@
         <el-table-column prop="objective" label="objective" min-width="320" />
         <el-table-column prop="oracle_type" label="oracle_type" width="170" />
         <el-table-column prop="enabled" label="enabled" width="110">
-          <template #default="{ row }"><el-switch v-model="row.enabled" /></template>
+            <template #default="{ row }"><el-switch v-model="row.enabled" @change="placeholderAction" /></template>
         </el-table-column>
         <el-table-column label="操作" width="100">
           <template #default="{ row }"><el-button size="small" @click="openEditor(row)">编辑</el-button></template>
@@ -62,7 +62,7 @@ const oracleTypes = ['rule_oracle', 'contract_oracle', 'llm_judge', 'metamorphic
 const form = reactive<TestCase>(emptyCase())
 
 function emptyCase(): TestCase {
-  return { id: `tc-${Date.now()}`, project_id: 'p-autogen-001', case_id: 'CUSTOM_001', case_type: 'baseline', objective: '', oracle_type: 'rule_oracle', enabled: true }
+  return { id: `tc-${Date.now()}`, project_id: store.currentProjectId, case_id: 'CUSTOM_001', case_type: 'baseline', objective: '', oracle_type: 'rule_oracle', enabled: true }
 }
 
 const generate = async () => {
@@ -71,11 +71,11 @@ const generate = async () => {
   const timer = window.setInterval(() => {
     activeStep.value = Math.min(activeStep.value + 1, steps.length)
   }, 420)
-  await store.generateTestCases(store.currentProject?.id ?? 'p-autogen-001')
+  await wait(1800)
   window.clearInterval(timer)
   activeStep.value = steps.length
   window.setTimeout(() => (generating.value = false), 500)
-  ElMessage.success('自动生成用例完成')
+  placeholderAction()
 }
 
 const openEditor = (item?: TestCase) => {
@@ -84,10 +84,15 @@ const openEditor = (item?: TestCase) => {
 }
 
 const save = async () => {
-  await store.saveTestCase(structuredClone(form))
   dialogVisible.value = false
-  ElMessage.success('测试用例已保存')
+  placeholderAction()
 }
+
+const placeholderAction = () => {
+  ElMessage.warning('演示版本：当前展示的是已完成的真实测试数据，该操作未接入实时执行')
+}
+
+const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms))
 </script>
 
 <style scoped>

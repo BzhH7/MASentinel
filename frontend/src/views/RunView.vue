@@ -3,12 +3,12 @@
     <section class="run-hero glass-card">
       <div>
         <p class="eyebrow">Live Semantic Test Run</p>
-        <h1>实时执行智能体测试用例</h1>
-        <p>点击启动后，用例会从 pending 逐条进入 running，并产生 Agent 消息、工具调用和 Oracle 判定 Trace。</p>
+        <h1>回放已完成的真实测试运行</h1>
+        <p>当前后端提供的是 MASentinel 已生成的真实结果文件。按钮只播放前端动画，不会创建新的后端运行任务。</p>
       </div>
       <div class="run-actions">
         <el-button type="primary" size="large" :loading="isRunning" @click="startRun">
-          {{ isRunning ? '运行中...' : '创建运行任务' }}
+          {{ isRunning ? '回放中...' : '回放真实运行' }}
         </el-button>
         <div class="pass-ring">
           <strong>{{ passRate }}</strong>
@@ -31,7 +31,7 @@
             :key="item.case_id"
             class="case-item"
             :class="item.status"
-            @click="selected = item.case_id"
+            @click="selectCase(item.case_id)"
           >
             <span><i class="status-dot" :class="`status-${item.status}`"></i>{{ item.case_id }}</span>
             <strong>{{ item.status }}</strong>
@@ -75,19 +75,26 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import TraceTimeline from '@/components/trace/TraceTimeline.vue'
 import { useAppStore } from '@/stores/app'
 
 const store = useAppStore()
-const selected = ref('')
+const selected = ref(store.selectedCaseId)
 const isRunning = computed(() => store.run?.status === 'running')
 const passRate = computed(() => `${Math.round((store.run?.pass_rate ?? 0) * 100)}%`)
 const selectedCase = computed(() => store.visibleRunCases.find((item) => item.case_id === selected.value))
 
 const startRun = async () => {
-  selected.value = ''
-  await store.startRun(store.currentProject?.id ?? 'p-autogen-001')
+  ElMessage.warning('演示版本：当前展示的是已完成的真实测试数据，该操作未接入实时执行')
+  await store.showCompletedRun()
   selected.value = store.visibleRunCases.find((item) => item.status === 'failed')?.case_id ?? store.visibleRunCases[0]?.case_id ?? ''
+  await store.loadTrace(selected.value)
+}
+
+const selectCase = async (caseId: string) => {
+  selected.value = caseId
+  await store.loadTrace(caseId)
 }
 </script>
 

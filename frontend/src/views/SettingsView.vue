@@ -3,110 +3,70 @@
     <section class="glass-card panel">
       <div class="section-heading">
         <div>
-          <h2>设置 / 真实项目</h2>
-          <p>管理后端、真实项目克隆位置、配置生成和分析入口。</p>
+          <h2>设置 / 接口状态</h2>
+          <p>当前前端默认连接 MASentinel FastAPI，只读取 outputs 下已生成的真实测试数据。</p>
         </div>
+        <el-tag :type="useMock ? 'warning' : 'success'" effect="dark">
+          {{ useMock ? 'Mock Mode' : 'Real API Mode' }}
+        </el-tag>
       </div>
+
       <el-descriptions :column="2" border>
-        <el-descriptions-item label="Backend Root">{{ settings?.backend_root }}</el-descriptions-item>
-        <el-descriptions-item label="Real Targets">{{ settings?.real_targets_root }}</el-descriptions-item>
-        <el-descriptions-item label="Configs">{{ settings?.configs_root }}</el-descriptions-item>
-        <el-descriptions-item label="Outputs">{{ settings?.outputs_root }}</el-descriptions-item>
-        <el-descriptions-item label="Python">{{ settings?.python }}</el-descriptions-item>
-        <el-descriptions-item label="Mock Mode">{{ settings?.mock_mode }}</el-descriptions-item>
+        <el-descriptions-item label="API Base">{{ apiBase }}</el-descriptions-item>
+        <el-descriptions-item label="默认 system_id">system1_iterative_coding</el-descriptions-item>
+        <el-descriptions-item label="Mock 开关">VITE_USE_MOCK=true 时才启用</el-descriptions-item>
+        <el-descriptions-item label="后端启动">uvicorn backend.main:app --reload --port 8000</el-descriptions-item>
       </el-descriptions>
     </section>
 
     <section class="glass-card panel">
       <div class="section-heading">
         <div>
-          <h2>真实项目池</h2>
-          <p>已下载 / 待下载项目可以在这里一键克隆并生成 MASentinel 配置。</p>
+          <h2>已接入真实接口</h2>
+          <p>这些操作会直接请求 backend/main.py 中已经存在的接口。</p>
         </div>
-        <el-button type="primary" :loading="loading" @click="refresh">刷新</el-button>
       </div>
-      <el-table :data="projects">
-        <el-table-column prop="name" label="name" min-width="220" />
-        <el-table-column prop="framework" label="framework" width="180" />
-        <el-table-column label="local_path" min-width="260">
-          <template #default="{ row }">
-            <span :class="{ ready: row.exists }">{{ row.local_path }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="状态" width="240">
-          <template #default="{ row }">
-            <el-tag :type="row.exists ? 'success' : 'warning'" effect="dark">{{ row.exists ? '已下载' : '未下载' }}</el-tag>
-            <el-tag :type="row.configured ? 'success' : 'info'" effect="dark" class="tag-gap">{{ row.configured ? '已配置' : '未配置' }}</el-tag>
-            <el-tag :type="row.analyzed ? 'success' : 'danger'" effect="dark" class="tag-gap">{{ row.analyzed ? '已分析' : '未分析' }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="300">
-          <template #default="{ row }">
-            <el-button size="small" @click="cloneProject(row)" :loading="jobId === row.id && jobAction === 'clone'">克隆</el-button>
-            <el-button size="small" @click="configureProject(row)">生成配置</el-button>
-            <el-button size="small" type="primary" @click="analyzeProject(row)" :loading="jobId === row.id && jobAction === 'analyze'">分析</el-button>
-          </template>
-        </el-table-column>
+      <el-table :data="realEndpoints">
+        <el-table-column prop="method" label="method" width="90" />
+        <el-table-column prop="path" label="path" min-width="320" />
+        <el-table-column prop="usage" label="前端用途" min-width="260" />
       </el-table>
+    </section>
+
+    <section class="glass-card panel">
+      <div class="section-heading">
+        <div>
+          <h2>占位操作</h2>
+          <p>这些按钮在 UI 中保留，但当前后端没有对应实时执行接口，点击只会给出明确提示。</p>
+        </div>
+      </div>
+      <div class="placeholder-grid">
+        <el-tag v-for="item in placeholders" :key="item" type="info" effect="plain">{{ item }}</el-tag>
+      </div>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { useMock } from '@/api/client'
 
-const settings = ref<any>(null)
-const projects = ref<any[]>([])
-const loading = ref(false)
-const jobId = ref('')
-const jobAction = ref('')
+const apiBase = import.meta.env.VITE_API_BASE || '/api'
 
-const refresh = async () => {
-  loading.value = true
-  settings.value = await fetch('/api/settings').then((res) => res.json()).catch(() => null)
-  projects.value = await fetch('/api/real-projects').then((res) => res.json()).catch(() => [])
-  loading.value = false
-}
+const realEndpoints = [
+  { method: 'GET', path: '/api/projects', usage: '项目列表、Dashboard 项目数' },
+  { method: 'GET', path: '/api/projects/{system_id}', usage: 'SystemProfile 摘要' },
+  { method: 'GET', path: '/api/projects/{system_id}/testcases', usage: '测试用例列表、Dashboard 用例数' },
+  { method: 'GET', path: '/api/runs/{run_id}', usage: '运行总览和通过率' },
+  { method: 'GET', path: '/api/runs/{run_id}/results', usage: '用例结果队列' },
+  { method: 'GET', path: '/api/runs/{run_id}/trace?case_id=xxx', usage: '单用例 Trace 时间线' },
+  { method: 'GET', path: '/api/runs/{run_id}/coverage', usage: '覆盖率雷达图' },
+  { method: 'GET', path: '/api/bugs?project_id=xxx', usage: '缺陷看板' },
+  { method: 'PUT', path: '/api/bugs/{bug_id}', usage: '缺陷状态 / 严重程度内存更新' },
+  { method: 'GET', path: '/api/reports/{system_id}', usage: '报告索引和 Markdown 预览' },
+  { method: 'GET', path: '/api/reports/{system_id}/file/{filename}', usage: 'HTML 报告 iframe 预览' }
+]
 
-const cloneProject = async (row: any) => {
-  jobId.value = row.id
-  jobAction.value = 'clone'
-  await fetch('/api/real-projects/clone', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: row.id })
-  })
-  ElMessage.success('已提交克隆任务')
-  await refresh()
-}
-
-const configureProject = async (row: any) => {
-  const payload = row.id === 'real_crewai_examples'
-    ? { id: row.id, subpath: 'crews/markdown_validator' }
-    : { id: row.id }
-  await fetch('/api/real-projects/configure', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  ElMessage.success('已生成配置')
-  await refresh()
-}
-
-const analyzeProject = async (row: any) => {
-  jobId.value = row.id
-  jobAction.value = 'analyze'
-  await fetch(`/api/real-projects/${row.id}/analyze`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ config_path: row.config_path })
-  })
-  ElMessage.success('已提交分析任务')
-  await refresh()
-}
-
-refresh()
+const placeholders = ['新建项目', '保存项目', '分析项目', '自动生成用例', '保存测试用例', '创建运行任务', '导出报告']
 </script>
 
 <style scoped>
@@ -119,11 +79,9 @@ refresh()
   padding: 18px;
 }
 
-.ready {
-  color: var(--green);
-}
-
-.tag-gap {
-  margin-left: 6px;
+.placeholder-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 </style>

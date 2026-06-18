@@ -3,7 +3,13 @@
     <div class="section-heading">
       <div>
         <h2>缺陷管理 Kanban</h2>
-        <p>拖拽卡片切换状态，模拟 PUT /api/bugs/{id}。</p>
+        <p>缺陷来自当前 system_id 的 faults.json；拖拽状态只调用 PUT /api/bugs/{bug_id} 写入后端内存状态。</p>
+      </div>
+      <div class="bug-actions">
+        <el-select v-model="projectId" filterable @change="loadBugs">
+          <el-option v-for="item in store.projects" :key="item.id" :label="item.id" :value="item.id" />
+        </el-select>
+        <el-button type="primary" :loading="loading" @click="loadBugs">刷新缺陷</el-button>
       </div>
     </div>
     <section class="kanban">
@@ -41,6 +47,8 @@ import type { BugStatus, Severity } from '@/types/domain'
 
 const store = useAppStore()
 const dragging = ref('')
+const loading = ref(false)
+const projectId = ref(store.currentProjectId)
 const statuses: BugStatus[] = ['Open', 'Processing', 'Fixed', 'Closed', 'Reopen']
 const grouped = computed(() => {
   const result: Record<BugStatus, typeof store.bugs> = {
@@ -60,6 +68,15 @@ const dropBug = async (status: BugStatus) => {
   dragging.value = ''
 }
 
+const loadBugs = async () => {
+  loading.value = true
+  try {
+    await store.loadProjectData(projectId.value)
+  } finally {
+    loading.value = false
+  }
+}
+
 const severityType = (severity: Severity) => {
   if (severity === 'critical' || severity === 'high') return 'danger'
   if (severity === 'medium') return 'warning'
@@ -68,6 +85,15 @@ const severityType = (severity: Severity) => {
 </script>
 
 <style scoped>
+.bug-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.bug-actions .el-select {
+  width: 280px;
+}
+
 .kanban {
   display: grid;
   grid-template-columns: repeat(5, minmax(220px, 1fr));

@@ -11,6 +11,7 @@
             <el-option v-for="item in projects" :key="item.id" :label="item.id" :value="item.id" />
           </el-select>
           <el-button type="primary" :loading="loading" @click="loadReports">刷新报告</el-button>
+          <el-button @click="placeholderAction">导出报告</el-button>
         </div>
       </div>
 
@@ -43,6 +44,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { api } from '@/api/client'
 
 interface ProjectRow {
   id: string
@@ -63,7 +65,7 @@ const previews = ref<Record<string, string>>({})
 const active = ref('report_html')
 
 const loadProjects = async () => {
-  projects.value = await fetch('/api/projects').then((res) => res.json())
+  projects.value = await api.listProjects()
   if (!projects.value.some((item) => item.id === selectedSystem.value) && projects.value[0]) {
     selectedSystem.value = projects.value[0].id
   }
@@ -73,7 +75,7 @@ const loadReports = async () => {
   if (!selectedSystem.value) return
   loading.value = true
   try {
-    const data = await fetch(`/api/reports/${selectedSystem.value}`).then((res) => res.json())
+    const data = await api.listReports(selectedSystem.value)
     reports.value = data.reports || []
     previews.value = data.previews || {}
     ElMessage.success('已加载 MASentinel 真实报告')
@@ -83,8 +85,11 @@ const loadReports = async () => {
 }
 
 const hasReport = (name: string) => reports.value.some((item) => item.name === name)
-const fileUrl = (name: string) => `/api/reports/${selectedSystem.value}/file/${encodeURIComponent(name)}`
+const fileUrl = (name: string) => api.reportFileUrl(selectedSystem.value, name)
 const formatSize = (size: number) => `${(size / 1024).toFixed(1)} KB`
+const placeholderAction = () => {
+  ElMessage.warning('演示版本：当前展示的是已完成的真实测试数据，该操作未接入实时执行')
+}
 
 onMounted(async () => {
   await loadProjects()

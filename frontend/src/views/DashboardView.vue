@@ -4,7 +4,7 @@
       <div>
         <p class="eyebrow">MASentinel-X Command Center</p>
         <h1>智能体应用测试态势一屏掌控</h1>
-        <p>聚合项目、用例、运行结果、语义覆盖率与缺陷严重程度，现场演示无需后端即可完整跑通。</p>
+        <p>基于 MASentinel 后端读取 outputs 中已完成的真实测试数据，在前端聚合项目、用例、运行结果、覆盖率与缺陷态势。</p>
       </div>
       <div class="hero-glow">
         <strong>{{ percent(summary.coverage.MASCov) }}</strong>
@@ -42,10 +42,10 @@ const percent = (value: number) => `${Math.round(value * 100)}%`
 const cards = computed(() => {
   if (!summary.value) return []
   return [
-    { label: '项目数', value: summary.value.projects, trend: '+2 本周', tone: 'up' },
-    { label: '用例总数', value: summary.value.totalCases, trend: '+9 自动生成', tone: 'up' },
-    { label: '最近通过率', value: percent(summary.value.latestPassRate), trend: '+7% 较上次', tone: 'up' },
-    { label: '未关闭缺陷', value: summary.value.openBugs, trend: '2 个高优先级', tone: 'warn' }
+    { label: '项目数', value: summary.value.projects, trend: 'outputs/profile.json', tone: 'up' },
+    { label: '用例总数', value: summary.value.totalCases, trend: 'testcases.json', tone: 'up' },
+    { label: '最近通过率', value: percent(summary.value.latestPassRate), trend: 'oracle_results.json', tone: 'up' },
+    { label: '未关闭缺陷', value: summary.value.openBugs, trend: 'faults.json', tone: 'warn' }
   ]
 })
 

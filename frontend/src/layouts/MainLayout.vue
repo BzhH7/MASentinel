@@ -28,7 +28,7 @@
         </div>
         <div class="top-actions">
           <el-tag type="success" effect="dark">MASCov 84%</el-tag>
-          <el-button type="primary" @click="$router.push('/runs')">启动演示运行</el-button>
+          <el-button type="primary" @click="$router.push('/runs')">查看真实运行</el-button>
         </div>
       </header>
       <router-view />
@@ -41,6 +41,7 @@ import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { DataAnalysis, FolderOpened, Histogram, Management, Tickets, Timer, Warning } from '@element-plus/icons-vue'
 import { useAppStore } from '@/stores/app'
+import { useMock } from '@/api/client'
 
 const store = useAppStore()
 const route = useRoute()
@@ -72,10 +73,9 @@ const titleMap: Record<string, string> = {
 }
 
 const routeTitle = computed(() => titleMap[String(route.name)] ?? 'MASentinel-X')
-const useMock = import.meta.env.VITE_USE_MOCK !== 'false'
 const modeTitle = computed(() => (useMock ? 'Mock 演示模式' : 'MASentinel 后端模式'))
 const modeDescription = computed(() =>
-  useMock ? '无需后端，可完整跑通流程' : '已连接 MASentinel Python API'
+  useMock ? '仅 VITE_USE_MOCK=true 时启用' : '读取 outputs 真实测试数据'
 )
 </script>
 

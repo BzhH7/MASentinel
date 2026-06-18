@@ -1,18 +1,19 @@
-# MASentinel-X
+# MASentinel-X Frontend
 
-面向智能体应用的自动化测试与缺陷管理平台前端演示项目。
+面向智能体应用的自动化测试与缺陷管理平台前端。当前版本默认连接 `backend/main.py` 暴露的真实 REST API，读取 `outputs/<system_id>/` 下已经生成好的 MASentinel 测试数据。
 
-## 技术栈
+## 启动顺序
 
-- Vue 3 + TypeScript + Vite
-- Element Plus
-- ECharts / vue-echarts
-- Pinia
-- Vue Router
-
-## 运行
+必须先在仓库根目录启动后端：
 
 ```bash
+python -m uvicorn backend.main:app --reload --port 8000
+```
+
+再启动前端：
+
+```bash
+cd frontend
 npm install
 npm run dev -- --port 5173
 ```
@@ -23,24 +24,44 @@ npm run dev -- --port 5173
 http://127.0.0.1:5173/
 ```
 
-## Mock / 后端模式
+前端 Vite 代理默认把 `/api` 转发到 `http://127.0.0.1:8000`。如果 Windows 不允许绑定 8000，请同步修改 `vite.config.ts` 里的 proxy target 和后端启动端口。
 
-默认连接 MASentinel Python 后端：
+## 默认演示数据
 
-```env
-VITE_USE_MOCK=false
-VITE_API_BASE=/api
+前端默认使用：
+
+```text
+system1_iterative_coding
 ```
 
-启动后端：
+作为首屏演示项目。也可以在项目、缺陷、报告等页面切换到后端扫描到的其他 `outputs/<system_id>/profile.json` 项目。
 
-```bash
-cd ..
-python -m uvicorn backend.main:app --reload --port 8000
-```
+## Mock 开关
 
-如需切回纯前端 mock 演示模式：
+默认走真实接口。只有显式设置下面变量时才启用前端 mock：
 
 ```env
 VITE_USE_MOCK=true
 ```
+
+未创建 `.env` 时不会回退假数据，会直接请求后端接口。
+
+## 已接入的真实只读展示
+
+- Dashboard：由 `GET /api/projects`、`GET /api/runs/{run_id}`、`GET /api/runs/{run_id}/results`、`GET /api/runs/{run_id}/coverage`、`GET /api/bugs?project_id=xxx` 在前端聚合生成。
+- 项目管理：读取 `GET /api/projects` 和 `GET /api/projects/{system_id}`。
+- 测试用例：读取 `GET /api/projects/{system_id}/testcases`。
+- 测试运行：读取 `GET /api/runs/{run_id}` 和 `GET /api/runs/{run_id}/results`，前端只做已完成运行的动画回放。
+- Trace：必须选择具体 `case_id`，调用 `GET /api/runs/{run_id}/trace?case_id=xxx`。
+- 缺陷管理：调用 `GET /api/bugs?project_id=xxx`，拖拽状态调用 `PUT /api/bugs/{bug_id}` 更新后端内存状态。
+- 报告：调用 `GET /api/reports/{system_id}` 和 `GET /api/reports/{system_id}/file/{filename}` 预览真实 `report.html`、`dashboard.html`、Markdown 报告。
+
+## 目前仍是占位的按钮
+
+后端当前没有对应接口，所以这些按钮保留 UI，但点击会提示：
+
+```text
+演示版本：当前展示的是已完成的真实测试数据，该操作未接入实时执行
+```
+
+占位按钮包括：新建项目、保存项目、分析项目、自动生成用例、保存测试用例、创建运行任务、导出报告。
