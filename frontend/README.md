@@ -40,6 +40,16 @@ system1_iterative_coding
 
 作为首屏演示项目。也可以在项目、缺陷、报告等页面切换到后端扫描到的其他 `outputs/<system_id>/profile.json` 项目。
 
+## 实时运行目标
+
+`system1_iterative_coding`、`system2_research_agents`、`system3_financial_analysis` 默认用于展示仓库里已有的历史输出。如果要点击“创建运行任务”实时跑，建议使用内置的：
+
+```text
+toy_autogen_system
+```
+
+它指向仓库内 `examples/toy_autogen_system`，不依赖额外下载的目标项目。历史项目如果没有对应目标源码目录，后端会在启动前返回路径预检错误，而不是继续执行到 Trace 里才显示 Windows 目录异常。
+
 ## Mock 开关
 
 默认走真实接口。只有显式设置下面变量时才启用前端 mock：

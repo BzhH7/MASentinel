@@ -7,6 +7,9 @@
         <p>点击后端会启动 MASentinel 全流程任务：分析、生成用例、执行、诊断并重新生成报告。</p>
       </div>
       <div class="run-actions">
+        <el-select v-model="runTarget" filterable placeholder="选择实时运行目标">
+          <el-option v-for="item in store.projects" :key="item.id" :label="item.id" :value="item.id" />
+        </el-select>
         <el-button type="primary" size="large" :loading="isRunning" @click="startRun">
           {{ isRunning ? '实时运行中...' : '创建运行任务' }}
         </el-button>
@@ -16,6 +19,19 @@
         </div>
       </div>
     </section>
+
+    <el-alert
+      v-if="store.runtimeValidation && !store.runtimeValidation.runnable"
+      type="error"
+      show-icon
+      :closable="false"
+      title="当前目标项目不能实时运行"
+      class="runtime-alert"
+    >
+      <template #default>
+        <div v-for="item in store.runtimeValidation.errors" :key="item">{{ item }}</div>
+      </template>
+    </el-alert>
 
     <section v-if="store.currentJob" class="glass-card job-panel">
       <div class="section-heading">
@@ -94,6 +110,7 @@ import TraceTimeline from '@/components/trace/TraceTimeline.vue'
 import { useAppStore } from '@/stores/app'
 
 const store = useAppStore()
+const runTarget = ref('toy_autogen_system')
 const selected = ref(store.selectedCaseId)
 const isRunning = computed(() => store.run?.status === 'running' || store.currentJob?.status === 'running' || store.currentJob?.status === 'pending')
 const passRate = computed(() => `${Math.round((store.run?.pass_rate ?? 0) * 100)}%`)
@@ -101,8 +118,13 @@ const selectedCase = computed(() => store.visibleRunCases.find((item) => item.ca
 
 const startRun = async () => {
   try {
+    const validation = await store.validateRuntime(runTarget.value)
+    if (!validation.runnable) {
+      ElMessage.error('当前目标项目路径无效，不能实时运行')
+      return
+    }
     ElMessage.info('已提交 MASentinel 后端实时运行任务')
-    const job = await store.startRealtimeRun(store.currentProject?.id ?? store.currentProjectId)
+    const job = await store.startRealtimeRun(runTarget.value)
     if (job?.status === 'succeeded') {
       ElMessage.success('实时运行完成，已刷新真实输出数据')
       selected.value = store.visibleRunCases.find((item) => item.status === 'failed')?.case_id ?? store.visibleRunCases[0]?.case_id ?? ''
@@ -155,6 +177,14 @@ const selectCase = async (caseId: string) => {
   justify-items: center;
   gap: 16px;
   min-width: 220px;
+}
+
+.run-actions .el-select {
+  width: 260px;
+}
+
+.runtime-alert {
+  border-radius: 12px;
 }
 
 .pass-ring {

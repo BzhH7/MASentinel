@@ -112,6 +112,47 @@ def find_system_config(system_id: str) -> Path | None:
     return None
 
 
+def list_configured_systems() -> list[dict[str, Any]]:
+    systems: list[dict[str, Any]] = []
+    if not CONFIGS_DIR.is_dir():
+        return systems
+    for path in sorted(CONFIGS_DIR.glob("*.yaml")):
+        data = load_yaml(path)
+        system_id = str(data.get("system_id") or "")
+        if not system_id:
+            continue
+        systems.append(
+            {
+                "id": system_id,
+                "system_id": system_id,
+                "config_path": str(path),
+                "root_path": data.get("root_path"),
+                "entrypoint": data.get("entrypoint"),
+                "adapter_type": "config",
+                "status": "configured",
+            }
+        )
+    return systems
+
+
+def validate_system_runtime(system_id: str) -> list[str]:
+    config_path = find_system_config(system_id)
+    if config_path is None:
+        return [f"No config file found for system_id={system_id}"]
+    from masentinel.runner.system_adapter import load_system_config
+
+    config = load_system_config(config_path)
+    errors: list[str] = []
+    for key in ("root_path", "entrypoint"):
+        value = config.get(key)
+        if value and not Path(str(value)).exists():
+            errors.append(f"{key} does not exist: {value}")
+    working_dir = (config.get("run", {}) or {}).get("working_dir")
+    if working_dir and not Path(str(working_dir)).is_dir():
+        errors.append(f"run.working_dir is not a directory: {working_dir}")
+    return errors
+
+
 def run_job(job: RunJob, system_config_path: Path, *, agentic: bool, clean_output: bool, no_human: bool) -> None:
     job.status = "running"
     job.started_at = time.time()
@@ -120,6 +161,9 @@ def run_job(job: RunJob, system_config_path: Path, *, agentic: bool, clean_outpu
     with RUN_LOCK:
         try:
             append_log(job, "runtime lock acquired")
+            runtime_errors = validate_system_runtime(job.system_id)
+            if runtime_errors:
+                raise RuntimeError("; ".join(runtime_errors))
             aggregate_config = write_single_system_config(job, system_config_path)
             job.progress = 8
             append_log(job, f"run_all config={aggregate_config}")

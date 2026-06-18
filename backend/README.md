@@ -19,11 +19,12 @@ python -m pip install fastapi uvicorn
 
 ## Demo System IDs
 
-The API scans `outputs/<system_id>/profile.json`. Current demo candidates include:
+The API scans `outputs/<system_id>/profile.json` and `configs/*.yaml`. Current demo candidates include:
 
 - `system1_iterative_coding`
 - `system2_research_agents`
 - `system3_financial_analysis`
+- `toy_autogen_system`
 
 ## Endpoints
 
@@ -47,3 +48,5 @@ Bug status/severity updates are stored in memory only for the demo and do not mu
 ## Realtime Runs
 
 `POST /api/runs` starts a background MASentinel job by resolving `system_id` / `project_id` to a matching `configs/*.yaml` file and calling the existing `run_all.run_all()` pipeline. It defaults to `clean_output=false` so existing demo artifacts are not cleared before a run; pass `clean_output=true` only when you deliberately want to rebuild that system output from scratch. Job progress can be monitored with `GET /api/jobs/{job_id}`.
+
+Use `toy_autogen_system` for an out-of-the-box realtime run on a fresh clone. The historical systems require their target source directories to exist locally; `GET /api/runtime/{system_id}/validate` reports missing `root_path`, `entrypoint`, or `run.working_dir` before launching.

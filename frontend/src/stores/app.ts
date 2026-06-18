@@ -18,6 +18,7 @@ interface AppState {
   bugs: BugRecord[]
   coverage: CoverageMetrics | null
   currentJob: RunJob | null
+  runtimeValidation: { system_id: string; runnable: boolean; errors: string[] } | null
 }
 
 export const useAppStore = defineStore('app', {
@@ -34,7 +35,8 @@ export const useAppStore = defineStore('app', {
     visibleTrace: [],
     bugs: [],
     coverage: null,
-    currentJob: null
+    currentJob: null,
+    runtimeValidation: null
   }),
   getters: {
     currentProject(state) {
@@ -96,6 +98,11 @@ export const useAppStore = defineStore('app', {
       if (this.dashboard && this.coverage && this.run) {
         this.dashboard = buildDashboard(this.projects, this.testCases, this.run, this.coverage, this.bugs)
       }
+    },
+    async validateRuntime(projectId?: string) {
+      const targetProjectId = projectId || this.currentProjectId
+      this.runtimeValidation = await api.validateRuntime(targetProjectId)
+      return this.runtimeValidation
     },
     async moveBug(id: string, status: BugRecord['status']) {
       const updated = await api.updateBug(id, { status })

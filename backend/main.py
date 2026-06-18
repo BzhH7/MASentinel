@@ -19,7 +19,7 @@ from backend.repository import (
     list_system_ids,
     project_summary,
 )
-from backend.jobs import create_run_job, get_job, list_jobs
+from backend.jobs import create_run_job, get_job, list_configured_systems, list_jobs, validate_system_runtime
 
 
 app = FastAPI(title="MASentinel Backend", version="0.1.0")
@@ -44,7 +44,16 @@ def ensure_project(system_id: str) -> None:
 
 @app.get("/api/projects")
 def list_projects() -> list[dict[str, Any]]:
-    return [project_summary(system_id) for system_id in list_system_ids()]
+    by_id = {item["id"]: item for item in list_configured_systems()}
+    for system_id in list_system_ids():
+        by_id[system_id] = {**by_id.get(system_id, {}), **project_summary(system_id)}
+    return list(by_id.values())
+
+
+@app.get("/api/runtime/{system_id}/validate")
+def validate_runtime(system_id: str) -> dict[str, Any]:
+    errors = validate_system_runtime(system_id)
+    return {"system_id": system_id, "runnable": not errors, "errors": errors}
 
 
 @app.get("/api/projects/{system_id}")

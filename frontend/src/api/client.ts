@@ -163,6 +163,12 @@ export interface ReportIndex {
   previews: Record<string, string>
 }
 
+export interface RuntimeValidation {
+  system_id: string
+  runnable: boolean
+  errors: string[]
+}
+
 export const api = {
   async listProjects(): Promise<Project[]> {
     if (useMock) return delay(projects)
@@ -196,6 +202,9 @@ export const api = {
       } as RunJob)
     }
     return (await http.post('/runs', { system_id: systemId, clean_output: false, no_human: true })).data
+  },
+  async validateRuntime(systemId: string): Promise<RuntimeValidation> {
+    return (await http.get(`/runtime/${systemId}/validate`)).data
   },
   async getJob(jobId: string): Promise<RunJob> {
     return (await http.get(`/jobs/${jobId}`)).data
