@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from '@/api/client'
-import type { BugRecord, CoverageMetrics, DashboardSummary, Project, RunCase, RunRecord, TestCase, TraceEventDTO } from '@/types/domain'
+import type { BugRecord, CoverageMetrics, DashboardSummary, Project, RunCase, RunJob, RunRecord, TestCase, TraceEventDTO } from '@/types/domain'
 
 const DEFAULT_SYSTEM_ID = 'system1_iterative_coding'
 
@@ -17,6 +17,7 @@ interface AppState {
   visibleTrace: TraceEventDTO[]
   bugs: BugRecord[]
   coverage: CoverageMetrics | null
+  currentJob: RunJob | null
 }
 
 export const useAppStore = defineStore('app', {
@@ -32,7 +33,8 @@ export const useAppStore = defineStore('app', {
     trace: [],
     visibleTrace: [],
     bugs: [],
-    coverage: null
+    coverage: null,
+    currentJob: null
   }),
   getters: {
     currentProject(state) {
@@ -102,6 +104,22 @@ export const useAppStore = defineStore('app', {
       if (this.dashboard && this.coverage && this.run) {
         this.dashboard = buildDashboard(this.projects, this.testCases, this.run, this.coverage, this.bugs)
       }
+    },
+    async startRealtimeRun(projectId?: string) {
+      const targetProjectId = projectId || this.currentProjectId
+      const job = await api.createRun(targetProjectId)
+      this.currentJob = job
+      this.run = this.run ? { ...this.run, status: 'running' } : null
+      while (this.currentJob && ['pending', 'running'].includes(this.currentJob.status)) {
+        await wait(1600)
+        this.currentJob = await api.getJob(this.currentJob.id)
+      }
+      if (this.currentJob?.status === 'succeeded') {
+        await this.loadProjectData(targetProjectId)
+      } else if (this.run) {
+        this.run.status = 'completed'
+      }
+      return this.currentJob
     },
     async showCompletedRun() {
       if (!this.run) return

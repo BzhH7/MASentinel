@@ -4,7 +4,7 @@
       <div class="section-heading">
         <div>
           <h2>设置 / 接口状态</h2>
-          <p>当前前端默认连接 MASentinel FastAPI，只读取 outputs 下已生成的真实测试数据。</p>
+          <p>当前前端默认连接 MASentinel FastAPI，可读取 outputs 真实数据，也可启动 MASentinel 后端实时运行任务。</p>
         </div>
         <el-tag :type="useMock ? 'warning' : 'success'" effect="dark">
           {{ useMock ? 'Mock Mode' : 'Real API Mode' }}
@@ -56,6 +56,8 @@ const realEndpoints = [
   { method: 'GET', path: '/api/projects', usage: '项目列表、Dashboard 项目数' },
   { method: 'GET', path: '/api/projects/{system_id}', usage: 'SystemProfile 摘要' },
   { method: 'GET', path: '/api/projects/{system_id}/testcases', usage: '测试用例列表、Dashboard 用例数' },
+  { method: 'POST', path: '/api/runs', usage: '启动 MASentinel 实时运行任务' },
+  { method: 'GET', path: '/api/jobs/{job_id}', usage: '轮询后端任务进度和日志' },
   { method: 'GET', path: '/api/runs/{run_id}', usage: '运行总览和通过率' },
   { method: 'GET', path: '/api/runs/{run_id}/results', usage: '用例结果队列' },
   { method: 'GET', path: '/api/runs/{run_id}/trace?case_id=xxx', usage: '单用例 Trace 时间线' },
@@ -66,7 +68,7 @@ const realEndpoints = [
   { method: 'GET', path: '/api/reports/{system_id}/file/{filename}', usage: 'HTML 报告 iframe 预览' }
 ]
 
-const placeholders = ['新建项目', '保存项目', '分析项目', '自动生成用例', '保存测试用例', '创建运行任务', '导出报告']
+const placeholders = ['新建项目', '保存项目', '分析项目', '自动生成用例', '保存测试用例', '导出报告']
 </script>
 
 <style scoped>

@@ -30,6 +30,9 @@ The API scans `outputs/<system_id>/profile.json`. Current demo candidates includ
 - `GET /api/projects`
 - `GET /api/projects/{id}`
 - `GET /api/projects/{id}/testcases`
+- `POST /api/runs`
+- `GET /api/jobs`
+- `GET /api/jobs/{job_id}`
 - `GET /api/runs/{run_id}`
 - `GET /api/runs/{run_id}/results`
 - `GET /api/runs/{run_id}/trace?case_id=xxx`
@@ -40,3 +43,7 @@ The API scans `outputs/<system_id>/profile.json`. Current demo candidates includ
 - `PUT /api/bugs/{id}`
 
 Bug status/severity updates are stored in memory only for the demo and do not mutate `faults.json`.
+
+## Realtime Runs
+
+`POST /api/runs` starts a background MASentinel job by resolving `system_id` / `project_id` to a matching `configs/*.yaml` file and calling the existing `run_all.run_all()` pipeline. It defaults to `clean_output=false` so existing demo artifacts are not cleared before a run; pass `clean_output=true` only when you deliberately want to rebuild that system output from scratch. Job progress can be monitored with `GET /api/jobs/{job_id}`.

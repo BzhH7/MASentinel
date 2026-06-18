@@ -3,18 +3,32 @@
     <section class="run-hero glass-card">
       <div>
         <p class="eyebrow">Live Semantic Test Run</p>
-        <h1>回放已完成的真实测试运行</h1>
-        <p>当前后端提供的是 MASentinel 已生成的真实结果文件。按钮只播放前端动画，不会创建新的后端运行任务。</p>
+        <h1>实时执行智能体测试用例</h1>
+        <p>点击后端会启动 MASentinel 全流程任务：分析、生成用例、执行、诊断并重新生成报告。</p>
       </div>
       <div class="run-actions">
         <el-button type="primary" size="large" :loading="isRunning" @click="startRun">
-          {{ isRunning ? '回放中...' : '回放真实运行' }}
+          {{ isRunning ? '实时运行中...' : '创建运行任务' }}
         </el-button>
         <div class="pass-ring">
           <strong>{{ passRate }}</strong>
           <span>当前通过率</span>
         </div>
       </div>
+    </section>
+
+    <section v-if="store.currentJob" class="glass-card job-panel">
+      <div class="section-heading">
+        <div>
+          <h2>后端任务</h2>
+          <p>{{ store.currentJob.id }} · {{ store.currentJob.status }} · {{ store.currentJob.config_path }}</p>
+        </div>
+        <el-tag :type="store.currentJob.status === 'failed' ? 'danger' : store.currentJob.status === 'succeeded' ? 'success' : 'primary'" effect="dark">
+          {{ store.currentJob.progress }}%
+        </el-tag>
+      </div>
+      <el-progress :percentage="store.currentJob.progress" :status="store.currentJob.status === 'failed' ? 'exception' : store.currentJob.status === 'succeeded' ? 'success' : undefined" />
+      <pre class="job-log">{{ store.currentJob.logs.join('\n') }}</pre>
     </section>
 
     <section class="run-grid">
@@ -81,15 +95,24 @@ import { useAppStore } from '@/stores/app'
 
 const store = useAppStore()
 const selected = ref(store.selectedCaseId)
-const isRunning = computed(() => store.run?.status === 'running')
+const isRunning = computed(() => store.run?.status === 'running' || store.currentJob?.status === 'running' || store.currentJob?.status === 'pending')
 const passRate = computed(() => `${Math.round((store.run?.pass_rate ?? 0) * 100)}%`)
 const selectedCase = computed(() => store.visibleRunCases.find((item) => item.case_id === selected.value))
 
 const startRun = async () => {
-  ElMessage.warning('演示版本：当前展示的是已完成的真实测试数据，该操作未接入实时执行')
-  await store.showCompletedRun()
-  selected.value = store.visibleRunCases.find((item) => item.status === 'failed')?.case_id ?? store.visibleRunCases[0]?.case_id ?? ''
-  await store.loadTrace(selected.value)
+  try {
+    ElMessage.info('已提交 MASentinel 后端实时运行任务')
+    const job = await store.startRealtimeRun(store.currentProject?.id ?? store.currentProjectId)
+    if (job?.status === 'succeeded') {
+      ElMessage.success('实时运行完成，已刷新真实输出数据')
+      selected.value = store.visibleRunCases.find((item) => item.status === 'failed')?.case_id ?? store.visibleRunCases[0]?.case_id ?? ''
+      await store.loadTrace(selected.value)
+    } else {
+      ElMessage.error(job?.error || '实时运行失败')
+    }
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : '创建运行任务失败')
+  }
 }
 
 const selectCase = async (caseId: string) => {
@@ -160,8 +183,21 @@ const selectCase = async (caseId: string) => {
 
 .case-panel,
 .detail-panel,
-.trace-panel {
+.trace-panel,
+.job-panel {
   padding: 18px;
+}
+
+.job-log {
+  max-height: 260px;
+  margin: 12px 0 0;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #0f172a;
+  color: #dbeafe;
+  padding: 12px;
+  white-space: pre-wrap;
 }
 
 .case-list {

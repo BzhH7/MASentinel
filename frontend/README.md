@@ -51,7 +51,7 @@ VITE_USE_MOCK=true
 - Dashboard：由 `GET /api/projects`、`GET /api/runs/{run_id}`、`GET /api/runs/{run_id}/results`、`GET /api/runs/{run_id}/coverage`、`GET /api/bugs?project_id=xxx` 在前端聚合生成。
 - 项目管理：读取 `GET /api/projects` 和 `GET /api/projects/{system_id}`。
 - 测试用例：读取 `GET /api/projects/{system_id}/testcases`。
-- 测试运行：读取 `GET /api/runs/{run_id}` 和 `GET /api/runs/{run_id}/results`，前端只做已完成运行的动画回放。
+- 测试运行：点击创建运行任务会调用 `POST /api/runs` 启动 MASentinel 后端实时任务，并轮询 `GET /api/jobs/{job_id}` 展示进度日志；完成后读取 `GET /api/runs/{run_id}` 和 `GET /api/runs/{run_id}/results` 刷新真实输出。
 - Trace：必须选择具体 `case_id`，调用 `GET /api/runs/{run_id}/trace?case_id=xxx`。
 - 缺陷管理：调用 `GET /api/bugs?project_id=xxx`，拖拽状态调用 `PUT /api/bugs/{bug_id}` 更新后端内存状态。
 - 报告：调用 `GET /api/reports/{system_id}` 和 `GET /api/reports/{system_id}/file/{filename}` 预览真实 `report.html`、`dashboard.html`、Markdown 报告。
@@ -64,4 +64,4 @@ VITE_USE_MOCK=true
 演示版本：当前展示的是已完成的真实测试数据，该操作未接入实时执行
 ```
 
-占位按钮包括：新建项目、保存项目、分析项目、自动生成用例、保存测试用例、创建运行任务、导出报告。
+占位按钮包括：新建项目、保存项目、分析项目、自动生成用例、保存测试用例、导出报告。

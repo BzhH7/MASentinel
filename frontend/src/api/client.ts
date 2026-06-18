@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { BugRecord, CoverageMetrics, Project, RunCase, RunRecord, TestCase, TraceEventDTO } from '@/types/domain'
+import type { BugRecord, CoverageMetrics, Project, RunCase, RunJob, RunRecord, TestCase, TraceEventDTO } from '@/types/domain'
 import { bugs, coverage, projects, runRecord, testCases, traceEvents } from '@/mock/data'
 
 export const useMock = import.meta.env.VITE_USE_MOCK === 'true'
@@ -182,6 +182,23 @@ export const api = {
   async getRun(runId: string): Promise<RunRecord> {
     if (useMock) return delay(runRecord)
     return normalizeRun((await http.get(`/runs/${runId}`)).data)
+  },
+  async createRun(systemId: string): Promise<RunJob> {
+    if (useMock) {
+      return delay({
+        id: `job-${Date.now()}`,
+        system_id: systemId,
+        config_path: 'mock',
+        status: 'succeeded',
+        progress: 100,
+        logs: ['mock run completed'],
+        created_at: Date.now() / 1000
+      } as RunJob)
+    }
+    return (await http.post('/runs', { system_id: systemId, clean_output: false, no_human: true })).data
+  },
+  async getJob(jobId: string): Promise<RunJob> {
+    return (await http.get(`/jobs/${jobId}`)).data
   },
   async getRunResults(runId: string): Promise<RunCase[]> {
     if (useMock) return delay(runRecord.cases)

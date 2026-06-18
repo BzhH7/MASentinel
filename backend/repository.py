@@ -59,6 +59,18 @@ def get_oracle_results(system_id: str) -> list[dict[str, Any]]:
     return []
 
 
+def get_run_summary(system_id: str) -> list[dict[str, Any]]:
+    data = read_json(system_dir(system_id) / "runs" / "run_summary.json", [])
+    if isinstance(data, list):
+        return [item for item in data if isinstance(item, dict)]
+    if isinstance(data, dict):
+        for key in ("runs", "results", "cases", "items"):
+            value = data.get(key)
+            if isinstance(value, list):
+                return [item for item in value if isinstance(item, dict)]
+    return []
+
+
 def get_coverage(system_id: str) -> dict[str, Any]:
     return read_json(system_dir(system_id) / "coverage.json", {})
 

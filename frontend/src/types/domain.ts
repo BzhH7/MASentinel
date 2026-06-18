@@ -110,3 +110,17 @@ export interface DashboardSummary {
   severity: Record<Severity, number>
   trend: Array<{ date: string; passRate: number }>
 }
+
+export interface RunJob {
+  id: string
+  system_id: string
+  config_path: string
+  status: 'pending' | 'running' | 'succeeded' | 'failed'
+  progress: number
+  logs: string[]
+  result?: unknown
+  error?: string
+  created_at: number
+  started_at?: number
+  ended_at?: number
+}

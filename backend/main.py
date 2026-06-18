@@ -11,6 +11,7 @@ from backend.repository import (
     get_faults,
     get_oracle_results,
     get_profile,
+    get_run_summary,
     list_reports,
     read_report_text,
     get_testcases,
@@ -18,6 +19,7 @@ from backend.repository import (
     list_system_ids,
     project_summary,
 )
+from backend.jobs import create_run_job, get_job, list_jobs
 
 
 app = FastAPI(title="MASentinel Backend", version="0.1.0")
@@ -57,17 +59,53 @@ def list_testcases(system_id: str) -> list[dict[str, Any]]:
     return get_testcases(system_id)
 
 
+@app.post("/api/runs")
+def create_run(payload: dict[str, Any]) -> dict[str, Any]:
+    system_id = str(payload.get("system_id") or payload.get("project_id") or "").strip()
+    if not system_id:
+        raise HTTPException(status_code=400, detail="system_id or project_id is required")
+    try:
+        job = create_run_job(
+            system_id,
+            agentic=bool(payload.get("agentic", False)),
+            clean_output=bool(payload.get("clean_output", False)),
+            no_human=bool(payload.get("no_human", True)),
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return job.snapshot()
+
+
+@app.get("/api/jobs")
+def get_jobs() -> list[dict[str, Any]]:
+    return [job.snapshot() for job in list_jobs()]
+
+
+@app.get("/api/jobs/{job_id}")
+def get_run_job(job_id: str) -> dict[str, Any]:
+    job = get_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail=f"Unknown job_id: {job_id}")
+    return job.snapshot()
+
+
 @app.get("/api/runs/{run_id}")
 def get_run(run_id: str) -> dict[str, Any]:
     ensure_project(run_id)
     testcases = get_testcases(run_id)
     oracle_results = get_oracle_results(run_id)
+    run_summary = get_run_summary(run_id)
     passed = len([item for item in oracle_results if item.get("passed") is True])
     failed = len([item for item in oracle_results if item.get("passed") is False])
     total = len(testcases)
-    if oracle_results and total == 0:
-        total = len(oracle_results)
-    if oracle_results and passed + failed < total:
+    if oracle_results:
+        if total == 0:
+            total = len(oracle_results)
+    elif run_summary:
+        passed = len([item for item in run_summary if item.get("status") == "passed"])
+        failed = len(run_summary) - passed
+        total = len(run_summary)
+    if total and passed + failed < total:
         failed = total - passed
     return {
         "run_id": run_id,
@@ -84,18 +122,36 @@ def get_run_results(run_id: str) -> list[dict[str, Any]]:
     ensure_project(run_id)
     testcases = get_testcases(run_id)
     oracle_by_case = {str(item.get("case_id")): item for item in get_oracle_results(run_id)}
+    summary_by_case = {str(item.get("case_id")): item for item in get_run_summary(run_id)}
     rows: list[dict[str, Any]] = []
     for testcase in testcases:
         case_id = str(testcase.get("case_id", ""))
         oracle = oracle_by_case.get(case_id, {})
+        summary = summary_by_case.get(case_id, {})
+        process_passed = summary.get("status") == "passed" if summary else None
+        oracle_passed = oracle.get("passed")
         rows.append(
             {
                 **testcase,
                 "oracle_result": oracle,
-                "passed": oracle.get("passed"),
+                "run_trace": summary,
+                "passed": oracle_passed if oracle_passed is not None else process_passed,
                 "failures": oracle.get("failures", []),
             }
         )
+    if not rows and summary_by_case:
+        for case_id, summary in summary_by_case.items():
+            rows.append(
+                {
+                    "case_id": case_id,
+                    "system_id": run_id,
+                    "case_type": "executed",
+                    "objective": summary.get("final_output") or "",
+                    "run_trace": summary,
+                    "passed": summary.get("status") == "passed",
+                    "failures": [],
+                }
+            )
     return rows
 
 
